@@ -570,33 +570,55 @@ if test "x$enable_ipv6" != "xno"; then
 fi
 
 dnl libcurl
+
 libcurl=no
-AC_PATH_PROG(libcurlconfig, [curl-config])
-if test "x$libcurlconfig" != "x"; then
-  CPPFLAGS="$CPPFLAGS `$libcurlconfig --cflags 2>/dev/null`"
+AC_ARG_WITH(curl,   [  --with-curl[=DIR]    curl install directory (default=auto)],
+            [], [with_curl=auto])
+if test "x$with_curl" != "xauto"; then
+  OCPPFLAGS="$CPPFLAGS"
+  OLDFLAGS="$LDFLAGS"
+  if test "x$with_curl" != "xyes" ; then
+    CPPFLAGS="$CPPFLAGS -I$with_curl/include"
+    LDFLAGS="$LDFLAGS -L$with_curl/lib -lcurl -lz"
+  fi
   AC_CHECK_HEADER(curl/curl.h, [libcurl=yes])
   if test "x$libcurl" = "xyes"; then
-    AC_MSG_CHECKING([whether curl-config hints compiles and links fine])
-    OLDFLAGS="$LDFLAGS"
-    LDFLAGS="$LDFLAGS `$libcurlconfig --libs 2>/dev/null`"
-    AC_TRY_LINK([], [curl_easy_init();], [libcurl=yes], [libcurl=no])
-    AC_MSG_RESULT([$libcurl])
-    if test "x$libcurl" = "xno"; then
+      AC_MSG_CHECKING([whether with-curl compiles and links fine])
+      AC_TRY_LINK([], [curl_easy_init();], [libcurl=yes], [libcurl=no])
+      AC_MSG_RESULT([$libcurl])
+  fi
+   if test "x$libcurl" = "xno"; then
+      CPPFLAGS="$OCPPFLAGS"
       LDFLAGS="$OLDFLAGS"
-    fi
-  fi
-
-  libcurl_major_version=`$libcurlconfig --version | \
-    sed 's/^.* \([[0-9]]*\)\.\([[0-9]]*\).*$/\1/'`
-  libcurl_minor_version=`$libcurlconfig --version | \
-    sed 's/^.* \([[0-9]]*\)\.\([[0-9]]*\).*$/\2/'`
-  if test "$libcurl_major_version" -lt "$libcurl_major_required" ; then
-    libcurl=no
-  fi
-  if test "$libcurl_major_version" -eq "$libcurl_major_required" ; then
-    if test "$libcurl_minor_version" -lt "$libcurl_minor_required" ; then
-      libcurl=no
-    fi
+   fi
+else
+  AC_PATH_PROG(libcurlconfig, [curl-config])
+  if test "x$libcurlconfig" != "x"; then
+      CPPFLAGS="$CPPFLAGS `$libcurlconfig --cflags 2>/dev/null`"
+      AC_CHECK_HEADER(curl/curl.h, [libcurl=yes])
+      if test "x$libcurl" = "xyes"; then
+          AC_MSG_CHECKING([whether curl-config hints compiles and links fine])
+          OLDFLAGS="$LDFLAGS"
+          LDFLAGS="$LDFLAGS `$libcurlconfig --libs 2>/dev/null`"
+          AC_TRY_LINK([], [curl_easy_init();], [libcurl=yes], [libcurl=no])
+          AC_MSG_RESULT([$libcurl])
+          if test "x$libcurl" = "xno"; then
+              LDFLAGS="$OLDFLAGS"
+          fi
+      fi
+      
+      libcurl_major_version=`$libcurlconfig --version | \
+          sed 's/^.* \([[0-9]]*\)\.\([[0-9]]*\).*$/\1/'`
+      libcurl_minor_version=`$libcurlconfig --version | \
+          sed 's/^.* \([[0-9]]*\)\.\([[0-9]]*\).*$/\2/'`
+      if test "$libcurl_major_version" -lt "$libcurl_major_required" ; then
+          libcurl=no
+      fi
+      if test "$libcurl_major_version" -eq "$libcurl_major_required" ; then
+          if test "$libcurl_minor_version" -lt "$libcurl_minor_required" ; then
+              libcurl=no
+          fi
+      fi
   fi
 fi
 
@@ -606,15 +628,36 @@ fi
 
 dnl expat
 libexpat=no
-AC_CHECK_HEADER(expat.h, [libexpat=yes])
-if test "x$libexpat" = "xyes"; then
-  AC_MSG_CHECKING([whether libexpat compiles and links fine])
+AC_ARG_WITH(expat,   [  --with-expat[=DIR]    expat install directory (default=auto)],
+            [], [with_expat=auto])
+if test "x$with_expat" != "xauto"; then
+  OCPPFLAGS="$CPPFLAGS"
   OLDFLAGS="$LDFLAGS"
-  LDFLAGS="$LDFLAGS -lexpat"
-  AC_TRY_LINK([], [XML_SetElementHandler();], [libexpat=yes], [libexpat=no])
-  AC_MSG_RESULT([$libexpat])
-  if test "x$libexpat" = "xno"; then
-    LDFLAGS="$OLDFLAGS"
+  if test "x$with_expat" != "xyes" ; then
+    CPPFLAGS="$CPPFLAGS -I$with_expat/include"
+    LDFLAGS="$LDFLAGS -L$with_expat/lib -lexpat"
+  fi
+  AC_CHECK_HEADER(expat.h, [libexpat=yes])
+  if test "x$libexpat" = "xyes"; then
+      AC_MSG_CHECKING([whether with-expat compiles and links fine])
+      AC_TRY_LINK([], [XML_SetElementHandler();], [libexpat=yes], [libexpat=no])
+      AC_MSG_RESULT([$libexpat])
+  fi
+   if test "x$libexpat" = "xno"; then
+      CPPFLAGS="$OCPPFLAGS"
+      LDFLAGS="$OLDFLAGS"
+   fi
+else
+  AC_CHECK_HEADER(expat.h, [libexpat=yes])
+  if test "x$libexpat" = "xyes"; then
+    AC_MSG_CHECKING([whether libexpat compiles and links fine])
+    OLDFLAGS="$LDFLAGS"
+    LDFLAGS="$LDFLAGS -lexpat"
+    AC_TRY_LINK([], [XML_SetElementHandler();], [libexpat=yes], [libexpat=no])
+    AC_MSG_RESULT([$libexpat])
+    if test "x$libexpat" = "xno"; then
+      LDFLAGS="$OLDFLAGS"
+    fi
   fi
 fi
 
