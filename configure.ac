@@ -667,7 +667,7 @@ fi
 
 dnl Version
 VERSION="$VERSION_MAJOR.$VERSION_MINOR"
-test -d CVS && VERSION="$VERSION-dev-"`date +'%Y%m%d'`
+test -d .git && VERSION="$VERSION-dev-"`date +'%Y%m%d'`
 AC_DEFINE_UNQUOTED(LIBETPAN_VERSION, "$VERSION",
   [Define this to the version of libEtPan])
 AC_SUBST(VERSION)
