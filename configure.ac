@@ -515,7 +515,7 @@ if test "x$with_sasl" != "xno"; then
     LDFLAGS="$LDFLAGS -L$with_sasl/lib"
   fi
   with_sasl=no
-  SASLLIBS=""
+  SASLLIBS="$SSLLIBS"
   AC_CHECK_HEADER(sasl/sasl.h, [
    AC_CHECK_LIB(sasl2, sasl_client_init, with_sasl=yes, [], [$SASLLIBS])])
   if test "x$with_sasl" != "xyes"; then
