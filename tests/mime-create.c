@@ -272,7 +272,7 @@ static char * generate_boundary(const char * boundary_prefix)
     return strdup(id);
 }
 
-struct mailmime * part_multiple_new(const char * type, const char * boundary_prefix)
+static struct mailmime * part_multiple_new(const char * type, const char * boundary_prefix)
 {
     struct mailmime_fields * mime_fields;
     struct mailmime_content * content;

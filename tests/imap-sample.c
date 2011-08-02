@@ -66,7 +66,7 @@ static void fetch_msg(struct mailimap * imap, uint32_t uid)
 {
 	struct mailimap_set * set;
 	struct mailimap_section * section;
-	char filename[20];
+	char filename[512];
 	size_t msg_len;
 	char * msg_content;
 	FILE * f;

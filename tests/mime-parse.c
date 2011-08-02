@@ -17,12 +17,12 @@ static void display_mime_data(struct mailmime_data * data)
   }
 }
 
-void display_mime_parameter(struct mailmime_parameter * param)
+static void display_mime_parameter(struct mailmime_parameter * param)
 {
   printf("%s = %s\n", param->pa_name, param->pa_value);
 }
 
-void display_mime_dsp_parm(struct mailmime_disposition_parm * param)
+static void display_mime_dsp_parm(struct mailmime_disposition_parm * param)
 {
   switch (param->pa_type) {
   case MAILMIME_DISPOSITION_PARM_FILENAME:
@@ -31,7 +31,7 @@ void display_mime_dsp_parm(struct mailmime_disposition_parm * param)
   }
 }
 
-void display_mime_disposition(struct mailmime_disposition * disposition)
+static void display_mime_disposition(struct mailmime_disposition * disposition)
 {
   clistiter * cur;
 
@@ -216,7 +216,7 @@ static void display_fields(struct mailimf_fields * fields)
   }
 }
 
-void display_mime_discrete_type(struct mailmime_discrete_type * discrete_type)
+static void display_mime_discrete_type(struct mailmime_discrete_type * discrete_type)
 {
   switch (discrete_type->dt_type) {
   case MAILMIME_DISCRETE_TYPE_TEXT:
@@ -240,7 +240,7 @@ void display_mime_discrete_type(struct mailmime_discrete_type * discrete_type)
   }
 }
 
-void display_mime_composite_type(struct mailmime_composite_type * ct)
+static void display_mime_composite_type(struct mailmime_composite_type * ct)
 {
   switch (ct->ct_type) {
   case MAILMIME_COMPOSITE_TYPE_MESSAGE:
@@ -255,7 +255,7 @@ void display_mime_composite_type(struct mailmime_composite_type * ct)
   }
 }
 
-void display_mime_type(struct mailmime_type * type)
+static void display_mime_type(struct mailmime_type * type)
 {
   switch (type->tp_type) {
   case MAILMIME_TYPE_DISCRETE_TYPE:
