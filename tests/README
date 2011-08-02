@@ -1,3 +1,24 @@
+imap-sample
+-----------
+connect to Gmail IMAP server and fetches the messages of INBOX to a folder "download"
+
+syntax: imap-sample mygmailaccount@gmail.com mypassword
+
+
+mime-parse
+----------
+parse a MIME message and show the structure
+
+syntax: mime-parse emailfile.eml
+
+
+mime-create
+-----------
+create a message and show the resulting RFC 2822 format
+
+syntax: mime-create
+
+
 compose-msg
 -----------
 

@@ -33,7 +33,7 @@ EXTRA_DIST = README
 
 noinst_PROGRAMS = smime decrypt pgp frm frm-tree frm-simple	\
 	readmsg-simple fetch-attachment smtpsend readmsg-uid \
-	readmsg compose-msg
+	readmsg compose-msg imap-sample mime-create mime-parse
 
 # For W32, reverse the -DLIBETPAN_DLL.  Unfortunately, CFLAGS comes
 # after AM_CPPFLAGS, so we have to frob CFLAGS.

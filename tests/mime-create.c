@@ -1,13 +1,14 @@
 #include <libetpan/libetpan.h>
 #include <string.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 static char * generate_boundary(const char * boundary_prefix);
 
 static struct mailmime * get_text_part(const char * mime_type,
 	const char * text, size_t length, int encoding_type);
 
-struct mailimf_fields * build_fields(void)
+static struct mailimf_fields * build_fields(void)
 {
   struct mailimf_fields * fields;
   struct mailimf_field * f;
@@ -28,7 +29,7 @@ struct mailimf_fields * build_fields(void)
   
   list = clist_new();
   mb = mailimf_mailbox_new(strdup("DINH =?iso-8859-1?Q?Vi=EAt_Ho=E0?="),
-    strdup("dinh.viet.hoa@free.fr"));
+    strdup("dinh.viet.hoa@foobaremail.com"));
   clist_append(list, mb);
   mb_list = mailimf_mailbox_list_new(list);
   
@@ -45,7 +46,7 @@ struct mailimf_fields * build_fields(void)
 
   list = clist_new();
   mb = mailimf_mailbox_new(strdup("DINH =?iso-8859-1?Q?Vi=EAt_Ho=E0?="),
-    strdup("dinh.viet.hoa@free.fr"));
+    strdup("dinh.viet.hoa@foobaremail.com"));
   addr = mailimf_address_new(MAILIMF_ADDRESS_MAILBOX, mb, NULL);
   clist_append(list, addr);
   addr_list = mailimf_address_list_new(list);
@@ -182,7 +183,6 @@ static struct mailmime * get_text_part(const char * mime_type,
 	struct mailmime_parameter * param;
 	struct mailmime_disposition * disposition;
 	struct mailmime_mechanism * encoding;
-	char * dup_content_id;
     
 	encoding = mailmime_mechanism_new(encoding_type, NULL);
 	disposition = mailmime_disposition_new_with_data(MAILMIME_DISPOSITION_TYPE_INLINE,
@@ -219,7 +219,6 @@ static struct mailmime * get_file_part(const char * filename, const char * mime_
 	struct mailmime_content * content;
 	struct mailmime * mime;
 	struct mailmime_fields * mime_fields;
-	char * dup_content_id;
 	
 	disposition_name = NULL;
 	if (filename != NULL) {
@@ -247,6 +246,8 @@ static struct mailmime * get_sample_file_part(void)
 	
 	part = get_file_part("file-data.jpg", "image/jpeg",
 		FILEDATA, sizeof(FILEDATA) - 1);
+
+	return part;
 }
 
 #define MAX_MESSAGE_ID 512
@@ -331,6 +332,8 @@ int main(int argc, char ** argv)
 
 	col = 0;
 	mailmime_write_file(stdout, &col, mime);
+
+	mailmime_free(mime);
 
 	exit(0);
 }

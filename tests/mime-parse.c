@@ -1,34 +1,12 @@
 #include <libetpan/libetpan.h>
 #include <sys/stat.h>
 #include <stdlib.h>
-//#include <fcntl.h>
 #include <stdio.h>
 
 static void display_mime_content(struct mailmime_content * content_type);
 
 static void display_mime_data(struct mailmime_data * data)
 {
-  switch (data->dt_encoding) {
-  case MAILMIME_MECHANISM_7BIT:
-    printf("7bit\n");
-    break;
-  case MAILMIME_MECHANISM_8BIT:
-    printf("8bit\n");
-    break;
-  case MAILMIME_MECHANISM_BINARY:
-    printf("binary\n");
-    break;
-  case MAILMIME_MECHANISM_QUOTED_PRINTABLE:
-    printf("quoted-printable\n");
-    break;
-  case MAILMIME_MECHANISM_BASE64:
-    printf("base64\n");
-    break;
-  case MAILMIME_MECHANISM_TOKEN:
-    printf("other\n");
-    break;
-  }
-
   switch (data->dt_type) {
   case MAILMIME_DATA_TEXT:
     printf("data : %u bytes\n", (unsigned int) data->dt_data.dt_text.dt_length);
@@ -144,8 +122,6 @@ static void display_group(struct mailimf_group * group)
 
 static void display_address(struct mailimf_address * a)
 {
-  clistiter * cur;
-
   switch (a->ad_type) {
     case MAILIMF_ADDRESS_GROUP:
       display_group(a->ad_data.ad_group);
@@ -293,8 +269,6 @@ void display_mime_type(struct mailmime_type * type)
 
 static void display_mime_content(struct mailmime_content * content_type)
 {
-  clistiter * cur;
-
   printf("type: ");
   display_mime_type(content_type->ct_type);
   printf("/%s\n", content_type->ct_subtype);
@@ -357,18 +331,28 @@ int main(int argc, char ** argv)
 {
 	FILE * f;
 	int r;
-	int status;
 	struct mailmime * mime;
 	struct stat stat_info;
 	char * data;
 	size_t current_index;
 	char * filename;
 
-	status = EXIT_FAILURE;
+	if (argc < 2) {
+		fprintf(stderr, "syntax: mime-parse [filename]\n");
+	}
 
 	filename = argv[1];
 	f = fopen(filename, "r");
+	if (f == NULL) {
+		exit(EXIT_FAILURE);
+	}
+	
 	r = stat(filename, &stat_info);
+	if (r != 0) {
+		fclose(f);
+		exit(EXIT_FAILURE);
+	}
+	
 	data = malloc(stat_info.st_size);
 	fread(data, 1, stat_info.st_size, f);
 	fclose(f);
@@ -376,13 +360,15 @@ int main(int argc, char ** argv)
 	current_index = 0;
 	r = mailmime_parse(data, stat_info.st_size,
 		&current_index, &mime);
-	if (r == MAILIMF_NO_ERROR) {
-		display_mime(mime);
-					/* do the things */
-		status = EXIT_SUCCESS;
-		mailmime_free(mime);
+	if (r != MAILIMF_NO_ERROR) {
+		free(data);
+		exit(EXIT_FAILURE);
+		return EXIT_FAILURE;
 	}
+	
+	display_mime(mime);
+	mailmime_free(mime);
 	free(data);
 
-	exit(status);
+	exit(EXIT_SUCCESS);
 }
