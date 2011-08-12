@@ -210,12 +210,18 @@ ssize_t mailstream_low_read(mailstream_low * s, void * buf, size_t count)
   }
 #endif
   
+  if (r < 0) {
+    STREAM_LOG_ERROR(s, 4, buf, 0);
+  }
+  
   return r;
 }
 
 ssize_t mailstream_low_write(mailstream_low * s,
     const void * buf, size_t count)
 {
+  ssize_t r;
+  
   if (s == NULL)
     return -1;
 
@@ -231,7 +237,13 @@ ssize_t mailstream_low_write(mailstream_low * s,
   STREAM_LOG(s, 1, ">>>>>>> end send >>>>>>\n");
 #endif
 
-  return s->driver->mailstream_write(s, buf, count);
+  r = s->driver->mailstream_write(s, buf, count);
+  
+  if (r < 0) {
+    STREAM_LOG_ERROR(s, 4 | 1, buf, 0);
+  }
+  
+  return r;
 }
 
 void mailstream_low_cancel(mailstream_low * s)
