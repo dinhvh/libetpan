@@ -1318,6 +1318,7 @@ int newsnntp_mode_reader(newsnntp * f)
     return NEWSNNTP_WARNING_REQUEST_AUTHORIZATION_PASSWORD;
       
   case 200:
+  case 201:
     return NEWSNNTP_NO_ERROR;
 
   default:
