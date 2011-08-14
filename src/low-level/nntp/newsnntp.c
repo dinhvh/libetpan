@@ -604,6 +604,7 @@ int newsnntp_authinfo_username(newsnntp * f, const char * username)
   case 480:
     return NEWSNNTP_WARNING_REQUEST_AUTHORIZATION_USERNAME;
 
+  case 481:
   case 482:
     return NEWSNNTP_ERROR_AUTHENTICATION_REJECTED;
 
@@ -639,6 +640,7 @@ int newsnntp_authinfo_password(newsnntp * f, const char * password)
   case 480:
     return NEWSNNTP_WARNING_REQUEST_AUTHORIZATION_USERNAME;
 
+  case 481:
   case 482:
     return NEWSNNTP_ERROR_AUTHENTICATION_REJECTED;
       
