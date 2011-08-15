@@ -5667,7 +5667,12 @@ static int mailimap_literal_parse_progress(mailstream * fd, MMAPString * buffer,
   }
   
   r = mailimap_crlf_parse(fd, buffer, &cur_token);
-  if (r != MAILIMAP_NO_ERROR) {
+	if (r == MAILIMAP_ERROR_PARSE) {
+		/* workaround for Lotus Domino IMAP server */
+		mailimap_space_parse(fd, buffer, &cur_token);
+		mailimap_space_parse(fd, buffer, &cur_token);
+	}
+	else if (r != MAILIMAP_NO_ERROR) {
     res = r;
     goto err;
   }
