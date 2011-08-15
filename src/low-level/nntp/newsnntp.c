@@ -277,9 +277,6 @@ static int newsnntp_get_content(newsnntp * f, char ** result,
   case 480:
     return NEWSNNTP_WARNING_REQUEST_AUTHORIZATION_USERNAME;
     
-  case 381:
-    return NEWSNNTP_WARNING_REQUEST_AUTHORIZATION_PASSWORD;
-    
   case 220:
   case 221:
   case 222:
@@ -447,9 +444,6 @@ int newsnntp_group(newsnntp * f, const char * groupname,
   case 480:
     return NEWSNNTP_WARNING_REQUEST_AUTHORIZATION_USERNAME;
     
-  case 381:
-    return NEWSNNTP_WARNING_REQUEST_AUTHORIZATION_PASSWORD;
-      
   case 211:
     if (!parse_group_info(f->nntp_response, info))
       return NEWSNNTP_ERROR_INVALID_RESPONSE;
@@ -493,9 +487,6 @@ int newsnntp_list(newsnntp * f, clist ** result)
   case 480:
     return NEWSNNTP_WARNING_REQUEST_AUTHORIZATION_USERNAME;
     
-  case 381:
-    return NEWSNNTP_WARNING_REQUEST_AUTHORIZATION_PASSWORD;
-      
   case 215:
     * result = read_groups_list(f);
     return NEWSNNTP_NO_ERROR;
@@ -540,9 +531,6 @@ int newsnntp_post(newsnntp * f, const char * message, size_t size)
   case 480:
     return NEWSNNTP_WARNING_REQUEST_AUTHORIZATION_USERNAME;
     
-  case 381:
-    return NEWSNNTP_WARNING_REQUEST_AUTHORIZATION_PASSWORD;
-
   case 340:
     break;
       
@@ -564,9 +552,6 @@ int newsnntp_post(newsnntp * f, const char * message, size_t size)
   switch (r) {
   case 480:
     return NEWSNNTP_WARNING_REQUEST_AUTHORIZATION_USERNAME;
-      
-  case 381:
-    return NEWSNNTP_WARNING_REQUEST_AUTHORIZATION_PASSWORD;
       
   case 240:
     return NEWSNNTP_NO_ERROR;
@@ -642,9 +627,6 @@ int newsnntp_authinfo_password(newsnntp * f, const char * password)
   case 482:
     return NEWSNNTP_ERROR_AUTHENTICATION_REJECTED;
       
-  case 381:
-    return NEWSNNTP_WARNING_REQUEST_AUTHORIZATION_PASSWORD;
-
   case 281:
     return NEWSNNTP_NO_ERROR;
       
@@ -683,9 +665,6 @@ int newsnntp_list_overview_fmt(newsnntp * f, clist ** result)
   switch (r) {
   case 480:
     return NEWSNNTP_WARNING_REQUEST_AUTHORIZATION_USERNAME;
-      
-  case 381:
-    return NEWSNNTP_WARNING_REQUEST_AUTHORIZATION_PASSWORD;
       
   case 215:
     * result = read_headers_list(f);
@@ -735,9 +714,6 @@ int newsnntp_list_active(newsnntp * f, const char * wildcard, clist ** result)
   case 480:
     return NEWSNNTP_WARNING_REQUEST_AUTHORIZATION_USERNAME;
       
-  case 381:
-    return NEWSNNTP_WARNING_REQUEST_AUTHORIZATION_PASSWORD;
-
   case 215:
     * result = read_groups_list(f);
     return NEWSNNTP_NO_ERROR;
@@ -832,9 +808,6 @@ int newsnntp_list_active_times(newsnntp * f, clist ** result)
   case 480:
     return NEWSNNTP_WARNING_REQUEST_AUTHORIZATION_USERNAME;
       
-  case 381:
-    return NEWSNNTP_WARNING_REQUEST_AUTHORIZATION_PASSWORD;
-      
   case 215:
     * result = read_group_time_list(f);
     return NEWSNNTP_NO_ERROR;
@@ -927,9 +900,6 @@ int newsnntp_list_distribution(newsnntp * f, clist ** result)
   switch (r) {
   case 480:
     return NEWSNNTP_WARNING_REQUEST_AUTHORIZATION_USERNAME;
-      
-  case 381:
-    return NEWSNNTP_WARNING_REQUEST_AUTHORIZATION_PASSWORD;
       
   case 215:
     * result = read_distrib_value_meaning_list(f);
@@ -1026,9 +996,6 @@ int newsnntp_list_distrib_pats(newsnntp * f, clist ** result)
   switch (r) {
   case 480:
     return NEWSNNTP_WARNING_REQUEST_AUTHORIZATION_USERNAME;
-      
-  case 381:
-    return NEWSNNTP_WARNING_REQUEST_AUTHORIZATION_PASSWORD;
       
   case 215:
     * result = read_distrib_default_value_list(f);
@@ -1128,9 +1095,6 @@ int newsnntp_list_newsgroups(newsnntp * f, const char * pattern,
   case 480:
     return NEWSNNTP_WARNING_REQUEST_AUTHORIZATION_USERNAME;
       
-  case 381:
-    return NEWSNNTP_WARNING_REQUEST_AUTHORIZATION_PASSWORD;
-      
   case 215:
     * result = read_group_description_list(f);
     return NEWSNNTP_NO_ERROR;
@@ -1189,9 +1153,6 @@ int newsnntp_list_subscriptions(newsnntp * f, clist ** result)
   switch (r) {
   case 480:
     return NEWSNNTP_WARNING_REQUEST_AUTHORIZATION_USERNAME;
-      
-  case 381:
-    return NEWSNNTP_WARNING_REQUEST_AUTHORIZATION_PASSWORD;
       
   case 215:
     * result = read_subscriptions_list(f);
@@ -1256,9 +1217,6 @@ int newsnntp_listgroup(newsnntp * f, const char * group_name,
   case 480:
     return NEWSNNTP_WARNING_REQUEST_AUTHORIZATION_USERNAME;
       
-  case 381:
-    return NEWSNNTP_WARNING_REQUEST_AUTHORIZATION_PASSWORD;
-      
   case 211:
     * result = read_articles_list(f);
     return NEWSNNTP_NO_ERROR;
@@ -1307,9 +1265,6 @@ int newsnntp_mode_reader(newsnntp * f)
   switch (r) {
   case 480:
     return NEWSNNTP_WARNING_REQUEST_AUTHORIZATION_USERNAME;
-      
-  case 381:
-    return NEWSNNTP_WARNING_REQUEST_AUTHORIZATION_PASSWORD;
       
   case 200:
     return NEWSNNTP_NO_ERROR;
@@ -1465,9 +1420,6 @@ static int newsnntp_xhdr_resp(newsnntp * f, clist ** result)
   switch (r) {
   case 480:
     return NEWSNNTP_WARNING_REQUEST_AUTHORIZATION_USERNAME;
-      
-  case 381:
-    return NEWSNNTP_WARNING_REQUEST_AUTHORIZATION_PASSWORD;
       
   case 221:
     * result = read_xhdr_resp_list(f);
@@ -1655,9 +1607,6 @@ static int newsnntp_xover_resp(newsnntp * f, clist ** result)
   case 480:
     return NEWSNNTP_WARNING_REQUEST_AUTHORIZATION_USERNAME;
       
-  case 381:
-    return NEWSNNTP_WARNING_REQUEST_AUTHORIZATION_PASSWORD;
-      
   case 224:
     * result = read_xover_resp_list(f);
     return NEWSNNTP_NO_ERROR;
@@ -1706,9 +1655,6 @@ int newsnntp_authinfo_generic(newsnntp * f, const char * authentificator,
   switch (r) {
   case 480:
     return NEWSNNTP_WARNING_REQUEST_AUTHORIZATION_USERNAME;
-      
-  case 381:
-    return NEWSNNTP_WARNING_REQUEST_AUTHORIZATION_PASSWORD;
       
   case 281:
     return NEWSNNTP_NO_ERROR;
