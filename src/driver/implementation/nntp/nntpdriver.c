@@ -444,7 +444,7 @@ static int nntpdriver_list_folders(mailsession * session, const char * mb,
       r = newsnntp_list(nntp, &group_list);
 
     switch (r) {
-    case NEWSNNTP_WARNING_REQUEST_AUTHORIZATION_USERNAME:
+    case NEWSNNTP_ERROR_REQUEST_AUTHORIZATION_USERNAME:
       r = nntpdriver_authenticate_user(session);
       if (r != MAIL_NO_ERROR) {
 	      if (new_mb != NULL)
@@ -624,7 +624,7 @@ static int nntpdriver_append_message(mailsession * session,
   do {
     r = newsnntp_post(get_nntp_session(session), message, size);
     switch (r) {
-    case NEWSNNTP_WARNING_REQUEST_AUTHORIZATION_USERNAME:
+    case NEWSNNTP_ERROR_REQUEST_AUTHORIZATION_USERNAME:
       r = nntpdriver_authenticate_user(session);
       if (r != MAIL_NO_ERROR)
 	return r;
@@ -713,7 +713,7 @@ nntpdriver_get_envelopes_list(mailsession * session,
           data->nntp_group_info->grp_last, &list);
       
       switch (r) {
-      case NEWSNNTP_WARNING_REQUEST_AUTHORIZATION_USERNAME:
+      case NEWSNNTP_ERROR_REQUEST_AUTHORIZATION_USERNAME:
 	r = nntpdriver_authenticate_user(session);
 	if (r != MAIL_NO_ERROR)
 	  return r;
