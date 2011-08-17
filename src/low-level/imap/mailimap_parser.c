@@ -8186,8 +8186,10 @@ mailimap_nz_number_parse(mailstream * fd, MMAPString * buffer,
   if (r != MAILIMAP_NO_ERROR)
     return r;
 
+#if 0 // don't fail if zero
   if (number == 0)
     return MAILIMAP_ERROR_PARSE;
+#endif
 
 #else
   size_t cur_token;
