@@ -3018,11 +3018,20 @@ mailimap_single_body_fld_param_parse(mailstream * fd, MMAPString * buffer,
   }
   
   if (!workaround_used) {
-    r = mailimap_string_parse(fd, buffer, &cur_token, &value, NULL,
+	  // also parse NIL to workaround Exchange issue
+    r = mailimap_nstring_parse(fd, buffer, &cur_token, &value, NULL,
                               progr_rate, progr_fun);
     if (r != MAILIMAP_NO_ERROR) {
       res = r;
       goto free_name;
+    }
+    
+    if (value == NULL) {
+      value = strdup("");
+      if (value == NULL) {
+        res = MAILIMAP_ERROR_MEMORY;
+        goto free_name;
+      }
     }
   }
   
