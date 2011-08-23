@@ -7057,12 +7057,28 @@ mailimap_message_data_parse_progress(mailstream * fd, MMAPString * buffer,
   cur_token = * indx;
   msg_att = NULL;
 
-  r = mailimap_nz_number_parse(fd, buffer, &cur_token, &number);
-  if (r != MAILIMAP_NO_ERROR) {
-    res = r;
-    goto err;
-  }
+	r = mailimap_nz_number_parse(fd, buffer, &cur_token, &number);
+	if (r == MAILIMAP_ERROR_PARSE) {
+		// workaround for Zoho Mail IMAP server. sometimes returns negative message numbers
 
+	  r = mailimap_minus_parse(fd, buffer, &cur_token);
+		if (r != MAILIMAP_NO_ERROR) {
+			res = r;
+			goto err;
+		}
+    r = mailimap_number_parse(fd, buffer, &cur_token, &number);
+    if (r != MAILIMAP_NO_ERROR) {
+      res = r;
+      goto err;
+    }
+		
+		number = 0;
+	}
+	else if (r != MAILIMAP_NO_ERROR) {
+		res = r;
+		goto err;
+	}
+  
   r = mailimap_space_parse(fd, buffer, &cur_token);
   if (r != MAILIMAP_NO_ERROR) {
     res = r;
