@@ -3054,6 +3054,61 @@ mailimap_single_body_fld_param_parse(mailstream * fd, MMAPString * buffer,
   return res;
 }
 
+static void mailimap_broken_single_body_fld_param_string_free(char * value)
+{
+  // do nothing
+}
+
+static int
+mailimap_broken_single_body_fld_param_string_parse(mailstream * fd, MMAPString * buffer,
+                                                   size_t * indx,
+                                                   char ** result,
+                                                   size_t progr_rate,
+                                                   progress_function * progr_fun)
+{
+  char * value;
+  int r;
+  size_t cur_token;
+  
+  cur_token = * indx;
+  
+  r = mailimap_string_parse(fd, buffer, &cur_token, &value, NULL,
+                            progr_rate, progr_fun);
+  if (r == MAILIMAP_NO_ERROR) {
+    mailimap_string_free(value);
+    * result = "";
+    * indx = cur_token;
+    return r;
+  }
+  
+  r = mailimap_astring_parse(fd, buffer, &cur_token, &value,
+                             progr_rate, progr_fun);
+  if (r == MAILIMAP_NO_ERROR) {
+    mailimap_astring_free(value);
+    * result = "";
+    * indx = cur_token;
+    return r;
+  }
+  
+  r = mailimap_token_case_insensitive_parse(fd, buffer, &cur_token, "\"3D\"Windows-1252\"\"");
+  if (r == MAILIMAP_NO_ERROR) {
+    * result = "";
+    * indx = cur_token;
+    return r;
+  }
+  
+  r = mailimap_nstring_parse(fd, buffer, &cur_token, &value, NULL,
+                             progr_rate, progr_fun);
+  if (r == MAILIMAP_NO_ERROR) {
+    mailimap_nstring_free(value);
+    * result = "";
+    * indx = cur_token;
+    return r;
+  }
+  
+  return MAILIMAP_ERROR_PARSE;
+}
+
 /*
    body-fld-param  = "(" string SP string *(SP string SP string) ")" / nil
 */
@@ -3099,6 +3154,7 @@ mailimap_body_fld_param_parse(mailstream * fd,
 					mailimap_single_body_fld_param_free,
 					progr_rate, progr_fun);
   if (r == MAILIMAP_ERROR_PARSE) {
+    // case of empty ()
     // do nothing, workaround for mbox mail parser
   }
   else if (r != MAILIMAP_NO_ERROR) {
@@ -3107,7 +3163,37 @@ mailimap_body_fld_param_parse(mailstream * fd,
   }
 
   r = mailimap_cparenth_parse(fd, buffer, &cur_token);
-  if (r != MAILIMAP_NO_ERROR) {
+  if (r == MAILIMAP_ERROR_PARSE) {
+    // workaround for broken param list
+    if (param_list != NULL) {
+      clist_foreach(param_list,
+                    (clist_func) mailimap_single_body_fld_param_free,
+                    NULL);
+      clist_free(param_list);
+      param_list = NULL;
+    }
+    r = mailimap_struct_spaced_list_parse(fd, buffer, &cur_token, &param_list,
+                                          (mailimap_struct_parser *)
+                                          mailimap_broken_single_body_fld_param_string_parse,
+                                          (mailimap_struct_destructor *)
+                                          mailimap_broken_single_body_fld_param_string_free,
+                                          progr_rate, progr_fun);
+    if (param_list != NULL) {
+      clist_free(param_list);
+      param_list = NULL;
+    }
+    if (r != MAILIMAP_NO_ERROR) {
+      res = r;
+      goto free;
+    }
+    
+    r = mailimap_cparenth_parse(fd, buffer, &cur_token);
+    if (r != MAILIMAP_NO_ERROR) {
+      res = r;
+      goto free;
+    }
+  }
+  else if (r != MAILIMAP_NO_ERROR) {
     res = r;
     goto free;
   }
