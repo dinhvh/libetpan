@@ -47,6 +47,7 @@
 #include "mailimap_extension.h"
 #include "mmapstring.h"
 #include "mail.h"
+#include "timeutils.h"
 
 #ifndef UNSTRICT_SYNTAX
 #define UNSTRICT_SYNTAX
@@ -4389,77 +4390,218 @@ static int mailimap_date_year_parse(mailstream * fd, MMAPString * buffer,
                      SP time SP zone DQUOTE
 */
 
+static int get_current_timezone_offset(void)
+{
+  struct tm gmt;
+  struct tm lt;
+  int off;
+  time_t t;
+  
+  t = time(NULL);
+  
+  if (gmtime_r(&t, &gmt) == NULL)
+    return 0;
+  
+  if (localtime_r(&t, &lt) == NULL)
+    return 0;
+  
+  off = (mail_mkgmtime(&lt) - mail_mkgmtime(&gmt)) * 100 / (60 * 60);
+  
+  return off;
+}
+
+static int mailimap_date_time_no_quote_space_timezone_parse(mailstream * fd, MMAPString * buffer,
+                                                            size_t * indx, int * p_timezone)
+{
+  int r;
+  size_t cur_token;
+  int zone;
+  
+  cur_token = * indx;
+  
+  r = mailimap_space_parse(fd, buffer, &cur_token);
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+  
+  r = mailimap_zone_parse(fd, buffer, &cur_token, &zone);
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+  
+  * indx = cur_token;
+  * p_timezone = zone;
+  
+  return MAILIMAP_NO_ERROR;
+}
+
+static int mailimap_date_time_no_quote_parse(mailstream * fd, MMAPString * buffer,
+                                             size_t * indx,
+                                             struct mailimap_date_time ** result,
+                                             size_t progr_rate,
+                                             progress_function * progr_fun)
+{
+  int day;
+  int month;
+  int year;
+  int hour;
+  int min;
+  int sec;
+  int zone;
+  struct mailimap_date_time * date_time;
+  size_t cur_token;
+  int r;
+  
+  cur_token = * indx;
+  
+  r = mailimap_date_day_fixed_parse(fd, buffer, &cur_token, &day);
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+  
+  r = mailimap_minus_parse(fd, buffer, &cur_token);
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+  
+  r = mailimap_date_month_parse(fd, buffer, &cur_token, &month);
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+  
+  r = mailimap_minus_parse(fd, buffer, &cur_token);
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+  
+  r = mailimap_date_year_parse(fd, buffer, &cur_token, &year);
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+  
+  r = mailimap_space_parse(fd, buffer, &cur_token);
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+  
+  r = mailimap_time_parse(fd, buffer, &cur_token, &hour, &min, &sec);
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+  
+  r = mailimap_date_time_no_quote_space_timezone_parse(fd, buffer, &cur_token, &zone);
+  if (r == MAILIMAP_ERROR_PARSE) {
+    zone = get_current_timezone_offset();
+  }
+  else if (r != MAILIMAP_NO_ERROR) {
+    return r;
+  }
+  
+  date_time = mailimap_date_time_new(day, month, year, hour, min, sec, zone);
+  if (date_time == NULL)
+    return MAILIMAP_ERROR_MEMORY;
+  
+  * result = date_time;
+  * indx = cur_token;
+  
+  return MAILIMAP_NO_ERROR;
+}
+
 int mailimap_hack_date_time_parse(char * str,
                                   struct mailimap_date_time ** result,
                                   size_t progr_rate,
                                   progress_function * progr_fun)
 {
-    int day;
-    int month;
-    int year;
-    int hour;
-    int min;
-    int sec;
-    struct mailimap_date_time * date_time;
-    size_t cur_token;
-    int zone;
-    int r;
-    mailstream * fd;
-    MMAPString * buffer;
-    
-    fd = NULL;
-    buffer = mmap_string_new(str);
-    if (buffer == NULL) {
-        return MAILIMAP_ERROR_MEMORY;
-    }
-    
-    cur_token = 0;
-    
-    r = mailimap_date_day_fixed_parse(fd, buffer, &cur_token, &day);
-    if (r != MAILIMAP_NO_ERROR)
-        return r;
-    
-    r = mailimap_minus_parse(fd, buffer, &cur_token);
-    if (r != MAILIMAP_NO_ERROR)
-        return r;
-    
-    r = mailimap_date_month_parse(fd, buffer, &cur_token, &month);
-    if (r != MAILIMAP_NO_ERROR)
-        return r;
-    
-    r = mailimap_minus_parse(fd, buffer, &cur_token);
-    if (r != MAILIMAP_NO_ERROR)
-        return r;
-    
-    r = mailimap_date_year_parse(fd, buffer, &cur_token, &year);
-    if (r != MAILIMAP_NO_ERROR)
-        return r;
-    
-    r = mailimap_space_parse(fd, buffer, &cur_token);
-    if (r != MAILIMAP_NO_ERROR)
-        return r;
-    
-    r = mailimap_time_parse(fd, buffer, &cur_token, &hour, &min, &sec);
-    if (r != MAILIMAP_NO_ERROR)
-        return r;
-    
-    r = mailimap_space_parse(fd, buffer, &cur_token);
-    if (r != MAILIMAP_NO_ERROR)
-        return r;
-    
-    r = mailimap_zone_parse(fd, buffer, &cur_token, &zone);
-    if (r != MAILIMAP_NO_ERROR)
-        return r;
-    
-    date_time = mailimap_date_time_new(day, month, year, hour, min, sec, zone);
-    if (date_time == NULL)
-        return MAILIMAP_ERROR_MEMORY;
-    
-    * result = date_time;
-    
-    return MAILIMAP_NO_ERROR;
+  mailstream * fd;
+  MMAPString * buffer;
+  struct mailimap_date_time * date_time;
+  size_t cur_token;
+  int r;
+  
+  fd = NULL;
+  buffer = mmap_string_new(str);
+  if (buffer == NULL) {
+    return MAILIMAP_ERROR_MEMORY;
+  }
+  
+  cur_token = 0;
+  
+  r = mailimap_date_time_no_quote_parse(fd, buffer, &cur_token, &date_time,
+                                        progr_rate, progr_fun);
+  if (r != MAILIMAP_NO_ERROR) {
+    return r;
+  }
+  
+  * result = date_time;
+  
+  return MAILIMAP_NO_ERROR;
 }
 
+#if 0
+int mailimap_hack_date_time_parse(char * str,
+                                  struct mailimap_date_time ** result,
+                                  size_t progr_rate,
+                                  progress_function * progr_fun)
+{
+  int day;
+  int month;
+  int year;
+  int hour;
+  int min;
+  int sec;
+  struct mailimap_date_time * date_time;
+  size_t cur_token;
+  int zone;
+  int r;
+  mailstream * fd;
+  MMAPString * buffer;
+  
+  fd = NULL;
+  buffer = mmap_string_new(str);
+  if (buffer == NULL) {
+    return MAILIMAP_ERROR_MEMORY;
+  }
+  
+  cur_token = 0;
+  
+  r = mailimap_date_day_fixed_parse(fd, buffer, &cur_token, &day);
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+  
+  r = mailimap_minus_parse(fd, buffer, &cur_token);
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+  
+  r = mailimap_date_month_parse(fd, buffer, &cur_token, &month);
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+  
+  r = mailimap_minus_parse(fd, buffer, &cur_token);
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+  
+  r = mailimap_date_year_parse(fd, buffer, &cur_token, &year);
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+  
+  r = mailimap_space_parse(fd, buffer, &cur_token);
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+  
+  r = mailimap_time_parse(fd, buffer, &cur_token, &hour, &min, &sec);
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+  
+  r = mailimap_space_parse(fd, buffer, &cur_token);
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+  
+  r = mailimap_zone_parse(fd, buffer, &cur_token, &zone);
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+  
+  date_time = mailimap_date_time_new(day, month, year, hour, min, sec, zone);
+  if (date_time == NULL)
+    return MAILIMAP_ERROR_MEMORY;
+  
+  * result = date_time;
+  
+  return MAILIMAP_NO_ERROR;
+}
+#endif
+
+#if 0
 static int mailimap_date_time_parse(mailstream * fd, MMAPString * buffer,
 				    size_t * indx,
 				    struct mailimap_date_time ** result,
@@ -4532,7 +4674,50 @@ static int mailimap_date_time_parse(mailstream * fd, MMAPString * buffer,
 
   return MAILIMAP_NO_ERROR;
 }
-
+#else
+static int mailimap_date_time_parse(mailstream * fd, MMAPString * buffer,
+                                    size_t * indx,
+                                    struct mailimap_date_time ** result,
+                                    size_t progr_rate,
+                                    progress_function * progr_fun)
+{
+  struct mailimap_date_time * date_time;
+  size_t cur_token;
+  int r;
+  int res;
+  
+  cur_token = * indx;
+  
+  r = mailimap_dquote_parse(fd, buffer, &cur_token);
+  if (r != MAILIMAP_NO_ERROR) {
+    res = r;
+    goto err;
+  }
+  
+  r = mailimap_date_time_no_quote_parse(fd, buffer, &cur_token,
+                                        &date_time, progr_rate, progr_fun);
+  if (r != MAILIMAP_NO_ERROR) {
+    res = r;
+    goto err;
+  }
+  
+  r = mailimap_dquote_parse(fd, buffer, &cur_token);
+  if (r != MAILIMAP_NO_ERROR) {
+    res = r;
+    goto free_date_time;
+  }
+  
+  * result = date_time;
+  * indx = cur_token;
+  
+  return MAILIMAP_NO_ERROR;
+  
+free_date_time:
+  mailimap_date_time_free(date_time);
+err:
+  return res;
+}
+#endif
 
 /*
   UNIMPLEMENTED
