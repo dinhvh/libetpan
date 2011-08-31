@@ -636,6 +636,11 @@ static int wait_read(mailstream_low * s)
   ssl_data = (struct mailstream_ssl_data *) s->data;
   timeout = mailstream_network_delay;
   
+#ifdef USE_GNUTLS
+  if (gnutls_record_check_pending(ssl_data->session) != 0)
+    return 0;
+#endif
+
   FD_ZERO(&fds_read);
   fd = mailstream_cancel_get_fd(ssl_data->cancel);
   FD_SET(fd, &fds_read);
