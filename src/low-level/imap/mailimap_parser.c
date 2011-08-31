@@ -7228,6 +7228,15 @@ mailimap_media_message_parse(mailstream * fd, MMAPString * buffer,
 
   r = mailimap_token_case_insensitive_parse(fd, buffer, &cur_token,
 					    "RFC822");
+  if (r == MAILIMAP_ERROR_PARSE) {
+    // workaround for IMAP server "Bigfoot"
+    // * OK [CAPABILITY IMAP4REV1 LITERAL+ SASL-IR LOGIN-REFERRALS AUTH=LOGIN ID] mail16c25 IMAP4rev1 Bigfoot
+    // 01 id
+    // * ID ("name", "Bigfoot", "version", "1.0", "os", "Linux", "os-version", "2.6", "vendor", "Megamailservers.com", "author", "Derek Snider")
+    // * OK ID completed
+    r = mailimap_token_case_insensitive_parse(fd, buffer, &cur_token,
+                                              "DELIVERY-STATUS");
+  }
   if (r != MAILIMAP_NO_ERROR)
     return r;
 
