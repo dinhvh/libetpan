@@ -1066,7 +1066,7 @@ int mailstream_ssl_set_client_private_key_data(struct mailstream_ssl_context * s
   tmp.data = pkey_der;
   tmp.size = len;
   if ((r = gnutls_x509_privkey_import(ssl_context->client_pkey, &tmp, GNUTLS_X509_FMT_DER)) < 0) {
-    gnutls_x509_crt_deinit(ssl_context->client_pkey);
+    gnutls_x509_privkey_deinit(ssl_context->client_pkey);
     ssl_context->client_pkey = NULL;
     return -1;
   }
