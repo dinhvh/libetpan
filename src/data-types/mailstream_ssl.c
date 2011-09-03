@@ -443,7 +443,7 @@ static struct mailstream_ssl_data * ssl_data_new(int fd, void (* callback)(struc
   gnutls_certificate_client_set_retrieve_function(xcred, mailstream_gnutls_client_cert_cb);
 
   gnutls_set_default_priority(session);
-  gnutls_priority_set_direct(session, "EXPORT", NULL);
+  gnutls_priority_set_direct(session, "NORMAL", NULL);
 
   gnutls_record_disable_padding(session);
   gnutls_dh_set_prime_bits(session, 512);
