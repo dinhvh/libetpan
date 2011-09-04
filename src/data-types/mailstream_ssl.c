@@ -30,7 +30,7 @@
  */
 
 /*
- * $Id: mailstream_ssl.c,v 1.75 2011/04/15 09:21:49 hoa Exp $
+ * $Id: mailstream_ssl.c,v 1.77 2011/08/30 19:42:16 colinleroy Exp $
  */
 
 /*
@@ -420,19 +420,6 @@ static struct mailstream_ssl_data * ssl_data_new(int fd, void (* callback)(struc
   struct mailstream_ssl_data * ssl_data;
   gnutls_session session;
   struct mailstream_cancel * cancel;
-  
-  const int cipher_prio[] = { GNUTLS_CIPHER_AES_128_CBC,
-		  		GNUTLS_CIPHER_3DES_CBC,
-		  		GNUTLS_CIPHER_AES_256_CBC,
-		  		GNUTLS_CIPHER_ARCFOUR_128, 0 };
-  const int kx_prio[] = { GNUTLS_KX_DHE_RSA,
-		  	   GNUTLS_KX_RSA, 
-		  	   GNUTLS_KX_DHE_DSS, 0 };
-  const int mac_prio[] = { GNUTLS_MAC_SHA1,
-		  		GNUTLS_MAC_MD5, 0 };
-  const int proto_prio[] = { GNUTLS_TLS1,
-		  		  GNUTLS_SSL3, 0 };
-
   gnutls_certificate_credentials_t xcred;
   int r;
   struct mailstream_ssl_context * ssl_context = NULL;
@@ -456,10 +443,8 @@ static struct mailstream_ssl_data * ssl_data_new(int fd, void (* callback)(struc
   gnutls_certificate_client_set_retrieve_function(xcred, mailstream_gnutls_client_cert_cb);
 
   gnutls_set_default_priority(session);
-  gnutls_protocol_set_priority (session, proto_prio);
-  gnutls_cipher_set_priority (session, cipher_prio);
-  gnutls_kx_set_priority (session, kx_prio);
-  gnutls_mac_set_priority (session, mac_prio);
+  gnutls_priority_set_direct(session, "NORMAL", NULL);
+
   gnutls_record_disable_padding(session);
   gnutls_dh_set_prime_bits(session, 512);
 
@@ -636,6 +621,11 @@ static int wait_read(mailstream_low * s)
   ssl_data = (struct mailstream_ssl_data *) s->data;
   timeout = mailstream_network_delay;
   
+#ifdef USE_GNUTLS
+  if (gnutls_record_check_pending(ssl_data->session) != 0)
+    return 0;
+#endif
+
   FD_ZERO(&fds_read);
   fd = mailstream_cancel_get_fd(ssl_data->cancel);
   FD_SET(fd, &fds_read);
@@ -765,7 +755,7 @@ static int wait_write(mailstream_low * s)
   ssl_data = (struct mailstream_ssl_data *) s->data;
   if (mailstream_cancel_cancelled(ssl_data->cancel))
     return -1;
-  
+ 
   timeout = mailstream_network_delay;
   
   FD_ZERO(&fds_read);
@@ -1066,7 +1056,7 @@ int mailstream_ssl_set_client_private_key_data(struct mailstream_ssl_context * s
   tmp.data = pkey_der;
   tmp.size = len;
   if ((r = gnutls_x509_privkey_import(ssl_context->client_pkey, &tmp, GNUTLS_X509_FMT_DER)) < 0) {
-    gnutls_x509_crt_deinit(ssl_context->client_pkey);
+    gnutls_x509_privkey_deinit(ssl_context->client_pkey);
     ssl_context->client_pkey = NULL;
     return -1;
   }
