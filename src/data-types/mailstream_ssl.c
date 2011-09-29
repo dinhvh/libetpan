@@ -254,6 +254,7 @@ static ssize_t mailstream_low_ssl_write(mailstream_low * s,
 static void mailstream_low_ssl_free(mailstream_low * s);
 static int mailstream_low_ssl_get_fd(mailstream_low * s);
 static void mailstream_low_ssl_cancel(mailstream_low * s);
+static struct mailstream_cancel * mailstream_low_ssl_get_cancel(mailstream_low * s);
 
 static mailstream_low_driver local_mailstream_ssl_driver = {
   /* mailstream_read */ mailstream_low_ssl_read,
@@ -262,6 +263,7 @@ static mailstream_low_driver local_mailstream_ssl_driver = {
   /* mailstream_get_fd */ mailstream_low_ssl_get_fd,
   /* mailstream_free */ mailstream_low_ssl_free,
   /* mailstream_cancel */ mailstream_low_ssl_cancel,
+  /* mailstream_get_cancel */ mailstream_low_ssl_get_cancel,
 };
 
 mailstream_low_driver * mailstream_ssl_driver = &local_mailstream_ssl_driver;
@@ -1154,3 +1156,14 @@ int mailstream_ssl_get_fd(struct mailstream_ssl_context * ssl_context)
   return ssl_context->fd;
 }
 
+static struct mailstream_cancel * mailstream_low_ssl_get_cancel(mailstream_low * s)
+{
+#ifdef USE_SSL
+  struct mailstream_ssl_data * data;
+  
+  data = s->data;
+  return data->cancel;
+#else
+  return NULL;
+#endif
+}

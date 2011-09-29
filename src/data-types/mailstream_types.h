@@ -64,6 +64,9 @@ struct _mailstream {
   size_t read_buffer_len;
 
   mailstream_low * low;
+  
+  struct mailstream_cancel * idle;
+  int idling;
 };
 
 struct mailstream_low_driver {
@@ -73,6 +76,7 @@ struct mailstream_low_driver {
   int (* mailstream_get_fd)(mailstream_low *);
   void (* mailstream_free)(mailstream_low *);
   void (* mailstream_cancel)(mailstream_low *);
+  struct mailstream_cancel * (* mailstream_get_cancel)(mailstream_low *);
 };
 
 typedef struct mailstream_low_driver mailstream_low_driver;
@@ -88,6 +92,14 @@ typedef void progress_function(size_t current, size_t maximum);
 
 typedef void mailprogress_function(size_t current, size_t maximum, void * context);
 
+enum {
+  MAILSTREAM_IDLE_ERROR,
+  MAILSTREAM_IDLE_INTERRUPTED,
+  MAILSTREAM_IDLE_HASDATA,
+  MAILSTREAM_IDLE_TIMEOUT,
+  MAILSTREAM_IDLE_CANCELLED
+};
+  
 #ifdef __cplusplus
 }
 #endif

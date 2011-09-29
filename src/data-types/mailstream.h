@@ -85,6 +85,14 @@ extern void (* mailstream_logger_id)(mailstream_low * s, int is_stream_data, int
 	const char * str, size_t size);
 #endif
 
+/* can be run in thread */
+int mailstream_wait_idle(mailstream * s, int max_idle_delay);
+
+/* in main thread */
+int mailstream_setup_idle(mailstream * s);
+void mailstream_unsetup_idle(mailstream * s);
+void mailstream_interrupt_idle(mailstream * s);
+
 #define LIBETPAN_MAILSTREAM_NETWORK_DELAY
 LIBETPAN_EXPORT
 extern struct timeval mailstream_network_delay;

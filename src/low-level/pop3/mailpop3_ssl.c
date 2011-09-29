@@ -40,6 +40,7 @@
 #include "mailpop3_ssl.h"
 
 #include "mailpop3.h"
+#include "mailstream_cfstream.h"
 
 #include "connect.h"
 #ifdef HAVE_NETINET_IN_H
@@ -54,6 +55,8 @@
 #define SERVICE_NAME_POP3S "pop3s"
 #define SERVICE_TYPE_TCP "tcp"
 
+static int mailpop3_cfssl_connect(mailpop3 * f, const char * server, uint16_t port);
+
 int mailpop3_ssl_connect(mailpop3 * f, const char * server, uint16_t port)
 {
   return mailpop3_ssl_connect_with_callback(f, server, port,
@@ -66,6 +69,12 @@ int mailpop3_ssl_connect_with_callback(mailpop3 * f, const char * server, uint16
   int s;
   mailstream * stream;
 
+#if HAVE_CFNETWORK
+  if (callback == NULL) {
+    return (mailpop3_cfssl_connect, server, port);
+  }
+#endif
+  
   if (port == 0) {
     port = mail_get_service_port(SERVICE_NAME_POP3S, SERVICE_TYPE_TCP);
     if (port == 0)
@@ -88,5 +97,24 @@ int mailpop3_ssl_connect_with_callback(mailpop3 * f, const char * server, uint16
     return MAILPOP3_ERROR_SSL;
   }
 
+  return mailpop3_connect(f, stream);
+}
+
+static int mailpop3_cfssl_connect(mailpop3 * f, const char * server, uint16_t port)
+{
+  mailstream * stream;
+  int r;
+  
+  stream = mailstream_cfstream_open(server, port);
+  if (stream == NULL) {
+    return MAILPOP3_ERROR_CONNECTION_REFUSED;
+  }
+  mailstream_cfstream_set_ssl_verification_mask(stream, MAILSTREAM_CFSTREAM_SSL_NO_VERIFICATION);
+  r = mailstream_cfstream_set_ssl_enabled(stream, 1);
+  if (r < 0) {
+    mailstream_close(stream);
+    return MAILPOP3_ERROR_SSL;
+  }
+  
   return mailpop3_connect(f, stream);
 }

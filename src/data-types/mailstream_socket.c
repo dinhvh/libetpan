@@ -85,6 +85,7 @@ static ssize_t mailstream_low_socket_write(mailstream_low * s,
 static void mailstream_low_socket_free(mailstream_low * s);
 static int mailstream_low_socket_get_fd(mailstream_low * s);
 static void mailstream_low_socket_cancel(mailstream_low * s);
+static struct mailstream_cancel * mailstream_low_socket_get_cancel(mailstream_low * s);
 
 static mailstream_low_driver local_mailstream_socket_driver = {
   /* mailstream_read */ mailstream_low_socket_read,
@@ -93,6 +94,7 @@ static mailstream_low_driver local_mailstream_socket_driver = {
   /* mailstream_get_fd */ mailstream_low_socket_get_fd,
   /* mailstream_free */ mailstream_low_socket_free,
   /* mailstream_cancel */ mailstream_low_socket_cancel,
+  /* mailstream_get_cancel */ mailstream_low_socket_get_cancel,
 };
 
 mailstream_low_driver * mailstream_socket_driver =
@@ -367,4 +369,12 @@ void mailstream_socket_set_use_read(mailstream * stream, int use_read)
   low = mailstream_get_low(stream);
   socket_data = (struct mailstream_socket_data *) low->data;
   socket_data->use_read = use_read;
+}
+
+static struct mailstream_cancel * mailstream_low_socket_get_cancel(mailstream_low * s)
+{
+  struct mailstream_socket_data * socket_data;
+  
+  socket_data = (struct mailstream_socket_data *) s->data;
+  return socket_data->cancel;
 }

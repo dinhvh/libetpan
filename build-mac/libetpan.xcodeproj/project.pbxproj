@@ -509,6 +509,11 @@
 		C6E572131103770400897274 /* quota_sender.h in Headers */ = {isa = PBXBuildFile; fileRef = C6E571FD110376F200897274 /* quota_sender.h */; };
 		C6E572141103770400897274 /* quota_types.c in Sources */ = {isa = PBXBuildFile; fileRef = C6E571FE110376F200897274 /* quota_types.c */; };
 		C6E572151103770400897274 /* quota_types.h in Headers */ = {isa = PBXBuildFile; fileRef = C6E571FF110376F200897274 /* quota_types.h */; };
+		C6EFB8781433F1F300F805C0 /* mailstream_cfstream.c in Sources */ = {isa = PBXBuildFile; fileRef = C6EFB8761433F1F300F805C0 /* mailstream_cfstream.c */; };
+		C6EFB8791433F1F300F805C0 /* mailstream_cfstream.h in Headers */ = {isa = PBXBuildFile; fileRef = C6EFB8771433F1F300F805C0 /* mailstream_cfstream.h */; };
+		C6EFB87A1433F1F300F805C0 /* mailstream_cfstream.c in Sources */ = {isa = PBXBuildFile; fileRef = C6EFB8761433F1F300F805C0 /* mailstream_cfstream.c */; };
+		C6EFB8AE1433F58500F805C0 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6EFB8AD1433F58500F805C0 /* CoreFoundation.framework */; };
+		C6EFB8B41433F5A400F805C0 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6EFB8B31433F5A400F805C0 /* CoreServices.framework */; };
 		C6F9EAFB105335BD0059C3BA /* base64.c in Sources */ = {isa = PBXBuildFile; fileRef = C6F9E84F105335BC0059C3BA /* base64.c */; };
 		C6F9EAFD105335BD0059C3BA /* carray.c in Sources */ = {isa = PBXBuildFile; fileRef = C6F9E851105335BC0059C3BA /* carray.c */; };
 		C6F9EAFF105335BD0059C3BA /* charconv.c in Sources */ = {isa = PBXBuildFile; fileRef = C6F9E853105335BC0059C3BA /* charconv.c */; };
@@ -848,6 +853,10 @@
 		C6E571FF110376F200897274 /* quota_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = quota_types.h; sourceTree = "<group>"; };
 		C6E57200110376F200897274 /* quota.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = quota.c; sourceTree = "<group>"; };
 		C6E57201110376F200897274 /* quota.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = quota.h; sourceTree = "<group>"; };
+		C6EFB8761433F1F300F805C0 /* mailstream_cfstream.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mailstream_cfstream.c; sourceTree = "<group>"; };
+		C6EFB8771433F1F300F805C0 /* mailstream_cfstream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mailstream_cfstream.h; sourceTree = "<group>"; };
+		C6EFB8AD1433F58500F805C0 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
+		C6EFB8B31433F5A400F805C0 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = System/Library/Frameworks/CoreServices.framework; sourceTree = SDKROOT; };
 		C6F9E84F105335BC0059C3BA /* base64.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = base64.c; sourceTree = "<group>"; };
 		C6F9E850105335BC0059C3BA /* base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = base64.h; sourceTree = "<group>"; };
 		C6F9E851105335BC0059C3BA /* carray.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = carray.c; sourceTree = "<group>"; };
@@ -1195,6 +1204,8 @@
 				C6F9EDAD1053395A0059C3BA /* libexpat.dylib in Frameworks */,
 				C6F9EDB2105339650059C3BA /* libcurl.dylib in Frameworks */,
 				C6F9EDBE105339EA0059C3BA /* libcrypto.dylib in Frameworks */,
+				C6EFB8AE1433F58500F805C0 /* CoreFoundation.framework in Frameworks */,
+				C6EFB8B41433F5A400F805C0 /* CoreServices.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1233,6 +1244,8 @@
 			isa = PBXGroup;
 			children = (
 				C6F9ED9A105338F60059C3BA /* Libraries */,
+				C6EFB8AD1433F58500F805C0 /* CoreFoundation.framework */,
+				C6EFB8B31433F5A400F805C0 /* CoreServices.framework */,
 			);
 			name = "External Frameworks and Libraries";
 			sourceTree = "<group>";
@@ -1467,6 +1480,8 @@
 				C6F9E868105335BC0059C3BA /* mailstream_cancel.c */,
 				C6F9E869105335BC0059C3BA /* mailstream_cancel.h */,
 				C6F9E86A105335BC0059C3BA /* mailstream_cancel_types.h */,
+				C6EFB8761433F1F300F805C0 /* mailstream_cfstream.c */,
+				C6EFB8771433F1F300F805C0 /* mailstream_cfstream.h */,
 				C6F9E86B105335BC0059C3BA /* mailstream_helper.c */,
 				C6F9E86C105335BC0059C3BA /* mailstream_helper.h */,
 				C6F9E86D105335BC0059C3BA /* mailstream_low.c */,
@@ -2363,6 +2378,7 @@
 				C68C620C130FFE7E00F16728 /* quota_types.h in Headers */,
 				C68C620D130FFE7E00F16728 /* quota.h in Headers */,
 				C6667DF01342ACCD00969A8E /* xlist.h in Headers */,
+				C6EFB8791433F1F300F805C0 /* mailstream_cfstream.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2604,6 +2620,7 @@
 				C6517A08130E86C6004ADD56 /* namespace_types.c in Sources */,
 				C6517A0E130E86D3004ADD56 /* namespace_sender.c in Sources */,
 				C6667DEF1342ACCD00969A8E /* xlist.c in Sources */,
+				C6EFB8781433F1F300F805C0 /* mailstream_cfstream.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2769,6 +2786,7 @@
 				C6517A0A130E86C6004ADD56 /* namespace_types.c in Sources */,
 				C6517A10130E86D3004ADD56 /* namespace_sender.c in Sources */,
 				C6667DF11342ACCD00969A8E /* xlist.c in Sources */,
+				C6EFB87A1433F1F300F805C0 /* mailstream_cfstream.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2820,7 +2838,10 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/include";
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
+				OTHER_CFLAGS = (
+					"-DHAVE_CONFIG_H=1",
+					"-DHAVE_CFNETWORK=1",
+				);
 				PREBINDING = NO;
 				SDKROOT = macosx10.5;
 			};
@@ -2834,7 +2855,10 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/include";
-				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
+				OTHER_CFLAGS = (
+					"-DHAVE_CONFIG_H=1",
+					"-DHAVE_CFNETWORK=1",
+				);
 				PREBINDING = NO;
 				SDKROOT = macosx10.5;
 			};
