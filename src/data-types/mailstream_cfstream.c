@@ -32,7 +32,12 @@
 #include "mailstream_cfstream.h"
 
 #include <CoreFoundation/CoreFoundation.h>
+#include <TargetConditionals.h>
+#if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
+#include <CFNetwork/CFNetwork.h>
+#else
 #include <CoreServices/CoreServices.h>
+#endif
 #include <pthread.h>
 
 enum {
