@@ -31,6 +31,7 @@
 
 #include "mailstream_cfstream.h"
 
+#if HAVE_CFNETWORK
 #include <CoreFoundation/CoreFoundation.h>
 #include <TargetConditionals.h>
 #if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
@@ -38,6 +39,8 @@
 #else
 #include <CoreServices/CoreServices.h>
 #endif
+#endif
+
 #include <pthread.h>
 
 enum {
@@ -130,9 +133,9 @@ static mailstream_low_driver local_mailstream_cfstream_driver = {
 mailstream_low_driver * mailstream_cfstream_driver =
 &local_mailstream_cfstream_driver;
 
+#if HAVE_CFNETWORK
 static struct mailstream_cfstream_data * cfstream_data_new(CFReadStreamRef readStream, CFWriteStreamRef writeStream)
 {
-#if HAVE_CFNETWORK
   struct mailstream_cfstream_data * cfstream_data;
   
   cfstream_data = (struct mailstream_cfstream_data * ) malloc(sizeof(* cfstream_data));
@@ -143,24 +146,18 @@ static struct mailstream_cfstream_data * cfstream_data_new(CFReadStreamRef readS
   pthread_mutex_init(&cfstream_data->runloop_lock, NULL);
   
   return cfstream_data;
-#else
-  return NULL;
-#endif
 }
 
 static void cfstream_data_free(struct mailstream_cfstream_data * cfstream_data)
 {
-#if HAVE_CFNETWORK
   cfstream_data_close(cfstream_data);
   pthread_mutex_destroy(&cfstream_data->runloop_lock);
   free(cfstream_data->ssl_peer_name);
   free(cfstream_data);
-#endif
 }
 
 static void cfstream_data_close(struct mailstream_cfstream_data * cfstream_data)
 {
-#if HAVE_CFNETWORK
   if (cfstream_data->writeStream != NULL) {
     CFWriteStreamClose(cfstream_data->writeStream);
     CFRelease(cfstream_data->writeStream);
@@ -171,8 +168,8 @@ static void cfstream_data_close(struct mailstream_cfstream_data * cfstream_data)
     CFRelease(cfstream_data->readStream);
     cfstream_data->readStream = NULL;
   }
-#endif
 }
+#endif
 
 mailstream * mailstream_cfstream_open(const char * hostname, int16_t port)
 {
@@ -945,9 +942,9 @@ int mailstream_cfstream_wait_idle(mailstream * s, int max_idle_delay)
 #endif
 }
 
+#if HAVE_CFNETWORK
 static void idleInterruptedPerform(void *info)
 {
-#if HAVE_CFNETWORK
   struct mailstream_cfstream_data * cfstream_data;
   mailstream * s;
   
@@ -956,8 +953,8 @@ static void idleInterruptedPerform(void *info)
   
   cfstream_data = (struct mailstream_cfstream_data *) s->low->data;
   cfstream_data->idleInterrupted = true;
-#endif
 }
+#endif
 
 void mailstream_cfstream_setup_idle(mailstream * s)
 {
