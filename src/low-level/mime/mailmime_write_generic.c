@@ -1431,6 +1431,7 @@ int mailmime_quoted_printable_write_driver(int (* do_write)(void *, const char *
             break;
             
           case '\n':
+            len --;
             r = write_remaining(do_write, data, col, &start, &len);
             if (r != MAILIMF_NO_ERROR)
               return r;
@@ -1464,6 +1465,7 @@ int mailmime_quoted_printable_write_driver(int (* do_write)(void *, const char *
       case STATE_SPACE_CR:
         switch (ch) {
           case '\n':
+            len --;
             r = write_remaining(do_write, data, col, &start, &len);
             if (r != MAILIMF_NO_ERROR)
               return r;
