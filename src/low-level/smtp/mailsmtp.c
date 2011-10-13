@@ -104,6 +104,7 @@ mailsmtp * mailsmtp_new(size_t progr_rate,
   session->progr_fun = progr_fun;
 
   session->response = NULL;
+	session->response_code = 0;
 
   session->line_buffer = mmap_string_new("");
   if (session->line_buffer == NULL)
@@ -904,7 +905,8 @@ static int read_response(mailsmtp * session)
   while ((code & SMTP_STATUS_CONTINUE) != 0);
 
   session->response = session->response_buffer->str;
-
+	session->response_code = code;
+    
   return code;
 }
 

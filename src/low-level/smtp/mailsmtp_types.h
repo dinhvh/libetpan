@@ -126,6 +126,8 @@ struct mailsmtp {
 
   mailprogress_function * smtp_progress_fun;
   void * smtp_progress_context;
+    
+	int response_code;
 };
 
 typedef struct mailsmtp mailsmtp;
