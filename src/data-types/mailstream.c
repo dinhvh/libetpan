@@ -349,6 +349,12 @@ int mailstream_wait_idle(mailstream * s, int max_idle_delay)
     return mailstream_cfstream_wait_idle(s, max_idle_delay);
   }
   
+  if (s->idle == NULL) {
+		return MAILSTREAM_IDLE_ERROR;
+	}
+  if (mailstream_low_get_cancel(mailstream_get_low(s)) == NULL) {
+		return MAILSTREAM_IDLE_ERROR;
+	}
   fd = mailstream_low_get_fd(mailstream_get_low(s));
   idle_fd = mailstream_cancel_get_fd(s->idle);
   cancel_fd = mailstream_cancel_get_fd(mailstream_low_get_cancel(mailstream_get_low(s)));
