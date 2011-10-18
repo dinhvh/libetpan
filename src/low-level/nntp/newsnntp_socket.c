@@ -63,7 +63,9 @@ int newsnntp_socket_connect(newsnntp * f, const char * server, uint16_t port)
   mailstream * stream;
 
 #if HAVE_CFNETWORK
-  return newsnntp_cfsocket_connect(f, server, port);
+  if (mailstream_cfstream_enabled) {
+    return newsnntp_cfsocket_connect(f, server, port);
+  }
 #endif
   
   if (port == 0) {

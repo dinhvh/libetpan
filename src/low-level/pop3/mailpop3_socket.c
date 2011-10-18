@@ -63,7 +63,9 @@ int mailpop3_socket_connect(mailpop3 * f, const char * server, uint16_t port)
   mailstream * stream;
 
 #if HAVE_CFNETWORK
-  return mailpop3_cfsocket_connect(f, server, port);
+  if (mailstream_cfstream_enabled) {
+    return mailpop3_cfsocket_connect(f, server, port);
+  }
 #endif
   
   if (port == 0) {

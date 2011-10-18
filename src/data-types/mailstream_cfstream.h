@@ -39,6 +39,8 @@
 extern "C" {
 #endif
   
+  extern int mailstream_cfstream_enabled;
+  
   enum {
     MAILSTREAM_CFSTREAM_SSL_ALLOWS_EXPIRED_CERTIFICATES = 1 << 0,
     MAILSTREAM_CFSTREAM_SSL_ALLOWS_EXPIRED_ROOTS = 1 << 1,

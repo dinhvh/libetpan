@@ -43,6 +43,8 @@
 
 #include <pthread.h>
 
+int mailstream_cfstream_enabled = 0;
+
 enum {
   STATE_NONE,
   STATE_WAIT_OPEN,

@@ -66,7 +66,9 @@ int mailsmtp_socket_connect(mailsmtp * session,
   mailstream * stream;
 
 #if HAVE_CFNETWORK
-  return mailsmtp_cfsocket_connect(session, server, port);
+  if (mailstream_cfstream_enabled) {
+    return mailsmtp_cfsocket_connect(session, server, port);
+  }
 #endif
   
   if (port == 0) {

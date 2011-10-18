@@ -66,7 +66,9 @@ int mailimap_socket_connect(mailimap * f, const char * server, uint16_t port)
   mailstream * stream;
 
 #if HAVE_CFNETWORK
-  return mailimap_cfsocket_connect(f, server, port);
+  if (mailstream_cfstream_enabled) {
+    return mailimap_cfsocket_connect(f, server, port);
+  }
 #endif
   
   if (port == 0) {

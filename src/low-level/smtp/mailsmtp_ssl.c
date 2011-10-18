@@ -74,8 +74,10 @@ int mailsmtp_ssl_connect_with_callback(mailsmtp * session,
   mailstream * stream;
 
 #if HAVE_CFNETWORK
-  if (callback == NULL) {
-    return mailsmtp_cfssl_connect(session, server, port);
+  if (mailstream_cfstream_enabled) {
+    if (callback == NULL) {
+      return mailsmtp_cfssl_connect(session, server, port);
+    }
   }
 #endif
   

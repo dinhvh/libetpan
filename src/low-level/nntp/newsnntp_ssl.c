@@ -69,8 +69,10 @@ int newsnntp_ssl_connect_with_callback(newsnntp * f, const char * server, uint16
   mailstream * stream;
 
 #if HAVE_CFNETWORK
-  if (callback == NULL) {
-    return newsnntp_cfssl_connect(f, server, port);
+  if (mailstream_cfstream_enabled) {
+    if (callback == NULL) {
+      return newsnntp_cfssl_connect(f, server, port);
+    }
   }
 #endif
   
