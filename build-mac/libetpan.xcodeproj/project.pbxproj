@@ -893,7 +893,7 @@
 		C68C6204130FFE7E00F16728 /* quota_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = quota_types.h; sourceTree = "<group>"; };
 		C68C6205130FFE7E00F16728 /* quota.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = quota.h; sourceTree = "<group>"; };
 		C69AAFB51054298E00F32FBD /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
-		C69AB10A10546FE500F32FBD /* libetpan.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libetpan.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		C69AB10A10546FE500F32FBD /* libetpan_mac.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libetpan_mac.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		C6DC66931083CDA000FA050B /* acl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = acl.h; sourceTree = "<group>"; };
 		C6DC66941083CDA000FA050B /* acl_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = acl_types.h; sourceTree = "<group>"; };
 		C6DC66951083CDA000FA050B /* annotatemore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = annotatemore.h; sourceTree = "<group>"; };
@@ -1378,7 +1378,7 @@
 		C6F9EDAC1053395A0059C3BA /* libexpat.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libexpat.dylib; path = /usr/lib/libexpat.dylib; sourceTree = "<absolute>"; };
 		C6F9EDB1105339650059C3BA /* libcurl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcurl.dylib; path = /usr/lib/libcurl.dylib; sourceTree = "<absolute>"; };
 		C6F9EDBD105339EA0059C3BA /* libcrypto.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcrypto.dylib; path = /usr/lib/libcrypto.dylib; sourceTree = "<absolute>"; };
-		F8B2455E144B8C48002B56DA /* libstatic libetpan iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libstatic libetpan iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		F8B2455E144B8C48002B56DA /* libetpan_ios.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libetpan_ios.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		F8B2455F144B8D24002B56DA /* Cyrus SASL.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "Cyrus SASL.xcodeproj"; path = "../../iOSPorts/ports/security/cyrus-sasl/Cyrus SASL.xcodeproj"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -1419,8 +1419,8 @@
 			isa = PBXGroup;
 			children = (
 				8DC2EF5B0486A6940098B216 /* libetpan.framework */,
-				C69AB10A10546FE500F32FBD /* libetpan.a */,
-				F8B2455E144B8C48002B56DA /* libstatic libetpan iOS.a */,
+				C69AB10A10546FE500F32FBD /* libetpan_mac.a */,
+				F8B2455E144B8C48002B56DA /* libetpan_ios.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2626,7 +2626,7 @@
 			);
 			name = "static libetpan";
 			productName = "static libetpan";
-			productReference = C69AB10A10546FE500F32FBD /* libetpan.a */;
+			productReference = C69AB10A10546FE500F32FBD /* libetpan_mac.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		F8B244B6144B8C48002B56DA /* static libetpan iOS */ = {
@@ -2645,7 +2645,7 @@
 			);
 			name = "static libetpan iOS";
 			productName = "static libetpan";
-			productReference = F8B2455E144B8C48002B56DA /* libstatic libetpan iOS.a */;
+			productReference = F8B2455E144B8C48002B56DA /* libetpan_ios.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -3330,7 +3330,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INSTALL_PATH = /usr/local/lib;
 				PREBINDING = NO;
-				PRODUCT_NAME = etpan;
+				PRODUCT_NAME = etpan_mac;
 			};
 			name = Debug;
 		};
@@ -3344,7 +3344,7 @@
 				GCC_MODEL_TUNING = G5;
 				INSTALL_PATH = /usr/local/lib;
 				PREBINDING = NO;
-				PRODUCT_NAME = etpan;
+				PRODUCT_NAME = etpan_mac;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -3364,7 +3364,7 @@
 				);
 				INSTALL_PATH = /usr/local/lib;
 				PREBINDING = NO;
-				PRODUCT_NAME = "static libetpan iOS";
+				PRODUCT_NAME = etpan_ios;
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
@@ -3383,7 +3383,7 @@
 				);
 				INSTALL_PATH = /usr/local/lib;
 				PREBINDING = NO;
-				PRODUCT_NAME = "static libetpan iOS";
+				PRODUCT_NAME = etpan_ios;
 				SDKROOT = iphoneos;
 				ZERO_LINK = NO;
 			};
