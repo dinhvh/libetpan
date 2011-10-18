@@ -4,6 +4,7 @@
 *.la
 .deps
 .libs
+confz*
 
 .DS_Store
 autogen.out
