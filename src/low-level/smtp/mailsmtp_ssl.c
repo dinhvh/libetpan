@@ -93,7 +93,7 @@ int mailsmtp_ssl_connect_with_callback(mailsmtp * session,
   if (s == -1)
     return MAILSMTP_ERROR_CONNECTION_REFUSED;
 
-  stream = mailstream_ssl_open(s);
+  stream = mailstream_ssl_open_with_callback(s, callback, data);
   if (stream == NULL) {
     close(s);
     return MAILSMTP_ERROR_SSL;
