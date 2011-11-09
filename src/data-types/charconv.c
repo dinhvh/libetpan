@@ -122,6 +122,29 @@ static size_t mail_iconv (iconv_t cd, const char **inbuf, size_t *inbytesleft,
 }
 #endif
 
+static const char * get_valid_charset(const char * fromcode)
+{
+  if ((strcasecmp(fromcode, "GB2312") == 0) || (strcasecmp(fromcode, "GB_2312-80") == 0)) {
+    fromcode = "GBK";
+  }
+  else if ((strcasecmp(fromcode, "iso-8859-8-i") == 0) || (strcasecmp(fromcode, "iso_8859-8-i") == 0) ||
+           (strcasecmp(fromcode, "iso8859-8-i") == 0)) {
+    fromcode = "iso-8859-8";
+  }
+  else if ((strcasecmp(fromcode, "iso-8859-8-e") == 0) || (strcasecmp(fromcode, "iso_8859-8-e") == 0) ||
+           (strcasecmp(fromcode, "iso8859-8-e") == 0)) {
+    fromcode = "iso-8859-8";
+  }
+  else if (strcasecmp(fromcode, "ks_c_5601-1987") == 0) {
+    fromcode = "euckr";
+  }
+  else if (strcasecmp(fromcode, "iso-2022-jp") == 0) {
+    fromcode = "iso-2022-jp-2";
+  }
+  
+  return fromcode;
+}
+
 LIBETPAN_EXPORT
 int charconv(const char * tocode, const char * fromcode,
     const char * str, size_t length,
@@ -138,6 +161,8 @@ int charconv(const char * tocode, const char * fromcode,
 	char * out;
 	int res;
 
+  fromcode = get_valid_charset(fromcode);
+  
 	if (extended_charconv != NULL) {
 		size_t		result_length;
 		result_length = length * 6;
@@ -164,21 +189,6 @@ int charconv(const char * tocode, const char * fromcode,
   return MAIL_CHARCONV_ERROR_UNKNOWN_CHARSET;
 #else
   
-  if ((strcasecmp(fromcode, "GB2312") == 0) || (strcasecmp(fromcode, "GB_2312-80") == 0)) {
-    fromcode = "GBK";
-  }
-  else if ((strcasecmp(fromcode, "iso-8859-8-i") == 0) || (strcasecmp(fromcode, "iso_8859-8-i") == 0) ||
-        (strcasecmp(fromcode, "iso8859-8-i") == 0)) {
-    fromcode = "iso-8859-8";
-  }
-  else if ((strcasecmp(fromcode, "iso-8859-8-e") == 0) || (strcasecmp(fromcode, "iso_8859-8-e") == 0) ||
-        (strcasecmp(fromcode, "iso8859-8-e") == 0)) {
-    fromcode = "iso-8859-8";
-  }
-  else if (strcasecmp(fromcode, "ks_c_5601-1987") == 0) {
-	fromcode = "euckr";
-  }
-
   conv = iconv_open(tocode, fromcode);
   if (conv == (iconv_t) -1) {
     res = MAIL_CHARCONV_ERROR_UNKNOWN_CHARSET;
@@ -242,6 +252,8 @@ int charconv_buffer(const char * tocode, const char * fromcode,
 	int res;
 	MMAPString * mmapstr;
 
+  fromcode = get_valid_charset(fromcode);
+  
 	if (extended_charconv != NULL) {
 		size_t		result_length;
 		result_length = length * 6;
@@ -263,7 +275,6 @@ int charconv_buffer(const char * tocode, const char * fromcode,
 						*result_len = result_length;
 					}
 				}
-				free( *result);
 			}
 			return res;
 		}
