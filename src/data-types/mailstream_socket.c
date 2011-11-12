@@ -227,11 +227,16 @@ static ssize_t mailstream_low_socket_read(mailstream_low * s,
     WSAEventSelect(socket_data->fd, event, FD_READ | FD_CLOSE);
     FD_SET(event, &fds_read);
     r = WaitForMultipleObjects(fds_read.fd_count, fds_read.fd_array, FALSE, timeout.tv_sec * 1000 + timeout.tv_usec / 1000);
-    if (WAIT_TIMEOUT == r)
+    if (WAIT_TIMEOUT == r) {
+			WSAEventSelect(socket_data->fd, event, 0);
+			CloseHandle(event);
       return -1;
+		}
     
     cancelled = (fds_read.fd_array[r - WAIT_OBJECT_0] == fd);
     got_data = (fds_read.fd_array[r - WAIT_OBJECT_0] == event);
+		WSAEventSelect(socket_data->fd, event, 0);
+		CloseHandle(event);
 #else
     FD_SET(socket_data->fd, &fds_read);
     max_fd = socket_data->fd;
@@ -298,11 +303,16 @@ static ssize_t mailstream_low_socket_write(mailstream_low * s,
     WSAEventSelect(socket_data->fd, event, FD_WRITE | FD_CLOSE);
     FD_SET(event, &fds_read);
     r = WaitForMultipleObjects(fds_read.fd_count, fds_read.fd_array, FALSE, timeout.tv_sec * 1000 + timeout.tv_usec / 1000);
-    if (r < 0)
+    if (r < 0) {
+			WSAEventSelect(socket_data->fd, event, 0);
+			CloseHandle(event);
       return -1;
+		}
     
     cancelled = (fds_read.fd_array[r - WAIT_OBJECT_0] == fd);
     write_enabled = (fds_read.fd_array[r - WAIT_OBJECT_0] == event);
+		WSAEventSelect(socket_data->fd, event, 0);
+		CloseHandle(event);
 #else
     FD_SET(socket_data->fd, &fds_write);
     max_fd = socket_data->fd;

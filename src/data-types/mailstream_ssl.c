@@ -297,7 +297,7 @@ static int mailstream_openssl_client_cert_cb(SSL *ssl, X509 **x509, EVP_PKEY **p
 		return 0;
 }
 
-static struct mailstream_ssl_data * ssl_data_new_full(int fd, SSL_METHOD * method, void (* callback)(struct mailstream_ssl_context * ssl_context, void * cb_data), void * cb_data)
+static struct mailstream_ssl_data * ssl_data_new_full(int fd, const SSL_METHOD * method, void (* callback)(struct mailstream_ssl_context * ssl_context, void * cb_data), void * cb_data)
 {
   struct mailstream_ssl_data * ssl_data;
   SSL * ssl_conn;
@@ -636,11 +636,16 @@ static int wait_read(mailstream_low * s)
   WSAEventSelect(ssl_data->fd, event, FD_READ | FD_CLOSE);
   FD_SET(event, &fds_read);
   r = WaitForMultipleObjects(fds_read.fd_count, fds_read.fd_array, FALSE, timeout.tv_sec * 1000 + timeout.tv_usec / 1000);
-  if (WAIT_TIMEOUT == r)
+  if (WAIT_TIMEOUT == r) {
+		WSAEventSelect(ssl_data->fd, event, 0);
+		CloseHandle(event);
     return -1;
+	}
   
   cancelled = (fds_read.fd_array[r - WAIT_OBJECT_0] == fd);
   got_data = (fds_read.fd_array[r - WAIT_OBJECT_0] == event);
+	WSAEventSelect(ssl_data->fd, event, 0);
+	CloseHandle(event);
 #else
   FD_SET(ssl_data->fd, &fds_read);
   max_fd = ssl_data->fd;
@@ -769,11 +774,16 @@ static int wait_write(mailstream_low * s)
   WSAEventSelect(ssl_data->fd, event, FD_WRITE | FD_CLOSE);
   FD_SET(event, &fds_read);
   r = WaitForMultipleObjects(fds_read.fd_count, fds_read.fd_array, FALSE, timeout.tv_sec * 1000 + timeout.tv_usec / 1000);
-  if (r < 0)
+  if (r < 0) {
+		WSAEventSelect(ssl_data->fd, event, 0);
+		CloseHandle(event);
     return -1;
+	}
   
   cancelled = (fds_read.fd_array[r - WAIT_OBJECT_0] == fd) /* SEB 20070709 */;
   write_enabled = (fds_read.fd_array[r - WAIT_OBJECT_0] == event);
+	WSAEventSelect(ssl_data->fd, event, 0);
+	CloseHandle(event);
 #else
   FD_SET(ssl_data->fd, &fds_write);
   
@@ -933,6 +943,8 @@ ssize_t mailstream_ssl_get_certificate(mailstream *stream, unsigned char **cert_
   *cert_DER = NULL;
   len = (ssize_t) i2d_X509(cert, cert_DER);
   
+	X509_free(cert);
+
   return len;
 #else
   session = data->session;
