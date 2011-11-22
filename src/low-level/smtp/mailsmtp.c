@@ -186,21 +186,31 @@ int mailsmtp_connect(mailsmtp * session, mailstream * s)
 
 #define SMTP_STRING_SIZE 513
 
+static int send_quit(mailsmtp * session)
+{
+    char command[SMTP_STRING_SIZE];
+    int r;
+    
+    snprintf(command, SMTP_STRING_SIZE, "QUIT\r\n");
+    r = send_command(session, command);
+    if (r == -1) {
+        return MAILSMTP_ERROR_STREAM;
+    }
+    
+    return MAILSMTP_NO_ERROR;
+}
+
 int mailsmtp_quit(mailsmtp * session)
 {
-  char command[SMTP_STRING_SIZE];
   int r;
   int res;
   
-  snprintf(command, SMTP_STRING_SIZE, "QUIT\r\n");
-  r = send_command(session, command);
-  if (r == -1) {
-    res = MAILSMTP_ERROR_STREAM;
-    goto close;
-  }
-  r = read_response(session);
-  if (r == 0) {
-    res = MAILSMTP_ERROR_STREAM;
+  if (session->stream == NULL)
+    return MAILSMTP_NO_ERROR;
+  
+  r = send_quit(session);
+  if (r != MAILSMTP_NO_ERROR) {
+    res = r;
     goto close;
   }
   
@@ -366,6 +376,47 @@ int mailsmtp_data_message(mailsmtp * session,
   }
 }
 
+int mailsmtp_data_message_quit(mailsmtp * session,
+                               const char * message,
+                               size_t size)
+{
+    int r;
+    
+    r = send_data(session, message, size);
+    if (r == -1)
+        return MAILSMTP_ERROR_STREAM;
+    
+    r = send_quit(session);
+    
+    r = read_response(session);
+    
+    mailstream_close(session->stream);
+    session->stream = NULL;
+    
+    switch(r) {
+        case 250:
+            return MAILSMTP_NO_ERROR;
+            
+        case 552:
+            return MAILSMTP_ERROR_EXCEED_STORAGE_ALLOCATION;
+            
+        case 554:
+            return MAILSMTP_ERROR_TRANSACTION_FAILED;
+            
+        case 451:
+            return MAILSMTP_ERROR_IN_PROCESSING;
+            
+        case 452:
+            return MAILSMTP_ERROR_INSUFFICIENT_SYSTEM_STORAGE;
+            
+        case 0:
+            return MAILSMTP_ERROR_STREAM;
+            
+        default:
+            return MAILSMTP_ERROR_UNEXPECTED_CODE;
+    }
+}
+
 /* esmtp operations */
 
 
@@ -419,6 +470,9 @@ int mailesmtp_parse_ehlo(mailsmtp * session)
         session->smtp_max_msg_size = strtoul(response + 4, NULL, 10);
       }
       /* TODO: grab optionnal max size */
+    }
+    else if (!strncasecmp(response, "PIPELINING", 10) && isdelim(response[10])) {
+      session->esmtp |= MAILSMTP_ESMTP_PIPELINING;
     }
     else if (!strncasecmp(response, "AUTH ", 5)) {
       response += 5;       /* remove "AUTH " */

@@ -53,6 +53,13 @@ int mailesmtp_send(mailsmtp * session,
 		    clist * addresses,
 		    const char * message, size_t size);
 
+int mailesmtp_send_quit(mailsmtp * session,
+                        const char * from,
+                        int return_full,
+                        const char * envid,
+                        clist * addresses,
+                        const char * message, size_t size);
+
 int mailsmtp_send(mailsmtp * session,
 		   const char * from,
 		   clist * addresses,
