@@ -275,7 +275,13 @@ int charconv_buffer(const char * tocode, const char * fromcode,
 						*result_len = result_length;
 					}
 				}
+                else {
+                    mmap_string_free(mmapstr);
+                }
 			}
+            else {
+                mmap_string_free(mmapstr);
+            }
 			return res;
 		}
 		/* else, let's try with iconv, if available */
