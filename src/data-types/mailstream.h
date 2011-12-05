@@ -45,6 +45,7 @@
 #include <libetpan/mailstream_helper.h>
 #include <libetpan/mailstream_socket.h>
 #include <libetpan/mailstream_ssl.h>
+#include <libetpan/mailstream_cfstream.h>
 #include <libetpan/mailstream_types.h>
 
 #ifdef __cplusplus
