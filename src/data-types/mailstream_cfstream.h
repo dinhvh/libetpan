@@ -88,6 +88,7 @@ extern "C" {
   void mailstream_cfstream_interrupt_idle(mailstream * s);
   void mailstream_cfstream_unsetup_idle(mailstream * s);
   
+  void mailstream_cfstream_set_voip_enabled(mailstream * s, int enabled);
 #ifdef __cplusplus
 }
 #endif

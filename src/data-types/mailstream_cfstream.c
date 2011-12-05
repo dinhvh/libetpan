@@ -180,6 +180,9 @@ mailstream * mailstream_cfstream_open(const char * hostname, int16_t port)
   mailstream * s;
   
   low = mailstream_low_cfstream_open(hostname, port);
+  if (low == NULL) {
+    return NULL;
+  }
   s = mailstream_new(low, 8192);
   return s;
 #else
@@ -435,6 +438,10 @@ mailstream_low * mailstream_low_cfstream_open(const char * hostname, int16_t por
   cfstream_data->cancelSource = CFRunLoopSourceCreate(NULL, 0, &cfstream_data->cancelContext);
   
   r = low_open(s);
+  if (r < 0) {
+    mailstream_low_cfstream_close(s);
+    return NULL;
+  }
   
   return s;
 #else
@@ -1001,5 +1008,23 @@ void mailstream_cfstream_interrupt_idle(mailstream * s)
   }
   
   pthread_mutex_unlock(&cfstream_data->runloop_lock);
+#endif
+}
+
+void mailstream_cfstream_set_voip_enabled(mailstream * s, int enabled)
+{
+  struct mailstream_cfstream_data * cfstream_data;
+  
+  cfstream_data = (struct mailstream_cfstream_data *) s->low->data;
+  
+#if TARGET_OS_IPHONE && !TARGET_IPHONE_SIMULATOR
+  if (enabled) {
+    CFReadStreamSetProperty(cfstream_data->readStream, kCFStreamNetworkServiceType, kCFStreamNetworkServiceTypeVoIP);
+    CFWriteStreamSetProperty(cfstream_data->writeStream, kCFStreamNetworkServiceType, kCFStreamNetworkServiceTypeVoIP);
+  }
+  else {
+    CFReadStreamSetProperty(cfstream_data->readStream, kCFStreamNetworkServiceType, NULL);
+    CFWriteStreamSetProperty(cfstream_data->writeStream, kCFStreamNetworkServiceType, NULL);
+  }
 #endif
 }
