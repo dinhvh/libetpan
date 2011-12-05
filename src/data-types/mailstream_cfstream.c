@@ -44,6 +44,7 @@
 #include <pthread.h>
 
 int mailstream_cfstream_enabled = 0;
+int mailstream_cfstream_voip_enabled = 0;
 
 enum {
   STATE_NONE,
@@ -405,6 +406,13 @@ mailstream_low * mailstream_low_cfstream_open(const char * hostname, int16_t por
   
   hostString = CFStringCreateWithCString(NULL, hostname, kCFStringEncodingUTF8);
   CFStreamCreatePairWithSocketToHost(NULL, hostString, port, &readStream, &writeStream);
+
+#if TARGET_OS_IPHONE && !TARGET_IPHONE_SIMULATOR  
+  if (mailstream_cfstream_voip_enabled) {
+    CFReadStreamSetProperty(readStream, kCFStreamNetworkServiceType, kCFStreamNetworkServiceTypeVoIP);
+    CFWriteStreamSetProperty(writeStream, kCFStreamNetworkServiceType, kCFStreamNetworkServiceTypeVoIP);
+  }
+#endif
   
   cfstream_data = cfstream_data_new(readStream, writeStream);
   s = mailstream_low_new(cfstream_data, mailstream_cfstream_driver);
@@ -1008,23 +1016,5 @@ void mailstream_cfstream_interrupt_idle(mailstream * s)
   }
   
   pthread_mutex_unlock(&cfstream_data->runloop_lock);
-#endif
-}
-
-void mailstream_cfstream_set_voip_enabled(mailstream * s, int enabled)
-{
-  struct mailstream_cfstream_data * cfstream_data;
-  
-  cfstream_data = (struct mailstream_cfstream_data *) s->low->data;
-  
-#if TARGET_OS_IPHONE && !TARGET_IPHONE_SIMULATOR
-  if (enabled) {
-    CFReadStreamSetProperty(cfstream_data->readStream, kCFStreamNetworkServiceType, kCFStreamNetworkServiceTypeVoIP);
-    CFWriteStreamSetProperty(cfstream_data->writeStream, kCFStreamNetworkServiceType, kCFStreamNetworkServiceTypeVoIP);
-  }
-  else {
-    CFReadStreamSetProperty(cfstream_data->readStream, kCFStreamNetworkServiceType, NULL);
-    CFWriteStreamSetProperty(cfstream_data->writeStream, kCFStreamNetworkServiceType, NULL);
-  }
 #endif
 }

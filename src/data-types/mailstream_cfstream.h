@@ -40,6 +40,7 @@ extern "C" {
 #endif
   
   extern int mailstream_cfstream_enabled;
+  extern int mailstream_cfstream_voip_enabled;
   
   enum {
     MAILSTREAM_CFSTREAM_SSL_ALLOWS_EXPIRED_CERTIFICATES = 1 << 0,
@@ -88,7 +89,6 @@ extern "C" {
   void mailstream_cfstream_interrupt_idle(mailstream * s);
   void mailstream_cfstream_unsetup_idle(mailstream * s);
   
-  void mailstream_cfstream_set_voip_enabled(mailstream * s, int enabled);
 #ifdef __cplusplus
 }
 #endif
