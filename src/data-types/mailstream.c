@@ -429,7 +429,6 @@ void mailstream_interrupt_idle(mailstream * s)
   
   if (s->low->driver == mailstream_cfstream_driver) {
     mailstream_cfstream_interrupt_idle(s);
-    return;
   }
   else {
     mailstream_cancel_notify(s->idle);
@@ -444,12 +443,11 @@ void mailstream_unsetup_idle(mailstream * s)
   
   if (s->low->driver == mailstream_cfstream_driver) {
     mailstream_cfstream_unsetup_idle(s);
-    return;
   }
   else {
     mailstream_cancel_free(s->idle);
+	  s->idle = NULL;
   }
   
-  s->idle = NULL;
   s->idling = 0;
 }
