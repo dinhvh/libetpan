@@ -346,7 +346,7 @@ static void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType event
       switch (cfstream_data->state) {
         case STATE_WAIT_WRITE:
           writeDataToStream(s);
-          cfstream_data->state = STATE_OPEN_WRITE_DONE;
+          cfstream_data->state = STATE_WRITE_DONE;
           break;
         case STATE_WAIT_SSL:
           cfstream_data->state = STATE_SSL_WRITE_DONE;
@@ -587,6 +587,7 @@ static int wait_runloop(mailstream_low * s, int wait_state)
       read_scheduled = 1;
       break;
     case STATE_WAIT_SSL:
+      //fprintf(stderr, "wait ssl\n");
       CFReadStreamScheduleWithRunLoop(cfstream_data->readStream, cfstream_data->runloop, kCFRunLoopDefaultMode);
       CFWriteStreamScheduleWithRunLoop(cfstream_data->writeStream, cfstream_data->runloop, kCFRunLoopDefaultMode);
       read_scheduled = 1;
@@ -594,41 +595,22 @@ static int wait_runloop(mailstream_low * s, int wait_state)
       break;
   }
   
+  if (read_scheduled) {
+    if (CFReadStreamHasBytesAvailable(cfstream_data->readStream)) {
+      readStreamCallback(cfstream_data->readStream, kCFStreamEventHasBytesAvailable, s);
+    }
+  }
+  if (write_scheduled) {
+    if (CFWriteStreamCanAcceptBytes(cfstream_data->writeStream)) {
+      writeStreamCallback(cfstream_data->writeStream, kCFStreamEventCanAcceptBytes, s);
+    }
+  }
+  
   while (1) {
     struct timeval timeout;
     CFTimeInterval delay;
     int r;
     int done;
-    
-    if (wait_state == STATE_WAIT_IDLE) {
-      timeout.tv_sec = cfstream_data->idleMaxDelay;
-      timeout.tv_usec = 0;
-    }
-    else {
-      timeout = mailstream_network_delay;
-    }
-    delay = (CFTimeInterval) timeout.tv_sec + (CFTimeInterval) timeout.tv_usec / (CFTimeInterval) 1e6;
-    
-    r = CFRunLoopRunInMode(kCFRunLoopDefaultMode, delay, true);
-    //fprintf(stderr, "wait %p\n", s);
-    //fprintf(stderr, "exit runloop because of %p %p %i\n", cfstream_data->runloop, CFRunLoopGetCurrent(), r);
-    if (r == kCFRunLoopRunTimedOut) {
-      //fprintf(stderr, "exit runloop because of timeout %p\n", s);
-      error = WAIT_RUNLOOP_EXIT_TIMEOUT;
-      break;
-    }
-    if (cfstream_data->cancelled) {
-      //fprintf(stderr, "cancelled\n");
-      error = WAIT_RUNLOOP_EXIT_CANCELLED;
-      break;
-    }
-    if (cfstream_data->state == STATE_WAIT_IDLE) {
-      if (cfstream_data->idleInterrupted) {
-        //fprintf(stderr, "idle interrupted\n");
-        error = WAIT_RUNLOOP_EXIT_INTERRUPTED;
-        break;
-      }
-    }
     
     done = 0;
     switch (cfstream_data->state) {
@@ -656,13 +638,9 @@ static int wait_runloop(mailstream_low * s, int wait_state)
         done = 1;
         break;
       case STATE_SSL_READ_DONE:
-        //CFReadStreamUnscheduleFromRunLoop(cfstream_data->readStream, cfstream_data->runloop, kCFRunLoopDefaultMode);
-        //read_scheduled = 0;
         done = 1;
         break;
       case STATE_SSL_WRITE_DONE:
-        //CFWriteStreamUnscheduleFromRunLoop(cfstream_data->writeStream, cfstream_data->runloop, kCFRunLoopDefaultMode);
-        //write_scheduled = 0;
         done = 1;
         break;
       case STATE_SSL_READ_WRITE_DONE:
@@ -675,6 +653,31 @@ static int wait_runloop(mailstream_low * s, int wait_state)
     
     if (done) {
       break;
+    }
+    
+    if (wait_state == STATE_WAIT_IDLE) {
+      timeout.tv_sec = cfstream_data->idleMaxDelay;
+      timeout.tv_usec = 0;
+    }
+    else {
+      timeout = mailstream_network_delay;
+    }
+    delay = (CFTimeInterval) timeout.tv_sec + (CFTimeInterval) timeout.tv_usec / (CFTimeInterval) 1e6;
+    
+    r = CFRunLoopRunInMode(kCFRunLoopDefaultMode, delay, true);
+    if (r == kCFRunLoopRunTimedOut) {
+      error = WAIT_RUNLOOP_EXIT_TIMEOUT;
+      break;
+    }
+    if (cfstream_data->cancelled) {
+      error = WAIT_RUNLOOP_EXIT_CANCELLED;
+      break;
+    }
+    if (cfstream_data->state == STATE_WAIT_IDLE) {
+      if (cfstream_data->idleInterrupted) {
+        error = WAIT_RUNLOOP_EXIT_INTERRUPTED;
+        break;
+      }
     }
   }
   
@@ -710,7 +713,6 @@ static ssize_t mailstream_low_cfstream_read(mailstream_low * s,
   }
   
   if (CFReadStreamHasBytesAvailable(cfstream_data->readStream)) {
-    //fprintf(stderr, "read available\n");
     readDataFromStream(s);
     return cfstream_data->readResult;
   }
@@ -719,8 +721,6 @@ static ssize_t mailstream_low_cfstream_read(mailstream_low * s,
   if (r != WAIT_RUNLOOP_EXIT_NO_ERROR) {
     return -1;
   }
-  
-  //fprintf(stderr, "read data %i\n", (int) cfstream_data->readResult);
   
   return cfstream_data->readResult;
 #else
@@ -743,7 +743,6 @@ static ssize_t mailstream_low_cfstream_write(mailstream_low * s,
     return -1;
   
   if (CFWriteStreamCanAcceptBytes(cfstream_data->writeStream)) {
-    //fprintf(stderr, "write available\n");
     writeDataToStream(s);
     return cfstream_data->writeResult;
   }
@@ -779,8 +778,6 @@ static int low_open(mailstream_low * s)
     return -1;
   if (cfstream_data->readOpenResult < 0)
     return -1;
-  
-  //fprintf(stderr, "** OPENED **\n");
   
   return 0;
 }
