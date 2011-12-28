@@ -7457,6 +7457,7 @@ mailimap_msg_att_item_parse_progress(mailstream * fd, MMAPString * buffer,
   int type;
   struct mailimap_msg_att_dynamic * msg_att_dynamic;
   struct mailimap_msg_att_static * msg_att_static;
+  struct mailimap_extension_data * msg_att_extension;
   size_t cur_token;
   struct mailimap_msg_att_item * item;
   int r;
@@ -7466,6 +7467,7 @@ mailimap_msg_att_item_parse_progress(mailstream * fd, MMAPString * buffer,
 
   msg_att_dynamic = NULL;
   msg_att_static = NULL;
+  msg_att_extension = NULL;
 
   type = MAILIMAP_MSG_ATT_ITEM_ERROR; /* XXX - removes a gcc warning */
 
@@ -7484,12 +7486,19 @@ mailimap_msg_att_item_parse_progress(mailstream * fd, MMAPString * buffer,
       type = MAILIMAP_MSG_ATT_ITEM_STATIC;
   }
 
+  if (r == MAILIMAP_ERROR_PARSE) {
+    r = mailimap_extension_data_parse(MAILIMAP_EXTENDED_PARSER_FETCH_DATA,
+                                      fd, buffer, &cur_token, &msg_att_extension, progr_rate, progr_fun);
+    if (r == MAILIMAP_NO_ERROR)
+      type = MAILIMAP_MSG_ATT_ITEM_EXTENSION;
+  }
+  
   if (r != MAILIMAP_NO_ERROR) {
     res = r;
     goto err;
   }
   
-  item = mailimap_msg_att_item_new(type, msg_att_dynamic, msg_att_static);
+  item = mailimap_msg_att_item_new(type, msg_att_dynamic, msg_att_static, msg_att_extension);
   if (item == NULL) {
     res = MAILIMAP_ERROR_MEMORY;
     goto free;
@@ -7501,6 +7510,8 @@ mailimap_msg_att_item_parse_progress(mailstream * fd, MMAPString * buffer,
   return MAILIMAP_NO_ERROR;
 
  free:
+  if (msg_att_extension != NULL)
+    mailimap_extension_data_free(msg_att_extension);
   if (msg_att_dynamic != NULL)
     mailimap_msg_att_dynamic_free(msg_att_dynamic);
   if (msg_att_static != NULL)

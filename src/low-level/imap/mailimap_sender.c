@@ -1247,6 +1247,12 @@ static int mailimap_fetch_att_send(mailstream * fd,
     }
     return MAILIMAP_NO_ERROR;
 
+  case MAILIMAP_FETCH_ATT_EXTENSION:
+    r = mailimap_token_send(fd, fetch_att->att_extension);
+    if (r != MAILIMAP_NO_ERROR)
+      return r;
+    return MAILIMAP_NO_ERROR;
+  
   default:
     /* should not happen */
     return MAILIMAP_ERROR_INVAL;

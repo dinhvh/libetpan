@@ -320,6 +320,13 @@ mailimap_fetch_att_new_body_peek_section_partial(struct mailimap_section * secti
 						 uint32_t offset, uint32_t size);
 
 /*
+ creates a mailimap_fetch_att extension
+*/
+    
+struct mailimap_fetch_att *
+    mailimap_fetch_att_new_extension(char * ext_keyword);
+
+/*
   this function creates a mailimap_fetch_type structure to request
   (FLAGS INTERNALDATE RFC822.SIZE ENVELOPE) of a message
 */

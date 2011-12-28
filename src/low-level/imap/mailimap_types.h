@@ -1824,21 +1824,24 @@ mailimap_message_data_free(struct mailimap_message_data * msg_data);
 enum {
   MAILIMAP_MSG_ATT_ITEM_ERROR,   /* on parse error */
   MAILIMAP_MSG_ATT_ITEM_DYNAMIC, /* dynamic message attributes (flags) */
-  MAILIMAP_MSG_ATT_ITEM_STATIC   /* static messages attributes
+  MAILIMAP_MSG_ATT_ITEM_STATIC,  /* static messages attributes
                                     (message content) */
+  MAILIMAP_MSG_ATT_ITEM_EXTENSION /* extension data */
 };
 
 /*
   mailimap_msg_att_item is a message attribute
 
   - type is the type of message attribute, the value can be
-    MAILIMAP_MSG_ATT_ITEM_DYNAMIC or MAILIMAP_MSG_ATT_ITEM_STATIC
+    MAILIMAP_MSG_ATT_ITEM_DYNAMIC, MAILIMAP_MSG_ATT_ITEM_STATIC or MAILIMAP_MSG_ATT_ITEM_EXTENSION
   
-  - msg_att_dyn is a dynamic message attribute when type is
+  - att_dyn is a dynamic message attribute when type is
     MAILIMAP_MSG_ATT_ITEM_DYNAMIC
 
-  - msg_att_static is a static message attribute when type is
+  - att_static is a static message attribute when type is
     MAILIMAP_MSG_ATT_ITEM_STATIC
+ 
+  - att_extension_data is an extension data.
 */
 
 struct mailimap_msg_att_item {
@@ -1846,13 +1849,15 @@ struct mailimap_msg_att_item {
   union {
     struct mailimap_msg_att_dynamic * att_dyn;   /* can be NULL */
     struct mailimap_msg_att_static * att_static; /* can be NULL */
+    struct mailimap_extension_data * att_extension_data; /* can be NULL */
   } att_data;
 };
 
 struct mailimap_msg_att_item *
 mailimap_msg_att_item_new(int att_type,
     struct mailimap_msg_att_dynamic * att_dyn,
-    struct mailimap_msg_att_static * att_static);
+    struct mailimap_msg_att_static * att_static,
+    struct mailimap_extension_data * att_extension_data);
 
 void
 mailimap_msg_att_item_free(struct mailimap_msg_att_item * item);
@@ -2659,8 +2664,9 @@ enum {
                                            additional information */
   MAILIMAP_FETCH_ATT_UID,               /* to fetch the unique identifier */
   MAILIMAP_FETCH_ATT_BODY_SECTION,      /* to fetch a given part */
-  MAILIMAP_FETCH_ATT_BODY_PEEK_SECTION  /* to fetch a given part without
+  MAILIMAP_FETCH_ATT_BODY_PEEK_SECTION, /* to fetch a given part without
                                            marking the message as read */
+  MAILIMAP_FETCH_ATT_EXTENSION
 };
 
 
@@ -2673,7 +2679,8 @@ enum {
     MAILIMAP_FETCH_ATT_RFC822_HEADER, MAILIMAP_FETCH_ATT_RFC822_SIZE,
     MAILIMAP_FETCH_ATT_RFC822_TEXT, MAILIMAP_FETCH_ATT_BODY,
     MAILIMAP_FETCH_ATT_BODYSTRUCTURE, MAILIMAP_FETCH_ATT_UID,
-    MAILIMAP_FETCH_ATT_BODY_SECTION or MAILIMAP_FETCH_ATT_BODY_PEEK_SECTION
+    MAILIMAP_FETCH_ATT_BODY_SECTION, MAILIMAP_FETCH_ATT_BODY_PEEK_SECTION,
+    MAILIMAP_FETCH_ATT_EXTENSION
 
   - section is the location of the part to fetch if type is
     MAILIMAP_FETCH_ATT_BODY_SECTION or MAILIMAP_FETCH_ATT_BODY_PEEK_SECTION
@@ -2681,6 +2688,8 @@ enum {
   - offset is the first byte to fetch in the given part
 
   - size is the maximum size of the part to fetch
+ 
+  - att_extension: keyword to send when MAILIMAP_FETCH_ATT_EXTENSION is used
 */
 
 struct mailimap_fetch_att {
@@ -2688,12 +2697,13 @@ struct mailimap_fetch_att {
   struct mailimap_section * att_section;
   uint32_t att_offset;
   uint32_t att_size;
+  char * att_extension; /* can be NULL */
 };
 
 LIBETPAN_EXPORT
 struct mailimap_fetch_att *
 mailimap_fetch_att_new(int att_type, struct mailimap_section * att_section,
-		       uint32_t att_offset, uint32_t att_size);
+		       uint32_t att_offset, uint32_t att_size, char * att_extension);
 
 
 LIBETPAN_EXPORT
