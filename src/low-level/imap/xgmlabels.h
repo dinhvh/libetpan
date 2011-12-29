@@ -63,6 +63,20 @@ extern "C" {
   
   LIBETPAN_EXPORT void mailimap_msg_att_xgmlabels_free(struct mailimap_msg_att_xgmlabels * att);
   
+  LIBETPAN_EXPORT
+  int
+  mailimap_store_xgmlabels(mailimap * session,
+                           struct mailimap_set * set,
+                           int fl_sign, int fl_silent,
+                           struct mailimap_msg_att_xgmlabels * labels);
+  
+  LIBETPAN_EXPORT
+  int
+  mailimap_uid_store_xgmlabels(mailimap * session,
+                               struct mailimap_set * set,
+                               int fl_sign, int fl_silent,
+                               struct mailimap_msg_att_xgmlabels * labels);
+  
 #ifdef __cplusplus
 }
 #endif
