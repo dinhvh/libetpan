@@ -65,8 +65,8 @@ extern "C" {
   
   extern mailstream_low_driver * mailstream_cfstream_driver;
   
-  mailstream_low * mailstream_low_cfstream_open(const char * hostname, int16_t port);
-  mailstream * mailstream_cfstream_open(const char * hostname, int16_t port);
+  mailstream_low * mailstream_low_cfstream_open(const char * hostname, int port);
+  mailstream * mailstream_cfstream_open(const char * hostname, int port);
   
   /* first, set these settings */
   void mailstream_cfstream_set_ssl_verification_mask(mailstream * s, int verification_mask);
