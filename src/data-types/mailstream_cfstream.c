@@ -41,7 +41,9 @@
 #endif
 #endif
 
+#ifndef WIN32
 #include <pthread.h>
+#endif
 
 int mailstream_cfstream_enabled = 0;
 int mailstream_cfstream_voip_enabled = 0;
@@ -174,7 +176,7 @@ static void cfstream_data_close(struct mailstream_cfstream_data * cfstream_data)
 }
 #endif
 
-mailstream * mailstream_cfstream_open(const char * hostname, int16_t port)
+mailstream * mailstream_cfstream_open(const char * hostname, int port)
 {
 #if HAVE_CFNETWORK
   mailstream_low * low;
@@ -392,7 +394,7 @@ static void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType event
 }
 #endif
 
-mailstream_low * mailstream_low_cfstream_open(const char * hostname, int16_t port)
+mailstream_low * mailstream_low_cfstream_open(const char * hostname, int port)
 {
 #if HAVE_CFNETWORK
   mailstream_low * s;
