@@ -41,7 +41,9 @@
 #endif
 #endif
 
+#ifndef WIN32
 #include <pthread.h>
+#endif
 
 int mailstream_cfstream_enabled = 0;
 int mailstream_cfstream_voip_enabled = 0;
