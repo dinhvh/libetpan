@@ -18,6 +18,7 @@
 
 #ifdef WIN32
 #include <winsock2.h>
+#undef EINPROGRESS
 #define EINPROGRESS WSAEINPROGRESS
 #endif
 
