@@ -675,6 +675,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\src\data-types\mailstream_cfstream.c"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\data-types\mailstream_helper.c"
 					>
 				</File>
@@ -778,6 +782,22 @@
 						>
 					</File>
 					<File
+						RelativePath="..\..\src\low-level\imap\namespace.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\low-level\imap\namespace_parser.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\low-level\imap\namespace_sender.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\low-level\imap\namespace_types.c"
+						>
+					</File>
+					<File
 						RelativePath="..\..\src\low-level\imap\mailimap.c"
 						>
 					</File>
@@ -851,6 +871,14 @@
 					</File>
 					<File
 						RelativePath="..\..\src\low-level\imap\uidplus_types.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\low-level\imap\xgmlabels.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\low-level\imap\xlist.c"
 						>
 					</File>
 				</Filter>
