@@ -48,6 +48,9 @@ extern "C" {
 #include <libetpan/mailimap_types.h>
 
 LIBETPAN_EXPORT
+int mailimap_socket_connect_voip(mailimap * f, const char * server, uint16_t port, int voip_enabled);
+
+LIBETPAN_EXPORT
 int mailimap_socket_connect(mailimap * f, const char * server, uint16_t port);
 
 LIBETPAN_EXPORT

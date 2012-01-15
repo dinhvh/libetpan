@@ -57,43 +57,49 @@
 #define SERVICE_NAME_IMAP "imap2"
 #define SERVICE_TYPE_TCP "tcp"
 
-static int mailimap_cfsocket_connect(mailimap * f, const char * server, uint16_t port);
+static int mailimap_cfsocket_connect_voip(mailimap * f, const char * server, uint16_t port, int voip_enabled);
+
+LIBETPAN_EXPORT
+int mailimap_socket_connect_voip(mailimap * f, const char * server, uint16_t port, int voip_enabled)
+{
+    int s;
+    mailstream * stream;
+
+  #if HAVE_CFNETWORK
+    if (mailstream_cfstream_enabled) {
+      return mailimap_cfsocket_connect_voip(f, server, port, voip_enabled);
+    }
+  #endif
+
+    if (port == 0) {
+      port = mail_get_service_port(SERVICE_NAME_IMAP, SERVICE_TYPE_TCP);
+      if (port == 0)
+        port = DEFAULT_IMAP_PORT;
+    }
+
+    /* Connection */
+
+    s = mail_tcp_connect(server, port);
+    if (s == -1)
+      return MAILIMAP_ERROR_CONNECTION_REFUSED;
+
+    stream = mailstream_socket_open(s);
+    if (stream == NULL) {
+  #ifdef WIN32
+  	closesocket(s);
+  #else
+      close(s);
+  #endif
+      return MAILIMAP_ERROR_MEMORY;
+    }
+
+    return mailimap_connect(f, stream);
+}
 
 LIBETPAN_EXPORT
 int mailimap_socket_connect(mailimap * f, const char * server, uint16_t port)
 {
-  int s;
-  mailstream * stream;
-
-#if HAVE_CFNETWORK
-  if (mailstream_cfstream_enabled) {
-    return mailimap_cfsocket_connect(f, server, port);
-  }
-#endif
-  
-  if (port == 0) {
-    port = mail_get_service_port(SERVICE_NAME_IMAP, SERVICE_TYPE_TCP);
-    if (port == 0)
-      port = DEFAULT_IMAP_PORT;
-  }
-
-  /* Connection */
-
-  s = mail_tcp_connect(server, port);
-  if (s == -1)
-    return MAILIMAP_ERROR_CONNECTION_REFUSED;
-
-  stream = mailstream_socket_open(s);
-  if (stream == NULL) {
-#ifdef WIN32
-	closesocket(s);
-#else
-    close(s);
-#endif
-    return MAILIMAP_ERROR_MEMORY;
-  }
-  
-  return mailimap_connect(f, stream);
+  return mailimap_socket_connect_voip(f, server, port, mailstream_cfstream_voip_enabled);
 }
 
 
@@ -141,11 +147,11 @@ int mailimap_socket_starttls_with_callback(mailimap * f,
   return MAILIMAP_NO_ERROR;
 }
 
-static int mailimap_cfsocket_connect(mailimap * f, const char * server, uint16_t port)
+static int mailimap_cfsocket_connect_voip(mailimap * f, const char * server, uint16_t port, int voip_enabled)
 {
   mailstream * stream;
   
-  stream = mailstream_cfstream_open(server, port);
+  stream = mailstream_cfstream_open_voip(server, port, voip_enabled);
   if (stream == NULL) {
     return MAILIMAP_ERROR_CONNECTION_REFUSED;
   }

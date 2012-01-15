@@ -67,6 +67,8 @@ extern "C" {
   
   mailstream_low * mailstream_low_cfstream_open(const char * hostname, int16_t port);
   mailstream * mailstream_cfstream_open(const char * hostname, int16_t port);
+  mailstream_low * mailstream_low_cfstream_open_voip(const char * hostname, int16_t port, int voip_enabled);
+  mailstream * mailstream_cfstream_open_voip(const char * hostname, int16_t port, int voip_enabled);
   
   /* first, set these settings */
   void mailstream_cfstream_set_ssl_verification_mask(mailstream * s, int verification_mask);
