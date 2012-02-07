@@ -416,6 +416,7 @@ mailstream_low * mailstream_low_cfstream_open_voip(const char * hostname, int16_
   
   hostString = CFStringCreateWithCString(NULL, hostname, kCFStringEncodingUTF8);
   CFStreamCreatePairWithSocketToHost(NULL, hostString, port, &readStream, &writeStream);
+  CFRelease(hostString);
 
 #if TARGET_OS_IPHONE && !TARGET_IPHONE_SIMULATOR  
   if (voip_enabled) {
