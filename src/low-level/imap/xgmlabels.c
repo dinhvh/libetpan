@@ -81,14 +81,7 @@ struct mailimap_msg_att_xgmlabels * mailimap_msg_att_xgmlabels_new(clist * att_l
 
 void mailimap_msg_att_xgmlabels_free(struct mailimap_msg_att_xgmlabels * att)
 {
-  clistiter * cur;
-  
-  for(cur = clist_begin(att->att_labels) ; cur != NULL ; cur = clist_next(cur)) {
-    char * label;
-    
-    label = clist_content(cur);
-    free(label);
-  }
+  clist_foreach(att->att_labels, (clist_func) mailimap_astring_free, NULL);
   clist_free(att->att_labels);
   free(att);
 }
