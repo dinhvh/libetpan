@@ -346,14 +346,17 @@ static void mailbox_data_store(mailimap * session,
     break;
 	
   case MAILIMAP_MAILBOX_DATA_EXISTS:
-    if (session->imap_selection_info)
+    if (session->imap_selection_info) {
       session->imap_selection_info->sel_exists = mb_data->mbd_data.mbd_exists;
+      session->imap_selection_info->sel_has_exists = 1;
+    }
     break;
 
   case MAILIMAP_MAILBOX_DATA_RECENT:
-    if (session->imap_selection_info)
-      session->imap_selection_info->sel_recent =
-        mb_data->mbd_data.mbd_recent;
+    if (session->imap_selection_info) {
+      session->imap_selection_info->sel_recent = mb_data->mbd_data.mbd_recent;
+      session->imap_selection_info->sel_has_recent = 1;
+    }
     break;
   case MAILIMAP_MAILBOX_DATA_EXTENSION_DATA:
     if (session->imap_response_info) {

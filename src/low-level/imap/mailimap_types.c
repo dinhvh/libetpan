@@ -2886,6 +2886,8 @@ mailimap_selection_info_new(void)
   sel_info->sel_exists = 0;
   sel_info->sel_recent = 0;
   sel_info->sel_unseen = 0;
+  sel_info->sel_has_exists = 0;
+  sel_info->sel_has_recent = 0 ;
 
   return sel_info;
 }

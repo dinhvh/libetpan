@@ -3227,6 +3227,8 @@ struct mailimap_selection_info {
   uint32_t sel_exists;
   uint32_t sel_recent;
   uint32_t sel_unseen;
+  uint8_t  sel_has_exists:1;
+  uint8_t  sel_has_recent:1;
 };
 
 struct mailimap_selection_info *
