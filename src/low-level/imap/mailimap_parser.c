@@ -3640,7 +3640,10 @@ mailimap_body_type_msg_parse(mailstream * fd, MMAPString * buffer,
   }
 
   r = mailimap_space_parse(fd, buffer, &cur_token);
-  if (r != MAILIMAP_NO_ERROR) {
+  if (r == MAILIMAP_ERROR_PARSE) {
+    // do nothing
+  }
+  else if (r != MAILIMAP_NO_ERROR) {
     res = r;
     goto envelope;
   }
