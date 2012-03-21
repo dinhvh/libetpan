@@ -156,6 +156,7 @@ static int mailsmtp_cfsocket_starttls(mailsmtp * session)
   if (r != MAILSMTP_NO_ERROR)
     return r;
   
+  mailstream_cfstream_set_ssl_verification_mask(session->stream, MAILSTREAM_CFSTREAM_SSL_NO_VERIFICATION);
   r = mailstream_cfstream_set_ssl_enabled(session->stream, 1);
   if (r < 0) {
     return MAILSMTP_ERROR_SSL;
