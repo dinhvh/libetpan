@@ -504,7 +504,36 @@ static void mailstream_low_cfstream_free(mailstream_low * s)
 
 static int mailstream_low_cfstream_get_fd(mailstream_low * s)
 {
-  return -1;
+  struct mailstream_cfstream_data * cfstream_data = NULL;
+  CFDataRef native_handle_data = NULL;
+  CFSocketNativeHandle native_handle_value = -1;
+  CFIndex native_data_len  = 0;
+  CFIndex native_value_len = 0;
+
+  if (!s)
+    return -1;
+
+  cfstream_data = (struct mailstream_cfstream_data *) s->data;
+
+  if (!cfstream_data->readStream)
+    return -1;
+
+  native_handle_data = (CFDataRef)CFReadStreamCopyProperty(cfstream_data->readStream, kCFStreamPropertySocketNativeHandle);
+  if (!native_handle_data)
+    return -1;
+
+  native_data_len  = CFDataGetLength(native_handle_data);
+  native_value_len = (CFIndex)sizeof(native_handle_value);
+
+  if (native_data_len != native_value_len) {
+    CFRelease(native_handle_data);
+    return -1;
+  }
+
+  CFDataGetBytes(native_handle_data, CFRangeMake(0, MIN(native_data_len, native_value_len)), (UInt8 *)&native_handle_value);
+  CFRelease(native_handle_data);
+
+  return native_handle_value;
 }
 
 #if HAVE_CFNETWORK

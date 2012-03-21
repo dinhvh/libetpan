@@ -44,21 +44,24 @@
 
 int mailsmtp_init(mailsmtp * session)
 {
+  return mailsmtp_init_with_ip(session, 0);
+}
+
+int mailsmtp_init_with_ip(mailsmtp * session, int useip)
+{
   int r;
 
-  r = mailesmtp_ehlo(session);
+  r = mailesmtp_ehlo_with_ip(session, useip);
 
   if (r == MAILSMTP_NO_ERROR)
     return MAILSMTP_NO_ERROR;
 
-  r = mailsmtp_helo(session);
+  r = mailsmtp_helo_with_ip(session, useip);
   if (r == MAILSMTP_NO_ERROR)
     return MAILSMTP_NO_ERROR;
 
   return r;
 }
-
-
 
 int mailesmtp_send(mailsmtp * session,
 		    const char * from,

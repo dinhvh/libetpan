@@ -45,6 +45,7 @@ extern "C" {
 #include "clist.h"
 
 int mailsmtp_init(mailsmtp * session);
+int mailsmtp_init_with_ip(mailsmtp * session, int useip);
 
 int mailesmtp_send(mailsmtp * session,
 		    const char * from,
