@@ -295,6 +295,12 @@ static void readStreamCallback(CFReadStreamRef stream, CFStreamEventType eventTy
         case STATE_WAIT_IDLE:
           cfstream_data->state = STATE_IDLE_DONE;
           break;
+        case STATE_WAIT_SSL:
+          cfstream_data->state = STATE_SSL_READ_DONE;
+          break;
+        case STATE_SSL_WRITE_DONE:
+          cfstream_data->state = STATE_SSL_WRITE_READ_DONE;
+          break;
       }
       break;
     case kCFStreamEventEndEncountered:
@@ -374,6 +380,12 @@ static void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType event
           break;
         case STATE_WAIT_WRITE:
           cfstream_data->state = STATE_OPEN_WRITE_DONE;
+          break;
+        case STATE_WAIT_SSL:
+          cfstream_data->state = STATE_SSL_WRITE_DONE;
+          break;
+        case STATE_SSL_READ_DONE:
+          cfstream_data->state = STATE_SSL_READ_WRITE_DONE;
           break;
       }
       break;
@@ -863,7 +875,7 @@ int mailstream_cfstream_set_ssl_enabled(mailstream * s, int ssl_enabled)
       case MAILSTREAM_CFSTREAM_SSL_LEVEL_SSLv2:
         CFDictionarySetValue(settings, kCFStreamSSLLevel, kCFStreamSocketSecurityLevelSSLv2);
         break;
-      case MAILSTREAM_CFSTREAM_SSL_LEVEL_SSLv1:
+      case MAILSTREAM_CFSTREAM_SSL_LEVEL_SSLv3:
         CFDictionarySetValue(settings, kCFStreamSSLLevel, kCFStreamSocketSecurityLevelSSLv3);
         break;
       case MAILSTREAM_CFSTREAM_SSL_LEVEL_TLSv1:
