@@ -72,7 +72,7 @@ int mailpop3_ssl_connect_with_callback(mailpop3 * f, const char * server, uint16
 #if HAVE_CFNETWORK
   if (mailstream_cfstream_enabled) {
     if (callback == NULL) {
-      return (mailpop3_cfssl_connect, server, port);
+      return mailpop3_cfssl_connect(f, server, port);
     }
   }
 #endif
