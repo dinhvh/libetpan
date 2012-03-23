@@ -102,7 +102,7 @@ int mailpop3_ssl_connect_with_callback(mailpop3 * f, const char * server, uint16
   return mailpop3_connect(f, stream);
 }
 
-static int mailpop3_cfssl_connect(mailpop3 * f, const char * server, uint16_t port)
+static int mailpop3_cfssl_connect_ssl_level(mailpop3 * f, const char * server, uint16_t port, int ssl_level)
 {
   mailstream * stream;
   int r;
@@ -111,6 +111,7 @@ static int mailpop3_cfssl_connect(mailpop3 * f, const char * server, uint16_t po
   if (stream == NULL) {
     return MAILPOP3_ERROR_CONNECTION_REFUSED;
   }
+  mailstream_cfstream_set_ssl_level(stream, ssl_level);
   mailstream_cfstream_set_ssl_verification_mask(stream, MAILSTREAM_CFSTREAM_SSL_NO_VERIFICATION);
   r = mailstream_cfstream_set_ssl_enabled(stream, 1);
   if (r < 0) {
@@ -119,4 +120,9 @@ static int mailpop3_cfssl_connect(mailpop3 * f, const char * server, uint16_t po
   }
   
   return mailpop3_connect(f, stream);
+}
+
+static int mailpop3_cfssl_connect(mailpop3 * f, const char * server, uint16_t port)
+{
+    return mailpop3_cfssl_connect_ssl_level(f, server, port, MAILSTREAM_CFSTREAM_SSL_LEVEL_SSLv3);
 }

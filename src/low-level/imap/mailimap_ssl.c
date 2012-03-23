@@ -115,7 +115,7 @@ int mailimap_ssl_connect_voip(mailimap * f, const char * server, uint16_t port, 
       NULL, NULL);
 }
 
-static int mailimap_cfssl_connect_voip(mailimap * f, const char * server, uint16_t port, int voip_enabled)
+static int mailimap_cfssl_connect_voip_ssl_level(mailimap * f, const char * server, uint16_t port, int voip_enabled, int ssl_level)
 {
   mailstream * stream;
   int r;
@@ -124,6 +124,7 @@ static int mailimap_cfssl_connect_voip(mailimap * f, const char * server, uint16
   if (stream == NULL) {
     return MAILIMAP_ERROR_CONNECTION_REFUSED;
   }
+  mailstream_cfstream_set_ssl_level(stream, ssl_level);
   mailstream_cfstream_set_ssl_verification_mask(stream, MAILSTREAM_CFSTREAM_SSL_NO_VERIFICATION);
   r = mailstream_cfstream_set_ssl_enabled(stream, 1);
   if (r < 0) {
@@ -132,4 +133,9 @@ static int mailimap_cfssl_connect_voip(mailimap * f, const char * server, uint16
   }
   
   return mailimap_connect(f, stream);
+}
+
+static int mailimap_cfssl_connect_voip(mailimap * f, const char * server, uint16_t port, int voip_enabled)
+{
+    return mailimap_cfssl_connect_voip_ssl_level(f, server, port, voip_enabled, MAILSTREAM_CFSTREAM_SSL_LEVEL_SSLv3);
 }
