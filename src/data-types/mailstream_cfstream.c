@@ -516,6 +516,7 @@ static void mailstream_low_cfstream_free(mailstream_low * s)
 
 static int mailstream_low_cfstream_get_fd(mailstream_low * s)
 {
+#if HAVE_CFNETWORK
   struct mailstream_cfstream_data * cfstream_data = NULL;
   CFDataRef native_handle_data = NULL;
   CFSocketNativeHandle native_handle_value = -1;
@@ -546,6 +547,9 @@ static int mailstream_low_cfstream_get_fd(mailstream_low * s)
   CFRelease(native_handle_data);
 
   return native_handle_value;
+#else
+  return -1;
+#endif
 }
 
 #if HAVE_CFNETWORK
