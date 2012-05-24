@@ -383,7 +383,12 @@ int mailpop3_quit(mailpop3 * f)
     res = MAILPOP3_ERROR_STREAM;
     goto close;
   }
-  parse_response(f, response);
+  if (parse_response(f, response) == RESPONSE_OK) {
+		res = MAILPOP3_NO_ERROR;
+	}
+	else {
+		res = MAILPOP3_ERROR_QUIT_FAILED;
+	}
 
   res = MAILPOP3_NO_ERROR;
 
@@ -1032,6 +1037,8 @@ static int parse_response(mailpop3 * f, char * response)
       f->pop3_response = f->pop3_response_buffer->str;
     else
       f->pop3_response = NULL;
+
+	  return RESPONSE_ERR;
   }
 
   f->pop3_response = NULL;

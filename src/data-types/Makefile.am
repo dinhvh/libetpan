@@ -32,7 +32,7 @@ include $(top_srcdir)/rules.mk
 etpaninclude_HEADERS = \
 	mmapstring.h mailstream.h mailstream_helper.h mail.h \
         mailstream_low.h \
-        mailstream_socket.h mailstream_ssl.h \
+        mailstream_socket.h mailstream_ssl.h mailstream_cfstream.h \
 	mailstream_types.h \
 	carray.h clist.h chash.h \
 	charconv.h mailsem.h maillock.h

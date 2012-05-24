@@ -56,9 +56,6 @@ else
   unset conf_flags
 fi
 
-echo "Running aclocal..."
-aclocal -I m4
-
 if test  "$gettext" -eq 1; then
   echo "Running gettextize...  Ignore non-fatal messages."
   echo "no" | gettextize --force --copy
@@ -68,6 +65,9 @@ if test  "$libtool" -eq 1; then
   echo "Running libtoolize..."
   $libtoolize --force --copy
 fi
+
+echo "Running aclocal..."
+aclocal -I m4
 
 echo "Running autoheader..."
 autoheader

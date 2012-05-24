@@ -55,6 +55,7 @@ extern "C" {
 #include <libetpan/quota.h>
 #include <libetpan/namespace.h>
 #include <libetpan/xlist.h>
+#include <libetpan/xgmlabels.h>
 
 /*
   mailimap_connect()

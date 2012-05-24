@@ -63,7 +63,9 @@ int mailpop3_socket_connect(mailpop3 * f, const char * server, uint16_t port)
   mailstream * stream;
 
 #if HAVE_CFNETWORK
-  return mailpop3_cfsocket_connect(f, server, port);
+  if (mailstream_cfstream_enabled) {
+    return mailpop3_cfsocket_connect(f, server, port);
+  }
 #endif
   
   if (port == 0) {
@@ -162,6 +164,7 @@ static int mailpop3_cfsocket_starttls(mailpop3 * f)
       return r;
   }
   
+  mailstream_cfstream_set_ssl_verification_mask(f->pop3_stream, MAILSTREAM_CFSTREAM_SSL_NO_VERIFICATION);
   r = mailstream_cfstream_set_ssl_enabled(f->pop3_stream, 1);
   if (r < 0) {
     return MAILPOP3_ERROR_SSL;

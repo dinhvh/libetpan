@@ -43,6 +43,9 @@
 
 #include <pthread.h>
 
+int mailstream_cfstream_enabled = 0;
+int mailstream_cfstream_voip_enabled = 0;
+
 enum {
   STATE_NONE,
   STATE_WAIT_OPEN,
@@ -173,11 +176,19 @@ static void cfstream_data_close(struct mailstream_cfstream_data * cfstream_data)
 
 mailstream * mailstream_cfstream_open(const char * hostname, int16_t port)
 {
+    return mailstream_cfstream_open_voip(hostname, port, mailstream_cfstream_voip_enabled);
+}
+
+mailstream * mailstream_cfstream_open_voip(const char * hostname, int16_t port, int voip_enabled)
+{
 #if HAVE_CFNETWORK
   mailstream_low * low;
   mailstream * s;
   
-  low = mailstream_low_cfstream_open(hostname, port);
+  low = mailstream_low_cfstream_open_voip(hostname, port, voip_enabled);
+  if (low == NULL) {
+    return NULL;
+  }
   s = mailstream_new(low, 8192);
   return s;
 #else
@@ -284,6 +295,12 @@ static void readStreamCallback(CFReadStreamRef stream, CFStreamEventType eventTy
         case STATE_WAIT_IDLE:
           cfstream_data->state = STATE_IDLE_DONE;
           break;
+        case STATE_WAIT_SSL:
+          cfstream_data->state = STATE_SSL_READ_DONE;
+          break;
+        case STATE_SSL_WRITE_DONE:
+          cfstream_data->state = STATE_SSL_WRITE_READ_DONE;
+          break;
       }
       break;
     case kCFStreamEventEndEncountered:
@@ -340,7 +357,7 @@ static void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType event
       switch (cfstream_data->state) {
         case STATE_WAIT_WRITE:
           writeDataToStream(s);
-          cfstream_data->state = STATE_OPEN_WRITE_DONE;
+          cfstream_data->state = STATE_WRITE_DONE;
           break;
         case STATE_WAIT_SSL:
           cfstream_data->state = STATE_SSL_WRITE_DONE;
@@ -363,6 +380,12 @@ static void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType event
           break;
         case STATE_WAIT_WRITE:
           cfstream_data->state = STATE_OPEN_WRITE_DONE;
+          break;
+        case STATE_WAIT_SSL:
+          cfstream_data->state = STATE_SSL_WRITE_DONE;
+          break;
+        case STATE_SSL_READ_DONE:
+          cfstream_data->state = STATE_SSL_READ_WRITE_DONE;
           break;
       }
       break;
@@ -388,6 +411,11 @@ static void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType event
 
 mailstream_low * mailstream_low_cfstream_open(const char * hostname, int16_t port)
 {
+    return mailstream_low_cfstream_open_voip(hostname, port, mailstream_cfstream_voip_enabled);
+}
+
+mailstream_low * mailstream_low_cfstream_open_voip(const char * hostname, int16_t port, int voip_enabled)
+{
 #if HAVE_CFNETWORK
   mailstream_low * s;
   struct mailstream_cfstream_data * cfstream_data;
@@ -400,6 +428,14 @@ mailstream_low * mailstream_low_cfstream_open(const char * hostname, int16_t por
   
   hostString = CFStringCreateWithCString(NULL, hostname, kCFStringEncodingUTF8);
   CFStreamCreatePairWithSocketToHost(NULL, hostString, port, &readStream, &writeStream);
+  CFRelease(hostString);
+
+#if TARGET_OS_IPHONE && !TARGET_IPHONE_SIMULATOR  
+  if (voip_enabled) {
+    CFReadStreamSetProperty(readStream, kCFStreamNetworkServiceType, kCFStreamNetworkServiceTypeVoIP);
+    CFWriteStreamSetProperty(writeStream, kCFStreamNetworkServiceType, kCFStreamNetworkServiceTypeVoIP);
+  }
+#endif
   
   cfstream_data = cfstream_data_new(readStream, writeStream);
   s = mailstream_low_new(cfstream_data, mailstream_cfstream_driver);
@@ -433,12 +469,17 @@ mailstream_low * mailstream_low_cfstream_open(const char * hostname, int16_t por
   cfstream_data->cancelSource = CFRunLoopSourceCreate(NULL, 0, &cfstream_data->cancelContext);
   
   r = low_open(s);
+  if (r < 0) {
+    mailstream_low_cfstream_close(s);
+    return NULL;
+  }
   
   return s;
 #else
   return NULL;
 #endif
 }
+
 
 static int mailstream_low_cfstream_close(mailstream_low * s)
 {
@@ -475,7 +516,40 @@ static void mailstream_low_cfstream_free(mailstream_low * s)
 
 static int mailstream_low_cfstream_get_fd(mailstream_low * s)
 {
+#if HAVE_CFNETWORK
+  struct mailstream_cfstream_data * cfstream_data = NULL;
+  CFDataRef native_handle_data = NULL;
+  CFSocketNativeHandle native_handle_value = -1;
+  CFIndex native_data_len  = 0;
+  CFIndex native_value_len = 0;
+
+  if (!s)
+    return -1;
+
+  cfstream_data = (struct mailstream_cfstream_data *) s->data;
+
+  if (!cfstream_data->readStream)
+    return -1;
+
+  native_handle_data = (CFDataRef)CFReadStreamCopyProperty(cfstream_data->readStream, kCFStreamPropertySocketNativeHandle);
+  if (!native_handle_data)
+    return -1;
+
+  native_data_len  = CFDataGetLength(native_handle_data);
+  native_value_len = (CFIndex)sizeof(native_handle_value);
+
+  if (native_data_len != native_value_len) {
+    CFRelease(native_handle_data);
+    return -1;
+  }
+
+  CFDataGetBytes(native_handle_data, CFRangeMake(0, MIN(native_data_len, native_value_len)), (UInt8 *)&native_handle_value);
+  CFRelease(native_handle_data);
+
+  return native_handle_value;
+#else
   return -1;
+#endif
 }
 
 #if HAVE_CFNETWORK
@@ -570,6 +644,7 @@ static int wait_runloop(mailstream_low * s, int wait_state)
       read_scheduled = 1;
       break;
     case STATE_WAIT_SSL:
+      //fprintf(stderr, "wait ssl\n");
       CFReadStreamScheduleWithRunLoop(cfstream_data->readStream, cfstream_data->runloop, kCFRunLoopDefaultMode);
       CFWriteStreamScheduleWithRunLoop(cfstream_data->writeStream, cfstream_data->runloop, kCFRunLoopDefaultMode);
       read_scheduled = 1;
@@ -577,41 +652,22 @@ static int wait_runloop(mailstream_low * s, int wait_state)
       break;
   }
   
+  if (read_scheduled) {
+    if (CFReadStreamHasBytesAvailable(cfstream_data->readStream)) {
+      readStreamCallback(cfstream_data->readStream, kCFStreamEventHasBytesAvailable, s);
+    }
+  }
+  if (write_scheduled) {
+    if (CFWriteStreamCanAcceptBytes(cfstream_data->writeStream)) {
+      writeStreamCallback(cfstream_data->writeStream, kCFStreamEventCanAcceptBytes, s);
+    }
+  }
+  
   while (1) {
     struct timeval timeout;
     CFTimeInterval delay;
     int r;
     int done;
-    
-    if (wait_state == STATE_WAIT_IDLE) {
-      timeout.tv_sec = cfstream_data->idleMaxDelay;
-      timeout.tv_usec = 0;
-    }
-    else {
-      timeout = mailstream_network_delay;
-    }
-    delay = (CFTimeInterval) timeout.tv_sec + (CFTimeInterval) timeout.tv_usec / (CFTimeInterval) 1e6;
-    
-    r = CFRunLoopRunInMode(kCFRunLoopDefaultMode, delay, true);
-    //fprintf(stderr, "wait %p\n", s);
-    //fprintf(stderr, "exit runloop because of %p %p %i\n", cfstream_data->runloop, CFRunLoopGetCurrent(), r);
-    if (r == kCFRunLoopRunTimedOut) {
-      //fprintf(stderr, "exit runloop because of timeout %p\n", s);
-      error = WAIT_RUNLOOP_EXIT_TIMEOUT;
-      break;
-    }
-    if (cfstream_data->cancelled) {
-      //fprintf(stderr, "cancelled\n");
-      error = WAIT_RUNLOOP_EXIT_CANCELLED;
-      break;
-    }
-    if (cfstream_data->state == STATE_WAIT_IDLE) {
-      if (cfstream_data->idleInterrupted) {
-        //fprintf(stderr, "idle interrupted\n");
-        error = WAIT_RUNLOOP_EXIT_INTERRUPTED;
-        break;
-      }
-    }
     
     done = 0;
     switch (cfstream_data->state) {
@@ -639,13 +695,9 @@ static int wait_runloop(mailstream_low * s, int wait_state)
         done = 1;
         break;
       case STATE_SSL_READ_DONE:
-        //CFReadStreamUnscheduleFromRunLoop(cfstream_data->readStream, cfstream_data->runloop, kCFRunLoopDefaultMode);
-        //read_scheduled = 0;
         done = 1;
         break;
       case STATE_SSL_WRITE_DONE:
-        //CFWriteStreamUnscheduleFromRunLoop(cfstream_data->writeStream, cfstream_data->runloop, kCFRunLoopDefaultMode);
-        //write_scheduled = 0;
         done = 1;
         break;
       case STATE_SSL_READ_WRITE_DONE:
@@ -658,6 +710,31 @@ static int wait_runloop(mailstream_low * s, int wait_state)
     
     if (done) {
       break;
+    }
+    
+    if (wait_state == STATE_WAIT_IDLE) {
+      timeout.tv_sec = cfstream_data->idleMaxDelay;
+      timeout.tv_usec = 0;
+    }
+    else {
+      timeout = mailstream_network_delay;
+    }
+    delay = (CFTimeInterval) timeout.tv_sec + (CFTimeInterval) timeout.tv_usec / (CFTimeInterval) 1e6;
+    
+    r = CFRunLoopRunInMode(kCFRunLoopDefaultMode, delay, true);
+    if (r == kCFRunLoopRunTimedOut) {
+      error = WAIT_RUNLOOP_EXIT_TIMEOUT;
+      break;
+    }
+    if (cfstream_data->cancelled) {
+      error = WAIT_RUNLOOP_EXIT_CANCELLED;
+      break;
+    }
+    if (cfstream_data->state == STATE_WAIT_IDLE) {
+      if (cfstream_data->idleInterrupted) {
+        error = WAIT_RUNLOOP_EXIT_INTERRUPTED;
+        break;
+      }
     }
   }
   
@@ -693,7 +770,6 @@ static ssize_t mailstream_low_cfstream_read(mailstream_low * s,
   }
   
   if (CFReadStreamHasBytesAvailable(cfstream_data->readStream)) {
-    //fprintf(stderr, "read available\n");
     readDataFromStream(s);
     return cfstream_data->readResult;
   }
@@ -702,8 +778,6 @@ static ssize_t mailstream_low_cfstream_read(mailstream_low * s,
   if (r != WAIT_RUNLOOP_EXIT_NO_ERROR) {
     return -1;
   }
-  
-  //fprintf(stderr, "read data %i\n", (int) cfstream_data->readResult);
   
   return cfstream_data->readResult;
 #else
@@ -726,7 +800,6 @@ static ssize_t mailstream_low_cfstream_write(mailstream_low * s,
     return -1;
   
   if (CFWriteStreamCanAcceptBytes(cfstream_data->writeStream)) {
-    //fprintf(stderr, "write available\n");
     writeDataToStream(s);
     return cfstream_data->writeResult;
   }
@@ -762,8 +835,6 @@ static int low_open(mailstream_low * s)
     return -1;
   if (cfstream_data->readOpenResult < 0)
     return -1;
-  
-  //fprintf(stderr, "** OPENED **\n");
   
   return 0;
 }
@@ -808,7 +879,7 @@ int mailstream_cfstream_set_ssl_enabled(mailstream * s, int ssl_enabled)
       case MAILSTREAM_CFSTREAM_SSL_LEVEL_SSLv2:
         CFDictionarySetValue(settings, kCFStreamSSLLevel, kCFStreamSocketSecurityLevelSSLv2);
         break;
-      case MAILSTREAM_CFSTREAM_SSL_LEVEL_SSLv1:
+      case MAILSTREAM_CFSTREAM_SSL_LEVEL_SSLv3:
         CFDictionarySetValue(settings, kCFStreamSSLLevel, kCFStreamSocketSecurityLevelSSLv3);
         break;
       case MAILSTREAM_CFSTREAM_SSL_LEVEL_TLSv1:

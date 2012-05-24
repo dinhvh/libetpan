@@ -499,17 +499,21 @@ static int mailmime_encoded_word_parse(const char * message, size_t length,
   mailmime_decoded_part_free(decoded);
 
   r = mailimf_token_case_insensitive_parse(message, length, &cur_token, "?=");
+#if 0
   if (r != MAILIMF_NO_ERROR) {
     res = r;
     goto free_encoded_text;
   }
+#endif
 
   if (opening_quote) {
     r = mailimf_char_parse(message, length, &cur_token, '\"');
+#if 0
     if ((r != MAILIMF_NO_ERROR) && (r != MAILIMF_ERROR_PARSE)) {
       res = r;
       goto free_encoded_text;
     }
+#endif
   }
   
   /* fix charset */

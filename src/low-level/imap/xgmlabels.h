@@ -1,7 +1,7 @@
 /*
  * libEtPan! -- a mail stuff library
  *
- * Copyright (C) 2001, 2005 - DINH Viet Hoa
+ * Copyright (C) 2001, 2011 - DINH Viet Hoa
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,40 +29,57 @@
  * SUCH DAMAGE.
  */
 
-/*
- * $Id: mailimap_ssl.h,v 1.16 2006/12/26 13:13:24 hoa Exp $
- */
-
-#ifndef MAILIMAP_SSL_H
-
-#define MAILIMAP_SSL_H
+#ifndef XGMLABELS_H
+#define XGMLABELS_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+  
+#include <libetpan/libetpan-config.h>
+#include <libetpan/mailimap_extension.h>
+  
+  struct mailimap_msg_att_xgmlabels {
+    clist * att_labels; /* != NULL */
+  };
+  
+  LIBETPAN_EXPORT
+  extern struct mailimap_extension_api mailimap_extension_xgmlabels;
+  
+  LIBETPAN_EXPORT
+  struct mailimap_fetch_att * mailimap_fetch_att_new_xgmlabels(void);
+  
+  LIBETPAN_EXPORT
+  int mailimap_has_xgmlabels(mailimap * session);
+  
+  LIBETPAN_EXPORT
+  struct mailimap_msg_att_xgmlabels * mailimap_msg_att_xgmlabels_new(clist * att_labels);
 
-#ifdef HAVE_INTTYPES_H
-#	include <inttypes.h>
-#endif
+  LIBETPAN_EXPORT
+  struct mailimap_msg_att_xgmlabels * mailimap_msg_att_xgmlabels_new_empty(void);
 
-#include <libetpan/mailimap_types.h>
-
-LIBETPAN_EXPORT
-int mailimap_ssl_connect(mailimap * f, const char * server, uint16_t port);
-
-LIBETPAN_EXPORT
-int mailimap_ssl_connect_voip(mailimap * f, const char * server, uint16_t port, int voip_enabled);
-
-LIBETPAN_EXPORT
-int mailimap_ssl_connect_with_callback(mailimap * f, const char * server, uint16_t port,
-    void (* callback)(struct mailstream_ssl_context * ssl_context, void * data), void * data);
-
-LIBETPAN_EXPORT
-int mailimap_ssl_connect_voip_with_callback(mailimap * f, const char * server, uint16_t port, int voip_enabled,
-    void (* callback)(struct mailstream_ssl_context * ssl_context, void * data), void * data);
-
+  LIBETPAN_EXPORT
+  int mailimap_msg_att_xgmlabels_add(struct mailimap_msg_att_xgmlabels * att, char * label);
+  
+  LIBETPAN_EXPORT void mailimap_msg_att_xgmlabels_free(struct mailimap_msg_att_xgmlabels * att);
+  
+  LIBETPAN_EXPORT
+  int
+  mailimap_store_xgmlabels(mailimap * session,
+                           struct mailimap_set * set,
+                           int fl_sign, int fl_silent,
+                           struct mailimap_msg_att_xgmlabels * labels);
+  
+  LIBETPAN_EXPORT
+  int
+  mailimap_uid_store_xgmlabels(mailimap * session,
+                               struct mailimap_set * set,
+                               int fl_sign, int fl_silent,
+                               struct mailimap_msg_att_xgmlabels * labels);
+  
 #ifdef __cplusplus
 }
 #endif
+
 
 #endif

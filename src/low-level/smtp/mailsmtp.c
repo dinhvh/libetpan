@@ -44,8 +44,19 @@
 #include "base64.h"
 #include "mail.h"
 
+#ifdef HAVE_SYS_SOCKET_H
+#	include <sys/socket.h>
+#endif
+
+#ifdef HAVE_STRING_H
+#  include <string.h>
+#endif
+
 #ifdef WIN32
 #	include "win_etpan.h"
+#else
+#	include <sys/types.h>
+#   include <netdb.h>
 #endif
 
 #ifdef HAVE_NETINET_IN_H
@@ -157,6 +168,8 @@ static int send_command_private(mailsmtp * f, char * command, int can_be_publish
 
 static int read_response(mailsmtp * session);
 
+static int get_hostname(mailsmtp * session, int useip, char * buf, int len);
+
 /* smtp operations */
 
 int mailsmtp_connect(mailsmtp * session, mailstream * s)
@@ -186,21 +199,31 @@ int mailsmtp_connect(mailsmtp * session, mailstream * s)
 
 #define SMTP_STRING_SIZE 513
 
+static int send_quit(mailsmtp * session)
+{
+    char command[SMTP_STRING_SIZE];
+    int r;
+    
+    snprintf(command, SMTP_STRING_SIZE, "QUIT\r\n");
+    r = send_command(session, command);
+    if (r == -1) {
+        return MAILSMTP_ERROR_STREAM;
+    }
+    
+    return MAILSMTP_NO_ERROR;
+}
+
 int mailsmtp_quit(mailsmtp * session)
 {
-  char command[SMTP_STRING_SIZE];
   int r;
   int res;
   
-  snprintf(command, SMTP_STRING_SIZE, "QUIT\r\n");
-  r = send_command(session, command);
-  if (r == -1) {
-    res = MAILSMTP_ERROR_STREAM;
-    goto close;
-  }
-  r = read_response(session);
-  if (r == 0) {
-    res = MAILSMTP_ERROR_STREAM;
+  if (session->stream == NULL)
+    return MAILSMTP_NO_ERROR;
+  
+  r = send_quit(session);
+  if (r != MAILSMTP_NO_ERROR) {
+    res = r;
     goto close;
   }
   
@@ -214,18 +237,57 @@ int mailsmtp_quit(mailsmtp * session)
 }
 
 
-
 #define HOSTNAME_SIZE 256
 
+static int get_hostname(mailsmtp * session, int useip, char * buf, int len)
+{
+  int r;
+  char hostname[HOSTNAME_SIZE];
+  struct sockaddr addr;
+  socklen_t addr_len = sizeof(addr);
+  int socket = -1;
+
+  if (!useip) {
+    r = gethostname(hostname, HOSTNAME_SIZE);
+    if (r != 0)
+      return MAILSMTP_ERROR_HOSTNAME;
+
+    if (snprintf(buf, len, "%s", hostname) >= len)
+      return MAILSMTP_ERROR_HOSTNAME;
+  } else {
+    socket = mailstream_low_get_fd(mailstream_get_low(session->stream));
+    if (socket < 0)
+      return MAILSMTP_ERROR_HOSTNAME;
+
+    r = getsockname(socket, &addr, &addr_len );
+    if (r != 0)
+      return MAILSMTP_ERROR_HOSTNAME;
+
+    r = getnameinfo(&addr, addr.sa_len, hostname, HOSTNAME_SIZE, NULL, 0, NI_NUMERICHOST);
+    if (r != 0)
+      return MAILSMTP_ERROR_HOSTNAME;
+
+    if (snprintf(buf, len, "[%s]", hostname) >= len)
+      return MAILSMTP_ERROR_HOSTNAME;
+  }
+   return MAILSMTP_NO_ERROR;
+}
+
+
 int mailsmtp_helo(mailsmtp * session)
+{
+  return mailsmtp_helo_with_ip(session, 0);
+}
+
+int mailsmtp_helo_with_ip(mailsmtp * session, int useip)
 {
   int r;
   char hostname[HOSTNAME_SIZE];
   char command[SMTP_STRING_SIZE];
 
-  r = gethostname(hostname, HOSTNAME_SIZE);
-  if (r < 0)
-    return MAILSMTP_ERROR_HOSTNAME;
+  r = get_hostname(session, useip, hostname, HOSTNAME_SIZE);
+  if (r != MAILSMTP_NO_ERROR)
+    return r;
 
   snprintf(command, SMTP_STRING_SIZE, "HELO %s\r\n", hostname);
   r = send_command(session, command);
@@ -366,6 +428,47 @@ int mailsmtp_data_message(mailsmtp * session,
   }
 }
 
+int mailsmtp_data_message_quit(mailsmtp * session,
+                               const char * message,
+                               size_t size)
+{
+    int r;
+    
+    r = send_data(session, message, size);
+    if (r == -1)
+        return MAILSMTP_ERROR_STREAM;
+    
+    r = send_quit(session);
+    
+    r = read_response(session);
+    
+    mailstream_close(session->stream);
+    session->stream = NULL;
+    
+    switch(r) {
+        case 250:
+            return MAILSMTP_NO_ERROR;
+            
+        case 552:
+            return MAILSMTP_ERROR_EXCEED_STORAGE_ALLOCATION;
+            
+        case 554:
+            return MAILSMTP_ERROR_TRANSACTION_FAILED;
+            
+        case 451:
+            return MAILSMTP_ERROR_IN_PROCESSING;
+            
+        case 452:
+            return MAILSMTP_ERROR_INSUFFICIENT_SYSTEM_STORAGE;
+            
+        case 0:
+            return MAILSMTP_ERROR_STREAM;
+            
+        default:
+            return MAILSMTP_ERROR_UNEXPECTED_CODE;
+    }
+}
+
 /* esmtp operations */
 
 
@@ -419,6 +522,9 @@ int mailesmtp_parse_ehlo(mailsmtp * session)
         session->smtp_max_msg_size = strtoul(response + 4, NULL, 10);
       }
       /* TODO: grab optionnal max size */
+    }
+    else if (!strncasecmp(response, "PIPELINING", 10) && isdelim(response[10])) {
+      session->esmtp |= MAILSMTP_ESMTP_PIPELINING;
     }
     else if (!strncasecmp(response, "AUTH ", 5)) {
       response += 5;       /* remove "AUTH " */
@@ -502,13 +608,18 @@ int mailesmtp_parse_ehlo(mailsmtp * session)
 
 int mailesmtp_ehlo(mailsmtp * session)
 {
+  return mailesmtp_ehlo_with_ip(session, 0);
+}
+
+int mailesmtp_ehlo_with_ip(mailsmtp * session, int useip)
+{
   int r;
   char hostname[HOSTNAME_SIZE];
   char command[SMTP_STRING_SIZE];
 
-  r = gethostname(hostname, HOSTNAME_SIZE);
-  if (r != 0)
-    return MAILSMTP_ERROR_HOSTNAME;
+  r = get_hostname(session, useip, hostname, HOSTNAME_SIZE);
+  if (r != MAILSMTP_NO_ERROR)
+    return r;
 
   snprintf(command, SMTP_STRING_SIZE, "EHLO %s\r\n", hostname);
   r = send_command(session, command);

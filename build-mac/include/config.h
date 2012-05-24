@@ -119,7 +119,7 @@
 #define LIBETPAN_REENTRANT 1
 
 /* Define this to the version of libEtPan */
-#define LIBETPAN_VERSION "1.1-dev-20111016"
+#define LIBETPAN_VERSION "1.1-dev-20120524"
 
 /* Define this to the major version of libEtPan */
 #define LIBETPAN_VERSION_MAJOR 1
@@ -145,6 +145,9 @@
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "libetpan"
+
+/* Define to the home page for this package. */
+#define PACKAGE_URL ""
 
 /* Define to the version of this package. */
 #define PACKAGE_VERSION "1.1"

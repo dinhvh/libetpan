@@ -74,8 +74,10 @@ int mailsmtp_ssl_connect_with_callback(mailsmtp * session,
   mailstream * stream;
 
 #if HAVE_CFNETWORK
-  if (callback == NULL) {
-    return mailsmtp_cfssl_connect(session, server, port);
+  if (mailstream_cfstream_enabled) {
+    if (callback == NULL) {
+      return mailsmtp_cfssl_connect(session, server, port);
+    }
   }
 #endif
   
@@ -91,7 +93,7 @@ int mailsmtp_ssl_connect_with_callback(mailsmtp * session,
   if (s == -1)
     return MAILSMTP_ERROR_CONNECTION_REFUSED;
 
-  stream = mailstream_ssl_open(s);
+  stream = mailstream_ssl_open_with_callback(s, callback, data);
   if (stream == NULL) {
     close(s);
     return MAILSMTP_ERROR_SSL;
@@ -100,8 +102,8 @@ int mailsmtp_ssl_connect_with_callback(mailsmtp * session,
   return mailsmtp_connect(session, stream);
 }
 
-static int mailsmtp_cfssl_connect(mailsmtp * session,
-                                  const char * server, uint16_t port)
+static int mailsmtp_cfssl_connect_ssl_level(mailsmtp * session,
+                                            const char * server, uint16_t port, int ssl_level)
 {
   mailstream * stream;
   int r;
@@ -110,6 +112,7 @@ static int mailsmtp_cfssl_connect(mailsmtp * session,
   if (stream == NULL) {
     return MAILSMTP_ERROR_CONNECTION_REFUSED;
   }
+  mailstream_cfstream_set_ssl_level(stream, ssl_level);
   mailstream_cfstream_set_ssl_verification_mask(stream, MAILSTREAM_CFSTREAM_SSL_NO_VERIFICATION);
   r = mailstream_cfstream_set_ssl_enabled(stream, 1);
   if (r < 0) {
@@ -118,4 +121,10 @@ static int mailsmtp_cfssl_connect(mailsmtp * session,
   }
   
   return mailsmtp_connect(session, stream);
+}
+
+static int mailsmtp_cfssl_connect(mailsmtp * session,
+                                  const char * server, uint16_t port)
+{
+    return mailsmtp_cfssl_connect_ssl_level(session, server, port, MAILSTREAM_CFSTREAM_SSL_LEVEL_SSLv3);
 }

@@ -69,8 +69,10 @@ int newsnntp_ssl_connect_with_callback(newsnntp * f, const char * server, uint16
   mailstream * stream;
 
 #if HAVE_CFNETWORK
-  if (callback == NULL) {
-    return newsnntp_cfssl_connect(f, server, port);
+  if (mailstream_cfstream_enabled) {
+    if (callback == NULL) {
+      return newsnntp_cfssl_connect(f, server, port);
+    }
   }
 #endif
   
@@ -99,7 +101,7 @@ int newsnntp_ssl_connect_with_callback(newsnntp * f, const char * server, uint16
   return newsnntp_connect(f, stream);
 }
 
-static int newsnntp_cfssl_connect(newsnntp * f, const char * server, uint16_t port)
+static int newsnntp_cfssl_connect_ssl_level(newsnntp * f, const char * server, uint16_t port, int ssl_level)
 {
   mailstream * stream;
   int r;
@@ -108,6 +110,7 @@ static int newsnntp_cfssl_connect(newsnntp * f, const char * server, uint16_t po
   if (stream == NULL) {
     return NEWSNNTP_ERROR_CONNECTION_REFUSED;
   }
+  mailstream_cfstream_set_ssl_level(stream, ssl_level);
   mailstream_cfstream_set_ssl_verification_mask(stream, MAILSTREAM_CFSTREAM_SSL_NO_VERIFICATION);
   r = mailstream_cfstream_set_ssl_enabled(stream, 1);
   if (r < 0) {
@@ -117,3 +120,9 @@ static int newsnntp_cfssl_connect(newsnntp * f, const char * server, uint16_t po
   
   return newsnntp_connect(f, stream);
 }
+
+static int newsnntp_cfssl_connect(newsnntp * f, const char * server, uint16_t port)
+{
+    return newsnntp_cfssl_connect_ssl_level(f, server, port, MAILSTREAM_CFSTREAM_SSL_LEVEL_SSLv3);
+}
+
