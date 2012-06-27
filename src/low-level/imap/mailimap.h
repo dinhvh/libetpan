@@ -662,6 +662,11 @@ void mailimap_set_progress_callback(mailimap * session,
                                     mailprogress_function * items_progr_fun,
                                     void * context);
 
+LIBETPAN_EXPORT
+void mailimap_set_msg_att_handler(mailimap * session,
+                                  mailimap_msg_att_handler * handler,
+                                  void * context);
+
 #ifdef __cplusplus
 }
 #endif
