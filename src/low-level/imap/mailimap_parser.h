@@ -58,10 +58,12 @@ mailimap_response_parse(mailstream * fd, MMAPString * buffer,
 int
 mailimap_response_parse_with_context(mailstream * fd, MMAPString * buffer,
                                      size_t * indx, struct mailimap_response ** result,
-                                     mailprogress_function * body_progress_fun,
-                                     mailprogress_function * items_progress_fun,
-                                     void * context);
-
+                                     mailprogress_function * body_progr_fun,
+                                     mailprogress_function * items_progr_fun,
+                                     void * context,
+                                     mailimap_msg_att_handler * msg_att_handler,
+                                     void * msg_att_context);
+  
 int
 mailimap_continue_req_parse(mailstream * fd, MMAPString * buffer,
 			    size_t * indx,

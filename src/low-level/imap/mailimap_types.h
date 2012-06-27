@@ -3128,6 +3128,8 @@ enum {
     for the last command
 */
 
+typedef void mailimap_msg_att_handler(struct mailimap_msg_att * msg_att, void * context);
+
 struct mailimap {
   char * imap_response;
   
@@ -3163,6 +3165,8 @@ struct mailimap {
   mailprogress_function * imap_body_progress_fun;
   mailprogress_function * imap_items_progress_fun;
   void * imap_progress_context;
+  mailimap_msg_att_handler * imap_msg_att_handler;
+  void * imap_msg_att_handler_context;
 };
 
 typedef struct mailimap mailimap;
