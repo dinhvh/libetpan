@@ -9081,6 +9081,7 @@ mailimap_response_data_parse_progress(mailstream * fd, MMAPString * buffer,
   if (msg_data != NULL) {
     if (msg_data->mdt_type == MAILIMAP_MESSAGE_DATA_FETCH) {
       if (msg_att_handler != NULL) {
+	      msg_data->mdt_msg_att->att_number = msg_data->mdt_number;
         msg_att_handler(msg_data->mdt_msg_att, msg_att_context);
         mailimap_message_data_free(msg_data);
         msg_data = NULL;
