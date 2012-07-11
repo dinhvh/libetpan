@@ -2790,9 +2790,11 @@ mailimap_body_fld_lang_list_parse(mailstream * fd, MMAPString * buffer,
   while (1) {
     char * elt;
 
+    mailimap_space_parse(fd, buffer, &cur_token);
+    
     r = mailimap_string_parse(fd, buffer, &cur_token, &elt, NULL,
 			      progr_rate, progr_fun);
-    if (r != MAILIMAP_ERROR_PARSE)
+    if (r == MAILIMAP_ERROR_PARSE)
       break;
     else if (r == MAILIMAP_NO_ERROR) {
       r = clist_append(list, elt);
