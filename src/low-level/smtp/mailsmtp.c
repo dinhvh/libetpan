@@ -263,7 +263,11 @@ static int get_hostname(mailsmtp * session, int useip, char * buf, int len)
     if (r != 0)
       return MAILSMTP_ERROR_HOSTNAME;
 
+#ifdef __linux__
+    r = getnameinfo(&addr, sizeof(addr), hostname, HOSTNAME_SIZE, NULL, 0, NI_NUMERICHOST);
+#else
     r = getnameinfo(&addr, addr.sa_len, hostname, HOSTNAME_SIZE, NULL, 0, NI_NUMERICHOST);
+#endif
     if (r != 0)
       return MAILSMTP_ERROR_HOSTNAME;
 
