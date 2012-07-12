@@ -3366,6 +3366,7 @@
 				INSTALL_PATH = /usr/local/lib;
 				PRODUCT_NAME = etpan_ios;
 				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
 			};
 			name = Debug;
 		};
@@ -3384,6 +3385,7 @@
 				INSTALL_PATH = /usr/local/lib;
 				PRODUCT_NAME = etpan_ios;
 				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
 				ZERO_LINK = NO;
 			};
 			name = Release;
