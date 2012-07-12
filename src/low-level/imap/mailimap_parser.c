@@ -8497,6 +8497,7 @@ mailimap_number_parse(mailstream * fd, MMAPString * buffer,
   uint32_t number;
   int parsed;
   int r;
+	int negative;
   
   cur_token = * indx;
   parsed = FALSE;
@@ -8505,6 +8506,12 @@ mailimap_number_parse(mailstream * fd, MMAPString * buffer,
   mailimap_space_parse(fd, buffer, &cur_token);
 #endif
 
+	negative = 0;
+	r = mailimap_char_parse(fd, buffer, &cur_token, '-');
+	if (r == MAILIMAP_NO_ERROR) {
+	  negative = 1;
+	}
+	
   number = 0;
   while (1) {
     r = mailimap_digit_parse(fd, buffer, &cur_token, &digit);
@@ -8519,6 +8526,10 @@ mailimap_number_parse(mailstream * fd, MMAPString * buffer,
       return r;
   }
 
+	if (negative) {
+	  number = 0;
+	}
+	
   if (!parsed)
     return MAILIMAP_ERROR_PARSE;
 
