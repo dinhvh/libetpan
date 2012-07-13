@@ -148,6 +148,76 @@ static int gnutls_init_done = 0;
 static int openssl_init_done = 0;
 #endif
 
+// Used to make OpenSSL thread safe
+#if defined (HAVE_PTHREAD_H) && !defined (WIN32) && defined (USE_SSL) && defined (LIBETPAN_REENTRANT)
+  struct CRYPTO_dynlock_value
+  {
+      pthread_mutex_t mutex;
+  };
+
+  static pthread_mutex_t * s_mutex_buf = NULL;
+
+  static void locking_function(int mode, int n, const char * file, int line)
+  {
+    if (mode & CRYPTO_LOCK)
+      MUTEX_LOCK(&s_mutex_buf[n]);
+    else
+      MUTEX_UNLOCK(&s_mutex_buf[n]);
+  }
+
+  static unsigned long id_function(void)
+  {
+    return ((unsigned long) pthread_self());
+  }
+
+  static struct CRYPTO_dynlock_value *dyn_create_function(const char *file, int line)
+  {
+    struct CRYPTO_dynlock_value *value;
+    
+    value = (struct CRYPTO_dynlock_value *) malloc(sizeof(struct CRYPTO_dynlock_value));
+    if (!value) {
+      goto err;
+    }
+    pthread_mutex_init(&value->mutex, NULL);
+    
+    return value;
+    
+  err:
+    return (NULL);
+  }
+
+  static void dyn_lock_function(int mode, struct CRYPTO_dynlock_value *l, const char *file, int line)
+  {
+    if (mode & CRYPTO_LOCK) {
+      MUTEX_LOCK(&l->mutex);
+    }
+    else {
+      MUTEX_UNLOCK(&l->mutex);
+    }
+  }
+
+  static void dyn_destroy_function(struct CRYPTO_dynlock_value *l,const char *file, int line)
+  {
+    pthread_mutex_destroy(&l->mutex);
+    free(l);
+  }
+
+  static void mailstream_openssl_reentrant_setup(void)
+  {
+    s_mutex_buf = (pthread_mutex_t *) malloc(CRYPTO_num_locks() * sizeof(* s_mutex_buf));
+    if(s_mutex_buf == NULL)
+      return;
+    
+    for(unsigned int i = 0 ; i < CRYPTO_num_locks() ; i++)
+      pthread_mutex_init(&s_mutex_buf[i], NULL);
+    CRYPTO_set_id_callback(id_function);
+    CRYPTO_set_locking_callback(locking_function);
+    CRYPTO_set_dynlock_create_callback(dyn_create_function);
+    CRYPTO_set_dynlock_lock_callback(dyn_lock_function);
+    CRYPTO_set_dynlock_destroy_callback(dyn_destroy_function);
+  }
+#endif
+
 void mailstream_ssl_init_lock(void)
 {
 #if !defined (HAVE_PTHREAD_H) && defined (WIN32) && defined (USE_SSL)
@@ -185,10 +255,16 @@ static inline void mailstream_ssl_init(void)
   MUTEX_LOCK(&ssl_lock);
 #ifndef USE_GNUTLS
   if (!openssl_init_done) {
+    #if defined (HAVE_PTHREAD_H) && !defined (WIN32) && defined (USE_SSL) && defined (LIBETPAN_REENTRANT)
+      mailstream_openssl_reentrant_setup();
+    #endif
+    
+    SSL_load_error_strings();
     SSL_library_init();
     OpenSSL_add_all_digests();
     OpenSSL_add_all_algorithms();
     OpenSSL_add_all_ciphers();
+    
     openssl_init_done = 1;
   }
 #else
