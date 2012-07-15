@@ -1110,6 +1110,8 @@ const char * mailsmtp_strerror(int errnum)
     return "TLS not available on server for temporary reason";
   case MAILSMTP_ERROR_STARTTLS_NOT_SUPPORTED:
     return "TLS not supported by server";
+  case MAILSMTP_ERROR_AUTH_LOGIN:
+  	return "Login failed";
   default:
     return "Unknown error code";
   }
