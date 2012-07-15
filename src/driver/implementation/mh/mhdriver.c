@@ -539,6 +539,7 @@ static int get_list_folders(struct mailmh_folder * folder, clist ** result)
 
   default:
     res = mhdriver_mh_error_to_mail_error(r);
+    free(new_filename);
     goto free;
   }
 
@@ -557,6 +558,7 @@ static int get_list_folders(struct mailmh_folder * folder, clist ** result)
 
       r = get_list_folders(subfolder, &list);
       if (r != MAIL_NO_ERROR) {
+		    free(new_filename);
 	res = MAIL_ERROR_MEMORY;
 	goto free;
       }
@@ -565,6 +567,7 @@ static int get_list_folders(struct mailmh_folder * folder, clist ** result)
 
   * result = list;
   
+  free(new_filename);
   return MAIL_NO_ERROR;
 
  free:

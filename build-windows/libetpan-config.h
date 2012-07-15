@@ -41,6 +41,9 @@
 #	if !defined(uint16_t)
 		typedef UINT16 uint16_t;
 #	endif
+#	if !defined(int16_t)
+		typedef INT16 int16_t;
+#	endif
 #	if !defined(uint32_t)
 		typedef UINT32 uint32_t;
 #	endif
