@@ -1307,14 +1307,14 @@ static int copy_to_old_file(char * source_filename,
   memcpy(dest, source, size);
   
   munmap(dest, size);
-  close(source_fd);
+  close(dest_fd);
   munmap(source, size);
   close(source_fd);
   
   return MAILMBOX_NO_ERROR;
   
  close_dest:
-  close(source_fd);
+  close(dest_fd);
  unmap_source:
   munmap(source, size);
  close_source:

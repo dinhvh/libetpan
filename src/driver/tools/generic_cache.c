@@ -97,12 +97,16 @@ int generic_cache_store(char * filename, char * content, size_t length)
   if (fd == -1)
     return MAIL_ERROR_FILE;
 
-  if (ftruncate(fd, length) < 0)
+  if (ftruncate(fd, length) < 0) {
+	  close(fd);
     return MAIL_ERROR_FILE;
+	}
   
   str = mmap(NULL, length, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
-  if (str == (char *)MAP_FAILED)
+  if (str == (char *)MAP_FAILED) {
+	  close(fd);
     return MAIL_ERROR_FILE;
+	}
 
   memcpy(str, content, length);
   msync(str, length, MS_SYNC);

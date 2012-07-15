@@ -36,10 +36,6 @@ int get_content_of_file(char * filename, char ** p_content, size_t * p_length)
   if (fd < 0)
     goto free;
   
-  fd = open(filename, O_RDONLY);
-  if (fd < 0)
-    goto free;
-
   nread = 0;
   do
     {

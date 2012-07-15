@@ -346,7 +346,6 @@ static int read_max_uid_value(mailsession * session)
   
   r = mailimf_cache_int_read(mmapstr, &cur_token, &written_uid);
   if (r != MAIL_NO_ERROR) {
-    fclose(f);
     res = r;
     goto free_mmapstr;
   }

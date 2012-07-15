@@ -603,7 +603,7 @@ static int mailmh_folder_alloc_msg(struct mailmh_folder * folder,
     }
 #endif /* WIN32 */
     else if (errno == EXDEV) {
-      free(filename);
+      free(new_filename);
       return MAILMH_ERROR_FOLDER;
     }
     else if (errno == EPERM) {
