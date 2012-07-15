@@ -204,11 +204,13 @@ static int openssl_init_done = 0;
 
   static void mailstream_openssl_reentrant_setup(void)
   {
+		unsigned int i;
+	
     s_mutex_buf = (pthread_mutex_t *) malloc(CRYPTO_num_locks() * sizeof(* s_mutex_buf));
     if(s_mutex_buf == NULL)
       return;
     
-    for(unsigned int i = 0 ; i < CRYPTO_num_locks() ; i++)
+    for(i = 0 ; i < CRYPTO_num_locks() ; i++)
       pthread_mutex_init(&s_mutex_buf[i], NULL);
     CRYPTO_set_id_callback(id_function);
     CRYPTO_set_locking_callback(locking_function);
