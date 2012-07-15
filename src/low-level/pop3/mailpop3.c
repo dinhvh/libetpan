@@ -393,15 +393,16 @@ int mailpop3_quit(mailpop3 * f)
   res = MAILPOP3_NO_ERROR;
 
  close:
-  if (f->pop3_state != POP3_STATE_DISCONNECTED)
+  if (f->pop3_stream != NULL) {
     mailstream_close(f->pop3_stream);
+    f->pop3_stream = NULL;
+  }
 
   if (f->pop3_timestamp != NULL) {
     free(f->pop3_timestamp);
     f->pop3_timestamp = NULL;
   }
 
-  f->pop3_stream = NULL;
   if (f->pop3_msg_tab != NULL) {
     mailpop3_msg_info_tab_free(f->pop3_msg_tab);
     f->pop3_msg_tab = NULL;
