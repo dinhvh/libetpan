@@ -72,6 +72,10 @@
 #	endif
 #endif
 
+#if LIBETPAN_IOS_DISABLE_SSL
+#undef USE_SSL
+#endif
+
 /* mailstream_low, ssl */
 
 #ifdef USE_SSL
