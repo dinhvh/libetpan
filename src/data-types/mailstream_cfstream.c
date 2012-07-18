@@ -43,7 +43,12 @@
 
 #include <pthread.h>
 
-int mailstream_cfstream_enabled = 0;
+#if LIBETPAN_IOS_DISABLE_SSL && HAVE_CFNETWORK
+#define CFSTREAM_ENABLED_DEFAULT 1
+#else
+#define CFSTREAM_ENABLED_DEFAULT 0
+#endif
+int mailstream_cfstream_enabled = CFSTREAM_ENABLED_DEFAULT;
 int mailstream_cfstream_voip_enabled = 0;
 
 enum {
