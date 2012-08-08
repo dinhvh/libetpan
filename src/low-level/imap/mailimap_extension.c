@@ -47,6 +47,7 @@
 #include "namespace.h"
 #include "xlist.h"
 #include "xgmlabels.h"
+#include "xgmmsgid.h"
 
 /*
   the list of registered extensions (struct mailimap_extension_api *)
@@ -64,6 +65,7 @@ static struct mailimap_extension_api * internal_extension_list[] = {
   &mailimap_extension_namespace,
   &mailimap_extension_xlist,
   &mailimap_extension_xgmlabels,
+  &mailimap_extension_xgmmsgid
 };
 
 LIBETPAN_EXPORT
