@@ -14,7 +14,8 @@ enum {
   MAILIMAP_EXTENSION_QUOTA,         /* quota */
   MAILIMAP_EXTENSION_NAMESPACE,     /* namespace */
   MAILIMAP_EXTENSION_XLIST,         /* XLIST (Gmail and Zimbra have this) */
-  MAILIMAP_EXTENSION_XGMLABELS      /* X-GM-LABELS (Gmail) */
+  MAILIMAP_EXTENSION_XGMLABELS,     /* X-GM-LABELS (Gmail) */
+  MAILIMAP_EXTENSION_XGMMSGID       /* X-GM-MSGID (Gmail) */
 };
 
 

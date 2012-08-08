@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		ABC0FA9C1638DDBF0094B17A /* xgmmsgid.c in Sources */ = {isa = PBXBuildFile; fileRef = ABC0FA9B1638DDBF0094B17A /* xgmmsgid.c */; };
+		ABC0FA9D1638DDBF0094B17A /* xgmmsgid.c in Sources */ = {isa = PBXBuildFile; fileRef = ABC0FA9B1638DDBF0094B17A /* xgmmsgid.c */; };
+		ABC0FA9E1638DDBF0094B17A /* xgmmsgid.c in Sources */ = {isa = PBXBuildFile; fileRef = ABC0FA9B1638DDBF0094B17A /* xgmmsgid.c */; };
+		ABC0FAA01638DDC60094B17A /* xgmmsgid.h in Headers */ = {isa = PBXBuildFile; fileRef = ABC0FA9F1638DDC60094B17A /* xgmmsgid.h */; };
 		C6451AFE1083D316003135FD /* mailimf_write.h in Headers */ = {isa = PBXBuildFile; fileRef = C6F9EA32105335BC0059C3BA /* mailimf_write.h */; };
 		C6451AFF1083D316003135FD /* mhdriver_cached.h in Headers */ = {isa = PBXBuildFile; fileRef = C6F9E913105335BC0059C3BA /* mhdriver_cached.h */; };
 		C6451B001083D316003135FD /* mhdriver_types.h in Headers */ = {isa = PBXBuildFile; fileRef = C6F9E91A105335BC0059C3BA /* mhdriver_types.h */; };
@@ -885,6 +889,8 @@
 /* Begin PBXFileReference section */
 		8DC2EF5A0486A6940098B216 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8DC2EF5B0486A6940098B216 /* libetpan.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = libetpan.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		ABC0FA9B1638DDBF0094B17A /* xgmmsgid.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = xgmmsgid.c; sourceTree = "<group>"; };
+		ABC0FA9F1638DDC60094B17A /* xgmmsgid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = xgmmsgid.h; sourceTree = "<group>"; };
 		C6516B69130DD667004ADD56 /* namespace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = namespace.h; sourceTree = "<group>"; };
 		C65179E4130E84BD004ADD56 /* namespace.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = namespace.c; sourceTree = "<group>"; };
 		C65179F0130E85CA004ADD56 /* namespace_parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = namespace_parser.h; sourceTree = "<group>"; };
@@ -2031,6 +2037,8 @@
 		C6F9E9D3105335BC0059C3BA /* imap */ = {
 			isa = PBXGroup;
 			children = (
+				ABC0FA9F1638DDC60094B17A /* xgmmsgid.h */,
+				ABC0FA9B1638DDBF0094B17A /* xgmmsgid.c */,
 				C6F9E9EE105335BC0059C3BA /* acl.c */,
 				C6F9E9EF105335BC0059C3BA /* acl.h */,
 				C6F9E9F0105335BC0059C3BA /* acl_parser.c */,
@@ -2601,6 +2609,7 @@
 				C6667DF01342ACCD00969A8E /* xlist.h in Headers */,
 				C6EFB8791433F1F300F805C0 /* mailstream_cfstream.h in Headers */,
 				C6CE9B1914AA9C9D00D20BA6 /* xgmlabels.h in Headers */,
+				ABC0FAA01638DDC60094B17A /* xgmmsgid.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2931,6 +2940,7 @@
 				C6667DEF1342ACCD00969A8E /* xlist.c in Sources */,
 				C6EFB8781433F1F300F805C0 /* mailstream_cfstream.c in Sources */,
 				C6CE9B1614AA9C8B00D20BA6 /* xgmlabels.c in Sources */,
+				ABC0FA9C1638DDBF0094B17A /* xgmmsgid.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3098,6 +3108,7 @@
 				F8B24557144B8C48002B56DA /* namespace_sender.c in Sources */,
 				F8B24558144B8C48002B56DA /* xlist.c in Sources */,
 				F8B24559144B8C48002B56DA /* mailstream_cfstream.c in Sources */,
+				ABC0FA9D1638DDBF0094B17A /* xgmmsgid.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3265,6 +3276,7 @@
 				F8B6D4C5156EE0B6008DE9EB /* namespace_sender.c in Sources */,
 				F8B6D4C6156EE0B6008DE9EB /* xlist.c in Sources */,
 				F8B6D4C7156EE0B6008DE9EB /* mailstream_cfstream.c in Sources */,
+				ABC0FA9E1638DDBF0094B17A /* xgmmsgid.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
