@@ -3365,6 +3365,7 @@
 					"$(SRCROOT)/include",
 				);
 				INSTALL_PATH = /usr/local/lib;
+				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_NAME = etpan_ios;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
