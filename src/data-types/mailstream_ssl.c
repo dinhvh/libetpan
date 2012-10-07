@@ -607,6 +607,9 @@ static void  ssl_data_close(struct mailstream_ssl_data * ssl_data)
 {
   gnutls_certificate_free_credentials(ssl_data->xcred);
   gnutls_deinit(ssl_data->session);
+  MUTEX_LOCK(&ssl_lock);
+  gnutls_global_deinit();
+  MUTEX_UNLOCK(&ssl_lock);
   ssl_data->session = NULL;
 #ifdef WIN32
   closesocket(socket_data->fd);
