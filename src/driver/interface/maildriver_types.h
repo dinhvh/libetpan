@@ -719,6 +719,10 @@ struct mailmessage {
   uint32_t msg_index;
   char * msg_uid;
 
+  char * msg_gmthrid;
+  char * msg_gmmsgid;
+  clist * msg_gmlabels;
+
   size_t msg_size;
   struct mailimf_fields * msg_fields;
   struct mail_flags * msg_flags;

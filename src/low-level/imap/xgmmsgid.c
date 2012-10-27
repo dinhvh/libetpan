@@ -16,6 +16,29 @@ enum {
     MAILIMAP_XGMMSGID_TYPE_MSGID
 };
 
+struct mailimap_fetch_att * mailimap_fetch_att_new_xgmmsgid(void)
+{
+  char * keyword;
+  struct mailimap_fetch_att * att;
+
+  keyword = strdup("X-GM-MSGID");
+  if (keyword == NULL)
+    return NULL;
+
+  att = mailimap_fetch_att_new_extension(keyword);
+  if (att == NULL) {
+    free(keyword);
+    return NULL;
+  }
+
+  return att;
+}
+
+int mailimap_has_xgmmsgid(mailimap * session)
+{
+  return mailimap_has_extension(session, "X-GM-EXT-1");
+}
+
 static int
 mailimap_xgmmsgid_extension_parse(int calling_parser, mailstream * fd,
                                    MMAPString * buffer, size_t * indx,

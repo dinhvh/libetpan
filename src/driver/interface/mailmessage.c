@@ -56,6 +56,9 @@ int mailmessage_init(mailmessage * msg_info,
   msg_info->msg_session = msg_session;
   msg_info->msg_index = msg_index;
   msg_info->msg_uid = NULL;
+  msg_info->msg_gmthrid = NULL;
+  msg_info->msg_gmmsgid = NULL;
+  msg_info->msg_gmlabels = clist_new();
 
   msg_info->msg_cached = FALSE;
   msg_info->msg_size = msg_size;

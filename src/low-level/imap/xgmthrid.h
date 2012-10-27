@@ -10,6 +10,13 @@ extern "C" {
 
   LIBETPAN_EXPORT
   extern struct mailimap_extension_api mailimap_extension_xgmthrid;
+
+  LIBETPAN_EXPORT
+  struct mailimap_fetch_att * mailimap_fetch_att_new_xgmthrid(void);
+
+  LIBETPAN_EXPORT
+  int mailimap_has_xgmthrid(mailimap * session);
+
   
   LIBETPAN_EXPORT
   int
