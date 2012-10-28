@@ -106,11 +106,11 @@ int mailimap_rename_send(mailstream * fd, const char * mb,
 			      const char * new_name);
 
 int
-mailimap_search_send(mailstream * fd, const char * charset,
+mailimap_search_send(mailstream * fd, const char * raw, const char * charset,
 		     struct mailimap_search_key * key);
 
 int
-mailimap_uid_search_send(mailstream * fd, const char * charset,
+mailimap_uid_search_send(mailstream * fd, const char * raw, const char * charset,
 			 struct mailimap_search_key * key);
 
 int

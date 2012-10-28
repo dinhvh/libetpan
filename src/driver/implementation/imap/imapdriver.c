@@ -502,7 +502,7 @@ static int status_selected_folder(mailsession * session, const char * mb,
   
   /* default : use the RECENT count if search fails */
   unseen = recent;
-  r = mailimap_search(imap, NULL, search_key, &search_result);
+  r = mailimap_search(imap, NULL, NULL, search_key, &search_result);
   mailimap_search_key_free(search_key);
   if (r == MAILIMAP_NO_ERROR) {
     /* if this succeed, we use the real count */
@@ -1058,7 +1058,7 @@ static int imapdriver_search_messages(mailsession * session, const char * charse
   if (r != MAIL_NO_ERROR)
     return MAIL_ERROR_MEMORY;
 
-  r = mailimap_uid_search(get_imap_session(session), charset, imap_key,
+  r = mailimap_uid_search(get_imap_session(session), NULL, charset, imap_key,
 			  &imap_result);
 
   mailimap_search_key_free(imap_key);

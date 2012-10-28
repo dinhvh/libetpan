@@ -445,6 +445,7 @@ int mailimap_rename(mailimap * session,
    their numbers in the result list.
 
    @param session  IMAP session
+   @param raw      raw search command for gmail
    @param charset  This indicates the charset of the strings that appears
    in the searching criteria
    @param key      This is the searching criteria
@@ -457,7 +458,7 @@ int mailimap_rename(mailimap * session,
 
 LIBETPAN_EXPORT
 int
-mailimap_search(mailimap * session, const char * charset,
+mailimap_search(mailimap * session, const char * raw, const char * charset,
     struct mailimap_search_key * key, clist ** result);
 
 /*
@@ -468,6 +469,7 @@ mailimap_search(mailimap * session, const char * charset,
    their unique identifiers in the result list.
 
    @param session  IMAP session
+   @param raw      raw search command for gmail
    @param charset  This indicates the charset of the strings that appears
    in the searching criteria
    @param key      This is the searching criteria
@@ -480,7 +482,7 @@ mailimap_search(mailimap * session, const char * charset,
 
 LIBETPAN_EXPORT
 int
-mailimap_uid_search(mailimap * session, const char * charset,
+mailimap_uid_search(mailimap * session, const char * raw, const char * charset,
     struct mailimap_search_key * key, clist ** result);
 
 /*
@@ -663,6 +665,11 @@ void mailimap_set_progress_callback(mailimap * session,
                                     mailprogress_function * body_progr_fun,
                                     mailprogress_function * items_progr_fun,
                                     void * context);
+
+LIBETPAN_EXPORT
+void mailimap_set_msg_att_handler(mailimap * session,
+                                  mailimap_msg_att_handler * handler,
+                                  void * context);
 
 #ifdef __cplusplus
 }
