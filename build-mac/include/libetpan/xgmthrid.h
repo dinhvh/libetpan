@@ -8,6 +8,11 @@ extern "C" {
 #include <libetpan/libetpan-config.h>
 #include <libetpan/mailimap_extension.h>
 
+    enum {
+        MAILIMAP_XGMTHRID_TYPE_THRID
+    };
+
+
   LIBETPAN_EXPORT
   extern struct mailimap_extension_api mailimap_extension_xgmthrid;
 

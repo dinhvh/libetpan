@@ -8,6 +8,10 @@ extern "C" {
 #include <libetpan/libetpan-config.h>
 #include <libetpan/mailimap_extension.h>
 
+  enum {
+    MAILIMAP_XGMMSGID_TYPE_MSGID
+  };
+
   LIBETPAN_EXPORT
   extern struct mailimap_extension_api mailimap_extension_xgmmsgid;
 
@@ -17,7 +21,6 @@ extern "C" {
   LIBETPAN_EXPORT
   int mailimap_has_xgmmsgid(mailimap * session);
 
-  
   LIBETPAN_EXPORT
   int
   mailimap_fetch_xgmmsgid(mailimap * session,

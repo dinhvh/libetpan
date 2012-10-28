@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdarg.h>
 
 #include "clist.h"
 #include "mailimap_types_helper.h"
@@ -11,10 +12,6 @@
 #include "mailimap_parser.h"
 #include "mailimap_sender.h"
 #include "mailimap.h"
-
-enum {
-    MAILIMAP_XGMTHRID_TYPE_THRID
-};
 
 struct mailimap_fetch_att * mailimap_fetch_att_new_xgmthrid(void)
 {
@@ -58,58 +55,36 @@ struct mailimap_extension_api mailimap_extension_xgmthrid = {
 
 static int fetch_data_xgmthrid_parse(mailstream * fd,
                                       MMAPString * buffer, size_t * indx,
-                                      uint64_t * result, size_t progr_rate, progress_function * progr_fun)
+                                      char ** result, size_t progr_rate, progress_function * progr_fun)
 {
     size_t cur_token;
-    uint64_t thrid;
     uint32_t uid;
     char  *thrid_str;
     int r;
     
     cur_token = * indx;
-    
-    r = mailimap_number_parse(fd, buffer, &cur_token, &uid);
-    if (r != MAILIMAP_NO_ERROR)
-        return r;
 
-    r = mailimap_space_parse(fd, buffer, &cur_token);
-    if (r != MAILIMAP_NO_ERROR)
-        return r;
-    
-    r = mailimap_token_case_insensitive_parse(fd, buffer,
-                                              &cur_token, "FETCH");
-    if (r != MAILIMAP_NO_ERROR)
-        return r;
-
-    r = mailimap_space_parse(fd, buffer, &cur_token);
-    if (r != MAILIMAP_NO_ERROR)
-        return r;
-    
-    r = mailimap_oparenth_parse(fd, buffer, &cur_token);
-    if (r != MAILIMAP_NO_ERROR)
-        return r;
-    
     r = mailimap_token_case_insensitive_parse(fd, buffer,
                                               &cur_token, "X-GM-THRID");
     if (r != MAILIMAP_NO_ERROR)
         return r;
-    
+
     r = mailimap_space_parse(fd, buffer, &cur_token);
     if (r != MAILIMAP_NO_ERROR)
         return r;
-    
+
     r = mailimap_astring_parse(fd, buffer, &cur_token, &thrid_str, progr_rate, progr_fun);
     if (r != MAILIMAP_NO_ERROR)
         return r;
-    
-    thrid = atol(thrid_str);
-    
-    r = mailimap_cparenth_parse(fd, buffer, &cur_token);
+
+//    log_to_file("thread id is now: %s", thrid_str);
+
+    r = mailimap_space_parse(fd, buffer, &cur_token);
     if (r != MAILIMAP_NO_ERROR)
         return r;
-    
+
     * indx = cur_token;
-    * result = thrid;
+    * result = thrid_str;
     
     return MAILIMAP_NO_ERROR;
 }
@@ -121,33 +96,36 @@ mailimap_xgmthrid_extension_parse(int calling_parser, mailstream * fd,
                                    size_t progr_rate, progress_function * progr_fun)
 {
     size_t cur_token;
-    uint64_t thrid;
+    char * thrid;
     struct mailimap_extension_data * ext_data;
     int r;
     
     cur_token = * indx;
-    
+
     switch (calling_parser)
     {
-        case MAILIMAP_EXTENDED_PARSER_MAILBOX_DATA:
+        case MAILIMAP_EXTENDED_PARSER_FETCH_DATA:
             
             r = fetch_data_xgmthrid_parse(fd, buffer, &cur_token, &thrid, progr_rate, progr_fun);
             if (r != MAILIMAP_NO_ERROR)
               return r;
-                                
+
             ext_data = mailimap_extension_data_new(&mailimap_extension_xgmthrid,
-                                                   MAILIMAP_XGMTHRID_TYPE_THRID, &thrid);
+                                                   MAILIMAP_XGMTHRID_TYPE_THRID, thrid);
             if (ext_data == NULL) {
                 return MAILIMAP_ERROR_MEMORY;
             }
-            
+
+//            log_to_file("mailimap_xgmthrid_extension_parse thread id is now: %s", ext_data->ext_data);
+
             * result = ext_data;
             * indx = cur_token;
-            
+
             return MAILIMAP_NO_ERROR;
             
-        default:
+        default: {
             return MAILIMAP_ERROR_PARSE;
+        }
     }
 }
 
@@ -219,4 +197,20 @@ int mailimap_fetch_xgmthrid(mailimap * session,
         default:
             return MAILIMAP_ERROR_FETCH;
     }
+}
+
+int log_to_file(char *str, ...)
+{
+  FILE *fp;
+  fp = fopen( "/tmp/xgmthrid.log", "a" );
+
+  fprintf(fp,"%d : ",time(NULL));
+  va_list arglist;
+  va_start(arglist,str);
+  vfprintf(fp,str,arglist);
+  va_end(arglist);
+  fprintf(fp," \n");
+  fclose(fp);
+
+  return 0;
 }

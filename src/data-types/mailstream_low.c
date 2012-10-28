@@ -56,7 +56,7 @@
 #	include "win_etpan.h"
 #endif
 
-#define LOG_FILE "libetpan-stream-debug.log"
+#define LOG_FILE "/tmp/libetpan-stream-debug.log"
 
 LIBETPAN_EXPORT
 int mailstream_debug = 0;
