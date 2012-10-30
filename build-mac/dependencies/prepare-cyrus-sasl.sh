@@ -113,7 +113,7 @@ for TARGET in $TARGETS; do
     case $TARGET in
         (iPhoneOS) 
             ARCH=arm
-            MARCHS="armv6 armv7"
+            MARCHS="armv6 armv7 armv7s"
             EXTRA_FLAGS="-miphoneos-version-min=$SDK_IOS_MIN_VERSION"
             ;;
         (iPhoneSimulator)
@@ -140,6 +140,11 @@ for TARGET in $TARGETS; do
 			export CXX=${TOOLCHAIN}/clang++
 		else
 			export CXX=${TOOLCHAIN}/g++
+		fi
+		if test -x ${TOOLCHAIN}/clang; then
+			export CC=${TOOLCHAIN}/clang
+		else
+			export CC=${TOOLCHAIN}/gcc
 		fi
         export NM=${TOOLCHAIN}/nm
         export LIBTOOL=${TOOLCHAIN}/libtool
