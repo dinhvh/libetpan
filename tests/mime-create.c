@@ -260,9 +260,14 @@ static char * generate_boundary(const char * boundary_prefix)
     long value;
     
     now = time(NULL);
+#ifndef WIN32
     value = random();
     
     gethostname(name, MAX_MESSAGE_ID);
+#else
+    value = now;
+    strcpy(name, "WINDOWS");
+#endif
     
     if (boundary_prefix == NULL)
         boundary_prefix = "";
