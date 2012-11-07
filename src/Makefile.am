@@ -33,7 +33,7 @@ EXTRA_DIST = versioninfo.rc.in
 
 if HAVE_MINGW32_SYSTEM
 
-LTRCCOMPILE = $(LIBTOOL) --mode=compile $(RC) \
+LTRCCOMPILE = $(LIBTOOL) --tag=CXX --mode=compile $(RC) \
      `echo $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) | \
      sed -e 's/-I/--include-dir /g;s/-D/--define /g'`
 
