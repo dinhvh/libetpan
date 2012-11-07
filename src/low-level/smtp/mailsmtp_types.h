@@ -85,7 +85,7 @@ enum {
   MAILSMTP_AUTH_GSSAPI = 32,
   MAILSMTP_AUTH_SRP = 64,
   MAILSMTP_AUTH_NTLM = 128,
-  MAILSMTP_AUTH_KERBEROS_V4 = 256,
+  MAILSMTP_AUTH_KERBEROS_V4 = 256
 };
 
 enum {
@@ -95,7 +95,8 @@ enum {
   MAILSMTP_ESMTP_SIZE = 8,
   MAILSMTP_ESMTP_ETRN = 16,
   MAILSMTP_ESMTP_STARTTLS = 32,
-  MAILSMTP_ESMTP_DSN = 64
+  MAILSMTP_ESMTP_DSN = 64,
+  MAILSMTP_ESMTP_PIPELINING = 128
 };
   
 struct mailsmtp {
@@ -126,6 +127,8 @@ struct mailsmtp {
 
   mailprogress_function * smtp_progress_fun;
   void * smtp_progress_context;
+    
+	int response_code;
 };
 
 typedef struct mailsmtp mailsmtp;

@@ -40,6 +40,7 @@
 #include "newsnntp_ssl.h"
 
 #include "newsnntp.h"
+#include "mailstream_cfstream.h"
 
 #include "connect.h"
 #ifdef HAVE_NETINET_IN_H
@@ -53,6 +54,8 @@
 #define SERVICE_NAME_NNTPS "nntps"
 #define SERVICE_TYPE_TCP "tcp"
 
+static int newsnntp_cfssl_connect(newsnntp * f, const char * server, uint16_t port);
+
 int newsnntp_ssl_connect(newsnntp * f, const char * server, uint16_t port)
 {
   return newsnntp_ssl_connect_with_callback(f, server, port,
@@ -65,6 +68,14 @@ int newsnntp_ssl_connect_with_callback(newsnntp * f, const char * server, uint16
   int s;
   mailstream * stream;
 
+#if HAVE_CFNETWORK
+  if (mailstream_cfstream_enabled) {
+    if (callback == NULL) {
+      return newsnntp_cfssl_connect(f, server, port);
+    }
+  }
+#endif
+  
   if (port == 0) {
     port = mail_get_service_port(SERVICE_NAME_NNTPS, SERVICE_TYPE_TCP);
     if (port == 0)
@@ -89,3 +100,29 @@ int newsnntp_ssl_connect_with_callback(newsnntp * f, const char * server, uint16
 
   return newsnntp_connect(f, stream);
 }
+
+static int newsnntp_cfssl_connect_ssl_level(newsnntp * f, const char * server, uint16_t port, int ssl_level)
+{
+  mailstream * stream;
+  int r;
+  
+  stream = mailstream_cfstream_open(server, port);
+  if (stream == NULL) {
+    return NEWSNNTP_ERROR_CONNECTION_REFUSED;
+  }
+  mailstream_cfstream_set_ssl_level(stream, ssl_level);
+  mailstream_cfstream_set_ssl_verification_mask(stream, MAILSTREAM_CFSTREAM_SSL_NO_VERIFICATION);
+  r = mailstream_cfstream_set_ssl_enabled(stream, 1);
+  if (r < 0) {
+    mailstream_close(stream);
+    return NEWSNNTP_ERROR_SSL;
+  }
+  
+  return newsnntp_connect(f, stream);
+}
+
+static int newsnntp_cfssl_connect(newsnntp * f, const char * server, uint16_t port)
+{
+    return newsnntp_cfssl_connect_ssl_level(f, server, port, MAILSTREAM_CFSTREAM_SSL_LEVEL_SSLv3);
+}
+

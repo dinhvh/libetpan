@@ -186,6 +186,13 @@ int mailstream_low_get_fd(mailstream_low * s)
   return s->driver->mailstream_get_fd(s);
 }
 
+struct mailstream_cancel * mailstream_low_get_cancel(mailstream_low * s)
+{
+  if (s == NULL)
+    return NULL;
+  return s->driver->mailstream_get_cancel(s);
+}
+
 void mailstream_low_free(mailstream_low * s)
 {
 	free(s->identifier);

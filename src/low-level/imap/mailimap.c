@@ -346,14 +346,17 @@ static void mailbox_data_store(mailimap * session,
     break;
 	
   case MAILIMAP_MAILBOX_DATA_EXISTS:
-    if (session->imap_selection_info)
+    if (session->imap_selection_info) {
       session->imap_selection_info->sel_exists = mb_data->mbd_data.mbd_exists;
+      session->imap_selection_info->sel_has_exists = 1;
+    }
     break;
 
   case MAILIMAP_MAILBOX_DATA_RECENT:
-    if (session->imap_selection_info)
-      session->imap_selection_info->sel_recent =
-        mb_data->mbd_data.mbd_recent;
+    if (session->imap_selection_info) {
+      session->imap_selection_info->sel_recent = mb_data->mbd_data.mbd_recent;
+      session->imap_selection_info->sel_has_recent = 1;
+    }
     break;
   case MAILIMAP_MAILBOX_DATA_EXTENSION_DATA:
     if (session->imap_response_info) {
@@ -2439,7 +2442,9 @@ int mailimap_parse_response(mailimap * session,
                                              &indx, &response,
                                              session->imap_body_progress_fun,
                                              session->imap_items_progress_fun,
-                                             session->imap_progress_context);
+                                             session->imap_progress_context,
+                                             session->imap_msg_att_handler,
+                                             session->imap_msg_att_handler_context);
   }
   else {
     r = mailimap_response_parse(session->imap_stream,
@@ -2582,6 +2587,9 @@ mailimap * mailimap_new(size_t imap_progr_rate,
   f->imap_body_progress_fun = NULL;
   f->imap_items_progress_fun = NULL;
   f->imap_progress_context = NULL;
+    
+  f->imap_msg_att_handler = NULL;
+  f->imap_msg_att_handler_context = NULL;
   
   return f;
   
@@ -2629,3 +2637,14 @@ void mailimap_set_progress_callback(mailimap * session,
   session->imap_items_progress_fun = items_progr_fun;
   session->imap_progress_context = context;
 }
+
+LIBETPAN_EXPORT
+void mailimap_set_msg_att_handler(mailimap * session,
+                                  mailimap_msg_att_handler * handler,
+                                  void * context)
+{
+    session->imap_msg_att_handler = handler;
+    session->imap_msg_att_handler_context = context;
+}
+
+

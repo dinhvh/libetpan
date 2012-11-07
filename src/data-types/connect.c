@@ -226,6 +226,14 @@ int mail_tcp_connect_with_local_address(const char * server, uint16_t port,
     if (s == -1)
       continue;
     
+    // Christopher Lyon Anderson - prevent SigPipe
+#ifdef SO_NOSIGPIPE
+    int kOne = 1;
+    int err = setsockopt(s, SOL_SOCKET, SO_NOSIGPIPE, &kOne, sizeof(kOne));
+    if (err != 0)
+        continue;
+#endif
+
     if ((local_address != NULL) || (local_port != 0)) {
       char local_port_str[6];
       char * p_local_port_str;

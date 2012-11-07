@@ -5,8 +5,13 @@
 .deps
 .libs
 
+/build-mac/libetpan.xcodeproj/project.xcworkspace/
+/build-mac/libetpan.xcodeproj/xcuserdata/
 /build-mac/build
 /build-mac/include
+/build-mac/dependencies/build/
+/build-mac/libsasl-ios/
+/build-mac/update.log
 /config.guess
 /config.h.in
 /config.sub
@@ -114,3 +119,7 @@
 /tests/readmsg-uid
 /tests/smime
 /tests/smtpsend
+/tests/imap-sample
+/tests/mime-create
+/tests/mime-parse
+/tests/pop-sample

@@ -1586,7 +1586,8 @@ mailimap_message_data_free(struct mailimap_message_data * msg_data)
 struct mailimap_msg_att_item *
 mailimap_msg_att_item_new(int att_type,
 			  struct mailimap_msg_att_dynamic * att_dyn,
-			  struct mailimap_msg_att_static * att_static)
+			  struct mailimap_msg_att_static * att_static,
+        struct mailimap_extension_data * att_extension_data)
 {
   struct mailimap_msg_att_item * item;
 
@@ -1602,6 +1603,9 @@ mailimap_msg_att_item_new(int att_type,
   case MAILIMAP_MSG_ATT_ITEM_STATIC:
     item->att_data.att_static = att_static;
     break;
+  case MAILIMAP_MSG_ATT_ITEM_EXTENSION:
+    item->att_data.att_extension_data = att_extension_data;
+    break;
   }
 
   return item;
@@ -1616,6 +1620,9 @@ mailimap_msg_att_item_free(struct mailimap_msg_att_item * item)
     break;
   case MAILIMAP_MSG_ATT_ITEM_STATIC:
     mailimap_msg_att_static_free(item->att_data.att_static);
+    break;
+  case MAILIMAP_MSG_ATT_ITEM_EXTENSION:
+    mailimap_extension_data_free(item->att_data.att_extension_data);
     break;
   }
   free(item);
@@ -2558,7 +2565,7 @@ void mailimap_date_free(struct mailimap_date * date)
 
 struct mailimap_fetch_att *
 mailimap_fetch_att_new(int att_type, struct mailimap_section * att_section,
-    uint32_t att_offset, uint32_t att_size)
+                       uint32_t att_offset, uint32_t att_size, char * att_extension)
 {
   struct mailimap_fetch_att * fetch_att;
 
@@ -2569,12 +2576,15 @@ mailimap_fetch_att_new(int att_type, struct mailimap_section * att_section,
   fetch_att->att_section = att_section;
   fetch_att->att_offset = att_offset;
   fetch_att->att_size = att_size;
+  fetch_att->att_extension = att_extension;
 
   return fetch_att;
 }
 
 void mailimap_fetch_att_free(struct mailimap_fetch_att * fetch_att)
 {
+  if (fetch_att->att_extension != NULL)
+    free(fetch_att->att_extension);
   if (fetch_att->att_section != NULL)
     mailimap_section_free(fetch_att->att_section);
   free(fetch_att);
@@ -2876,6 +2886,8 @@ mailimap_selection_info_new(void)
   sel_info->sel_exists = 0;
   sel_info->sel_recent = 0;
   sel_info->sel_unseen = 0;
+  sel_info->sel_has_exists = 0;
+  sel_info->sel_has_recent = 0 ;
 
   return sel_info;
 }

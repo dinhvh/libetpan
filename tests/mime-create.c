@@ -319,7 +319,7 @@ int main(int argc, char ** argv)
 	
 	msg_mime = mailmime_new_message_data(NULL);
 	fields = build_fields();
-	mailmime_set_imf_fields(mime, fields);
+	mailmime_set_imf_fields(msg_mime, fields);
 	
 	mime = get_multipart_mixed(NULL);
   
@@ -333,7 +333,7 @@ int main(int argc, char ** argv)
 	col = 0;
 	mailmime_write_file(stdout, &col, mime);
 
-	mailmime_free(mime);
+	mailmime_free(msg_mime);
 
 	exit(0);
 }

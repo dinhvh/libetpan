@@ -497,73 +497,73 @@ mailimap_section_new_part_text(struct mailimap_section_part * part)
 struct mailimap_fetch_att *
 mailimap_fetch_att_new_envelope(void)
 {
-  return mailimap_fetch_att_new(MAILIMAP_FETCH_ATT_ENVELOPE, NULL, 0, 0);
+  return mailimap_fetch_att_new(MAILIMAP_FETCH_ATT_ENVELOPE, NULL, 0, 0, NULL);
 }
 
 struct mailimap_fetch_att *
 mailimap_fetch_att_new_flags(void)
 {
-  return mailimap_fetch_att_new(MAILIMAP_FETCH_ATT_FLAGS, NULL, 0, 0);
+  return mailimap_fetch_att_new(MAILIMAP_FETCH_ATT_FLAGS, NULL, 0, 0, NULL);
 }
 
 struct mailimap_fetch_att *
 mailimap_fetch_att_new_internaldate(void)
 {
-  return mailimap_fetch_att_new(MAILIMAP_FETCH_ATT_INTERNALDATE, NULL, 0, 0);
+  return mailimap_fetch_att_new(MAILIMAP_FETCH_ATT_INTERNALDATE, NULL, 0, 0, NULL);
 }
 
 struct mailimap_fetch_att *
 mailimap_fetch_att_new_rfc822(void)
 {
-  return mailimap_fetch_att_new(MAILIMAP_FETCH_ATT_RFC822, NULL, 0, 0);
+  return mailimap_fetch_att_new(MAILIMAP_FETCH_ATT_RFC822, NULL, 0, 0, NULL);
 }
 
 struct mailimap_fetch_att *
 mailimap_fetch_att_new_rfc822_header(void)
 {
-  return mailimap_fetch_att_new(MAILIMAP_FETCH_ATT_RFC822_HEADER, NULL, 0, 0);
+  return mailimap_fetch_att_new(MAILIMAP_FETCH_ATT_RFC822_HEADER, NULL, 0, 0, NULL);
 }
 
 struct mailimap_fetch_att *
 mailimap_fetch_att_new_rfc822_size(void)
 {
-  return mailimap_fetch_att_new(MAILIMAP_FETCH_ATT_RFC822_SIZE, NULL, 0, 0);
+  return mailimap_fetch_att_new(MAILIMAP_FETCH_ATT_RFC822_SIZE, NULL, 0, 0, NULL);
 }
 
 struct mailimap_fetch_att *
 mailimap_fetch_att_new_rfc822_text(void)
 {
-  return mailimap_fetch_att_new(MAILIMAP_FETCH_ATT_RFC822_TEXT, NULL, 0, 0);
+  return mailimap_fetch_att_new(MAILIMAP_FETCH_ATT_RFC822_TEXT, NULL, 0, 0, NULL);
 }
 
 struct mailimap_fetch_att *
 mailimap_fetch_att_new_body(void)
 {
-  return mailimap_fetch_att_new(MAILIMAP_FETCH_ATT_BODY, NULL, 0, 0);
+  return mailimap_fetch_att_new(MAILIMAP_FETCH_ATT_BODY, NULL, 0, 0, NULL);
 }
 
 struct mailimap_fetch_att *
 mailimap_fetch_att_new_bodystructure(void)
 {
-  return mailimap_fetch_att_new(MAILIMAP_FETCH_ATT_BODYSTRUCTURE, NULL, 0, 0);
+  return mailimap_fetch_att_new(MAILIMAP_FETCH_ATT_BODYSTRUCTURE, NULL, 0, 0, NULL);
 }
 
 struct mailimap_fetch_att *
 mailimap_fetch_att_new_uid(void)
 {
-  return mailimap_fetch_att_new(MAILIMAP_FETCH_ATT_UID, NULL, 0, 0);
+  return mailimap_fetch_att_new(MAILIMAP_FETCH_ATT_UID, NULL, 0, 0, NULL);
 }
 
 struct mailimap_fetch_att *
 mailimap_fetch_att_new_body_section(struct mailimap_section * section)
 {
-  return mailimap_fetch_att_new(MAILIMAP_FETCH_ATT_BODY_SECTION, section, 0, 0);
+  return mailimap_fetch_att_new(MAILIMAP_FETCH_ATT_BODY_SECTION, section, 0, 0, NULL);
 }
 
 struct mailimap_fetch_att *
 mailimap_fetch_att_new_body_peek_section(struct mailimap_section * section)
 {
-  return mailimap_fetch_att_new(MAILIMAP_FETCH_ATT_BODY_PEEK_SECTION, section, 0, 0);
+  return mailimap_fetch_att_new(MAILIMAP_FETCH_ATT_BODY_PEEK_SECTION, section, 0, 0, NULL);
 }
 
 struct mailimap_fetch_att *
@@ -571,7 +571,7 @@ mailimap_fetch_att_new_body_section_partial(struct mailimap_section * section,
 					    uint32_t offset, uint32_t size)
 {
   return mailimap_fetch_att_new(MAILIMAP_FETCH_ATT_BODY_SECTION, section,
-				offset, size);
+				offset, size, NULL);
 }
 
 struct mailimap_fetch_att *
@@ -579,9 +579,14 @@ mailimap_fetch_att_new_body_peek_section_partial(struct mailimap_section * secti
 						 uint32_t offset, uint32_t size)
 {
   return mailimap_fetch_att_new(MAILIMAP_FETCH_ATT_BODY_PEEK_SECTION, section,
-				offset, size);
+				offset, size, NULL);
 }
 
+struct mailimap_fetch_att *
+mailimap_fetch_att_new_extension(char * ext_keyword)
+{
+  return mailimap_fetch_att_new(MAILIMAP_FETCH_ATT_EXTENSION, NULL, 0, 0, ext_keyword);
+}
 
 
 struct mailimap_fetch_type *

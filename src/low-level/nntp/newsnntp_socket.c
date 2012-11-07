@@ -41,6 +41,7 @@
 
 #include "newsnntp.h"
 
+#include "mailstream_cfstream.h"
 #include "connect.h"
 
 #ifdef HAVE_NETINET_IN_H
@@ -54,11 +55,19 @@
 #define SERVICE_NAME_NNTP "nntp"
 #define SERVICE_TYPE_TCP "tcp"
 
+static int newsnntp_cfsocket_connect(newsnntp * f, const char * server, uint16_t port);
+
 int newsnntp_socket_connect(newsnntp * f, const char * server, uint16_t port)
 {
   int s;
   mailstream * stream;
 
+#if HAVE_CFNETWORK
+  if (mailstream_cfstream_enabled) {
+    return newsnntp_cfsocket_connect(f, server, port);
+  }
+#endif
+  
   if (port == 0) {
     port = mail_get_service_port(SERVICE_NAME_NNTP, SERVICE_TYPE_TCP);
     if (port == 0)
@@ -74,12 +83,24 @@ int newsnntp_socket_connect(newsnntp * f, const char * server, uint16_t port)
   stream = mailstream_socket_open(s);
   if (stream == NULL) {
 #ifdef WIN32
-	closesocket(s);
+    closesocket(s);
 #else
     close(s);
 #endif
     return NEWSNNTP_ERROR_MEMORY;
   }
 
+  return newsnntp_connect(f, stream);
+}
+
+static int newsnntp_cfsocket_connect(newsnntp * f, const char * server, uint16_t port)
+{
+  mailstream * stream;
+  
+  stream = mailstream_cfstream_open(server, port);
+  if (stream == NULL) {
+    return NEWSNNTP_ERROR_STREAM;
+  }
+  
   return newsnntp_connect(f, stream);
 }

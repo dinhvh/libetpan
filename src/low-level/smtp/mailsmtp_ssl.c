@@ -41,6 +41,7 @@
 
 #include "mailsmtp.h"
 
+#include "mailstream_cfstream.h"
 #include "connect.h"
 
 #include <stdlib.h>
@@ -54,6 +55,9 @@
 #define DEFAULT_SMTPS_PORT 465
 #define SERVICE_NAME_SMTPS "smtps"
 #define SERVICE_TYPE_TCP "tcp"
+
+static int mailsmtp_cfssl_connect(mailsmtp * session,
+                                  const char * server, uint16_t port);
 
 int mailsmtp_ssl_connect(mailsmtp * session,
     const char * server, uint16_t port)
@@ -69,6 +73,14 @@ int mailsmtp_ssl_connect_with_callback(mailsmtp * session,
   int s;
   mailstream * stream;
 
+#if HAVE_CFNETWORK
+  if (mailstream_cfstream_enabled) {
+    if (callback == NULL) {
+      return mailsmtp_cfssl_connect(session, server, port);
+    }
+  }
+#endif
+  
   if (port == 0) {
     port = mail_get_service_port(SERVICE_NAME_SMTPS, SERVICE_TYPE_TCP);
     if (port == 0)
@@ -81,11 +93,38 @@ int mailsmtp_ssl_connect_with_callback(mailsmtp * session,
   if (s == -1)
     return MAILSMTP_ERROR_CONNECTION_REFUSED;
 
-  stream = mailstream_ssl_open(s);
+  stream = mailstream_ssl_open_with_callback(s, callback, data);
   if (stream == NULL) {
     close(s);
     return MAILSMTP_ERROR_SSL;
   }
 
   return mailsmtp_connect(session, stream);
+}
+
+static int mailsmtp_cfssl_connect_ssl_level(mailsmtp * session,
+                                            const char * server, uint16_t port, int ssl_level)
+{
+  mailstream * stream;
+  int r;
+  
+  stream = mailstream_cfstream_open(server, port);
+  if (stream == NULL) {
+    return MAILSMTP_ERROR_CONNECTION_REFUSED;
+  }
+  mailstream_cfstream_set_ssl_level(stream, ssl_level);
+  mailstream_cfstream_set_ssl_verification_mask(stream, MAILSTREAM_CFSTREAM_SSL_NO_VERIFICATION);
+  r = mailstream_cfstream_set_ssl_enabled(stream, 1);
+  if (r < 0) {
+    mailstream_close(stream);
+    return MAILSMTP_ERROR_SSL;
+  }
+  
+  return mailsmtp_connect(session, stream);
+}
+
+static int mailsmtp_cfssl_connect(mailsmtp * session,
+                                  const char * server, uint16_t port)
+{
+    return mailsmtp_cfssl_connect_ssl_level(session, server, port, MAILSTREAM_CFSTREAM_SSL_LEVEL_SSLv3);
 }

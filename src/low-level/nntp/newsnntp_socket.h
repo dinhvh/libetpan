@@ -48,6 +48,7 @@ extern "C" {
 
 #include <libetpan/newsnntp_types.h>
 
+LIBETPAN_EXPORT
 int newsnntp_socket_connect(newsnntp * f, const char * server, uint16_t port);
 
 #ifdef __cplusplus

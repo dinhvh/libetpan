@@ -62,6 +62,9 @@ LIBETPAN_EXPORT
 int mailstream_low_get_fd(mailstream_low * s);
 
 LIBETPAN_EXPORT
+struct mailstream_cancel * mailstream_low_get_cancel(mailstream_low * s);
+
+LIBETPAN_EXPORT
 void mailstream_low_free(mailstream_low * s);
 
 LIBETPAN_EXPORT

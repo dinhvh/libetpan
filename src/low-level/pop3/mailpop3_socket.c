@@ -40,6 +40,7 @@
 #include "mailpop3_socket.h"
 
 #include "mailpop3.h"
+#include "mailstream_cfstream.h"
 
 #include "connect.h"
 #ifdef HAVE_NETINET_IN_H
@@ -54,11 +55,19 @@
 #define SERVICE_NAME_POP3 "pop3"
 #define SERVICE_TYPE_TCP "tcp"
 
+static int mailpop3_cfsocket_connect(mailpop3 * f, const char * server, uint16_t port);
+
 int mailpop3_socket_connect(mailpop3 * f, const char * server, uint16_t port)
 {
   int s;
   mailstream * stream;
 
+#if HAVE_CFNETWORK
+  if (mailstream_cfstream_enabled) {
+    return mailpop3_cfsocket_connect(f, server, port);
+  }
+#endif
+  
   if (port == 0) {
     port = mail_get_service_port(SERVICE_NAME_POP3, SERVICE_TYPE_TCP);
     if (port == 0)
@@ -84,6 +93,8 @@ int mailpop3_socket_connect(mailpop3 * f, const char * server, uint16_t port)
   return mailpop3_connect(f, stream);
 }
 
+static int mailpop3_cfsocket_starttls(mailpop3 * f);
+
 LIBETPAN_EXPORT
 int mailpop3_socket_starttls(mailpop3 * f)
 {
@@ -99,6 +110,12 @@ int mailpop3_socket_starttls_with_callback(mailpop3 * f,
   mailstream_low * low;
   mailstream_low * new_low;
   
+  low = mailstream_get_low(f->pop3_stream);
+  if (low->driver == mailstream_cfstream_driver) {
+    // won't use callback
+    return mailpop3_cfsocket_starttls(f);
+  }
+  
   r = mailpop3_stls(f);
 
   switch (r) {
@@ -108,7 +125,6 @@ int mailpop3_socket_starttls_with_callback(mailpop3 * f,
     return r;
   }
 
-  low = mailstream_get_low(f->pop3_stream);
   fd = mailstream_low_get_fd(low);
   if (fd == -1)
     return MAILPOP3_ERROR_STREAM;
@@ -120,6 +136,39 @@ int mailpop3_socket_starttls_with_callback(mailpop3 * f,
   
   mailstream_low_free(low);
   mailstream_set_low(f->pop3_stream, new_low);
+  
+  return MAILPOP3_NO_ERROR;
+}
+
+static int mailpop3_cfsocket_connect(mailpop3 * f, const char * server, uint16_t port)
+{
+  mailstream * stream;
+  
+  stream = mailstream_cfstream_open(server, port);
+  if (stream == NULL) {
+    return MAILPOP3_ERROR_CONNECTION_REFUSED;
+  }
+  
+  return mailpop3_connect(f, stream);
+}
+
+static int mailpop3_cfsocket_starttls(mailpop3 * f)
+{
+  int r;
+  
+  r = mailpop3_stls(f);
+  switch (r) {
+    case MAILPOP3_NO_ERROR:
+      break;
+    default:
+      return r;
+  }
+  
+  mailstream_cfstream_set_ssl_verification_mask(f->pop3_stream, MAILSTREAM_CFSTREAM_SSL_NO_VERIFICATION);
+  r = mailstream_cfstream_set_ssl_enabled(f->pop3_stream, 1);
+  if (r < 0) {
+    return MAILPOP3_ERROR_SSL;
+  }
   
   return MAILPOP3_NO_ERROR;
 }

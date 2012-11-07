@@ -106,7 +106,7 @@ int mailimap_xlist(mailimap * session, const char * mb,
   result_list = clist_new();
   if (result_list == NULL) {
     res = MAILIMAP_ERROR_MEMORY;
-    goto err;
+    goto free_response;
   }
   
   for(cur = clist_begin(session->imap_response_info->rsp_extension_list) ; cur != NULL ; cur = clist_next(cur)) {

@@ -85,6 +85,7 @@ static ssize_t mailstream_low_socket_write(mailstream_low * s,
 static void mailstream_low_socket_free(mailstream_low * s);
 static int mailstream_low_socket_get_fd(mailstream_low * s);
 static void mailstream_low_socket_cancel(mailstream_low * s);
+static struct mailstream_cancel * mailstream_low_socket_get_cancel(mailstream_low * s);
 
 static mailstream_low_driver local_mailstream_socket_driver = {
   /* mailstream_read */ mailstream_low_socket_read,
@@ -93,6 +94,7 @@ static mailstream_low_driver local_mailstream_socket_driver = {
   /* mailstream_get_fd */ mailstream_low_socket_get_fd,
   /* mailstream_free */ mailstream_low_socket_free,
   /* mailstream_cancel */ mailstream_low_socket_cancel,
+  /* mailstream_get_cancel */ mailstream_low_socket_get_cancel,
 };
 
 mailstream_low_driver * mailstream_socket_driver =
@@ -225,11 +227,16 @@ static ssize_t mailstream_low_socket_read(mailstream_low * s,
     WSAEventSelect(socket_data->fd, event, FD_READ | FD_CLOSE);
     FD_SET(event, &fds_read);
     r = WaitForMultipleObjects(fds_read.fd_count, fds_read.fd_array, FALSE, timeout.tv_sec * 1000 + timeout.tv_usec / 1000);
-    if (WAIT_TIMEOUT == r)
+    if (WAIT_TIMEOUT == r) {
+			WSAEventSelect(socket_data->fd, event, 0);
+			CloseHandle(event);
       return -1;
+		}
     
     cancelled = (fds_read.fd_array[r - WAIT_OBJECT_0] == fd);
     got_data = (fds_read.fd_array[r - WAIT_OBJECT_0] == event);
+		WSAEventSelect(socket_data->fd, event, 0);
+		CloseHandle(event);
 #else
     FD_SET(socket_data->fd, &fds_read);
     max_fd = socket_data->fd;
@@ -296,11 +303,16 @@ static ssize_t mailstream_low_socket_write(mailstream_low * s,
     WSAEventSelect(socket_data->fd, event, FD_WRITE | FD_CLOSE);
     FD_SET(event, &fds_read);
     r = WaitForMultipleObjects(fds_read.fd_count, fds_read.fd_array, FALSE, timeout.tv_sec * 1000 + timeout.tv_usec / 1000);
-    if (r < 0)
+    if (r < 0) {
+			WSAEventSelect(socket_data->fd, event, 0);
+			CloseHandle(event);
       return -1;
+		}
     
     cancelled = (fds_read.fd_array[r - WAIT_OBJECT_0] == fd);
     write_enabled = (fds_read.fd_array[r - WAIT_OBJECT_0] == event);
+		WSAEventSelect(socket_data->fd, event, 0);
+		CloseHandle(event);
 #else
     FD_SET(socket_data->fd, &fds_write);
     max_fd = socket_data->fd;
@@ -367,4 +379,12 @@ void mailstream_socket_set_use_read(mailstream * stream, int use_read)
   low = mailstream_get_low(stream);
   socket_data = (struct mailstream_socket_data *) low->data;
   socket_data->use_read = use_read;
+}
+
+static struct mailstream_cancel * mailstream_low_socket_get_cancel(mailstream_low * s)
+{
+  struct mailstream_socket_data * socket_data;
+  
+  socket_data = (struct mailstream_socket_data *) s->data;
+  return socket_data->cancel;
 }

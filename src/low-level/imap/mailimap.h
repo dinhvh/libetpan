@@ -55,6 +55,7 @@ extern "C" {
 #include <libetpan/quota.h>
 #include <libetpan/namespace.h>
 #include <libetpan/xlist.h>
+#include <libetpan/xgmlabels.h>
 
 /*
   mailimap_connect()
@@ -660,6 +661,11 @@ void mailimap_set_progress_callback(mailimap * session,
                                     mailprogress_function * body_progr_fun,
                                     mailprogress_function * items_progr_fun,
                                     void * context);
+
+LIBETPAN_EXPORT
+void mailimap_set_msg_att_handler(mailimap * session,
+                                  mailimap_msg_att_handler * handler,
+                                  void * context);
 
 #ifdef __cplusplus
 }

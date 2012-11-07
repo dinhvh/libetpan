@@ -178,6 +178,18 @@ int send_message(char *data, size_t len, char**rcpts) {
     goto error;
   }
   
+  if (esmtp && smtp_tls) {
+    /* introduce ourselves again */
+    if (smtp_esmtp && (ret = mailesmtp_ehlo(smtp)) == MAILSMTP_NO_ERROR)
+      esmtp = 1;
+    else if (!smtp_esmtp || ret == MAILSMTP_ERROR_NOT_IMPLEMENTED)
+      ret = mailsmtp_helo(smtp);
+    if (ret != MAILSMTP_NO_ERROR) {
+      fprintf(stderr, "mailsmtp_helo: %s\n", mailsmtp_strerror(ret));
+      goto error;
+    }
+  }
+  
   if (esmtp && smtp_user != NULL &&
       (ret = mailsmtp_auth(smtp, smtp_user,
 			   (smtp_password != NULL) ? smtp_password : ""))

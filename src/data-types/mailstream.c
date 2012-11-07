@@ -43,12 +43,17 @@
 
 #include "mailstream.h"
 #include "maillock.h"
+#include "mailstream_cfstream.h"
+#include "mailstream_cancel.h"
 #include <string.h>
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 
 #define DEFAULT_NETWORK_TIMEOUT 300
+
+struct timeval mailstream_network_delay =
+{  DEFAULT_NETWORK_TIMEOUT, 0 };
 
 mailstream * mailstream_new(mailstream_low * low, size_t buffer_size)
 {
@@ -70,6 +75,9 @@ mailstream * mailstream_new(mailstream_low * low, size_t buffer_size)
 
   s->buffer_max_size = buffer_size;
   s->low = low;
+  
+  s->idle = NULL;
+  s->idling = 0;
   
   return s;
 
@@ -273,6 +281,10 @@ void mailstream_set_low(mailstream * s, mailstream_low * low)
 
 int mailstream_close(mailstream * s)
 {
+  if (s->idle != NULL) {
+    mailstream_cancel_free(s->idle);
+  }
+  
   mailstream_low_close(s->low);
   mailstream_low_free(s->low);
   
@@ -322,5 +334,120 @@ void mailstream_set_privacy(mailstream * s, int can_be_public)
   mailstream_low_set_privacy(s->low, can_be_public);
 }
 
-struct timeval mailstream_network_delay =
-{  DEFAULT_NETWORK_TIMEOUT, 0 };
+
+int mailstream_wait_idle(mailstream * s, int max_idle_delay)
+{
+  int fd;
+  int idle_fd;
+  int cancel_fd;
+  int maxfd;
+  fd_set readfds;
+  struct timeval delay;
+  int r;
+  
+  if (s->low->driver == mailstream_cfstream_driver) {
+    return mailstream_cfstream_wait_idle(s, max_idle_delay);
+  }
+  
+  if (s->idle == NULL) {
+		return MAILSTREAM_IDLE_ERROR;
+	}
+  if (mailstream_low_get_cancel(mailstream_get_low(s)) == NULL) {
+		return MAILSTREAM_IDLE_ERROR;
+	}
+  fd = mailstream_low_get_fd(mailstream_get_low(s));
+  idle_fd = mailstream_cancel_get_fd(s->idle);
+  cancel_fd = mailstream_cancel_get_fd(mailstream_low_get_cancel(mailstream_get_low(s)));
+  
+  FD_ZERO(&readfds);
+  FD_SET(fd, &readfds);
+  FD_SET(idle_fd, &readfds);
+  FD_SET(cancel_fd, &readfds);
+  maxfd = fd;
+  if (idle_fd > maxfd) {
+    maxfd = idle_fd;
+  }
+  if (cancel_fd > maxfd) {
+    maxfd = cancel_fd;
+  }
+  delay.tv_sec = max_idle_delay;
+  delay.tv_usec = 0;
+  
+  r = select(maxfd + 1, &readfds, NULL, NULL, &delay);
+  if (r == 0) {
+    // timeout
+    return MAILSTREAM_IDLE_TIMEOUT;
+  }
+  else if (r == -1) {
+    // do nothing
+    return MAILSTREAM_IDLE_ERROR;
+  }
+  else {
+    if (FD_ISSET(fd, &readfds)) {
+      // has something on socket
+      return MAILSTREAM_IDLE_HASDATA;
+    }
+    if (FD_ISSET(idle_fd, &readfds)) {
+      // idle interrupted
+      mailstream_cancel_ack(s->idle);
+      return MAILSTREAM_IDLE_INTERRUPTED;
+    }
+    if (FD_ISSET(cancel_fd, &readfds)) {
+      // idle cancelled
+      mailstream_cancel_ack(mailstream_low_get_cancel(mailstream_get_low(s)));
+      return MAILSTREAM_IDLE_CANCELLED;
+    }
+    return MAILSTREAM_IDLE_ERROR;
+  }
+}
+
+int mailstream_setup_idle(mailstream * s)
+{
+  if (s->idling) {
+    return -1;
+  }
+  
+  if (s->low->driver == mailstream_cfstream_driver) {
+    mailstream_cfstream_setup_idle(s);
+  }
+  else {
+    s->idle = mailstream_cancel_new();
+    if (s->idle == NULL)
+      return -1;
+  }
+  
+  s->idling = 1;
+  
+  return 0;
+}
+
+void mailstream_interrupt_idle(mailstream * s)
+{
+  if (!s->idling) {
+    return;
+  }
+  
+  if (s->low->driver == mailstream_cfstream_driver) {
+    mailstream_cfstream_interrupt_idle(s);
+  }
+  else {
+    mailstream_cancel_notify(s->idle);
+  }
+}
+
+void mailstream_unsetup_idle(mailstream * s)
+{
+  if (!s->idling) {
+    return;
+  }
+  
+  if (s->low->driver == mailstream_cfstream_driver) {
+    mailstream_cfstream_unsetup_idle(s);
+  }
+  else {
+    mailstream_cancel_free(s->idle);
+	  s->idle = NULL;
+  }
+  
+  s->idling = 0;
+}

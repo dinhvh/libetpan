@@ -82,6 +82,9 @@ LIBETPAN_EXPORT
 int mailsmtp_helo(mailsmtp * session);
 
 LIBETPAN_EXPORT
+int mailsmtp_helo_with_ip(mailsmtp * session, int useip);
+
+LIBETPAN_EXPORT
 int mailsmtp_mail(mailsmtp * session, const char * from);
 
 LIBETPAN_EXPORT
@@ -96,7 +99,15 @@ int mailsmtp_data_message(mailsmtp * session,
 			   size_t size);
 
 LIBETPAN_EXPORT
+int mailsmtp_data_message_quit(mailsmtp * session,
+                               const char * message,
+                               size_t size);
+
+LIBETPAN_EXPORT
 int mailesmtp_ehlo(mailsmtp * session);
+
+LIBETPAN_EXPORT
+int mailesmtp_ehlo_with_ip(mailsmtp * session, int useip);
 
 LIBETPAN_EXPORT
 int mailesmtp_mail(mailsmtp * session,
