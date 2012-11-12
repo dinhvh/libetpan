@@ -613,7 +613,7 @@ static void  ssl_data_close(struct mailstream_ssl_data * ssl_data)
 
   ssl_data->session = NULL;
 #ifdef WIN32
-  closesocket(socket_data->fd);
+  closesocket(ssl_data->fd);
 #else
   close(ssl_data->fd);
 #endif
