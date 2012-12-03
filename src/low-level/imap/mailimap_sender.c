@@ -299,12 +299,12 @@ int mailimap_crlf_send(mailstream * fd)
   return MAILIMAP_NO_ERROR;
 }
 
-static int mailimap_oparenth_send(mailstream * fd)
+int mailimap_oparenth_send(mailstream * fd)
 {
   return mailimap_char_send(fd, '(');
 }
 
-static int mailimap_cparenth_send(mailstream * fd)
+int mailimap_cparenth_send(mailstream * fd)
 {
   return mailimap_char_send(fd, ')');
 }

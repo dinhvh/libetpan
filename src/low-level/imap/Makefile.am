@@ -33,8 +33,8 @@ EXTRA_DIST = TODO
 
 etpaninclude_HEADERS = \
 	mailimap_helper.h mailimap.h \
-        mailimap_types.h mailimap_types_helper.h \
-        mailimap_socket.h mailimap_ssl.h \
+	mailimap_types.h mailimap_types_helper.h \
+	mailimap_socket.h mailimap_ssl.h \
 	mailimap_extension.h mailimap_extension_types.h \
 	annotatemore.h annotatemore_types.h \
 	acl.h acl_types.h \
@@ -42,7 +42,8 @@ etpaninclude_HEADERS = \
 	quota.h quota_parser.h quota_sender.h quota_types.h \
 	idle.h \
 	namespace.h namespace_parser.h namespace_sender.h namespace_types.h \
-	xlist.h xgmlabels.h xgmmsgid.h
+	xlist.h xgmlabels.h xgmmsgid.h \
+	mailimap_id.h mailimap_id_types.h
 
 AM_CPPFLAGS = -I$(top_builddir)/include \
 	-I$(top_srcdir)/src/data-types
@@ -83,4 +84,8 @@ libimap_la_SOURCES = \
 	namespace_types.c namespace_types.h \
 	xlist.c xlist.h \
 	xgmlabels.c xgmlabels.h \
-        xgmmsgid.c xgmmsgid.h
+	xgmmsgid.c xgmmsgid.h \
+	mailimap_id.h mailimap_id.c \
+	mailimap_id_types.h mailimap_id_types.c \
+	mailimap_id_sender.h mailimap_id_sender.c \
+	mailimap_id_parser.h mailimap_id_parser.c

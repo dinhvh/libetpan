@@ -280,16 +280,6 @@ mailimap_xgmlabels_extension_data_free(struct mailimap_extension_data * ext_data
   free(ext_data);
 }
 
-static int mailimap_oparenth_send(mailstream * fd)
-{
-  return mailimap_char_send(fd, '(');
-}
-
-static int mailimap_cparenth_send(mailstream * fd)
-{
-  return mailimap_char_send(fd, ')');
-}
-
 static int mailimap_msg_att_xgmlabels_send(mailstream * fd, struct mailimap_msg_att_xgmlabels * labels)
 {
   int r;
