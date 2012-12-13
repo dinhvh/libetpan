@@ -58,7 +58,7 @@ static int mailimap_id_param_send(mailstream * fd, struct mailimap_id_param * pa
     return r;
 
   if (param->idpa_value == NULL) {
-    r = mailimap_nil_send(fd, param->idpa_value);
+    r = mailimap_token_send(fd, "NIL");
     if (r != MAILIMAP_NO_ERROR)
       return r;
   }

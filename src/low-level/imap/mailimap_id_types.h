@@ -26,4 +26,8 @@ void mailimap_id_param_free(struct mailimap_id_param * param);
 struct mailimap_id_params_list * mailimap_id_params_list_new_empty(void);
 int mailimap_id_params_list_add_name_value(struct mailimap_id_params_list * list, char * name, char * value);
 
+#ifdef __cplusplus
+}
+#endif
+
 #endif
