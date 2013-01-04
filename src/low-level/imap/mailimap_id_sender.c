@@ -1,5 +1,7 @@
 #include "mailimap_id_sender.h"
 
+#include <stdlib.h>
+
 #include "mailimap_sender.h"
 
 static int mailimap_id_param_send(mailstream * fd, struct mailimap_id_param * param);
