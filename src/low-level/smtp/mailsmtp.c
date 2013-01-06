@@ -951,7 +951,8 @@ int mailsmtp_auth(mailsmtp * session, const char * user, const char * pass)
 
 /* TODO: add mailesmtp_etrn, mailssmtp_expn */
 
-int mailesmtp_starttls(mailsmtp * session) {
+int mailesmtp_starttls(mailsmtp * session)
+{
   int r;
 
   if (!(session->esmtp & MAILSMTP_ESMTP_STARTTLS))
@@ -1203,16 +1204,16 @@ int mailesmtp_auth_sasl(mailsmtp * session, const char * auth_type,
   unsigned int max_encoded;
   
   sasl_callback[0].id = SASL_CB_GETREALM;
-  sasl_callback[0].proc =  sasl_getrealm;
+  sasl_callback[0].proc =  (int(*)(void)) sasl_getrealm;
   sasl_callback[0].context = session;
   sasl_callback[1].id = SASL_CB_USER;
-  sasl_callback[1].proc =  sasl_getsimple;
+  sasl_callback[1].proc =  (int(*)(void)) sasl_getsimple;
   sasl_callback[1].context = session;
   sasl_callback[2].id = SASL_CB_AUTHNAME;
-  sasl_callback[2].proc =  sasl_getsimple;
+  sasl_callback[2].proc =  (int(*)(void)) sasl_getsimple;
   sasl_callback[2].context = session; 
   sasl_callback[3].id = SASL_CB_PASS;
-  sasl_callback[3].proc =  sasl_getsecret;
+  sasl_callback[3].proc =  (int(*)(void)) sasl_getsecret;
   sasl_callback[3].context = session;
   sasl_callback[4].id = SASL_CB_LIST_END;
   sasl_callback[4].proc =  NULL;
@@ -1438,3 +1439,14 @@ void mailsmtp_set_progress_callback(mailsmtp * session,
   session->smtp_progress_fun = progr_fun;
   session->smtp_progress_context = context;
 }
+
+void mailsmtp_set_timeout(mailsmtp * session, time_t timeout)
+{
+	session->smtp_timeout = timeout;
+}
+
+time_t mailsmtp_get_timeout(mailsmtp * session)
+{
+	return session->smtp_timeout;
+}
+

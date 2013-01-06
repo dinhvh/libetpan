@@ -216,7 +216,13 @@ static ssize_t mailstream_low_socket_read(mailstream_low * s,
     int max_fd;
 #endif
     
-    timeout = mailstream_network_delay;
+    if (s->timeout == 0) {
+      timeout = mailstream_network_delay;
+    }
+    else {
+			timeout.tv_sec = s->timeout;
+      timeout.tv_usec = 0;
+    }
     
     FD_ZERO(&fds_read);
     fd = mailstream_cancel_get_fd(socket_data->cancel);
@@ -292,7 +298,13 @@ static ssize_t mailstream_low_socket_write(mailstream_low * s,
     HANDLE event;
 #endif
     
-    timeout = mailstream_network_delay;
+    if (s->timeout == 0) {
+      timeout = mailstream_network_delay;
+    }
+    else {
+			timeout.tv_sec = s->timeout;
+      timeout.tv_usec = 0;
+    }
     
     FD_ZERO(&fds_read);
     fd = mailstream_cancel_get_fd(socket_data->cancel);
@@ -344,12 +356,18 @@ static ssize_t mailstream_low_socket_write(mailstream_low * s,
 
 mailstream * mailstream_socket_open(int fd)
 {
+	return mailstream_socket_open_timeout(fd, 0);
+}
+
+mailstream * mailstream_socket_open_timeout(int fd, time_t timeout)
+{
   mailstream_low * low;
   mailstream * s;
 
   low = mailstream_low_socket_open(fd);
   if (low == NULL)
     goto err;
+	mailstream_low_set_timeout(low, timeout);
 
   s = mailstream_new(low, 8192);
   if (s == NULL)

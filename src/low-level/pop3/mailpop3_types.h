@@ -93,6 +93,8 @@ struct mailpop3
     const char * sasl_realm;
     void * sasl_secret;
   } pop3_sasl;
+
+  time_t pop3_timeout;
 };
 
 typedef struct mailpop3 mailpop3;

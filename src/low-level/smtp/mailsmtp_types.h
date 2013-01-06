@@ -129,6 +129,8 @@ struct mailsmtp {
   void * smtp_progress_context;
     
 	int response_code;
+	
+  time_t smtp_timeout;
 };
 
 typedef struct mailsmtp mailsmtp;

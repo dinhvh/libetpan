@@ -87,11 +87,11 @@ int mailimap_ssl_connect_voip_with_callback(mailimap * f, const char * server, u
 
   /* Connection */
 
-  s = mail_tcp_connect(server, port);
+  s = mail_tcp_connect_timeout(server, port, f->imap_timeout);
   if (s == -1)
     return MAILIMAP_ERROR_CONNECTION_REFUSED;
 
-  stream = mailstream_ssl_open_with_callback(s, callback, data);
+  stream = mailstream_ssl_open_with_callback_timeout(s, f->imap_timeout, callback, data);
   if (stream == NULL) {
 #ifdef WIN32
 	closesocket(s);
@@ -120,7 +120,7 @@ static int mailimap_cfssl_connect_voip_ssl_level(mailimap * f, const char * serv
   mailstream * stream;
   int r;
   
-  stream = mailstream_cfstream_open_voip(server, port, voip_enabled);
+  stream = mailstream_cfstream_open_voip_timeout(server, port, voip_enabled, f->imap_timeout);
   if (stream == NULL) {
     return MAILIMAP_ERROR_CONNECTION_REFUSED;
   }

@@ -46,6 +46,8 @@ int mailimap_idle(mailimap * session)
   struct mailimap_response * response;
   clist * resp_data_list;
   
+  session->imap_selection_info->sel_has_exists = 0;
+  session->imap_selection_info->sel_has_recent = 0;
   session->imap_idle_timestamp = time(NULL);
   
   r = mailimap_send_current_tag(session);

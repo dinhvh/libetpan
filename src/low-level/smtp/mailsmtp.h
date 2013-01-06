@@ -55,6 +55,12 @@ LIBETPAN_EXPORT
 void mailsmtp_free(mailsmtp * session);
 
 LIBETPAN_EXPORT
+void mailsmtp_set_timeout(mailsmtp * session, time_t timeout);
+
+LIBETPAN_EXPORT
+time_t mailsmtp_get_timeout(mailsmtp * session);
+
+LIBETPAN_EXPORT
 int mailsmtp_connect(mailsmtp * session, mailstream * s);
 
 LIBETPAN_EXPORT

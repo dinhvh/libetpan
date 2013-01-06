@@ -1394,16 +1394,16 @@ int mailpop3_auth(mailpop3 * f, const char * auth_type,
   unsigned int max_encoded;
   
   sasl_callback[0].id = SASL_CB_GETREALM;
-  sasl_callback[0].proc =  sasl_getrealm;
+  sasl_callback[0].proc =  (int(*)(void)) sasl_getrealm;
   sasl_callback[0].context = f;
   sasl_callback[1].id = SASL_CB_USER;
-  sasl_callback[1].proc =  sasl_getsimple;
+  sasl_callback[1].proc =  (int(*)(void)) sasl_getsimple;
   sasl_callback[1].context = f;
   sasl_callback[2].id = SASL_CB_AUTHNAME;
-  sasl_callback[2].proc =  sasl_getsimple;
+  sasl_callback[2].proc =  (int(*)(void)) sasl_getsimple;
   sasl_callback[2].context = f; 
   sasl_callback[3].id = SASL_CB_PASS;
-  sasl_callback[3].proc =  sasl_getsecret;
+  sasl_callback[3].proc =  (int(*)(void)) sasl_getsecret;
   sasl_callback[3].context = f;
   sasl_callback[4].id = SASL_CB_LIST_END;
   sasl_callback[4].proc =  NULL;
@@ -1568,4 +1568,14 @@ int mailpop3_auth(mailpop3 * f, const char * auth_type,
 #else
   return MAILPOP3_ERROR_BAD_USER;
 #endif
+}
+
+void mailpop3_set_timeout(mailpop3 * f, time_t timeout)
+{
+	f->pop3_timeout = timeout;
+}
+
+time_t mailpop3_get_timeout(mailpop3 * f)
+{
+	return f->pop3_timeout;
 }

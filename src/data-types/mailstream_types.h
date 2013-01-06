@@ -85,7 +85,8 @@ struct _mailstream_low {
   void * data;
   mailstream_low_driver * driver;
   int privacy;
-	char * identifier;
+  char * identifier;
+  unsigned long timeout; /* in seconds, 0 will use the global value */
 };
 
 typedef void progress_function(size_t current, size_t maximum);

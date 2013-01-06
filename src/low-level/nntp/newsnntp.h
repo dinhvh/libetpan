@@ -58,6 +58,9 @@ newsnntp * newsnntp_new(size_t nntp_progr_rate,
     progress_function * nntp_progr_fun);
 void newsnntp_free(newsnntp * f);
 
+void newsnntp_set_timeout(newsnntp * f, time_t timeout);
+time_t newsnntp_get_timeout(newsnntp * f);
+
 int newsnntp_quit(newsnntp * f);
 int newsnntp_connect(newsnntp * f, mailstream * s);
 

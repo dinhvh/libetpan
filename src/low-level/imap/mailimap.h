@@ -669,6 +669,12 @@ void mailimap_set_msg_att_handler(mailimap * session,
                                   mailimap_msg_att_handler * handler,
                                   void * context);
 
+LIBETPAN_EXPORT
+void mailimap_set_timeout(mailimap * session, time_t timeout);;
+
+LIBETPAN_EXPORT
+time_t mailimap_get_timeout(mailimap * session);
+
 #ifdef __cplusplus
 }
 #endif

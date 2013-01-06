@@ -3167,6 +3167,8 @@ struct mailimap {
   void * imap_progress_context;
   mailimap_msg_att_handler * imap_msg_att_handler;
   void * imap_msg_att_handler_context;
+
+  time_t imap_timeout;
 };
 
 typedef struct mailimap mailimap;

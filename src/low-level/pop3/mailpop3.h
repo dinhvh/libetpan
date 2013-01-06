@@ -58,6 +58,14 @@ LIBETPAN_EXPORT
 void mailpop3_free(mailpop3 * f);
 
 LIBETPAN_EXPORT
+void mailpop3_set_timeout(mailpop3 * f, time_t timeout);
+
+LIBETPAN_EXPORT
+time_t mailpop3_get_timeout(mailpop3 * f);
+
+LIBETPAN_EXPORT
+
+LIBETPAN_EXPORT
 int mailpop3_connect(mailpop3 * f, mailstream * s);
 
 LIBETPAN_EXPORT

@@ -1611,16 +1611,16 @@ int mailimap_authenticate(mailimap * session, const char * auth_type,
   }
   
   sasl_callback[0].id = SASL_CB_GETREALM;
-  sasl_callback[0].proc =  sasl_getrealm;
+  sasl_callback[0].proc =  (int(*)(void)) sasl_getrealm;
   sasl_callback[0].context = session;
   sasl_callback[1].id = SASL_CB_USER;
-  sasl_callback[1].proc =  sasl_getsimple;
+  sasl_callback[1].proc =  (int(*)(void)) sasl_getsimple;
   sasl_callback[1].context = session;
   sasl_callback[2].id = SASL_CB_AUTHNAME;
-  sasl_callback[2].proc =  sasl_getsimple;
+  sasl_callback[2].proc =  (int(*)(void)) sasl_getsimple;
   sasl_callback[2].context = session; 
   sasl_callback[3].id = SASL_CB_PASS;
-  sasl_callback[3].proc =  sasl_getsecret;
+  sasl_callback[3].proc =  (int(*)(void)) sasl_getsecret;
   sasl_callback[3].context = session;
   sasl_callback[4].id = SASL_CB_LIST_END;
   sasl_callback[4].proc =  NULL;
@@ -2591,6 +2591,8 @@ mailimap * mailimap_new(size_t imap_progr_rate,
   f->imap_msg_att_handler = NULL;
   f->imap_msg_att_handler_context = NULL;
   
+	f->imap_timeout = 0;
+
   return f;
   
  free_stream_buffer:
@@ -2625,6 +2627,18 @@ void mailimap_free(mailimap * session)
     mailimap_connection_info_free(session->imap_connection_info);
 
   free(session);
+}
+
+LIBETPAN_EXPORT
+void mailimap_set_timeout(mailimap * session, time_t timeout)
+{
+	session->imap_timeout = timeout;
+}
+
+LIBETPAN_EXPORT
+time_t mailimap_get_timeout(mailimap * session)
+{
+	return session->imap_timeout;
 }
 
 LIBETPAN_EXPORT

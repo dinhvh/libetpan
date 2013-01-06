@@ -88,6 +88,8 @@ struct newsnntp
   MMAPString * nntp_response_buffer;
 
   char * nntp_response;
+
+  time_t nntp_timeout;
 };
 
 typedef struct newsnntp newsnntp;

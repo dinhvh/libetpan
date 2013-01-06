@@ -166,6 +166,7 @@ mailstream_low * mailstream_low_new(void * data,
   s->driver = driver;
   s->privacy = 1;
 	s->identifier = NULL;
+	s->timeout = 0;
   
   return s;
 }
@@ -292,3 +293,15 @@ const char * mailstream_low_get_identifier(mailstream_low * s)
 {
 	return s->identifier;
 }
+
+void mailstream_low_set_timeout(mailstream_low * s,
+  time_t timeout)
+{
+	s->timeout = timeout;
+}
+
+time_t mailstream_low_get_timeout(mailstream_low * s)
+{
+	return s->timeout;
+}
+

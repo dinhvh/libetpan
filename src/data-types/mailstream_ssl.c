@@ -208,7 +208,7 @@ static int openssl_init_done = 0;
 
   static void mailstream_openssl_reentrant_setup(void)
   {
-		unsigned int i;
+		int i;
 	
     s_mutex_buf = (pthread_mutex_t *) malloc(CRYPTO_num_locks() * sizeof(* s_mutex_buf));
     if(s_mutex_buf == NULL)
@@ -299,7 +299,7 @@ static inline int mailstream_prepare_fd(int fd)
 }
 #endif
 
-static int wait_SSL_connect(int s, int want_read)
+static int wait_SSL_connect(int s, int want_read, time_t timeout_seconds)
 {
   fd_set fds;
   struct timeval timeout;
@@ -307,7 +307,13 @@ static int wait_SSL_connect(int s, int want_read)
   
   FD_ZERO(&fds);
   FD_SET(s, &fds);
-  timeout = mailstream_network_delay;
+  if (timeout_seconds == 0) {
+    timeout = mailstream_network_delay;
+  }
+  else {
+		timeout.tv_sec = timeout_seconds;
+    timeout.tv_usec = 0;
+  }
   /* TODO: how to cancel this ? */
   if (want_read)
     r = select(s + 1, &fds, NULL, NULL, &timeout);
@@ -377,7 +383,9 @@ static int mailstream_openssl_client_cert_cb(SSL *ssl, X509 **x509, EVP_PKEY **p
 		return 0;
 }
 
-static struct mailstream_ssl_data * ssl_data_new_full(int fd, const SSL_METHOD * method, void (* callback)(struct mailstream_ssl_context * ssl_context, void * cb_data), void * cb_data)
+static struct mailstream_ssl_data * ssl_data_new_full(int fd, time_t timeout,
+	SSL_METHOD * method, void (* callback)(struct mailstream_ssl_context * ssl_context, void * cb_data),
+	void * cb_data)
 {
   struct mailstream_ssl_data * ssl_data;
   SSL * ssl_conn;
@@ -411,14 +419,14 @@ again:
 
   switch(SSL_get_error(ssl_conn, r)) {
   	case SSL_ERROR_WANT_READ:
-          r = wait_SSL_connect(fd, 1);
+          r = wait_SSL_connect(fd, 1, timeout);
           if (r < 0)
             goto free_ssl_conn;
 	  else
 	    goto again;
 	break;
 	case SSL_ERROR_WANT_WRITE:
-          r = wait_SSL_connect(fd, 0);
+          r = wait_SSL_connect(fd, 0, timeout);
           if (r < 0)
             goto free_ssl_conn;
 	  else
@@ -459,14 +467,16 @@ again:
   return NULL;
 }
 
-static struct mailstream_ssl_data * ssl_data_new(int fd, void (* callback)(struct mailstream_ssl_context * ssl_context, void * cb_data), void * cb_data)
+static struct mailstream_ssl_data * ssl_data_new(int fd, time_t timeout,
+	void (* callback)(struct mailstream_ssl_context * ssl_context, void * cb_data), void * cb_data)
 {
-  return ssl_data_new_full(fd, SSLv23_client_method(), callback, cb_data);
+  return ssl_data_new_full(fd, timeout, SSLv23_client_method(), callback, cb_data);
 }
 
-static struct mailstream_ssl_data * tls_data_new(int fd, void (* callback)(struct mailstream_ssl_context * ssl_context, void * cb_data), void * cb_data)
+static struct mailstream_ssl_data * tls_data_new(int fd, time_t timeout,
+  void (* callback)(struct mailstream_ssl_context * ssl_context, void * cb_data), void * cb_data)
 {
-  return ssl_data_new_full(fd, TLSv1_client_method(), callback, cb_data);
+  return ssl_data_new_full(fd, timeout, TLSv1_client_method(), callback, cb_data);
 }
 
 #else
@@ -497,7 +507,8 @@ static int mailstream_gnutls_client_cert_cb(gnutls_session session,
 	return 0;
 }
 
-static struct mailstream_ssl_data * ssl_data_new(int fd, void (* callback)(struct mailstream_ssl_context * ssl_context, void * cb_data), void * cb_data)
+static struct mailstream_ssl_data * ssl_data_new(int fd, time_t timeout,
+  void (* callback)(struct mailstream_ssl_context * ssl_context, void * cb_data), void * cb_data)
 {
   struct mailstream_ssl_data * ssl_data;
   gnutls_session session;
@@ -535,6 +546,14 @@ static struct mailstream_ssl_data * ssl_data_new(int fd, void (* callback)(struc
   /* lower limits on server key length restriction */
   gnutls_dh_set_prime_bits(session, 512);
   
+  if (timeout == 0) {
+		timeout_value = mailstream_network_delay.tv_sec * 1000 + timeout.tv_usec / 1000;
+  }
+  else {
+		timeout_value = timeout;
+  }
+	gnutls_handshake_set_timeout(session, timeout_value);
+
   do {
     r = gnutls_handshake(session);
   } while (r == GNUTLS_E_AGAIN || r == GNUTLS_E_INTERRUPTED);
@@ -574,9 +593,10 @@ static struct mailstream_ssl_data * ssl_data_new(int fd, void (* callback)(struc
  err:
   return NULL;
 }
-static struct mailstream_ssl_data * tls_data_new(int fd, void (* callback)(struct mailstream_ssl_context * ssl_context, void * cb_data), void * cb_data)
+static struct mailstream_ssl_data * tls_data_new(int fd, time_t timeout,
+  void (* callback)(struct mailstream_ssl_context * ssl_context, void * cb_data), void * cb_data)
 {
-  return ssl_data_new(fd, callback, cb_data);
+  return ssl_data_new(fd, timeout, callback, cb_data);
 }
 #endif
 
@@ -623,16 +643,17 @@ static void  ssl_data_close(struct mailstream_ssl_data * ssl_data)
 
 #endif
 
-static mailstream_low * mailstream_low_ssl_open_full(int fd, int starttls, void (* callback)(struct mailstream_ssl_context * ssl_context, void * cb_data), void * cb_data)
+static mailstream_low * mailstream_low_ssl_open_full(int fd, int starttls, time_t timeout,
+  void (* callback)(struct mailstream_ssl_context * ssl_context, void * cb_data), void * cb_data)
 {
 #ifdef USE_SSL
   mailstream_low * s;
   struct mailstream_ssl_data * ssl_data;
 
   if (starttls)
-    ssl_data = tls_data_new(fd, callback, cb_data);
+    ssl_data = tls_data_new(fd, timeout, callback, cb_data);
   else
-    ssl_data = ssl_data_new(fd, callback, cb_data);
+    ssl_data = ssl_data_new(fd, timeout, callback, cb_data);
 
   if (ssl_data == NULL)
     goto err;
@@ -640,6 +661,7 @@ static mailstream_low * mailstream_low_ssl_open_full(int fd, int starttls, void 
   s = mailstream_low_new(ssl_data, mailstream_ssl_driver);
   if (s == NULL)
     goto free_ssl_data;
+	mailstream_low_set_timeout(s, timeout);
 
   return s;
 
@@ -654,12 +676,22 @@ static mailstream_low * mailstream_low_ssl_open_full(int fd, int starttls, void 
 
 mailstream_low * mailstream_low_ssl_open(int fd)
 {
-  return mailstream_low_ssl_open_full(fd, 0, NULL, NULL);
+	return mailstream_low_ssl_open_timeout(fd, 0);
 }
 
 mailstream_low * mailstream_low_tls_open(int fd)
 {
-  return mailstream_low_ssl_open_full(fd, 1, NULL, NULL);
+	return mailstream_low_tls_open_timeout(fd, 0);
+}
+
+mailstream_low * mailstream_low_ssl_open_timeout(int fd, time_t timeout)
+{
+  return mailstream_low_ssl_open_full(fd, 0, timeout, NULL, NULL);
+}
+
+mailstream_low * mailstream_low_tls_open_timeout(int fd, time_t timeout)
+{
+  return mailstream_low_ssl_open_full(fd, 1, timeout, NULL, NULL);
 }
 
 #ifdef USE_SSL
@@ -707,7 +739,13 @@ static int wait_read(mailstream_low * s)
 #endif
   
   ssl_data = (struct mailstream_ssl_data *) s->data;
-  timeout = mailstream_network_delay;
+  if (s->timeout == 0) {
+    timeout = mailstream_network_delay;
+  }
+  else {
+		timeout.tv_sec = s->timeout;
+    timeout.tv_usec = 0;
+  }
   
 #ifdef USE_GNUTLS
   if (gnutls_record_check_pending(ssl_data->session) != 0)
@@ -849,7 +887,13 @@ static int wait_write(mailstream_low * s)
   if (mailstream_cancel_cancelled(ssl_data->cancel))
     return -1;
  
-  timeout = mailstream_network_delay;
+  if (s->timeout == 0) {
+    timeout = mailstream_network_delay;
+  }
+  else {
+		timeout.tv_sec = s->timeout;
+    timeout.tv_usec = 0;
+  }
   
   FD_ZERO(&fds_read);
   fd = mailstream_cancel_get_fd(ssl_data->cancel);
@@ -964,17 +1008,28 @@ static ssize_t mailstream_low_ssl_write(mailstream_low * s,
 
 mailstream * mailstream_ssl_open(int fd)
 {
-  return mailstream_ssl_open_with_callback(fd, NULL, NULL);
+  return mailstream_ssl_open_timeout(fd, 0);
+}
+
+mailstream * mailstream_ssl_open_timeout(int fd, time_t timeout)
+{
+  return mailstream_ssl_open_with_callback_timeout(fd, timeout, NULL, NULL);
 }
 
 mailstream * mailstream_ssl_open_with_callback(int fd,
+    void (* callback)(struct mailstream_ssl_context * ssl_context, void * data), void * data)
+{
+	return mailstream_ssl_open_with_callback_timeout(fd, 0, callback, data);
+}
+
+mailstream * mailstream_ssl_open_with_callback_timeout(int fd, time_t timeout,
     void (* callback)(struct mailstream_ssl_context * ssl_context, void * data), void * data)
 {
 #ifdef USE_SSL
   mailstream_low * low;
   mailstream * s;
 
-  low = mailstream_low_ssl_open_with_callback(fd, callback, data);
+  low = mailstream_low_ssl_open_with_callback_timeout(fd, timeout, callback, data);
   if (low == NULL)
     goto err;
 
@@ -1072,13 +1127,25 @@ static void mailstream_low_ssl_cancel(mailstream_low * s)
 mailstream_low * mailstream_low_ssl_open_with_callback(int fd,
     void (* callback)(struct mailstream_ssl_context * ssl_context, void * data), void * data)
 {
-  return mailstream_low_ssl_open_full(fd, 0, callback, data);
+	return mailstream_low_ssl_open_with_callback_timeout(fd, 0, callback, data);
+}
+
+mailstream_low * mailstream_low_ssl_open_with_callback_timeout(int fd, time_t timeout,
+    void (* callback)(struct mailstream_ssl_context * ssl_context, void * data), void * data)
+{
+  return mailstream_low_ssl_open_full(fd, 0, timeout, callback, data);
 }
 
 mailstream_low * mailstream_low_tls_open_with_callback(int fd,
     void (* callback)(struct mailstream_ssl_context * ssl_context, void * data), void * data)
 {
-  return mailstream_low_ssl_open_full(fd, 1, callback, data);
+  return mailstream_low_tls_open_with_callback_timeout(fd, 0, callback, data);
+}
+
+mailstream_low * mailstream_low_tls_open_with_callback_timeout(int fd, time_t timeout,
+    void (* callback)(struct mailstream_ssl_context * ssl_context, void * data), void * data)
+{
+  return mailstream_low_ssl_open_full(fd, 1, timeout, callback, data);
 }
 
 int mailstream_ssl_set_client_certicate(struct mailstream_ssl_context * ssl_context,

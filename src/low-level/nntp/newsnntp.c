@@ -105,6 +105,8 @@ newsnntp * newsnntp_new(size_t progr_rate, progress_function * progr_fun)
   if (f->nntp_response_buffer == NULL)
     goto free_stream_buffer;
 
+	f->nntp_timeout = 0;
+
   return f;
 
  free_stream_buffer:
@@ -127,15 +129,15 @@ void newsnntp_free(newsnntp * f)
 }
 
 
+void newsnntp_set_timeout(newsnntp * f, time_t timeout)
+{
+	f->nntp_timeout = timeout;
+}
 
-
-
-
-
-
-
-
-
+time_t newsnntp_get_timeout(newsnntp * f)
+{
+	return f->nntp_timeout;
+}
 
 
 

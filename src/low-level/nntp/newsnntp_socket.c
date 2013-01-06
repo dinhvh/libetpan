@@ -76,17 +76,18 @@ int newsnntp_socket_connect(newsnntp * f, const char * server, uint16_t port)
 
   /* Connection */
 
-  s = mail_tcp_connect(server, port);
+  s = mail_tcp_connect_timeout(server, port, f->nntp_timeout);
   if (s == -1)
     return NEWSNNTP_ERROR_CONNECTION_REFUSED;
 
-  stream = mailstream_socket_open(s);
+  stream = mailstream_socket_open_timeout(s, f->nntp_timeout);
   if (stream == NULL) {
 #ifdef WIN32
     closesocket(s);
 #else
     close(s);
 #endif
+		
     return NEWSNNTP_ERROR_MEMORY;
   }
 
@@ -97,7 +98,7 @@ static int newsnntp_cfsocket_connect(newsnntp * f, const char * server, uint16_t
 {
   mailstream * stream;
   
-  stream = mailstream_cfstream_open(server, port);
+  stream = mailstream_cfstream_open_timeout(server, port, f->nntp_timeout);
   if (stream == NULL) {
     return NEWSNNTP_ERROR_STREAM;
   }

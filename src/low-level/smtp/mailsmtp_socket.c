@@ -79,7 +79,7 @@ int mailsmtp_socket_connect(mailsmtp * session,
 
   /* Connection */
 
-  s = mail_tcp_connect(server, port);
+  s = mail_tcp_connect_timeout(server, port, session->smtp_timeout);
   if (s == -1)
     return MAILSMTP_ERROR_CONNECTION_REFUSED;
 
@@ -125,7 +125,7 @@ int mailsmtp_socket_starttls_with_callback(mailsmtp * session,
   if (fd == -1)
     return MAILSMTP_ERROR_STREAM;
 
-  new_low = mailstream_low_tls_open_with_callback(fd, callback, data);
+  new_low = mailstream_low_tls_open_with_callback_timeout(fd, session->smtp_timeout, callback, data);
   if (new_low == NULL)
     return MAILSMTP_ERROR_SSL;
 
@@ -140,7 +140,7 @@ static int mailsmtp_cfsocket_connect(mailsmtp * session,
 {
   mailstream * stream;
   
-  stream = mailstream_cfstream_open(server, port);
+  stream = mailstream_cfstream_open_timeout(server, port, session->smtp_timeout);
   if (stream == NULL) {
     return MAILSMTP_ERROR_CONNECTION_REFUSED;
   }
