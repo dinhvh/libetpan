@@ -5456,6 +5456,7 @@ int mailimf_msg_id_parse(const char * message, size_t length,
     // ok
   }
   else {
+    free(msg_id);
     res = r;
     goto err;
   }
