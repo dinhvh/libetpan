@@ -136,6 +136,8 @@ mailsmtp * mailsmtp_new(size_t progr_rate,
   session->smtp_progress_fun = NULL;
   session->smtp_progress_context = NULL;
 
+	session->smtp_timeout = 0;
+
   return session;
 
  free_line_buffer:

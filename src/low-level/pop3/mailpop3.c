@@ -225,6 +225,8 @@ mailpop3 * mailpop3_new(size_t progr_rate, progress_function * progr_fun)
 #ifdef USE_SASL
   f->pop3_sasl.sasl_conn = NULL;
 #endif
+
+	f->pop3_timeout = 0;
   
   return f;
 
