@@ -95,6 +95,8 @@ struct mailpop3
   } pop3_sasl;
 
   time_t pop3_timeout;
+  mailprogress_function * pop3_progress_fun;
+  void * pop3_progress_context;
 };
 
 typedef struct mailpop3 mailpop3;

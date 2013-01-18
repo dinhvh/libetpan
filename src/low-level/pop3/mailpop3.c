@@ -227,6 +227,8 @@ mailpop3 * mailpop3_new(size_t progr_rate, progress_function * progr_fun)
 #endif
 
 	f->pop3_timeout = 0;
+	f->pop3_progress_fun = NULL;
+	f->pop3_progress_context = NULL;
   
   return f;
 
@@ -1285,7 +1287,7 @@ static char * read_multiline(mailpop3 * f, size_t size,
 {
   return mailstream_read_multiline(f->pop3_stream, size,
 				   f->pop3_stream_buffer, multiline_buffer,
-				   f->pop3_progr_rate, f->pop3_progr_fun);
+				   f->pop3_progr_rate, f->pop3_progr_fun, f->pop3_progress_fun, f->pop3_progress_context);
 }
 
 static int send_command(mailpop3 * f, char * command)
@@ -1581,3 +1583,10 @@ time_t mailpop3_get_timeout(mailpop3 * f)
 {
 	return f->pop3_timeout;
 }
+
+void mailpop3_set_progress_callback(mailpop3 * f, mailprogress_function * progr_fun, void * context)
+{
+	f->pop3_progress_fun = progr_fun;
+	f->pop3_progress_context = context;
+}
+

@@ -1834,7 +1834,7 @@ static char * read_multiline(newsnntp * f, size_t size,
 {
   return mailstream_read_multiline(f->nntp_stream, size,
 				   f->nntp_stream_buffer, multiline_buffer,
-				   f->nntp_progr_rate, f->nntp_progr_fun);
+				   f->nntp_progr_rate, f->nntp_progr_fun, NULL, NULL);
 }
 
 

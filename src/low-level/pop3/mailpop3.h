@@ -64,6 +64,7 @@ LIBETPAN_EXPORT
 time_t mailpop3_get_timeout(mailpop3 * f);
 
 LIBETPAN_EXPORT
+void mailpop3_set_progress_callback(mailpop3 * f, mailprogress_function * progr_fun, void * context);
 
 LIBETPAN_EXPORT
 int mailpop3_connect(mailpop3 * f, mailstream * s);
