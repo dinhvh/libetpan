@@ -4,9 +4,11 @@
 *.la
 .deps
 .libs
+.DS_Store
 
-/build-mac/libetpan.xcodeproj/project.xcworkspace/
-/build-mac/libetpan.xcodeproj/xcuserdata/
+project.xcworkspace/
+xcuserdata/
+
 /build-mac/build
 /build-mac/include
 /build-mac/dependencies/build/
