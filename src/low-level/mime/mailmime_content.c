@@ -1254,7 +1254,6 @@ static int mailmime_parse_with_default(const char * message, size_t length,
   int res;
   struct mailmime_data * preamble;
   struct mailmime_data * epilogue;
-  int is_encoded;
 
   /*
     note that when this function is called, content type is always detached,
