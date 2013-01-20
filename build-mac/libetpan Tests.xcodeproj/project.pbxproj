@@ -662,7 +662,10 @@
 				367860F616AB38D3002F2B96 /* External Frameworks and Libraries */,
 				367860BC16AB35BC002F2B96 /* Products */,
 			);
+			indentWidth = 2;
 			sourceTree = "<group>";
+			tabWidth = 2;
+			usesTabs = 0;
 		};
 		367860BC16AB35BC002F2B96 /* Products */ = {
 			isa = PBXGroup;
