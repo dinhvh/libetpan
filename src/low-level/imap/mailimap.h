@@ -55,6 +55,7 @@ extern "C" {
 #include <libetpan/quota.h>
 #include <libetpan/namespace.h>
 #include <libetpan/mailimap_id.h>
+#include <libetpan/enable.h>
 #include <libetpan/xlist.h>
 #include <libetpan/xgmlabels.h>
 #include <libetpan/xgmmsgid.h>
