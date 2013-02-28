@@ -183,6 +183,21 @@ int mailimap_capability_data_parse(mailstream * fd, MMAPString * buffer,
 	size_t progr_rate,
 	progress_function * progr_fun);
 
+int mailimap_status_att_parse(mailstream * fd, MMAPString * buffer,
+  size_t * indx, int * result);
+
+int mailimap_nz_number_alloc_parse(mailstream * fd, MMAPString * buffer,
+			       size_t * indx,
+			       uint32_t ** result,
+			       size_t progr_rate,
+             progress_function * progr_fun);
+
+int mailimap_mod_sequence_value_parse(mailstream * fd, MMAPString * buffer,
+  size_t * indx, uint64_t * result);
+
+int mailimap_set_parse(mailstream * fd,
+  MMAPString * buffer, size_t * indx, struct mailimap_set ** result);
+
 #ifdef __cplusplus
 }
 #endif

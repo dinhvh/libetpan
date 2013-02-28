@@ -1497,16 +1497,20 @@ mailimap_header_list_free(struct mailimap_header_list * header_list);
 /* this is the type of mailbox STATUS that can be returned */
 
 enum {
-  MAILIMAP_STATUS_ATT_MESSAGES,    /* when requesting the number of
-                                      messages */
-  MAILIMAP_STATUS_ATT_RECENT,      /* when requesting the number of
-                                      recent messages */
-  MAILIMAP_STATUS_ATT_UIDNEXT,     /* when requesting the next unique
-                                      identifier */
-  MAILIMAP_STATUS_ATT_UIDVALIDITY, /* when requesting the validity of
-                                      message unique identifiers*/
-  MAILIMAP_STATUS_ATT_UNSEEN       /* when requesting the number of
-                                      unseen messages */
+  MAILIMAP_STATUS_ATT_MESSAGES,      /* when requesting the number of
+                                        messages */
+  MAILIMAP_STATUS_ATT_RECENT,        /* when requesting the number of
+                                        recent messages */
+  MAILIMAP_STATUS_ATT_UIDNEXT,       /* when requesting the next unique
+                                        identifier */
+  MAILIMAP_STATUS_ATT_UIDVALIDITY,   /* when requesting the validity of
+                                        message unique identifiers*/
+  MAILIMAP_STATUS_ATT_UNSEEN,        /* when requesting the number of
+                                        unseen messages */
+  MAILIMAP_STATUS_ATT_HIGHESTMODSEQ, /* when requesting the highest
+                                        mod-sequence value of all messages in
+                                        the mailbox */
+  MAILIMAP_STATUS_ATT_EXTENSION
 };
 
 /*
@@ -1515,19 +1519,23 @@ enum {
 
   - att is the type of mailbox STATUS, the value can be 
     MAILIMAP_STATUS_ATT_MESSAGES, MAILIMAP_STATUS_ATT_RECENT,
-    MAILIMAP_STATUS_ATT_UIDNEXT, MAILIMAP_STATUS_ATT_UIDVALIDITY or
-    MAILIMAP_STATUS_ATT_UNSEEN
+    MAILIMAP_STATUS_ATT_UIDNEXT, MAILIMAP_STATUS_ATT_UIDVALIDITY,
+    MAILIMAP_STATUS_ATT_UNSEEN or MAILIMAP_STATUS_ATT_EXTENSION
 
   - value is the value of the given information
+  
+  - st_ext_data is the data of the extension.
 */
 
 struct mailimap_status_info {
   int st_att;
   uint32_t st_value;
+  struct mailimap_extension_data * st_ext_data; /* can be NULL */
 };
 
 struct mailimap_status_info *
-mailimap_status_info_new(int st_att, uint32_t st_value);
+  mailimap_status_info_new(int st_att, uint32_t st_value,
+  struct mailimap_extension_data * st_ext_data);
 
 void mailimap_status_info_free(struct mailimap_status_info * info);
 
@@ -2847,8 +2855,9 @@ enum {
   MAILIMAP_SEARCH_KEY_SET,        /* messages whose number (or unique
                                      identifiers in case of UID SEARCH) are
                                      in the given range */
-  MAILIMAP_SEARCH_KEY_MULTIPLE    /* the boolean operator between the
+  MAILIMAP_SEARCH_KEY_MULTIPLE,   /* the boolean operator between the
                                      conditions is AND */
+  MAILIMAP_SEARCH_KEY_MODSEQ      /* mod sequence */
 };
 
 /*
@@ -2918,6 +2927,12 @@ enum {
   - multiple is a set of message when type is MAILIMAP_SEARCH_KEY_MULTIPLE
 */
 
+enum {
+	MAILIMAP_SEARCH_KEY_MODSEQ_ENTRY_TYPE_REQ_PRIV,
+	MAILIMAP_SEARCH_KEY_MODSEQ_ENTRY_TYPE_REQ_SHARED,
+	MAILIMAP_SEARCH_KEY_MODSEQ_ENTRY_TYPE_REQ_ALL,
+};
+
 struct mailimap_search_key {
   int sk_type;
   union {
@@ -2950,6 +2965,11 @@ struct mailimap_search_key {
     struct mailimap_set * sk_uid;
     struct mailimap_set * sk_set;
     clist * sk_multiple; /* list of (struct mailimap_search_key *) */
+    struct {
+      struct mailimap_flag * sk_entry_name;
+      int sk_entry_type_req;
+      uint64_t sk_modseq_valzer;
+    } sk_modseq;
   } sk_data;
 };
 

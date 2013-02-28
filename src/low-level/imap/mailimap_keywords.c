@@ -177,11 +177,12 @@ static int mailimap_get_token_value_size(mailstream * fd, MMAPString * buffer,
 
 
 static struct mailimap_token_value status_att_tab[] = {
-  {MAILIMAP_STATUS_ATT_MESSAGES,    "MESSAGES"},
-  {MAILIMAP_STATUS_ATT_RECENT,      "RECENT"},
-  {MAILIMAP_STATUS_ATT_UIDNEXT,     "UIDNEXT"},
-  {MAILIMAP_STATUS_ATT_UIDVALIDITY, "UIDVALIDITY"},
-  {MAILIMAP_STATUS_ATT_UNSEEN,      "UNSEEN"}
+  {MAILIMAP_STATUS_ATT_MESSAGES,      "MESSAGES"},
+  {MAILIMAP_STATUS_ATT_RECENT,        "RECENT"},
+  {MAILIMAP_STATUS_ATT_UIDNEXT,       "UIDNEXT"},
+  {MAILIMAP_STATUS_ATT_UIDVALIDITY,   "UIDVALIDITY"},
+  {MAILIMAP_STATUS_ATT_UNSEEN,        "UNSEEN"},
+  {MAILIMAP_STATUS_ATT_HIGHESTMODSEQ, "HIGHESTMODSEQ"},
 };
 
 int mailimap_status_att_get_token_value(mailstream * fd, MMAPString * buffer,

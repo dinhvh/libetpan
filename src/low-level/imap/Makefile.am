@@ -44,7 +44,7 @@ etpaninclude_HEADERS = \
 	namespace.h namespace_parser.h namespace_sender.h namespace_types.h \
 	xlist.h xgmlabels.h xgmmsgid.h \
 	mailimap_id.h mailimap_id_types.h \
-	enable.h
+	enable.h condstore.h condstore_types.h
 
 AM_CPPFLAGS = -I$(top_builddir)/include \
 	-I$(top_srcdir)/src/data-types
@@ -90,5 +90,6 @@ libimap_la_SOURCES = \
 	mailimap_id_types.h mailimap_id_types.c \
 	mailimap_id_sender.h mailimap_id_sender.c \
 	mailimap_id_parser.h mailimap_id_parser.c \
-	enable.h enable.c
+	enable.h enable.c \
+	condstore.h condstore.c condstore_types.h condstore_types.c
 

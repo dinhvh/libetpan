@@ -42,6 +42,8 @@
 #include "mailimap_sender.h"
 #include "mailimap_extension.h"
 #include "mail.h"
+#include "condstore.h"
+#include "condstore_private.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -1239,6 +1241,7 @@ int mailimap_delete(mailimap * session, const char * mb)
   }
 }
 
+#if 0
 LIBETPAN_EXPORT
 int mailimap_examine(mailimap * session, const char * mb)
 {
@@ -1292,12 +1295,21 @@ int mailimap_examine(mailimap * session, const char * mb)
     return MAILIMAP_ERROR_EXAMINE;
   }
 }
+#else
+LIBETPAN_EXPORT
+int mailimap_examine(mailimap * session, const char * mb)
+{
+	uint64_t dummy;
+	return mailimap_examine_condstore_optional(session, mb, 0, &dummy);
+}
+#endif
 
 LIBETPAN_EXPORT
 int
 mailimap_fetch(mailimap * session, struct mailimap_set * set,
 	       struct mailimap_fetch_type * fetch_type, clist ** result)
 {
+#if 0
   struct mailimap_response * response;
   int r;
   int error_code;
@@ -1347,6 +1359,9 @@ mailimap_fetch(mailimap * session, struct mailimap_set * set,
     mailimap_fetch_list_free(* result);
     return MAILIMAP_ERROR_FETCH;
   }
+#else
+  return mailimap_fetch_changedsince(session, set, fetch_type, 0, result);
+#endif
 }
 
 LIBETPAN_EXPORT
@@ -1362,6 +1377,7 @@ mailimap_uid_fetch(mailimap * session,
 		   struct mailimap_set * set,
 		   struct mailimap_fetch_type * fetch_type, clist ** result)
 {
+#if 0
   struct mailimap_response * response;
   int r;
   int error_code;
@@ -1412,6 +1428,9 @@ mailimap_uid_fetch(mailimap * session,
     mailimap_fetch_list_free(* result);
     return MAILIMAP_ERROR_UID_FETCH;
   }
+#else
+  return mailimap_uid_fetch_changedsince(session, set, fetch_type, 0, result);
+#endif
 }
 
 LIBETPAN_EXPORT
@@ -1948,6 +1967,7 @@ int
 mailimap_search(mailimap * session, const char * charset,
     struct mailimap_search_key * key, clist ** result)
 {
+#if 0
   struct mailimap_response * response;
   int r;
   int error_code;
@@ -1991,6 +2011,9 @@ mailimap_search(mailimap * session, const char * charset,
   default:
     return MAILIMAP_ERROR_SEARCH;
   }
+#else
+  return mailimap_search_modseq(session, charset, key, result, NULL);
+#endif
 }
 
 LIBETPAN_EXPORT
@@ -1998,6 +2021,7 @@ int
 mailimap_uid_search(mailimap * session, const char * charset,
     struct mailimap_search_key * key, clist ** result)
 {
+#if 0
   struct mailimap_response * response;
   int r;
   int error_code;
@@ -2041,6 +2065,9 @@ mailimap_uid_search(mailimap * session, const char * charset,
   default:
     return MAILIMAP_ERROR_UID_SEARCH;
   }
+#else
+  return mailimap_uid_search_modseq(session, charset, key, result, NULL);
+#endif
 }
 
 LIBETPAN_EXPORT
@@ -2050,6 +2077,7 @@ void mailimap_search_result_free(clist * search_result)
   clist_free(search_result);
 }
 
+#if 0
 LIBETPAN_EXPORT
 int
 mailimap_select(mailimap * session, const char * mb)
@@ -2104,6 +2132,15 @@ mailimap_select(mailimap * session, const char * mb)
     return MAILIMAP_ERROR_SELECT;
   }
 }
+#else
+LIBETPAN_EXPORT
+int
+mailimap_select(mailimap * session, const char * mb)
+{
+	uint64_t dummy;
+	return mailimap_select_condstore_optional(session, mb, 0, &dummy);
+}
+#endif
 
 LIBETPAN_EXPORT
 int
@@ -2164,6 +2201,7 @@ mailimap_store(mailimap * session,
 	       struct mailimap_set * set,
 	       struct mailimap_store_att_flags * store_att_flags)
 {
+#if 0
   struct mailimap_response * response;
   int r;
   int error_code;
@@ -2204,6 +2242,10 @@ mailimap_store(mailimap * session,
   default:
     return MAILIMAP_ERROR_STORE;
   }
+#else
+  return mailimap_store_unchangedsince_optional(session,
+  	set, 0, 0, store_att_flags);
+#endif
 }
 
 LIBETPAN_EXPORT
@@ -2212,6 +2254,7 @@ mailimap_uid_store(mailimap * session,
 		   struct mailimap_set * set,
 		   struct mailimap_store_att_flags * store_att_flags)
 {
+#if 0
   struct mailimap_response * response;
   int r;
   int error_code;
@@ -2252,6 +2295,10 @@ mailimap_uid_store(mailimap * session,
   default:
     return MAILIMAP_ERROR_UID_STORE;
   }
+#else
+  return mailimap_uid_store_unchangedsince_optional(session,
+  	set, 0, 0, store_att_flags);
+#endif
 }
 
 LIBETPAN_EXPORT

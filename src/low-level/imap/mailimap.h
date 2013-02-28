@@ -59,6 +59,7 @@ extern "C" {
 #include <libetpan/xlist.h>
 #include <libetpan/xgmlabels.h>
 #include <libetpan/xgmmsgid.h>
+#include <libetpan/condstore.h>
 
 /*
   mailimap_connect()
