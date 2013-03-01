@@ -1636,7 +1636,7 @@
 			buildPhases = (
 			);
 			buildToolPath = /bin/sh;
-			buildWorkingDirectory = "/Users/hoa/LibEtPan/libetpan/build-mac";
+			buildWorkingDirectory = "$(SRCROOT)";
 			dependencies = (
 			);
 			name = "libetpan-prepare";
@@ -1650,7 +1650,7 @@
 			buildPhases = (
 			);
 			buildToolPath = /bin/sh;
-			buildWorkingDirectory = "/Users/hoa/LibEtPan/libetpan/build-mac";
+			buildWorkingDirectory = "$(SRCROOT)";
 			dependencies = (
 			);
 			name = "libetpan-prepare-ios";
