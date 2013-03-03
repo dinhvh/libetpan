@@ -3891,7 +3891,7 @@ mailimap_capability_parse(mailstream * fd, MMAPString * buffer,
  SP capability *(SP capability)
 */
 
-static int mailimap_capability_list_parse(mailstream * fd,
+int mailimap_capability_list_parse(mailstream * fd,
 					  MMAPString * buffer,
 					  size_t * indx,
 					  clist ** result,
@@ -11047,8 +11047,8 @@ int mailimap_set_parse(mailstream * fd,
   
   cur_token = * indx;
   
-  r = mailimap_struct_list_parse(fd, buffer, indx, &item_list,
-    ' ', (mailimap_struct_parser *) mailimap_set_item_parse, (mailimap_struct_destructor *)mailimap_set_item_free,
+  r = mailimap_struct_list_parse(fd, buffer, &cur_token, &item_list,
+    ',', (mailimap_struct_parser *) mailimap_set_item_parse, (mailimap_struct_destructor *)mailimap_set_item_free,
     0, NULL);
   if (r != MAILIMAP_NO_ERROR)
     return r;

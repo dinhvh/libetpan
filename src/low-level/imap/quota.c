@@ -164,9 +164,6 @@ int mailimap_quota_getquotaroot(mailimap * session,
 void
 mailimap_quota_free(struct mailimap_extension_data * ext_data)
 {
-  if (ext_data == NULL)
-    return;
-
   switch (ext_data->ext_type) {
     case MAILIMAP_QUOTA_TYPE_QUOTA_DATA:
       mailimap_quota_quota_data_free(ext_data->ext_data);

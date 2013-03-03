@@ -190,6 +190,8 @@ int mailimap_cparenth_send(mailstream * fd);
 
 int mailimap_mod_sequence_value_send(mailstream * fd, uint64_t modseq);
 
+int mailimap_number_send(mailstream * fd, uint32_t number);
+
 #ifdef __cplusplus
 }
 #endif

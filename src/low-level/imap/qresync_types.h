@@ -29,29 +29,27 @@
  * SUCH DAMAGE.
  */
 
-#ifndef CONDSTORE_PRIVATE_H
+#ifndef QRESYNC_TYPES_H
 
-#define CONDSTORE_PRIVATE_H
+#define QRESYNC_TYPES_H
 
-enum {
-  MAILIMAP_CONDSTORE_TYPE_FETCH_DATA,
-  MAILIMAP_CONDSTORE_TYPE_RESP_TEXT_CODE,
-  MAILIMAP_CONDSTORE_TYPE_SEARCH_DATA,
-  MAILIMAP_CONDSTORE_TYPE_STATUS_INFO
+struct mailimap_qresync_vanished {
+  int qr_earlier;
+  struct mailimap_set * qr_known_uids;
 };
 
-int mailimap_examine_condstore_optional(mailimap * session, const char * mb,
-  int condstore, uint64_t * p_mod_sequence_value);
+enum {
+  MAILIMAP_QRESYNC_RESPTEXTCODE_CLOSED
+};
 
-int mailimap_select_condstore_optional(mailimap * session, const char * mb,
-	int condstore, uint64_t * p_mod_sequence_value);
+struct mailimap_qresync_resptextcode {
+  int qr_type;
+};
 
-int mailimap_store_unchangedsince_optional(mailimap * session,
-	struct mailimap_set * set, int use_unchangedsince, uint64_t mod_sequence_valzer,
-  struct mailimap_store_att_flags * store_att_flags);
+struct mailimap_qresync_vanished * mailimap_qresync_vanished_new(int qr_earlier, struct mailimap_set * qr_known_uids);
+void mailimap_qresync_vanished_free(struct mailimap_qresync_vanished * vanished);
 
-int mailimap_uid_store_unchangedsince_optional(mailimap * session,
-	struct mailimap_set * set, int use_unchangedsince, uint64_t mod_sequence_valzer,
-  struct mailimap_store_att_flags * store_att_flags);
+struct mailimap_qresync_resptextcode * mailimap_qresync_resptextcode_new(int qr_type);
+void mailimap_qresync_resptextcode_free(struct mailimap_qresync_resptextcode * resptextcode);
 
 #endif

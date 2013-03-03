@@ -119,9 +119,6 @@ int mailimap_id(mailimap * session, struct mailimap_id_params_list * client_iden
 
 static void mailimap_id_ext_data_free(struct mailimap_extension_data * ext_data)
 {
-  if (ext_data == NULL)
-    return;
-
   if (ext_data->ext_data != NULL) {
     mailimap_id_params_list_free(ext_data->ext_data);
   }

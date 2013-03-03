@@ -51,6 +51,7 @@
 #include "mailimap_id.h"
 #include "enable.h"
 #include "condstore.h"
+#include "qresync.h"
 
 /*
   the list of registered extensions (struct mailimap_extension_api *)
@@ -71,7 +72,8 @@ static struct mailimap_extension_api * internal_extension_list[] = {
   &mailimap_extension_xgmmsgid,
   &mailimap_extension_id,
   &mailimap_extension_enable,
-  &mailimap_extension_condstore
+  &mailimap_extension_condstore,
+  &mailimap_extension_qresync
 };
 
 LIBETPAN_EXPORT

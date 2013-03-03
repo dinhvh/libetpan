@@ -126,8 +126,6 @@ static int
 mailimap_header_list_send(mailstream * fd,
 			  struct mailimap_header_list * header_list);
 
-static int mailimap_number_send(mailstream * fd, uint32_t number);
-
 static int mailimap_password_send(mailstream * fd, const char * pass);
 
 static int mailimap_quoted_char_send(mailstream * fd, char ch);
@@ -1709,7 +1707,7 @@ int mailimap_mailbox_send(mailstream * fd, const char * mb)
                        ; (0 < n < 4,294,967,296)
 */
 
-static int mailimap_number_send(mailstream * fd, uint32_t number)
+int mailimap_number_send(mailstream * fd, uint32_t number)
 {
   int r;
   

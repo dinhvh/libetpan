@@ -131,9 +131,6 @@ mailimap_xgmmsgid_extension_parse(int calling_parser, mailstream * fd,
 static void
 mailimap_xgmmsgid_extension_data_free(struct mailimap_extension_data * ext_data)
 {
-    if (ext_data == NULL)
-        return;
- 
     free(ext_data);
 }
 

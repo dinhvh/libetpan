@@ -1,3 +1,34 @@
+/*
+ * libEtPan! -- a mail stuff library
+ *
+ * Copyright (C) 2001, 2013 - DINH Viet Hoa
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ * 3. Neither the name of the libEtPan! project nor the names of its
+ *    contributors may be used to endorse or promote products derived
+ *    from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHORS AND CONTRIBUTORS ``AS IS'' AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHORS OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+ * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+ * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ */
+
 #include "condstore.h"
 #include "condstore_private.h"
 
@@ -10,6 +41,8 @@
 #include "condstore_types.h"
 #include "mailimap_keywords.h"
 #include "mailimap_parser.h"
+#include "qresync.h"
+#include "qresync_private.h"
 
 /*
    capability          =/ "CONDSTORE"
@@ -117,13 +150,6 @@
 
    attr-flag-keyword   = atom
 */
-
-enum {
-  MAILIMAP_CONDSTORE_TYPE_FETCH_DATA,
-  MAILIMAP_CONDSTORE_TYPE_RESP_TEXT_CODE,
-  MAILIMAP_CONDSTORE_TYPE_SEARCH_DATA,
-  MAILIMAP_CONDSTORE_TYPE_STATUS_INFO
-};
 
 static void
 	mailimap_condstore_extension_data_free(struct mailimap_extension_data * ext_data);
@@ -256,81 +282,8 @@ int mailimap_fetch_changedsince(mailimap * session,
 	struct mailimap_fetch_type * fetch_type, uint64_t mod_sequence_value,
 	clist ** result)
 {
-  struct mailimap_response * response;
-  int r;
-  int error_code;
-
-  if (session->imap_state != MAILIMAP_STATE_SELECTED)
-    return MAILIMAP_ERROR_BAD_STATE;
-
-  r = mailimap_send_current_tag(session);
-  if (r != MAILIMAP_NO_ERROR)
-    return r;
-
-  r = mailimap_fetch_send(session->imap_stream, set, fetch_type);
-  if (r != MAILIMAP_NO_ERROR)
-    return r;
-
-  if (mod_sequence_value != 0) {
-		r = mailimap_space_send(session->imap_stream);
-		if (r != MAILIMAP_NO_ERROR)
-			return r;
-
-		r = mailimap_oparenth_send(session->imap_stream);
-		if (r != MAILIMAP_NO_ERROR)
-			return r;
-
-		r = mailimap_token_send(session->imap_stream, "CHANGEDSINCE");
-		if (r != MAILIMAP_NO_ERROR)
-			return r;
-
-		r = mailimap_space_send(session->imap_stream);
-		if (r != MAILIMAP_NO_ERROR)
-			return r;
-		
-    r = mailimap_mod_sequence_value_send(session->imap_stream, mod_sequence_value);
-		if (r != MAILIMAP_NO_ERROR)
-			return r;
-		
-		r = mailimap_cparenth_send(session->imap_stream);
-		if (r != MAILIMAP_NO_ERROR)
-			return r;
-	}
-	
-  r = mailimap_crlf_send(session->imap_stream);
-  if (r != MAILIMAP_NO_ERROR)
-    return r;
-
-  if (mailstream_flush(session->imap_stream) == -1)
-    return MAILIMAP_ERROR_STREAM;
-
-  if (mailimap_read_line(session) == NULL)
-    return MAILIMAP_ERROR_STREAM;
-
-  r = mailimap_parse_response(session, &response);
-  if (r != MAILIMAP_NO_ERROR)
-    return r;
-
-  * result = session->imap_response_info->rsp_fetch_list;
-  session->imap_response_info->rsp_fetch_list = NULL;
-
-  if (clist_count(* result) == 0) {
-    error_code = response->rsp_resp_done->rsp_data.rsp_tagged->rsp_cond_state->rsp_type;
-  }
-  else {
-    error_code = MAILIMAP_RESP_COND_STATE_OK;
-  }
-
-  mailimap_response_free(response);
-
-  switch (error_code) {
-  case MAILIMAP_RESP_COND_STATE_OK:
-    return MAILIMAP_NO_ERROR;
-
-  default:
-    mailimap_fetch_list_free(* result);
-    return MAILIMAP_ERROR_FETCH;
-  }
+  return mailimap_fetch_qresync_vanished(session, set, fetch_type, mod_sequence_value, 0,
+                                         result, NULL);
 }
 
 int mailimap_uid_fetch_changedsince(mailimap * session,
@@ -338,82 +291,8 @@ int mailimap_uid_fetch_changedsince(mailimap * session,
 	struct mailimap_fetch_type * fetch_type, uint64_t mod_sequence_value,
 	clist ** result)
 {
-  struct mailimap_response * response;
-  int r;
-  int error_code;
-
-  if (session->imap_state != MAILIMAP_STATE_SELECTED)
-    return MAILIMAP_ERROR_BAD_STATE;
-
-  r = mailimap_send_current_tag(session);
-  if (r != MAILIMAP_NO_ERROR)
-    return r;
-
-  r = mailimap_uid_fetch_send(session->imap_stream, set, fetch_type);
-  if (r != MAILIMAP_NO_ERROR)
-    return r;
-
-  if (mod_sequence_value != 0) {
-		r = mailimap_space_send(session->imap_stream);
-		if (r != MAILIMAP_NO_ERROR)
-			return r;
-
-		r = mailimap_oparenth_send(session->imap_stream);
-		if (r != MAILIMAP_NO_ERROR)
-			return r;
-
-		r = mailimap_token_send(session->imap_stream, "CHANGEDSINCE");
-		if (r != MAILIMAP_NO_ERROR)
-			return r;
-
-		r = mailimap_space_send(session->imap_stream);
-		if (r != MAILIMAP_NO_ERROR)
-			return r;
-		
-    r = mailimap_mod_sequence_value_send(session->imap_stream, mod_sequence_value);
-		if (r != MAILIMAP_NO_ERROR)
-			return r;
-		
-		r = mailimap_cparenth_send(session->imap_stream);
-		if (r != MAILIMAP_NO_ERROR)
-			return r;
-	}
-
-  r = mailimap_crlf_send(session->imap_stream);
-  if (r != MAILIMAP_NO_ERROR)
-    return r;
-
-  if (mailstream_flush(session->imap_stream) == -1)
-    return MAILIMAP_ERROR_STREAM;
-
-  if (mailimap_read_line(session) == NULL)
-    return MAILIMAP_ERROR_STREAM;
-
-  r = mailimap_parse_response(session, &response);
-  if (r != MAILIMAP_NO_ERROR) {
-    return r;
-  }
-  
-  * result = session->imap_response_info->rsp_fetch_list;
-  session->imap_response_info->rsp_fetch_list = NULL;
-
-  if (clist_count(* result) == 0) {
-    error_code = response->rsp_resp_done->rsp_data.rsp_tagged->rsp_cond_state->rsp_type;
-  }
-  else {
-    error_code = MAILIMAP_RESP_COND_STATE_OK;
-  }
-  
-  mailimap_response_free(response);
-
-  switch (error_code) {
-  case MAILIMAP_RESP_COND_STATE_OK:
-    return MAILIMAP_NO_ERROR;
-
-  default:
-    mailimap_fetch_list_free(* result);
-    return MAILIMAP_ERROR_UID_FETCH;
-  }
+  return mailimap_uid_fetch_qresync_vanished(session, set, fetch_type, mod_sequence_value, 0,
+                                             result, NULL);
 }
 
 struct mailimap_fetch_att * mailimap_fetch_att_new_modseq(void)
@@ -430,19 +309,6 @@ struct mailimap_fetch_att * mailimap_fetch_att_new_modseq(void)
     free(keyword);
     return NULL;
   }
-  
-  return att;
-}
-
-struct mailimap_msg_att_modseq * mailimap_msg_att_modseq_new(uint64_t mod_sequence_value)
-{
-  struct mailimap_msg_att_modseq * att;
-  
-  att = malloc(sizeof(* att));
-  if (att == NULL)
-    return NULL;
-  
-  att->att_modseq = mod_sequence_value;
   
   return att;
 }
@@ -1049,7 +915,7 @@ static int
         MAILIMAP_CONDSTORE_TYPE_FETCH_DATA, fetch_data);
       if (ext_data == NULL) {
         mailimap_condstore_fetch_mod_resp_free(fetch_data);
-        return MAILIMAP_NO_ERROR;
+        return MAILIMAP_ERROR_MEMORY;
       }
       * indx = cur_token;
       * result = ext_data;
@@ -1067,7 +933,7 @@ static int
         MAILIMAP_CONDSTORE_TYPE_RESP_TEXT_CODE, resptextcode);
       if (ext_data == NULL) {
         mailimap_condstore_resptextcode_free(resptextcode);
-        return MAILIMAP_NO_ERROR;
+        return MAILIMAP_ERROR_MEMORY;
       }
       * indx = cur_token;
       * result = ext_data;
@@ -1085,7 +951,7 @@ static int
         MAILIMAP_CONDSTORE_TYPE_SEARCH_DATA, search_data);
       if (ext_data == NULL) {
         mailimap_condstore_search_free(search_data);
-        return MAILIMAP_NO_ERROR;
+        return MAILIMAP_ERROR_MEMORY;
       }
       * indx = cur_token;
       * result = ext_data;
@@ -1103,7 +969,7 @@ static int
         MAILIMAP_CONDSTORE_TYPE_STATUS_INFO, status_info);
       if (ext_data == NULL) {
         mailimap_condstore_status_info_free(status_info);
-        return MAILIMAP_NO_ERROR;
+        return MAILIMAP_ERROR_MEMORY;
       }
       * indx = cur_token;
       * result = ext_data;
@@ -1117,9 +983,6 @@ static int
 static void
 	mailimap_condstore_extension_data_free(struct mailimap_extension_data * ext_data)
 {
-  if (ext_data == NULL)
-    return;
-
   switch (ext_data->ext_type) {
     case MAILIMAP_CONDSTORE_TYPE_FETCH_DATA:
       mailimap_condstore_fetch_mod_resp_free(ext_data->ext_data);

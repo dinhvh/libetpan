@@ -183,6 +183,13 @@ int mailimap_capability_data_parse(mailstream * fd, MMAPString * buffer,
 	size_t progr_rate,
 	progress_function * progr_fun);
 
+int mailimap_capability_list_parse(mailstream * fd,
+  MMAPString * buffer,
+  size_t * indx,
+  clist ** result,
+  size_t progr_rate,
+  progress_function * progr_fun);
+
 int mailimap_status_att_parse(mailstream * fd, MMAPString * buffer,
   size_t * indx, int * result);
 

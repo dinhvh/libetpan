@@ -269,9 +269,6 @@ mailimap_xgmlabels_extension_parse(int calling_parser, mailstream * fd,
 static void
 mailimap_xgmlabels_extension_data_free(struct mailimap_extension_data * ext_data)
 {
-  if (ext_data == NULL)
-    return;
-  
   if (ext_data->ext_data != NULL) {
     if (ext_data->ext_type == MAILIMAP_XGMLABELS_TYPE_XGMLABELS) {
       mailimap_msg_att_xgmlabels_free((struct mailimap_msg_att_xgmlabels *) ext_data->ext_data);

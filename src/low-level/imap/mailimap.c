@@ -361,15 +361,8 @@ static void mailbox_data_store(mailimap * session,
     }
     break;
   case MAILIMAP_MAILBOX_DATA_EXTENSION_DATA:
-    if (session->imap_response_info) {
-      r = clist_append(session->imap_response_info->rsp_extension_list,
-          mb_data->mbd_data.mbd_extension);
-      if (r == 0)
-	mb_data->mbd_data.mbd_extension = NULL;
-      else {
-	/* TODO must handle error case */	
-      }
-    }
+    mailimap_extension_data_store(session, &mb_data->mbd_data.mbd_extension);
+    break;
   }
 }
 

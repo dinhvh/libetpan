@@ -29,29 +29,47 @@
  * SUCH DAMAGE.
  */
 
-#ifndef CONDSTORE_PRIVATE_H
+#ifndef QRESYNC_H
 
-#define CONDSTORE_PRIVATE_H
+#define QRESYNC_H
 
-enum {
-  MAILIMAP_CONDSTORE_TYPE_FETCH_DATA,
-  MAILIMAP_CONDSTORE_TYPE_RESP_TEXT_CODE,
-  MAILIMAP_CONDSTORE_TYPE_SEARCH_DATA,
-  MAILIMAP_CONDSTORE_TYPE_STATUS_INFO
-};
+#include <libetpan/mailimap_extension_types.h>
+#include <libetpan/mailimap_types.h>
+#include <libetpan/clist.h>
+#include <libetpan/qresync_types.h>
 
-int mailimap_examine_condstore_optional(mailimap * session, const char * mb,
-  int condstore, uint64_t * p_mod_sequence_value);
+LIBETPAN_EXPORT
+extern struct mailimap_extension_api mailimap_extension_qresync;
 
-int mailimap_select_condstore_optional(mailimap * session, const char * mb,
-	int condstore, uint64_t * p_mod_sequence_value);
+/*
+mailimap_select_qresync()
+known_uids can be NULL
+seq_match_data_sequences can be NULL
+seq_match_data_uids can be NULL
+*/
 
-int mailimap_store_unchangedsince_optional(mailimap * session,
-	struct mailimap_set * set, int use_unchangedsince, uint64_t mod_sequence_valzer,
-  struct mailimap_store_att_flags * store_att_flags);
+LIBETPAN_EXPORT
+  int mailimap_select_qresync(mailimap * session, const char * mb,
+  uint32_t uidvalidity, uint64_t modseq_value,
+  struct mailimap_set * known_uids,
+  struct mailimap_set * seq_match_data_sequences,
+  struct mailimap_set * seq_match_data_uids,
+  clist ** fetch_result, struct mailimap_qresync_vanished ** p_vanished,
+  uint64_t * p_mod_sequence_value);
 
-int mailimap_uid_store_unchangedsince_optional(mailimap * session,
-	struct mailimap_set * set, int use_unchangedsince, uint64_t mod_sequence_valzer,
-  struct mailimap_store_att_flags * store_att_flags);
+LIBETPAN_EXPORT
+int mailimap_fetch_qresync(mailimap * session,
+	struct mailimap_set * set,
+	struct mailimap_fetch_type * fetch_type, uint64_t mod_sequence_value,
+  clist ** fetch_result, struct mailimap_qresync_vanished ** p_vanished);
+
+LIBETPAN_EXPORT
+int mailimap_uid_fetch_qresync(mailimap * session,
+	struct mailimap_set * set,
+	struct mailimap_fetch_type * fetch_type, uint64_t mod_sequence_value,
+  clist ** fetch_result, struct mailimap_qresync_vanished ** p_vanished);
+
+LIBETPAN_EXPORT
+int mailimap_has_qresync(mailimap * session);
 
 #endif

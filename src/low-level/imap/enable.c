@@ -190,9 +190,6 @@ int mailimap_has_enable(mailimap * session)
 static void
 mailimap_enable_extension_data_free(struct mailimap_extension_data * ext_data)
 {
-  if (ext_data == NULL)
-    return;
-  
   if (ext_data->ext_data != NULL) {
     mailimap_capability_data_free((struct mailimap_capability_data *) ext_data->ext_data);
   }
@@ -209,32 +206,50 @@ static int mailimap_enable_parse(mailstream * fd, MMAPString * buffer,
   int r;
   int res;
 	struct mailimap_capability_data * capabilities;
+  clist * cap_list;
   
   cur_token = * indx;
   
-  r = mailimap_token_case_insensitive_parse(fd, buffer, &cur_token, "ENABLE");
+  r = mailimap_token_case_insensitive_parse(fd, buffer, &cur_token, "ENABLED");
   if (r != MAILIMAP_NO_ERROR) {
     res = r;
-    return r;
+    goto err;
   }
   
-  r = mailimap_space_parse(fd, buffer, &cur_token);
+  r = mailimap_capability_list_parse(fd, buffer, &cur_token,
+                                     &cap_list,
+                                     progr_rate, progr_fun);
+  if (r == MAILIMAP_ERROR_PARSE) {
+    cap_list = clist_new();
+    if (cap_list == NULL) {
+      res = MAILIMAP_ERROR_MEMORY;
+      goto err;
+    }
+    r = MAILIMAP_NO_ERROR;
+  }
   if (r != MAILIMAP_NO_ERROR) {
     res = r;
-    return r;
+    goto err;
   }
   
-	r = mailimap_capability_data_parse(fd, buffer, &cur_token, &capabilities,
-		progr_rate, progr_fun);
-  if (r != MAILIMAP_NO_ERROR) {
-    res = r;
-    return r;
+  capabilities = mailimap_capability_data_new(cap_list);
+  if (capabilities == NULL) {
+    res = MAILIMAP_ERROR_MEMORY;
+    goto free_list;
   }
   
   * result = capabilities;
   * indx = cur_token;
   
   return MAILIMAP_NO_ERROR;
+  
+free_list:
+  if (cap_list) {
+    clist_foreach(cap_list, (clist_func) mailimap_capability_free, NULL);
+    clist_free(cap_list);
+  }
+err:
+  return res;
 }
 
 static int

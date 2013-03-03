@@ -11,6 +11,12 @@
 		C60E7B9A16C3809400A25BF4 /* enable.c in Sources */ = {isa = PBXBuildFile; fileRef = C60E7B9816C3809400A25BF4 /* enable.c */; };
 		C60E7B9D16C3809C00A25BF4 /* enable.c in Sources */ = {isa = PBXBuildFile; fileRef = C60E7B9816C3809400A25BF4 /* enable.c */; };
 		C60E7B9E16C3809D00A25BF4 /* enable.c in Sources */ = {isa = PBXBuildFile; fileRef = C60E7B9816C3809400A25BF4 /* enable.c */; };
+		C64BB21816E2FC2F000DB34C /* qresync_types.c in Sources */ = {isa = PBXBuildFile; fileRef = C64BB21416E2FC2F000DB34C /* qresync_types.c */; };
+		C64BB21916E2FC2F000DB34C /* qresync_types.c in Sources */ = {isa = PBXBuildFile; fileRef = C64BB21416E2FC2F000DB34C /* qresync_types.c */; };
+		C64BB21A16E2FC2F000DB34C /* qresync_types.c in Sources */ = {isa = PBXBuildFile; fileRef = C64BB21416E2FC2F000DB34C /* qresync_types.c */; };
+		C64BB21B16E2FC2F000DB34C /* qresync.c in Sources */ = {isa = PBXBuildFile; fileRef = C64BB21616E2FC2F000DB34C /* qresync.c */; };
+		C64BB21C16E2FC2F000DB34C /* qresync.c in Sources */ = {isa = PBXBuildFile; fileRef = C64BB21616E2FC2F000DB34C /* qresync.c */; };
+		C64BB21D16E2FC2F000DB34C /* qresync.c in Sources */ = {isa = PBXBuildFile; fileRef = C64BB21616E2FC2F000DB34C /* qresync.c */; };
 		C64EA7B716A00CA700778456 /* xgmmsgid.c in Sources */ = {isa = PBXBuildFile; fileRef = 365DFFD115D1C93100F2DD85 /* xgmmsgid.c */; };
 		C64EA7B816A00CA700778456 /* xgmmsgid.c in Sources */ = {isa = PBXBuildFile; fileRef = 365DFFD115D1C93100F2DD85 /* xgmmsgid.c */; };
 		C64EA7C116A00CC500778456 /* mailimap_id_parser.c in Sources */ = {isa = PBXBuildFile; fileRef = C64EA7B916A00CC100778456 /* mailimap_id_parser.c */; };
@@ -552,6 +558,11 @@
 		8DC2EF5B0486A6940098B216 /* libetpan.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = libetpan.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C60E7B9816C3809400A25BF4 /* enable.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = enable.c; sourceTree = "<group>"; };
 		C60E7B9916C3809400A25BF4 /* enable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = enable.h; sourceTree = "<group>"; };
+		C64BB21416E2FC2F000DB34C /* qresync_types.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = qresync_types.c; sourceTree = "<group>"; };
+		C64BB21516E2FC2F000DB34C /* qresync_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qresync_types.h; sourceTree = "<group>"; };
+		C64BB21616E2FC2F000DB34C /* qresync.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = qresync.c; sourceTree = "<group>"; };
+		C64BB21716E2FC2F000DB34C /* qresync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qresync.h; sourceTree = "<group>"; };
+		C64BB21E16E32CDB000DB34C /* qresync_private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = qresync_private.h; sourceTree = "<group>"; };
 		C64EA7B916A00CC100778456 /* mailimap_id_parser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mailimap_id_parser.c; sourceTree = "<group>"; };
 		C64EA7BA16A00CC100778456 /* mailimap_id_parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mailimap_id_parser.h; sourceTree = "<group>"; };
 		C64EA7BB16A00CC200778456 /* mailimap_id_sender.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mailimap_id_sender.c; sourceTree = "<group>"; };
@@ -1458,6 +1469,11 @@
 				C6517A0B130E86D3004ADD56 /* namespace_sender.h */,
 				C6517A06130E86C6004ADD56 /* namespace_types.c */,
 				C6517A05130E86C6004ADD56 /* namespace_types.h */,
+				C64BB21616E2FC2F000DB34C /* qresync.c */,
+				C64BB21716E2FC2F000DB34C /* qresync.h */,
+				C64BB21E16E32CDB000DB34C /* qresync_private.h */,
+				C64BB21416E2FC2F000DB34C /* qresync_types.c */,
+				C64BB21516E2FC2F000DB34C /* qresync_types.h */,
 				C6E57200110376F200897274 /* quota.c */,
 				C6E57201110376F200897274 /* quota.h */,
 				C6E571FA110376F200897274 /* quota_parser.c */,
@@ -1991,6 +2007,8 @@
 				C60E7B9A16C3809400A25BF4 /* enable.c in Sources */,
 				C6635C3A16DFF10E0066276E /* condstore_types.c in Sources */,
 				C6635C3B16DFF10E0066276E /* condstore.c in Sources */,
+				C64BB21816E2FC2F000DB34C /* qresync_types.c in Sources */,
+				C64BB21B16E2FC2F000DB34C /* qresync.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2166,6 +2184,8 @@
 				C60E7B9E16C3809D00A25BF4 /* enable.c in Sources */,
 				C6CC501616E11074001E7392 /* condstore.c in Sources */,
 				C6CC501816E1107A001E7392 /* condstore_types.c in Sources */,
+				C64BB21A16E2FC2F000DB34C /* qresync_types.c in Sources */,
+				C64BB21D16E2FC2F000DB34C /* qresync.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2341,6 +2361,8 @@
 				C60E7B9D16C3809C00A25BF4 /* enable.c in Sources */,
 				C6CC501516E11074001E7392 /* condstore.c in Sources */,
 				C6CC501716E11079001E7392 /* condstore_types.c in Sources */,
+				C64BB21916E2FC2F000DB34C /* qresync_types.c in Sources */,
+				C64BB21C16E2FC2F000DB34C /* qresync.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
