@@ -7,6 +7,21 @@ logfile="`pwd`/update.log"
 
 cd ..
 
+if test x$1 = xprepare ; then
+  echo preparing
+  ./autogen.sh > "$logfile" 2>&1
+  tar czf build-mac/autogen-result.tar.gz `find . -name '*.in'` configure install-sh config.sub missing config.guess
+  exit 0
+elif test x$1 = xprepare-clean ; then
+  if test -f Makefile ; then
+    make maintainer-clean >/dev/null
+    cd build-mac
+    rm -rf libsasl-ios
+    rm -rf dependencies/build
+  fi
+  exit 0
+fi
+
 if test x$SRCROOT = x ; then
   echo Should be run from Xcode
   exit 1
@@ -15,7 +30,8 @@ fi
 if test x$ACTION = x ; then
   if test ! -f Makefile ; then
     echo configuring
-    ./autogen.sh > "$logfile" 2>&1
+    tar xzf build-mac/autogen-result.tar.gz
+    ./configure --enable-debug > "$logfile" 2>&1
     if [[ "$?" != "0" ]]; then
       echo "configure failed"
       exit 1
@@ -33,7 +49,7 @@ if test x$ACTION = x ; then
   fi
 elif test x$ACTION = xclean ; then
   if test -f Makefile ; then
-    make maintainer-clean >/dev/null
+    make distclean >/dev/null
     cd build-mac
     rm -rf libsasl-ios
     rm -rf dependencies/build
