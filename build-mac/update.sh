@@ -28,6 +28,10 @@ if test x$SRCROOT = x ; then
 fi
 
 if test x$ACTION = x ; then
+  ACTION=build
+fi
+
+if test x$ACTION = xbuild ; then
   if test ! -f Makefile ; then
     echo configuring
     tar xzf build-mac/autogen-result.tar.gz
