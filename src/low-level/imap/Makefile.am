@@ -92,6 +92,6 @@ libimap_la_SOURCES = \
 	mailimap_id_sender.h mailimap_id_sender.c \
 	mailimap_id_parser.h mailimap_id_parser.c \
 	enable.h enable.c \
-	condstore.h condstore.c condstore_types.h condstore_types.c \
-	qresync.h qresync.c qresync_types.h qresync_types.c
+	condstore.h condstore.c condstore_types.h condstore_types.c condstore_private.h \
+	qresync.h qresync.c qresync_types.h qresync_types.c qresync_private.h
 
