@@ -82,11 +82,6 @@ rexpunges-fetch-mod =  "VANISHED"
 resp-text-code      =/ "CLOSED"
 */
 
-enum {
-  MAILIMAP_QRESYNC_TYPE_VANISHED,
-  MAILIMAP_QRESYNC_TYPE_RESPTEXTCODE
-};
-
 static void
 	mailimap_qresync_extension_data_free(struct mailimap_extension_data * ext_data);
 
@@ -528,7 +523,7 @@ static void
         mailimap_qresync_vanished_free(ext_data->ext_data);
       }
       break;
-    case MAILIMAP_QRESYNC_TYPE_RESPTEXTCODE:
+    case MAILIMAP_QRESYNC_TYPE_RESP_TEXT_CODE:
       if (ext_data->ext_data != NULL) {
         mailimap_qresync_resptextcode_free(ext_data->ext_data);
       }
@@ -566,7 +561,7 @@ static int
       if (r != MAILIMAP_NO_ERROR)
         return r;
       ext_data = mailimap_extension_data_new(&mailimap_extension_qresync,
-        MAILIMAP_QRESYNC_TYPE_RESPTEXTCODE, resptextcode);
+        MAILIMAP_QRESYNC_TYPE_RESP_TEXT_CODE, resptextcode);
       if (ext_data == NULL) {
         mailimap_qresync_resptextcode_free(resptextcode);
         return MAILIMAP_ERROR_MEMORY;

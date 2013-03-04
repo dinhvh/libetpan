@@ -35,6 +35,13 @@
 
 #include <libetpan/mailimap_types.h>
 
+enum {
+  MAILIMAP_CONDSTORE_TYPE_FETCH_DATA,
+  MAILIMAP_CONDSTORE_TYPE_RESP_TEXT_CODE,
+  MAILIMAP_CONDSTORE_TYPE_SEARCH_DATA,
+  MAILIMAP_CONDSTORE_TYPE_STATUS_INFO
+};
+
 struct mailimap_condstore_fetch_mod_resp {
   uint64_t cs_modseq_value;
 };

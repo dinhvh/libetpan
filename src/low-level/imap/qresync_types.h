@@ -33,6 +33,11 @@
 
 #define QRESYNC_TYPES_H
 
+enum {
+  MAILIMAP_QRESYNC_TYPE_VANISHED,
+  MAILIMAP_QRESYNC_TYPE_RESP_TEXT_CODE
+};
+
 struct mailimap_qresync_vanished {
   int qr_earlier;
   struct mailimap_set * qr_known_uids;

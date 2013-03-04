@@ -33,13 +33,6 @@
 
 #define CONDSTORE_PRIVATE_H
 
-enum {
-  MAILIMAP_CONDSTORE_TYPE_FETCH_DATA,
-  MAILIMAP_CONDSTORE_TYPE_RESP_TEXT_CODE,
-  MAILIMAP_CONDSTORE_TYPE_SEARCH_DATA,
-  MAILIMAP_CONDSTORE_TYPE_STATUS_INFO
-};
-
 int mailimap_examine_condstore_optional(mailimap * session, const char * mb,
   int condstore, uint64_t * p_mod_sequence_value);
 
