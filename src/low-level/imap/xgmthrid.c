@@ -103,22 +103,26 @@ mailimap_xgmthrid_extension_parse(int calling_parser, mailstream * fd,
     int r;
     
     cur_token = * indx;
-    thrid = malloc(sizeof(*thrid));
-    if (thrid == NULL) {
-        return MAILIMAP_ERROR_MEMORY;
-    }
     
     switch (calling_parser)
     {
         case MAILIMAP_EXTENDED_PARSER_MAILBOX_DATA:
             
+            thrid = malloc(sizeof(*thrid));
+            if (thrid == NULL) {
+                return MAILIMAP_ERROR_MEMORY;
+            }
+            
             r = fetch_data_xgmthrid_parse(fd, buffer, &cur_token, thrid, progr_rate, progr_fun);
-            if (r != MAILIMAP_NO_ERROR)
-              return r;
-                                
+            if (r != MAILIMAP_NO_ERROR) {
+                free (thrid);
+                return r;
+            }
+            
             ext_data = mailimap_extension_data_new(&mailimap_extension_xgmthrid,
                                                    MAILIMAP_XGMTHRID_TYPE_THRID, thrid);
             if (ext_data == NULL) {
+                free(thrid);
                 return MAILIMAP_ERROR_MEMORY;
             }
             
