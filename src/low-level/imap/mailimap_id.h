@@ -44,6 +44,9 @@ extern "C" {
 extern struct mailimap_extension_api mailimap_extension_id;
 
 LIBETPAN_EXPORT
+int mailimap_has_id(mailimap * session);
+
+LIBETPAN_EXPORT
 int mailimap_id(mailimap * session, struct mailimap_id_params_list * client_identification,
                 struct mailimap_id_params_list ** result);
 

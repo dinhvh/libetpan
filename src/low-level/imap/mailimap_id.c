@@ -223,3 +223,9 @@ int mailimap_id_basic(mailimap * session, const char * name, const char * versio
   return MAILIMAP_NO_ERROR;
 }
 
+LIBETPAN_EXPORT
+int mailimap_has_id(mailimap * session)
+{
+  return mailimap_has_extension(session, "ID");
+}
+
