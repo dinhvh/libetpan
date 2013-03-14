@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdarg.h>
 
 #include "clist.h"
 #include "mailimap_types_helper.h"
@@ -62,11 +63,11 @@ static int fetch_data_xgmmsgid_parse(mailstream * fd,
     int r;
     
     cur_token = * indx;
-
+/*
     r = mailimap_space_parse(fd, buffer, &cur_token);
     if (r != MAILIMAP_NO_ERROR)
         return r;
-
+*/
     r = mailimap_token_case_insensitive_parse(fd, buffer,
                                               &cur_token, "X-GM-MSGID");
     if (r != MAILIMAP_NO_ERROR)
@@ -79,6 +80,8 @@ static int fetch_data_xgmmsgid_parse(mailstream * fd,
     r = mailimap_astring_parse(fd, buffer, &cur_token, &msgid_str, progr_rate, progr_fun);
     if (r != MAILIMAP_NO_ERROR)
         return r;
+
+	//    log_to_file("thread id is now: %s", msgid_str);
 
     r = mailimap_space_parse(fd, buffer, &cur_token);
     if (r != MAILIMAP_NO_ERROR)
@@ -105,7 +108,7 @@ mailimap_xgmmsgid_extension_parse(int calling_parser, mailstream * fd,
     
     switch (calling_parser)
     {
-        case MAILIMAP_EXTENDED_PARSER_MAILBOX_DATA:
+        case MAILIMAP_EXTENDED_PARSER_FETCH_DATA:
             
             r = fetch_data_xgmmsgid_parse(fd, buffer, &cur_token, &msgid, progr_rate, progr_fun);
             if (r != MAILIMAP_NO_ERROR)
