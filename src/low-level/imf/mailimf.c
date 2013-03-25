@@ -5591,6 +5591,8 @@ static int mailimf_parse_unwanted_msg_id(const char * message, size_t length,
       return r;
   }
 
+  * indx = cur_token;
+
   return MAILIMF_NO_ERROR;
 }
 
