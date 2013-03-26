@@ -1410,8 +1410,6 @@
 		C6F9E9D3105335BC0059C3BA /* imap */ = {
 			isa = PBXGroup;
 			children = (
-				C6F61F721701409B0073032E /* xgmthrid.c */,
-				C6F61F731701409B0073032E /* xgmthrid.h */,
 				C6F9E9EE105335BC0059C3BA /* acl.c */,
 				C6F9E9EF105335BC0059C3BA /* acl.h */,
 				C6F9E9F0105335BC0059C3BA /* acl_parser.c */,
@@ -1501,6 +1499,8 @@
 				C6CE9B1814AA9C9C00D20BA6 /* xgmlabels.h */,
 				365DFFD115D1C93100F2DD85 /* xgmmsgid.c */,
 				365DFFD815D1CF1800F2DD85 /* xgmmsgid.h */,
+				C6F61F721701409B0073032E /* xgmthrid.c */,
+				C6F61F731701409B0073032E /* xgmthrid.h */,
 				C6667DED1342ACCD00969A8E /* xlist.c */,
 				C6667DEE1342ACCD00969A8E /* xlist.h */,
 			);
