@@ -115,7 +115,7 @@ mailimap_xgmthrid_extension_data_free(struct mailimap_extension_data * ext_data)
     free(ext_data);
 }
 
-struct mailimap_fetch_att * mailimap_fetch_att_new_xgmmsgid(void)
+struct mailimap_fetch_att * mailimap_fetch_att_new_xgmthrid(void)
 {
   char * keyword;
   struct mailimap_fetch_att * att;
