@@ -40,31 +40,9 @@ static int fetch_data_xgmthrid_parse(mailstream * fd,
     size_t cur_token;
     uint64_t thrid;
     uint32_t uid;
-    char  *thrid_str;
     int r;
     
     cur_token = * indx;
-    
-    r = mailimap_number_parse(fd, buffer, &cur_token, &uid);
-    if (r != MAILIMAP_NO_ERROR)
-        return r;
-
-    r = mailimap_space_parse(fd, buffer, &cur_token);
-    if (r != MAILIMAP_NO_ERROR)
-        return r;
-    
-    r = mailimap_token_case_insensitive_parse(fd, buffer,
-                                              &cur_token, "FETCH");
-    if (r != MAILIMAP_NO_ERROR)
-        return r;
-
-    r = mailimap_space_parse(fd, buffer, &cur_token);
-    if (r != MAILIMAP_NO_ERROR)
-        return r;
-    
-    r = mailimap_oparenth_parse(fd, buffer, &cur_token);
-    if (r != MAILIMAP_NO_ERROR)
-        return r;
     
     r = mailimap_token_case_insensitive_parse(fd, buffer,
                                               &cur_token, "X-GM-THRID");
@@ -75,13 +53,7 @@ static int fetch_data_xgmthrid_parse(mailstream * fd,
     if (r != MAILIMAP_NO_ERROR)
         return r;
     
-    r = mailimap_astring_parse(fd, buffer, &cur_token, &thrid_str, progr_rate, progr_fun);
-    if (r != MAILIMAP_NO_ERROR)
-        return r;
-    
-    thrid = atol(thrid_str);
-    
-    r = mailimap_cparenth_parse(fd, buffer, &cur_token);
+    r = mailimap_uint64_parse(fd, buffer, &cur_token, &thrid);
     if (r != MAILIMAP_NO_ERROR)
         return r;
     
@@ -98,7 +70,8 @@ mailimap_xgmthrid_extension_parse(int calling_parser, mailstream * fd,
                                    size_t progr_rate, progress_function * progr_fun)
 {
     size_t cur_token;
-    uint64_t *thrid;
+    uint64_t thrid;
+    uint64_t * data_thrid;
     struct mailimap_extension_data * ext_data;
     int r;
     
@@ -108,22 +81,21 @@ mailimap_xgmthrid_extension_parse(int calling_parser, mailstream * fd,
     {
         case MAILIMAP_EXTENDED_PARSER_MAILBOX_DATA:
             
-            thrid = malloc(sizeof(*thrid));
-            if (thrid == NULL) {
-                return MAILIMAP_ERROR_MEMORY;
-            }
-            
-            r = fetch_data_xgmthrid_parse(fd, buffer, &cur_token, thrid, progr_rate, progr_fun);
-            if (r != MAILIMAP_NO_ERROR) {
-                free (thrid);
+            r = fetch_data_xgmthrid_parse(fd, buffer, &cur_token, &thrid, progr_rate, progr_fun);
+            if (r != MAILIMAP_NO_ERROR)
                 return r;
-            }
             
+            data_thrid = malloc(sizeof(* data_thrid));
+            if (data_thrid == NULL) {
+              return MAILIMAP_ERROR_MEMORY;
+            }
+            * data_thrid = thrid;
+              
             ext_data = mailimap_extension_data_new(&mailimap_extension_xgmthrid,
-                                                   MAILIMAP_XGMTHRID_TYPE_THRID, thrid);
+                                                   MAILIMAP_XGMTHRID_TYPE_THRID, data_thrid);
             if (ext_data == NULL) {
-                free(thrid);
-                return MAILIMAP_ERROR_MEMORY;
+              free(data_thrid);
+              return MAILIMAP_ERROR_MEMORY;
             }
             
             * result = ext_data;
@@ -139,70 +111,24 @@ mailimap_xgmthrid_extension_parse(int calling_parser, mailstream * fd,
 static void
 mailimap_xgmthrid_extension_data_free(struct mailimap_extension_data * ext_data)
 {
-    if (ext_data == NULL)
-        return;
- 
     free(ext_data->ext_data);
     free(ext_data);
 }
 
-int mailimap_fetch_xgmthrid(mailimap * session,
-                            struct mailimap_set * set,
-                            clist ** results)
+struct mailimap_fetch_att * mailimap_fetch_att_new_xgmmsgid(void)
 {
-    struct mailimap_response * response;
-    int r;
-    int error_code;
-    
-    if (session->imap_state != MAILIMAP_STATE_SELECTED)
-        return MAILIMAP_ERROR_BAD_STATE;
-    
-    r = mailimap_send_current_tag(session);
-    if (r != MAILIMAP_NO_ERROR)
-        return r;
-    
-    r = mailimap_token_send(session->imap_stream, "FETCH");
-    if (r != MAILIMAP_NO_ERROR)
-        return r;
-    r = mailimap_space_send(session->imap_stream);
-    if (r != MAILIMAP_NO_ERROR)
-        return r;
-    r = mailimap_set_send(session->imap_stream, set);
-    if (r != MAILIMAP_NO_ERROR)
-        return r;
-    r = mailimap_space_send(session->imap_stream);
-    if (r != MAILIMAP_NO_ERROR)
-        return r;
-    
-    r = mailimap_token_send(session->imap_stream, "(X-GM-THRID)");
-    if (r != MAILIMAP_NO_ERROR)
-        return r;
-    
-    r = mailimap_crlf_send(session->imap_stream);
-    if (r != MAILIMAP_NO_ERROR)
-      return r;
-    
-    if (mailstream_flush(session->imap_stream) == -1)
-        return MAILIMAP_ERROR_STREAM;
-    
-    if (mailimap_read_line(session) == NULL)
-        return MAILIMAP_ERROR_STREAM;
-   
-    r = mailimap_parse_response(session, &response);
-    if (r != MAILIMAP_NO_ERROR)
-        return r;
-    
-    error_code = response->rsp_resp_done->rsp_data.rsp_tagged->rsp_cond_state->rsp_type;
-    
-    *results = response->rsp_cont_req_or_resp_data_list;
-    
-//    mailimap_response_free(response); // Tom: This was in the original, but I think it was a mistake
-    
-    switch (error_code) {
-        case MAILIMAP_RESP_COND_STATE_OK:
-            return MAILIMAP_NO_ERROR;
-            
-        default:
-            return MAILIMAP_ERROR_FETCH;
-    }
+  char * keyword;
+  struct mailimap_fetch_att * att;
+  
+  keyword = strdup("X-GM-THRID");
+  if (keyword == NULL)
+    return NULL;
+  
+  att = mailimap_fetch_att_new_extension(keyword);
+  if (att == NULL) {
+    free(keyword);
+    return NULL;
+  }
+  
+  return att;
 }

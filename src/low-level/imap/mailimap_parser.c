@@ -10902,7 +10902,7 @@ static int mailimap_zone_parse(mailstream * fd, MMAPString * buffer,
   return MAILIMAP_NO_ERROR;
 }
 
-int mailimap_mod_sequence_value_parse(mailstream * fd, MMAPString * buffer,
+int mailimap_uint64_parse(mailstream * fd, MMAPString * buffer,
   size_t * indx, uint64_t * result)
 {
   size_t cur_token;
@@ -10937,6 +10937,12 @@ int mailimap_mod_sequence_value_parse(mailstream * fd, MMAPString * buffer,
   * indx = cur_token;
 
   return MAILIMAP_NO_ERROR;
+}
+
+int mailimap_mod_sequence_value_parse(mailstream * fd, MMAPString * buffer,
+  size_t * indx, uint64_t * result)
+{
+  return mailimap_uint64_parse(fd, buffer, indx, result);
 }
 
 static int mailimap_seq_number_parse(mailstream * fd, MMAPString * buffer,

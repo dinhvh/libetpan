@@ -40,31 +40,9 @@ static int fetch_data_xgmmsgid_parse(mailstream * fd,
     size_t cur_token;
     uint64_t msgid;
     uint32_t uid;
-    char  *msgid_str;
     int r;
     
     cur_token = * indx;
-    
-    r = mailimap_number_parse(fd, buffer, &cur_token, &uid);
-    if (r != MAILIMAP_NO_ERROR)
-        return r;
-
-    r = mailimap_space_parse(fd, buffer, &cur_token);
-    if (r != MAILIMAP_NO_ERROR)
-        return r;
-    
-    r = mailimap_token_case_insensitive_parse(fd, buffer,
-                                              &cur_token, "FETCH");
-    if (r != MAILIMAP_NO_ERROR)
-        return r;
-
-    r = mailimap_space_parse(fd, buffer, &cur_token);
-    if (r != MAILIMAP_NO_ERROR)
-        return r;
-    
-    r = mailimap_oparenth_parse(fd, buffer, &cur_token);
-    if (r != MAILIMAP_NO_ERROR)
-        return r;
     
     r = mailimap_token_case_insensitive_parse(fd, buffer,
                                               &cur_token, "X-GM-MSGID");
@@ -75,13 +53,7 @@ static int fetch_data_xgmmsgid_parse(mailstream * fd,
     if (r != MAILIMAP_NO_ERROR)
         return r;
     
-    r = mailimap_astring_parse(fd, buffer, &cur_token, &msgid_str, progr_rate, progr_fun);
-    if (r != MAILIMAP_NO_ERROR)
-        return r;
-    
-    msgid = atol(msgid_str);
-    
-    r = mailimap_cparenth_parse(fd, buffer, &cur_token);
+    r = mailimap_uint64_parse(fd, buffer, &cur_token, &msgid);
     if (r != MAILIMAP_NO_ERROR)
         return r;
     
@@ -107,7 +79,7 @@ mailimap_xgmmsgid_extension_parse(int calling_parser, mailstream * fd,
     
     switch (calling_parser)
     {
-        case MAILIMAP_EXTENDED_PARSER_MAILBOX_DATA:
+        case MAILIMAP_EXTENDED_PARSER_FETCH_DATA:
             
             r = fetch_data_xgmmsgid_parse(fd, buffer, &cur_token, &msgid, progr_rate, progr_fun);
             if (r != MAILIMAP_NO_ERROR)

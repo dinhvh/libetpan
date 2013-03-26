@@ -202,6 +202,9 @@ int mailimap_nz_number_alloc_parse(mailstream * fd, MMAPString * buffer,
 int mailimap_mod_sequence_value_parse(mailstream * fd, MMAPString * buffer,
   size_t * indx, uint64_t * result);
 
+int mailimap_uint64_parse(mailstream * fd, MMAPString * buffer,
+  size_t * indx, uint64_t * result);
+
 int mailimap_set_parse(mailstream * fd,
   MMAPString * buffer, size_t * indx, struct mailimap_set ** result);
 
