@@ -48,6 +48,7 @@
 #include "xlist.h"
 #include "xgmlabels.h"
 #include "xgmmsgid.h"
+#include "xgmthrid.h"
 #include "mailimap_id.h"
 #include "enable.h"
 #include "condstore.h"
@@ -70,6 +71,7 @@ static struct mailimap_extension_api * internal_extension_list[] = {
   &mailimap_extension_xlist,
   &mailimap_extension_xgmlabels,
   &mailimap_extension_xgmmsgid,
+  &mailimap_extension_xgmthrid,
   &mailimap_extension_id,
   &mailimap_extension_enable,
   &mailimap_extension_condstore,
