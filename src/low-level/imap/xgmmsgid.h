@@ -9,13 +9,10 @@ extern "C" {
 #include <libetpan/mailimap_extension.h>
 
   LIBETPAN_EXPORT
-  extern struct mailimap_extension_api mailimap_extension_xgmmsgid;
+  struct mailimap_extension_api mailimap_extension_xgmmsgid;
   
   LIBETPAN_EXPORT
-  int
-  mailimap_fetch_xgmmsgid(mailimap * session,
-                          struct mailimap_set * set,
-                          clist ** results);
+  struct mailimap_fetch_att * mailimap_fetch_att_new_xgmmsgid(void);
 
 #ifdef __cplusplus
 }
