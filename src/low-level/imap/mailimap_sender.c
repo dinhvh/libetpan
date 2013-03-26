@@ -134,6 +134,9 @@ static int mailimap_quoted_char_send(mailstream * fd, char ch);
 static int mailimap_search_key_send(mailstream * fd,
 				    struct mailimap_search_key * key);
 
+static int mailimap_sort_key_send(mailstream * fd,
+                                  struct mailimap_sort_key * key);
+
 static int
 mailimap_section_send(mailstream * fd,
 		      struct mailimap_section * section);
@@ -2346,6 +2349,117 @@ int mailimap_mod_sequence_value_send(mailstream * fd, uint64_t modseq)
   char modseqstr[30];
   snprintf(modseqstr, sizeof(modseqstr), "%llu", (long long unsigned) modseq);
   return mailimap_token_send(fd, modseqstr);
+}
+
+
+int
+mailimap_sort_send(mailstream * fd, const char * charset,
+                   struct mailimap_sort_key * key, struct mailimap_search_key * searchkey)
+{
+  int r;
+  
+  r = mailimap_token_send(fd, "SORT");
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+    
+  r = mailimap_space_send(fd);
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+  
+  r = mailimap_oparenth_send(fd);
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+  
+  r = mailimap_sort_key_send(fd, key);
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+
+  r = mailimap_cparenth_send(fd);
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+  
+  if (charset != NULL) {
+    r = mailimap_space_send(fd);
+    if (r != MAILIMAP_NO_ERROR)
+      return r;
+    r = mailimap_astring_send(fd, charset);
+    if (r != MAILIMAP_NO_ERROR)
+      return r;
+  }
+  
+  r = mailimap_space_send(fd);
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+  
+  if (searchkey != NULL) {
+    r = mailimap_search_key_send(fd, searchkey);
+    if (r != MAILIMAP_NO_ERROR)
+      return r;
+  }
+
+  
+  return MAILIMAP_NO_ERROR;
+}
+
+int
+mailimap_uid_sort_send(mailstream * fd, const char * charset,
+                       struct mailimap_sort_key * key, struct mailimap_search_key * searchkey)
+
+{
+  int r;
+  
+  r = mailimap_token_send(fd, "UID");
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+  
+  r = mailimap_space_send(fd);
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+  
+  return mailimap_sort_send(fd, charset, key, searchkey);
+}
+
+static int mailimap_sort_key_send(mailstream * fd,
+                                  struct mailimap_sort_key * key)
+{
+  int r;
+  
+  if (key->sortk_is_reverse) {
+    r = mailimap_token_send(fd, "REVERSE");
+    if (r != MAILIMAP_NO_ERROR)
+      return r;
+    r = mailimap_space_send(fd);
+    if (r != MAILIMAP_NO_ERROR)
+      return r;
+  }
+  
+  switch (key->sortk_type) {
+      
+    case MAILIMAP_SORT_KEY_ARRIVAL:
+      return mailimap_token_send(fd, "ARRIVAL");
+    case MAILIMAP_SORT_KEY_CC:
+      return mailimap_token_send(fd, "CC");
+    case MAILIMAP_SORT_KEY_DATE:
+      return mailimap_token_send(fd, "DATE");
+    case MAILIMAP_SORT_KEY_FROM:
+      return mailimap_token_send(fd, "FROM");
+    case MAILIMAP_SORT_KEY_SIZE:
+      return mailimap_token_send(fd, "SIZE");
+    case MAILIMAP_SORT_KEY_SUBJECT:
+      return mailimap_token_send(fd, "SUBJECT");
+    case MAILIMAP_SORT_KEY_TO:
+      return mailimap_token_send(fd, "TO");
+      
+    case MAILIMAP_SORT_KEY_MULTIPLE:
+      r = mailimap_struct_spaced_list_send(fd, key->sortk_multiple,
+                                           (mailimap_struct_sender *)
+                                           mailimap_sort_key_send);
+      
+      return MAILIMAP_NO_ERROR;
+    default:
+      /* should not happend */
+      return MAILIMAP_ERROR_INVAL;
+  }
 }
 
 /*

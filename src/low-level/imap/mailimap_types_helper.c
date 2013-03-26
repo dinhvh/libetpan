@@ -994,6 +994,74 @@ mailimap_search_key_multiple_add(struct mailimap_search_key * keys,
 }
 
 
+struct mailimap_sort_key *
+mailimap_sort_key_new_arrival(_Bool is_reverse) {
+  return mailimap_sort_key_new(MAILIMAP_SORT_KEY_ARRIVAL, is_reverse, NULL);
+}
+
+struct mailimap_sort_key *
+mailimap_sort_key_new_cc(_Bool is_reverse) {
+  return mailimap_sort_key_new(MAILIMAP_SORT_KEY_CC, is_reverse, NULL);
+}
+
+struct mailimap_sort_key *
+mailimap_sort_key_new_date(_Bool is_reverse) {
+  return mailimap_sort_key_new(MAILIMAP_SORT_KEY_DATE, is_reverse, NULL);
+}
+
+struct mailimap_sort_key *
+mailimap_sort_key_new_from(_Bool is_reverse) {
+  return mailimap_sort_key_new(MAILIMAP_SORT_KEY_FROM, is_reverse, NULL);
+}
+
+struct mailimap_sort_key *
+mailimap_sort_key_new_size(_Bool is_reverse) {
+  return mailimap_sort_key_new(MAILIMAP_SORT_KEY_SIZE, is_reverse, NULL);
+}
+
+struct mailimap_sort_key *
+mailimap_sort_key_new_subject(_Bool is_reverse) {
+  return mailimap_sort_key_new(MAILIMAP_SORT_KEY_SUBJECT, is_reverse, NULL);
+}
+
+struct mailimap_sort_key *
+mailimap_sort_key_new_to(_Bool is_reverse) {
+  return mailimap_sort_key_new(MAILIMAP_SORT_KEY_TO, is_reverse, NULL);
+}
+
+struct mailimap_sort_key *
+mailimap_sort_key_new_multiple(clist * keys) {
+  return mailimap_sort_key_new(MAILIMAP_SORT_KEY_MULTIPLE, false, keys);
+}
+
+
+struct mailimap_sort_key *
+mailimap_sort_key_new_multiple_empty(void)
+{
+  clist * list;
+  
+  list = clist_new();
+  if (list == NULL)
+    return NULL;
+  
+  return mailimap_sort_key_new_multiple(list);
+}
+
+int
+mailimap_sort_key_multiple_add(struct mailimap_sort_key * keys,
+                               struct mailimap_sort_key * key_item)
+{
+  int r;
+	
+  r = clist_append(keys->sortk_multiple, key_item);
+  if (r < 0)
+    return MAILIMAP_ERROR_MEMORY;
+  
+  return MAILIMAP_NO_ERROR;
+}
+
+
+
 
 /* CAPABILITY */
 /* no args */
