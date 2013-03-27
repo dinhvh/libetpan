@@ -900,6 +900,7 @@ mailimap_date_time_send(mailstream * fd,
 			struct mailimap_date_time * date_time)
 {
   int r;
+  int zone;
 
   r = mailimap_date_day_fixed_send(fd, date_time->dt_day);
   if (r != MAILIMAP_NO_ERROR)
@@ -949,11 +950,20 @@ mailimap_date_time_send(mailstream * fd,
   if (r != MAILIMAP_NO_ERROR)
     return r;
 
-  r = mailimap_char_send(fd, '+');
-  if (r != MAILIMAP_NO_ERROR)
-    return r;
+  if (date_time->dt_zone < 0) {
+    r = mailimap_char_send(fd, '-');
+    if (r != MAILIMAP_NO_ERROR)
+      return r;
+    zone = -date_time->dt_zone;
+  }
+  else {
+    r = mailimap_char_send(fd, '+');
+    if (r != MAILIMAP_NO_ERROR)
+      return r;
+    zone = date_time->dt_zone;
+  }
 
-  r = mailimap_fixed_digit_send(fd, date_time->dt_zone, 3);
+  r = mailimap_fixed_digit_send(fd, zone, 4);
   if (r != MAILIMAP_NO_ERROR)
     return r;
 
