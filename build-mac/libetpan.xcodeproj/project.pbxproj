@@ -8,6 +8,12 @@
 
 /* Begin PBXBuildFile section */
 		365DFFD215D1C93100F2DD85 /* xgmmsgid.c in Sources */ = {isa = PBXBuildFile; fileRef = 365DFFD115D1C93100F2DD85 /* xgmmsgid.c */; };
+		8A75ECDA17040F92007F9972 /* mailimap_sort.c in Sources */ = {isa = PBXBuildFile; fileRef = 8A75ECD917040F91007F9972 /* mailimap_sort.c */; };
+		8A75ECDB17040F92007F9972 /* mailimap_sort.c in Sources */ = {isa = PBXBuildFile; fileRef = 8A75ECD917040F91007F9972 /* mailimap_sort.c */; };
+		8A75ECDC17040F92007F9972 /* mailimap_sort.c in Sources */ = {isa = PBXBuildFile; fileRef = 8A75ECD917040F91007F9972 /* mailimap_sort.c */; };
+		8A75ECE6170414BA007F9972 /* mailimap_sort_types.c in Sources */ = {isa = PBXBuildFile; fileRef = 8A75ECE5170414B8007F9972 /* mailimap_sort_types.c */; };
+		8A75ECE7170414BA007F9972 /* mailimap_sort_types.c in Sources */ = {isa = PBXBuildFile; fileRef = 8A75ECE5170414B8007F9972 /* mailimap_sort_types.c */; };
+		8A75ECE8170414BA007F9972 /* mailimap_sort_types.c in Sources */ = {isa = PBXBuildFile; fileRef = 8A75ECE5170414B8007F9972 /* mailimap_sort_types.c */; };
 		C60E7B9A16C3809400A25BF4 /* enable.c in Sources */ = {isa = PBXBuildFile; fileRef = C60E7B9816C3809400A25BF4 /* enable.c */; };
 		C60E7B9D16C3809C00A25BF4 /* enable.c in Sources */ = {isa = PBXBuildFile; fileRef = C60E7B9816C3809400A25BF4 /* enable.c */; };
 		C60E7B9E16C3809D00A25BF4 /* enable.c in Sources */ = {isa = PBXBuildFile; fileRef = C60E7B9816C3809400A25BF4 /* enable.c */; };
@@ -557,6 +563,10 @@
 /* Begin PBXFileReference section */
 		365DFFD115D1C93100F2DD85 /* xgmmsgid.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = xgmmsgid.c; sourceTree = "<group>"; };
 		365DFFD815D1CF1800F2DD85 /* xgmmsgid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = xgmmsgid.h; sourceTree = "<group>"; };
+		8A75ECD917040F91007F9972 /* mailimap_sort.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mailimap_sort.c; sourceTree = "<group>"; };
+		8A75ECDD17040FBD007F9972 /* mailimap_sort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mailimap_sort.h; sourceTree = "<group>"; };
+		8A75ECE5170414B8007F9972 /* mailimap_sort_types.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mailimap_sort_types.c; sourceTree = "<group>"; };
+		8A75ECEA170414E9007F9972 /* mailimap_sort_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mailimap_sort_types.h; sourceTree = "<group>"; };
 		8DC2EF5A0486A6940098B216 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8DC2EF5B0486A6940098B216 /* libetpan.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = libetpan.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C60E7B9816C3809400A25BF4 /* enable.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = enable.c; sourceTree = "<group>"; };
@@ -1503,6 +1513,10 @@
 				C6F61F731701409B0073032E /* xgmthrid.h */,
 				C6667DED1342ACCD00969A8E /* xlist.c */,
 				C6667DEE1342ACCD00969A8E /* xlist.h */,
+				8A75ECD917040F91007F9972 /* mailimap_sort.c */,
+				8A75ECDD17040FBD007F9972 /* mailimap_sort.h */,
+				8A75ECE5170414B8007F9972 /* mailimap_sort_types.c */,
+				8A75ECEA170414E9007F9972 /* mailimap_sort_types.h */,
 			);
 			path = imap;
 			sourceTree = "<group>";
@@ -2017,6 +2031,8 @@
 				C64BB21816E2FC2F000DB34C /* qresync_types.c in Sources */,
 				C64BB21B16E2FC2F000DB34C /* qresync.c in Sources */,
 				C6F61F741701409B0073032E /* xgmthrid.c in Sources */,
+				8A75ECDA17040F92007F9972 /* mailimap_sort.c in Sources */,
+				8A75ECE6170414BA007F9972 /* mailimap_sort_types.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2195,6 +2211,8 @@
 				C64BB21A16E2FC2F000DB34C /* qresync_types.c in Sources */,
 				C64BB21D16E2FC2F000DB34C /* qresync.c in Sources */,
 				C6F61F761701409B0073032E /* xgmthrid.c in Sources */,
+				8A75ECDC17040F92007F9972 /* mailimap_sort.c in Sources */,
+				8A75ECE8170414BA007F9972 /* mailimap_sort_types.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2373,6 +2391,8 @@
 				C64BB21916E2FC2F000DB34C /* qresync_types.c in Sources */,
 				C64BB21C16E2FC2F000DB34C /* qresync.c in Sources */,
 				C6F61F751701409B0073032E /* xgmthrid.c in Sources */,
+				8A75ECDB17040F92007F9972 /* mailimap_sort.c in Sources */,
+				8A75ECE7170414BA007F9972 /* mailimap_sort_types.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

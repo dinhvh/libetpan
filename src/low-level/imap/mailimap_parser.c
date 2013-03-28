@@ -6333,6 +6333,46 @@ mailimap_mailbox_data_search_parse(mailstream * fd, MMAPString * buffer,
   return MAILIMAP_NO_ERROR;
 }
 
+static int
+mailimap_mailbox_data_sort_parse(mailstream * fd, MMAPString * buffer,
+                                 size_t * indx,
+                                 clist ** result,
+                                 size_t progr_rate,
+                                 progress_function * progr_fun)
+{
+  size_t cur_token;
+  size_t final_token;
+  clist * number_list;
+  int r;
+  
+  cur_token = * indx;
+  
+  r = mailimap_token_case_insensitive_parse(fd, buffer,
+                                            &cur_token, "SORT");
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+  
+  final_token = cur_token;
+  number_list = NULL;
+  
+  r = mailimap_space_parse(fd, buffer, &cur_token);
+  if (r == MAILIMAP_NO_ERROR) {
+    r = mailimap_struct_spaced_list_parse(fd, buffer, &cur_token, &number_list,
+                                          (mailimap_struct_parser *)
+                                          mailimap_nz_number_alloc_parse,
+                                          (mailimap_struct_destructor *)
+                                          mailimap_number_alloc_free,
+                                          progr_rate, progr_fun);
+    if (r == MAILIMAP_NO_ERROR)
+      final_token = cur_token;
+  }
+  
+  * result = number_list;
+  * indx = final_token;
+  
+  return MAILIMAP_NO_ERROR;
+}
+
 /*
   "STATUS" SP mailbox SP "("
   [status-att SP number *(SP status-att SP number)] ")"

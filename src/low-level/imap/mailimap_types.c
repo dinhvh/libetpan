@@ -44,6 +44,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdbool.h>
 
 /* ************************************************************************* */
 /* ************************************************************************* */
@@ -2843,9 +2844,6 @@ void mailimap_search_key_free(struct mailimap_search_key * key)
   
   free(key);
 }
-
-
-
 
 
 
