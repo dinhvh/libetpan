@@ -14,7 +14,6 @@
 #include "mmapstring.h"
 #include "mail.h"
 #include "mailimap_extension.h"
-#include "mailimap_sort.h"
 
 #include <stdlib.h>
 #include <stdio.h>

@@ -29,9 +29,9 @@
  * SUCH DAMAGE.
  */
 
-#ifndef UIDPLUS_TYPES_H
+#ifndef MAILIMAP_SORT_TYPES_H
 
-#define UIDPLUS_TYPES_H
+#define MAILIMAP_SORT_TYPES_H
 
 #ifdef __cplusplus
 extern "C" {
