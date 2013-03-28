@@ -2846,37 +2846,6 @@ void mailimap_search_key_free(struct mailimap_search_key * key)
 }
 
 
-struct mailimap_sort_key *
-mailimap_sort_key_new(int sortk_type,
-                      _Bool is_reverse,
-                      clist * sortk_multiple) {
-  struct mailimap_sort_key * key;
-  
-  key = malloc(sizeof(* key));
-  if (key == NULL)
-    return NULL;
-  
-  key->sortk_type = sortk_type;
-  key->sortk_is_reverse = is_reverse;
-  
-  if (sortk_type == MAILIMAP_SORT_KEY_MULTIPLE) {
-    key->sortk_multiple = sortk_multiple;
-  }
-  
-  return key;
-}
-
-
-void mailimap_sort_key_free(struct mailimap_sort_key * key) {
-  if (key->sortk_type == MAILIMAP_SORT_KEY_MULTIPLE) {
-    clist_foreach(key->sortk_multiple,
-                  (clist_func) mailimap_sort_key_free, NULL);
-    clist_free(key->sortk_multiple);
-  }
-  
-  free(key);
-}
-
 
 
 

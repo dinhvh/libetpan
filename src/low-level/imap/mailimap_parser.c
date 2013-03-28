@@ -6679,14 +6679,6 @@ mailimap_mailbox_data_parse(mailstream * fd, MMAPString * buffer,
     if (r == MAILIMAP_NO_ERROR)
       type = MAILIMAP_MAILBOX_DATA_SEARCH;
   }
-  
-  if (r == MAILIMAP_ERROR_PARSE) {
-    r = mailimap_mailbox_data_sort_parse(fd, buffer, &cur_token,
-                                         &data_search,
-                                         progr_rate, progr_fun);
-    if (r == MAILIMAP_NO_ERROR)
-      type = MAILIMAP_MAILBOX_DATA_SEARCH;
-  }
 
   if (r == MAILIMAP_ERROR_PARSE) {
     r = mailimap_mailbox_data_status_parse(fd, buffer, &cur_token,

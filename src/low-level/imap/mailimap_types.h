@@ -2996,37 +2996,6 @@ mailimap_search_key_new(int sk_type,
 LIBETPAN_EXPORT
 void mailimap_search_key_free(struct mailimap_search_key * key);
 
-
-
-/* this is the condition of the SORT operation */
-
-enum {
-  MAILIMAP_SORT_KEY_ARRIVAL,
-  MAILIMAP_SORT_KEY_CC,
-  MAILIMAP_SORT_KEY_DATE,
-  MAILIMAP_SORT_KEY_FROM,
-  MAILIMAP_SORT_KEY_SIZE,
-  MAILIMAP_SORT_KEY_SUBJECT,
-  MAILIMAP_SORT_KEY_TO,
-  MAILIMAP_SORT_KEY_MULTIPLE
-};
-
-struct mailimap_sort_key {
-  int sortk_type;
-  _Bool sortk_is_reverse;
-  clist * sortk_multiple; /* list of (struct mailimap_sort_key *) */
-};
-
-
-LIBETPAN_EXPORT
-struct mailimap_sort_key *
-mailimap_sort_key_new(int sortk_type,
-                      _Bool is_reverse,
-                      clist * sortk_multiple);
-
-LIBETPAN_EXPORT
-void mailimap_sort_key_free(struct mailimap_sort_key * key);
-
 /*
   mailimap_status_att_list is a list of mailbox STATUS request type
 
