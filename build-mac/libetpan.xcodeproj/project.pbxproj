@@ -2493,6 +2493,7 @@
 		C6635C4F16E002340066276E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				PLATFORM_NAME = iphoneos;
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
@@ -2500,6 +2501,7 @@
 		C6635C5016E002340066276E /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				PLATFORM_NAME = iphoneos;
 				SDKROOT = iphoneos;
 			};
 			name = Release;
