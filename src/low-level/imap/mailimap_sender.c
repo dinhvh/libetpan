@@ -130,10 +130,6 @@ static int mailimap_password_send(mailstream * fd, const char * pass);
 
 static int mailimap_quoted_char_send(mailstream * fd, char ch);
 
-
-static int mailimap_search_key_send(mailstream * fd,
-				    struct mailimap_search_key * key);
-
 static int
 mailimap_section_send(mailstream * fd,
 		      struct mailimap_section * section);
@@ -1945,7 +1941,7 @@ mailimap_uid_search_send(mailstream * fd, const char * charset,
 */
 
 
-static int mailimap_search_key_send(mailstream * fd,
+int mailimap_search_key_send(mailstream * fd,
    				struct mailimap_search_key * key)
 {
   int r;
@@ -2347,6 +2343,7 @@ int mailimap_mod_sequence_value_send(mailstream * fd, uint64_t modseq)
   snprintf(modseqstr, sizeof(modseqstr), "%llu", (long long unsigned) modseq);
   return mailimap_token_send(fd, modseqstr);
 }
+
 
 /*
 =>   section         = "[" [section-spec] "]"

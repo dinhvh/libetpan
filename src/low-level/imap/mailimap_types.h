@@ -509,6 +509,7 @@ extern "C" {
 #include <libetpan/libetpan-config.h>
 #include <libetpan/mailstream.h>
 #include <libetpan/clist.h>
+#include <stdbool.h>
 
 
 /*
@@ -2994,7 +2995,6 @@ mailimap_search_key_new(int sk_type,
 
 LIBETPAN_EXPORT
 void mailimap_search_key_free(struct mailimap_search_key * key);
-
 
 /*
   mailimap_status_att_list is a list of mailbox STATUS request type
