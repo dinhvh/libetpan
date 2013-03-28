@@ -92,6 +92,8 @@ extern "C" {
                     struct mailimap_sort_key * key, struct mailimap_search_key * searchkey,
                     clist ** result);
 
+  LIBETPAN_EXPORT
+  void mailimap_sort_result_free(clist * search_result);
   
 #ifdef __cplusplus
 }

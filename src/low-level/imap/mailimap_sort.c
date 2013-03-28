@@ -206,6 +206,12 @@ mailimap_uid_sort(mailimap * session, const char * charset,
   return MAILIMAP_NO_ERROR;
 }
 
+LIBETPAN_EXPORT
+void mailimap_sort_result_free(clist * search_result)
+{
+  clist_foreach(search_result, (clist_func) free, NULL);
+  clist_free(search_result);
+}
 
 
 int
@@ -329,6 +335,7 @@ mailimap_number_list_data_sort_parse(mailstream * fd, MMAPString * buffer,
   clist * number_list;
   int r;
   int res;
+  size_t final_token;
   
   cur_token = * indx;
   
@@ -338,25 +345,24 @@ mailimap_number_list_data_sort_parse(mailstream * fd, MMAPString * buffer,
     return r;
   }
   
-  r = mailimap_space_parse(fd, buffer, &cur_token);
-  if (r != MAILIMAP_NO_ERROR) {
-    res = r;
-    return r;
-  }
+  final_token = cur_token;
+  number_list = NULL;
   
-  r = mailimap_struct_spaced_list_parse(fd, buffer, &cur_token, &number_list,
-                                        (mailimap_struct_parser *)
-                                        mailimap_nz_number_alloc_parse,
-                                        (mailimap_struct_destructor *)
-                                        mailimap_number_alloc_free,
-                                        progr_rate, progr_fun);
-  if (r != MAILIMAP_NO_ERROR) {
-    res = r;
-    return r;
+  r = mailimap_space_parse(fd, buffer, &cur_token);
+  if (r == MAILIMAP_NO_ERROR) {
+    r = mailimap_struct_spaced_list_parse(fd, buffer, &cur_token, &number_list,
+                                          (mailimap_struct_parser *)
+                                          mailimap_nz_number_alloc_parse,
+                                          (mailimap_struct_destructor *)
+                                          mailimap_number_alloc_free,
+                                          progr_rate, progr_fun);
+    if (r == MAILIMAP_NO_ERROR) {
+      final_token = cur_token;
+    }
   }
   
   * result = number_list;
-  * indx = cur_token;
+  * indx = final_token;
   
   return MAILIMAP_NO_ERROR;
 }
@@ -378,6 +384,7 @@ mailimap_sort_extension_parse(int calling_parser, mailstream * fd,
   
   switch (calling_parser)
   {
+    case MAILIMAP_EXTENDED_PARSER_RESPONSE_DATA:
     case MAILIMAP_EXTENDED_PARSER_MAILBOX_DATA:
       r = mailimap_number_list_data_sort_parse(fd, buffer, &cur_token,
                                                &number_list, progr_rate, progr_fun);
