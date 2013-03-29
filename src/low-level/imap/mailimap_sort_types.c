@@ -22,7 +22,7 @@
 
 struct mailimap_sort_key *
 mailimap_sort_key_new(int sortk_type,
-                      _Bool is_reverse,
+                      int is_reverse,
                       clist * sortk_multiple) {
   struct mailimap_sort_key * key;
   
@@ -53,37 +53,37 @@ void mailimap_sort_key_free(struct mailimap_sort_key * key) {
 
 
 struct mailimap_sort_key *
-mailimap_sort_key_new_arrival(_Bool is_reverse) {
+mailimap_sort_key_new_arrival(int is_reverse) {
   return mailimap_sort_key_new(MAILIMAP_SORT_KEY_ARRIVAL, is_reverse, NULL);
 }
 
 struct mailimap_sort_key *
-mailimap_sort_key_new_cc(_Bool is_reverse) {
+mailimap_sort_key_new_cc(int is_reverse) {
   return mailimap_sort_key_new(MAILIMAP_SORT_KEY_CC, is_reverse, NULL);
 }
 
 struct mailimap_sort_key *
-mailimap_sort_key_new_date(_Bool is_reverse) {
+mailimap_sort_key_new_date(int is_reverse) {
   return mailimap_sort_key_new(MAILIMAP_SORT_KEY_DATE, is_reverse, NULL);
 }
 
 struct mailimap_sort_key *
-mailimap_sort_key_new_from(_Bool is_reverse) {
+mailimap_sort_key_new_from(int is_reverse) {
   return mailimap_sort_key_new(MAILIMAP_SORT_KEY_FROM, is_reverse, NULL);
 }
 
 struct mailimap_sort_key *
-mailimap_sort_key_new_size(_Bool is_reverse) {
+mailimap_sort_key_new_size(int is_reverse) {
   return mailimap_sort_key_new(MAILIMAP_SORT_KEY_SIZE, is_reverse, NULL);
 }
 
 struct mailimap_sort_key *
-mailimap_sort_key_new_subject(_Bool is_reverse) {
+mailimap_sort_key_new_subject(int is_reverse) {
   return mailimap_sort_key_new(MAILIMAP_SORT_KEY_SUBJECT, is_reverse, NULL);
 }
 
 struct mailimap_sort_key *
-mailimap_sort_key_new_to(_Bool is_reverse) {
+mailimap_sort_key_new_to(int is_reverse) {
   return mailimap_sort_key_new(MAILIMAP_SORT_KEY_TO, is_reverse, NULL);
 }
 
