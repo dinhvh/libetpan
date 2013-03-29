@@ -673,25 +673,25 @@ mailimap_search_key_multiple_add(struct mailimap_search_key * keys,
 
 
 struct mailimap_sort_key *
-mailimap_sort_key_new_arrival(_Bool is_reverse);
+mailimap_sort_key_new_arrival(int is_reverse);
 
 struct mailimap_sort_key *
-mailimap_sort_key_new_cc(_Bool is_reverse);
+mailimap_sort_key_new_cc(int is_reverse);
 
 struct mailimap_sort_key *
-mailimap_sort_key_new_date(_Bool is_reverse);
+mailimap_sort_key_new_date(int is_reverse);
 
 struct mailimap_sort_key *
-mailimap_sort_key_new_from(_Bool is_reverse);
+mailimap_sort_key_new_from(int is_reverse);
 
 struct mailimap_sort_key *
-mailimap_sort_key_new_size(_Bool is_reverse);
+mailimap_sort_key_new_size(int is_reverse);
 
 struct mailimap_sort_key *
-mailimap_sort_key_new_subject(_Bool is_reverse);
+mailimap_sort_key_new_subject(int is_reverse);
 
 struct mailimap_sort_key *
-mailimap_sort_key_new_to(_Bool is_reverse);
+mailimap_sort_key_new_to(int is_reverse);
 
 struct mailimap_sort_key *
 mailimap_sort_key_new_multiple(clist * keys);
