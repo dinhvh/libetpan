@@ -1,2 +1,6 @@
-run ./update.sh to bootstrap project for Mac OS X and iPhone OS.
+./update.sh will be run during the build of the Xcode project.
 
+For the developers:
+Run the following if any file has been added to the sources:
+./update.sh prepare
+It will rebuild autogen-result.tar.gz. This archive will contains the result of ./autogen.sh script.
