@@ -626,6 +626,22 @@ LIBETPAN_EXPORT
 int mailimap_starttls(mailimap * session);
 
 /*
+   mailimap_compress()
+
+   This function will request IMAP compression by sending
+   a COMPRESS command.
+
+   @param session IMAP session
+
+   @return the return code is one of MAILIMAP_ERROR_XXX or
+     MAILIMAP_NO_ERROR codes
+ */
+
+LIBETPAN_EXPORT
+int mailimap_compress(mailimap * session);
+
+
+/*
    mailimap_new()
 
    This function returns a new IMAP session.

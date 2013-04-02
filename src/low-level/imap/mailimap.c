@@ -2429,7 +2429,46 @@ int mailimap_starttls(mailimap * session)
   }
 }
 
+int mailimap_compress(mailimap * session)
+{
 
+    struct mailimap_response * response;
+    int r;
+    int error_code;
+
+    r = mailimap_send_current_tag(session);
+    if (r != MAILIMAP_NO_ERROR)
+        return r;
+
+    r = mailimap_token_send(session->imap_stream, "COMPRESS DEFLATE");
+    if (r != MAILIMAP_NO_ERROR)
+        return r;
+
+    r = mailimap_crlf_send(session->imap_stream);
+    if (r != MAILIMAP_NO_ERROR)
+        return r;
+
+    if (mailstream_flush(session->imap_stream) == -1)
+        return MAILIMAP_ERROR_STREAM;
+
+    if (mailimap_read_line(session) == NULL)
+        return MAILIMAP_ERROR_STREAM;
+
+    r = mailimap_parse_response(session, &response);
+    if (r != MAILIMAP_NO_ERROR)
+        return r;
+
+    error_code = response->rsp_resp_done->rsp_data.rsp_tagged->rsp_cond_state->rsp_type;
+
+    mailimap_response_free(response);
+
+    if (error_code == MAILIMAP_RESP_COND_STATE_OK) {
+        return MAILIMAP_NO_ERROR;
+    }
+
+    // should probably add a better erro
+    return MAILIMAP_ERROR_BAD_STATE;
+}
 
 char * mailimap_read_line(mailimap * session)
 {
@@ -2672,7 +2711,7 @@ void mailimap_free(mailimap * session)
 LIBETPAN_EXPORT
 void mailimap_set_timeout(mailimap * session, time_t timeout)
 {
-	session->imap_timeout = timeout;
+  session->imap_timeout = timeout;
 }
 
 LIBETPAN_EXPORT
