@@ -132,13 +132,26 @@ mailimap_xgmmsgid_extension_parse(int calling_parser, mailstream * fd,
     }
 }
 
+/*
+    Free mailimap_extension_data created for the xgmmsgid extension, including anything pointed to by
+ ext_data->ext_data
+ 
+ */
 static void
 mailimap_xgmmsgid_extension_data_free(struct mailimap_extension_data * ext_data)
 {
     if (ext_data == NULL)
-        return;
- 
-    free(ext_data);
+	return;
+    
+    switch (ext_data->ext_type)
+    {
+	case MAILIMAP_XGMMSGID_TYPE_MSGID:
+	    free(ext_data->ext_data); // msgid stashed in ext_data
+	    break;
+    }
+    
+    free (ext_data);
+
 }
 
 int mailimap_fetch_xgmmsgid(mailimap * session,
