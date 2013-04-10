@@ -102,9 +102,9 @@ void mailmessage_free(mailmessage * msg_info)
   if (msg_info->msg_gmlabels != NULL)
 //    clist_free(msg_info->msg_gmlabels);
   if (msg_info->msg_gmthrid != NULL)
-//    free(msg_info->msg_gmthrid);
+    free(msg_info->msg_gmthrid);
   if (msg_info->msg_gmmsgid != NULL)
-//    free(msg_info->msg_gmmsgid);
+    free(msg_info->msg_gmmsgid);
 
   free(msg_info);
 }
