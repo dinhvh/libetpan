@@ -60,7 +60,7 @@ mailmessage * mailmessage_new(void)
 
   msg_info->msg_gmthrid = NULL;
   msg_info->msg_gmmsgid = NULL;
-  msg_info->msg_gmlabels = clist_new();
+  msg_info->msg_gmlabels = NULL;
 
   msg_info->msg_cached = FALSE;
   msg_info->msg_size = 0;
@@ -100,7 +100,7 @@ void mailmessage_free(mailmessage * msg_info)
     free(msg_info->msg_uid);
 
   if (msg_info->msg_gmlabels != NULL)
-//    clist_free(msg_info->msg_gmlabels);
+    clist_free(msg_info->msg_gmlabels);
   if (msg_info->msg_gmthrid != NULL)
     free(msg_info->msg_gmthrid);
   if (msg_info->msg_gmmsgid != NULL)
