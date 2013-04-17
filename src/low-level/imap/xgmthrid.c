@@ -79,7 +79,7 @@ mailimap_xgmthrid_extension_parse(int calling_parser, mailstream * fd,
     
     switch (calling_parser)
     {
-        case MAILIMAP_EXTENDED_PARSER_MAILBOX_DATA:
+        case MAILIMAP_EXTENDED_PARSER_FETCH_DATA:
             
             r = fetch_data_xgmthrid_parse(fd, buffer, &cur_token, &thrid, progr_rate, progr_fun);
             if (r != MAILIMAP_NO_ERROR)
