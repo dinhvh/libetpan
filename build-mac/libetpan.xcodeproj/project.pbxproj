@@ -3322,6 +3322,7 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Library/Frameworks";
 				PRODUCT_NAME = libetpan;
+				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Debug;
@@ -3338,6 +3339,7 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Library/Frameworks";
 				PRODUCT_NAME = libetpan;
+				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Release;
@@ -3356,6 +3358,7 @@
 					"-DHAVE_CFNETWORK=1",
 					"-DHAVE_CONFIG_H=1",
 				);
+				SKIP_INSTALL = YES;
 			};
 			name = Debug;
 		};
@@ -3371,6 +3374,7 @@
 					"-DHAVE_CFNETWORK=1",
 					"-DHAVE_CONFIG_H=1",
 				);
+				SKIP_INSTALL = YES;
 			};
 			name = Release;
 		};
@@ -3446,6 +3450,7 @@
 				INSTALL_PATH = /usr/local/lib;
 				PRODUCT_NAME = etpan_mac;
 				SDKROOT = macosx10.7;
+				SKIP_INSTALL = YES;
 			};
 			name = Debug;
 		};
@@ -3468,6 +3473,7 @@
 				INSTALL_PATH = /usr/local/lib;
 				PRODUCT_NAME = etpan_mac;
 				SDKROOT = macosx10.7;
+				SKIP_INSTALL = YES;
 				ZERO_LINK = NO;
 			};
 			name = Release;
