@@ -1419,6 +1419,7 @@ mailimap_uid_fetch(mailimap * session,
 
   default:
     mailimap_fetch_list_free(* result);
+    * result = NULL;
     return MAILIMAP_ERROR_UID_FETCH;
   }
 #else
