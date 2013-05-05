@@ -898,6 +898,10 @@ mailimap_date_time_send(mailstream * fd,
   int r;
   int zone;
 
+  r = mailimap_dquote_send(fd);
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+
   r = mailimap_date_day_fixed_send(fd, date_time->dt_day);
   if (r != MAILIMAP_NO_ERROR)
     return r;
@@ -960,6 +964,10 @@ mailimap_date_time_send(mailstream * fd,
   }
 
   r = mailimap_fixed_digit_send(fd, zone, 4);
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+
+  r = mailimap_dquote_send(fd);
   if (r != MAILIMAP_NO_ERROR)
     return r;
 
