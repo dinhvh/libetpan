@@ -33,6 +33,7 @@ etpaninclude_HEADERS = \
 	mmapstring.h mailstream.h mailstream_helper.h mail.h \
         mailstream_low.h \
         mailstream_socket.h mailstream_ssl.h mailstream_cfstream.h \
+        mailstream_compress.h \
 	mailstream_types.h \
 	carray.h clist.h chash.h \
 	charconv.h mailsem.h maillock.h
@@ -50,4 +51,5 @@ libdata_types_la_SOURCES = connect.h connect.c base64.h hmac-md5.h	\
 	mailsasl.c mailstream_cancel_types.h mailstream_cancel.h	\
 	mailstream_cancel.c timeutils.h timeutils.c			\
 	mmapstring_private.h mailstream_ssl_private.h			\
-	mailstream_cfstream.c mailstream_cfstream.h
+	mailstream_cfstream.c mailstream_cfstream.h \
+    mailstream_compress.c mailstream_compress.h

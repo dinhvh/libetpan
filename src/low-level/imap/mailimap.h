@@ -62,6 +62,8 @@ extern "C" {
 #include <libetpan/xgmthrid.h>
 #include <libetpan/condstore.h>
 #include <libetpan/qresync.h>
+#include <libetpan/mailimap_sort.h>
+#include <libetpan/mailimap_compress.h>
 
 /*
   mailimap_connect()
@@ -615,6 +617,8 @@ int mailimap_unsubscribe(mailimap * session, const char * mb);
 
    This function starts change the mode of the connection to
    switch to SSL connection.
+   It won't change the stream connection to SSL rightway.
+   See mailimap_socket_starttls() will switch the mailstream too.
 
    @param session   IMAP session
 
