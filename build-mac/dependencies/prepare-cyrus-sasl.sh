@@ -113,7 +113,7 @@ for TARGET in $TARGETS; do
     case $TARGET in
         (iPhoneOS) 
             ARCH=arm
-            MARCHS="armv6 armv7 armv7s"
+            MARCHS="armv7 armv7s"
             EXTRA_FLAGS="-miphoneos-version-min=$SDK_IOS_MIN_VERSION"
             ;;
         (iPhoneSimulator)
