@@ -30,7 +30,7 @@
  */
 
 /*  Created by Ian Ragsdale on 3/8/13. */
-
+#include <stddef.h>
 #include "mailstream_compress.h"
 
 #if !HAVE_ZLIB
