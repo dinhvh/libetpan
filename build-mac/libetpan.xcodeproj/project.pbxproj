@@ -53,6 +53,8 @@
 		C668E2DA1736004400A2BB47 /* mailimap_compress.c in Sources */ = {isa = PBXBuildFile; fileRef = C668E2D81736004400A2BB47 /* mailimap_compress.c */; };
 		C668E2DB1736004400A2BB47 /* mailimap_compress.c in Sources */ = {isa = PBXBuildFile; fileRef = C668E2D81736004400A2BB47 /* mailimap_compress.c */; };
 		C668E2DC1736004400A2BB47 /* mailimap_compress.c in Sources */ = {isa = PBXBuildFile; fileRef = C668E2D81736004400A2BB47 /* mailimap_compress.c */; };
+		C668E2F9173E18B900A2BB47 /* mailstream_compress.c in Sources */ = {isa = PBXBuildFile; fileRef = 2307A00A170AAA5500C43C59 /* mailstream_compress.c */; };
+		C668E2FA173E18BA00A2BB47 /* mailstream_compress.c in Sources */ = {isa = PBXBuildFile; fileRef = 2307A00A170AAA5500C43C59 /* mailstream_compress.c */; };
 		C682E21C15B315EF00BE9DA7 /* acl.c in Sources */ = {isa = PBXBuildFile; fileRef = C6F9E9EE105335BC0059C3BA /* acl.c */; };
 		C682E21D15B315EF00BE9DA7 /* acl_parser.c in Sources */ = {isa = PBXBuildFile; fileRef = C6F9E9F0105335BC0059C3BA /* acl_parser.c */; };
 		C682E21E15B315EF00BE9DA7 /* acl_sender.c in Sources */ = {isa = PBXBuildFile; fileRef = C6F9E9F2105335BC0059C3BA /* acl_sender.c */; };
@@ -2228,6 +2230,7 @@
 				8A75ECDC17040F92007F9972 /* mailimap_sort.c in Sources */,
 				8A75ECE8170414BA007F9972 /* mailimap_sort_types.c in Sources */,
 				C668E2DC1736004400A2BB47 /* mailimap_compress.c in Sources */,
+				C668E2FA173E18BA00A2BB47 /* mailstream_compress.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2409,6 +2412,7 @@
 				8A75ECDB17040F92007F9972 /* mailimap_sort.c in Sources */,
 				8A75ECE7170414BA007F9972 /* mailimap_sort_types.c in Sources */,
 				C668E2DB1736004400A2BB47 /* mailimap_compress.c in Sources */,
+				C668E2F9173E18B900A2BB47 /* mailstream_compress.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
