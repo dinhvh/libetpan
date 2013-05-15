@@ -383,12 +383,16 @@ int mailimap_search_modseq(mailimap * session, const char * charset,
   }
 
   if (search_data == NULL) {
-    return MAILIMAP_ERROR_UID_SEARCH;
+    * result = session->imap_response_info->rsp_search_result;
+    * p_mod_sequence_value = 0;
+    session->imap_response_info->rsp_search_result = NULL;
   }
-
-  * result = search_data->cs_search_result;
-  * p_mod_sequence_value = search_data->cs_modseq_value;
-  search_data->cs_search_result = NULL;
+  else {
+    * result = search_data->cs_search_result;
+    * p_mod_sequence_value = search_data->cs_modseq_value;
+    search_data->cs_search_result = NULL;
+    mailimap_condstore_search_free(search_data);
+  }
 
   error_code = response->rsp_resp_done->rsp_data.rsp_tagged->rsp_cond_state->rsp_type;
 
@@ -455,13 +459,16 @@ int mailimap_uid_search_modseq(mailimap * session, const char * charset,
   }
 
   if (search_data == NULL) {
-    return MAILIMAP_ERROR_UID_SEARCH;
+    * result = session->imap_response_info->rsp_search_result;
+    * p_mod_sequence_value = 0;
+    session->imap_response_info->rsp_search_result = NULL;
+  }
+  else {
+    * result = search_data->cs_search_result;
+    * p_mod_sequence_value = search_data->cs_modseq_value;
+    search_data->cs_search_result = NULL;
   }
   
-  * result = search_data->cs_search_result;
-  * p_mod_sequence_value = search_data->cs_modseq_value;
-  search_data->cs_search_result = NULL;
-
   error_code = response->rsp_resp_done->rsp_data.rsp_tagged->rsp_cond_state->rsp_type;
 
   mailimap_response_free(response);
