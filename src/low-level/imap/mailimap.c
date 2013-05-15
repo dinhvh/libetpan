@@ -2015,53 +2015,88 @@ int
 mailimap_uid_search(mailimap * session, const char * charset,
     struct mailimap_search_key * key, clist ** result)
 {
-#if 0
+  struct mailimap_search_key * keyx;
+  struct mailimap_flag *the_flag;
   struct mailimap_response * response;
   int r;
   int error_code;
+  uint64_t dummy;
 
-  if (session->imap_state != MAILIMAP_STATE_SELECTED)
-    return MAILIMAP_ERROR_BAD_STATE;
-
-  r = mailimap_send_current_tag(session);
-  if (r != MAILIMAP_NO_ERROR)
+  if (mailimap_has_condstore(session) &&
+      (
+       key->sk_type == MAILIMAP_SEARCH_KEY_SEEN ||
+       key->sk_type == MAILIMAP_SEARCH_KEY_ANSWERED ||
+       key->sk_type == MAILIMAP_SEARCH_KEY_FLAGGED ||
+       key->sk_type == MAILIMAP_SEARCH_KEY_DELETED ||
+       key->sk_type == MAILIMAP_SEARCH_KEY_DRAFT
+       )
+      )
+  {
+  
+    switch (key->sk_type) {
+      case MAILIMAP_SEARCH_KEY_SEEN:
+        the_flag = mailimap_flag_new_seen();
+        break;
+      case MAILIMAP_SEARCH_KEY_ANSWERED:
+        the_flag = mailimap_flag_new_answered();
+        break;
+      case MAILIMAP_SEARCH_KEY_FLAGGED:
+        the_flag = mailimap_flag_new_flagged();
+        break;
+      case MAILIMAP_SEARCH_KEY_DELETED:
+        the_flag = mailimap_flag_new_deleted();
+        break;
+      case MAILIMAP_SEARCH_KEY_DRAFT:
+        the_flag = mailimap_flag_new_draft();
+        break;
+    }
+    keyx = mailimap_search_key_new_modseq(the_flag, MAILIMAP_SEARCH_KEY_MODSEQ_ENTRY_TYPE_REQ_ALL, &dummy);
+    r = mailimap_uid_search_modseq(session, charset, keyx, result, NULL);
+    mailimap_search_key_free(keyx);
     return r;
-
-  r = mailimap_uid_search_send(session->imap_stream, charset, key);
-  if (r != MAILIMAP_NO_ERROR)
-    return r;
-
-  r = mailimap_crlf_send(session->imap_stream);
-  if (r != MAILIMAP_NO_ERROR)
-    return r;
-
-  if (mailstream_flush(session->imap_stream) == -1)
-    return MAILIMAP_ERROR_STREAM;
-
-  if (mailimap_read_line(session) == NULL)
-    return MAILIMAP_ERROR_STREAM;
-
-  r = mailimap_parse_response(session, &response);
-  if (r != MAILIMAP_NO_ERROR)
-    return r;
-
-  * result = session->imap_response_info->rsp_search_result;
-  session->imap_response_info->rsp_search_result = NULL;
-
-  error_code = response->rsp_resp_done->rsp_data.rsp_tagged->rsp_cond_state->rsp_type;
-
-  mailimap_response_free(response);
-
-  switch (error_code) {
-  case MAILIMAP_RESP_COND_STATE_OK:
-    return MAILIMAP_NO_ERROR;
-
-  default:
-    return MAILIMAP_ERROR_UID_SEARCH;
   }
-#else
-  return mailimap_uid_search_modseq(session, charset, key, result, NULL);
-#endif
+  else {
+    
+    if (session->imap_state != MAILIMAP_STATE_SELECTED)
+      return MAILIMAP_ERROR_BAD_STATE;
+    
+    r = mailimap_send_current_tag(session);
+    if (r != MAILIMAP_NO_ERROR)
+      return r;
+    
+    r = mailimap_uid_search_send(session->imap_stream, charset, key);
+    if (r != MAILIMAP_NO_ERROR)
+      return r;
+    
+    r = mailimap_crlf_send(session->imap_stream);
+    if (r != MAILIMAP_NO_ERROR)
+      return r;
+    
+    if (mailstream_flush(session->imap_stream) == -1)
+      return MAILIMAP_ERROR_STREAM;
+    
+    if (mailimap_read_line(session) == NULL)
+      return MAILIMAP_ERROR_STREAM;
+    
+    r = mailimap_parse_response(session, &response);
+    if (r != MAILIMAP_NO_ERROR)
+      return r;
+    
+    * result = session->imap_response_info->rsp_search_result;
+    session->imap_response_info->rsp_search_result = NULL;
+    
+    error_code = response->rsp_resp_done->rsp_data.rsp_tagged->rsp_cond_state->rsp_type;
+    
+    mailimap_response_free(response);
+    
+    switch (error_code) {
+      case MAILIMAP_RESP_COND_STATE_OK:
+        return MAILIMAP_NO_ERROR;
+        
+      default:
+        return MAILIMAP_ERROR_UID_SEARCH;
+    }
+  }
 }
 
 LIBETPAN_EXPORT
