@@ -467,6 +467,7 @@ int mailimap_uid_search_modseq(mailimap * session, const char * charset,
     * result = search_data->cs_search_result;
     * p_mod_sequence_value = search_data->cs_modseq_value;
     search_data->cs_search_result = NULL;
+    mailimap_condstore_search_free(search_data);
   }
   
   error_code = response->rsp_resp_done->rsp_data.rsp_tagged->rsp_cond_state->rsp_type;
