@@ -460,12 +460,16 @@ int mailimap_uid_search_modseq(mailimap * session, const char * charset,
 
   if (search_data == NULL) {
     * result = session->imap_response_info->rsp_search_result;
-    * p_mod_sequence_value = 0;
+    if (p_mod_sequence_value != NULL) {
+      * p_mod_sequence_value = 0;
+    }
     session->imap_response_info->rsp_search_result = NULL;
   }
   else {
     * result = search_data->cs_search_result;
-    * p_mod_sequence_value = search_data->cs_modseq_value;
+    if (p_mod_sequence_value != NULL) {
+      * p_mod_sequence_value = search_data->cs_modseq_value;
+    }
     search_data->cs_search_result = NULL;
     mailimap_condstore_search_free(search_data);
   }
