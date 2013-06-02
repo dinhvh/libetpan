@@ -5,6 +5,7 @@ ARCHIVE=cyrus-sasl-$version
 ARCHIVE_NAME=$ARCHIVE.tar.gz
 ARCHIVE_PATCH=$ARCHIVE.patch
 url=ftp://ftp.andrew.cmu.edu/pub/cyrus-mail/$ARCHIVE_NAME
+patchfile=cyrus-2.1.25-libetpan.patch
 
 scriptdir="`pwd`"
 
@@ -65,6 +66,7 @@ logfile="$srcdir/$ARCHIVE/build.log"
 echo "*** patching sources ***" > "$logfile" 2>&1
 
 cd "$srcdir/$ARCHIVE"
+patch -p1 < $current_dir/$patchfile
 # patch source files
 cd "$srcdir/$ARCHIVE/include"
 sed -E 's/\.\/makemd5 /.\/makemd5i386 /' < Makefile.am > Makefile.am.new
