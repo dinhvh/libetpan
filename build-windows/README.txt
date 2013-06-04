@@ -53,6 +53,15 @@ So, if you modify original headers (in src), you need to remove this file to ref
 includes copy folder.
 
      _________________________________________________________________
+ 
+ Linker errors:
+
+ If you are getting a missing function linker error, a new source file may have been added to the 
+ src folder somewhere by another (unix based) contributor.  This now must be added to the solution
+ for it to compile properly.
+
+
+     _________________________________________________________________
 
 Supported drivers:
 

@@ -41,7 +41,7 @@ extern "C" {
 #include <libetpan/mailimap_extension.h>
 #include <libetpan/mailimap_id_types.h>
 
-extern struct mailimap_extension_api mailimap_extension_id;
+LIBETPAN_EXPORT struct mailimap_extension_api mailimap_extension_id;
 
 LIBETPAN_EXPORT
 int mailimap_has_id(mailimap * session);

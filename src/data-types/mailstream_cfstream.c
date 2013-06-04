@@ -41,7 +41,9 @@
 #endif
 #endif
 
+#ifndef WIN32
 #include <pthread.h>
+#endif
 
 #if LIBETPAN_IOS_DISABLE_SSL && HAVE_CFNETWORK
 #define CFSTREAM_ENABLED_DEFAULT 1

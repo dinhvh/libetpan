@@ -61,6 +61,8 @@ mailimap_sort(mailimap * session, const char * charset,
   struct mailimap_response * response;
   int r;
   int error_code;
+  clist * sort_result = NULL;
+  clistiter * cur = NULL;
   
   if (session->imap_state != MAILIMAP_STATE_SELECTED)
     return MAILIMAP_ERROR_BAD_STATE;
@@ -87,8 +89,7 @@ mailimap_sort(mailimap * session, const char * charset,
   if (r != MAILIMAP_NO_ERROR)
     return r;
   
-  clist * sort_result = NULL;
-  clistiter * cur = NULL;
+  
   for (cur = clist_begin(session->imap_response_info->rsp_extension_list);
        cur != NULL; cur = clist_next(cur)) {
     struct mailimap_extension_data * ext_data;
@@ -138,6 +139,8 @@ mailimap_uid_sort(mailimap * session, const char * charset,
   struct mailimap_response * response;
   int r;
   int error_code;
+  clistiter * cur = NULL;
+  clist * sort_result = NULL;
   
   if (session->imap_state != MAILIMAP_STATE_SELECTED)
     return MAILIMAP_ERROR_BAD_STATE;
@@ -164,8 +167,7 @@ mailimap_uid_sort(mailimap * session, const char * charset,
   if (r != MAILIMAP_NO_ERROR)
     return r;
   
-  clistiter * cur = NULL;
-  clist * sort_result = NULL;
+  
   for (cur = clist_begin(session->imap_response_info->rsp_extension_list);
        cur != NULL; cur = clist_next(cur)) {
     struct mailimap_extension_data * ext_data;
