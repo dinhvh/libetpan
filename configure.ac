@@ -2,10 +2,10 @@
 # Process this file with autoconf to produce a configure script.
 
 m4_define([maj_version], [1])
-m4_define([min_version], [1])
-m4_define([api_current], [16])
+m4_define([min_version], [2])
+m4_define([api_current], [17])
 m4_define([api_revision], [0])
-m4_define([api_compatibility], [16])
+m4_define([api_compatibility], [17])
 dnl API version
 dnl 1. If you have changed any of the sources for this library, the revision
 dnl    number must be incremented. This is a new revision of the current
