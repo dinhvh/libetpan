@@ -1,7 +1,7 @@
 #define _GNU_SOURCE
 
 #ifdef HAVE_CONFIG_H
-#include "../config.h.in" //this should be conditional for win builds.
+#include "../config.h" //this should be conditional for win builds.
 #endif
 
 #ifdef _MSC_VER
