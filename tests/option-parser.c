@@ -1,5 +1,9 @@
 #define _GNU_SOURCE
-#include "../config.h.in"
+
+#ifdef HAVE_CONFIG_H
+#include "../config.h.in" //this should be conditional for win builds.
+#endif
+
 #ifdef _MSC_VER
 #	include "../src/bsd/getopt.h"
 #else

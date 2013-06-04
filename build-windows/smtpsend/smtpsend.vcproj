@@ -4,6 +4,7 @@
 	Version="9.00"
 	Name="smtpsend"
 	ProjectGUID="{FF9F45C9-74A0-4B4E-99E9-6ADE0EB6D8AC}"
+	RootNamespace="smtpsend"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
