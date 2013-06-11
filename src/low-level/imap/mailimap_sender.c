@@ -901,16 +901,83 @@ static int
 mailimap_date_time_send(mailstream * fd,
 			struct mailimap_date_time * date_time)
 {
-    const char *monthName = mailimap_month_get_token_str(date_time->dt_month);
+    int r;
+    int zone;
     
-    char buf[128];
-    sprintf(buf, "%.2d-%s-%d %.2d:%.2d:%.2d %s%.4d",
-	    date_time->dt_day,monthName,date_time->dt_year,
-	    date_time->dt_hour, date_time->dt_min, date_time->dt_sec,
-	    (date_time->dt_zone >= 0 ? "+" : ""), date_time->dt_zone);
+    r = mailimap_dquote_send(fd);
+    if (r != MAILIMAP_NO_ERROR)
+	return r;
     
+    r = mailimap_date_day_fixed_send(fd, date_time->dt_day);
+    if (r != MAILIMAP_NO_ERROR)
+	return r;
     
-    return mailimap_quoted_send(fd, buf);
+    r = mailimap_char_send(fd, '-');
+    if (r != MAILIMAP_NO_ERROR)
+	return r;
+    
+    r = mailimap_date_month_send(fd, date_time->dt_month);
+    if (r != MAILIMAP_NO_ERROR)
+	return r;
+    
+    r = mailimap_char_send(fd, '-');
+    if (r != MAILIMAP_NO_ERROR)
+	return r;
+    
+    r = mailimap_date_year_send(fd, date_time->dt_year);
+    if (r != MAILIMAP_NO_ERROR)
+	return r;
+    
+    r = mailimap_space_send(fd);
+    if (r != MAILIMAP_NO_ERROR)
+	return r;
+    
+    r = mailimap_fixed_digit_send(fd, date_time->dt_hour, 2);
+    if (r != MAILIMAP_NO_ERROR)
+	return r;
+    
+    r = mailimap_char_send(fd, ':');
+    if (r != MAILIMAP_NO_ERROR)
+	return r;
+    
+    r = mailimap_fixed_digit_send(fd, date_time->dt_min, 2);
+    if (r != MAILIMAP_NO_ERROR)
+	return r;
+    
+    r = mailimap_char_send(fd, ':');
+    if (r != MAILIMAP_NO_ERROR)
+	return r;
+    
+    r = mailimap_fixed_digit_send(fd, date_time->dt_sec, 2);
+    if (r != MAILIMAP_NO_ERROR)
+	return r;
+    
+    r = mailimap_space_send(fd);
+    if (r != MAILIMAP_NO_ERROR)
+	return r;
+    
+    if (date_time->dt_zone < 0) {
+	r = mailimap_char_send(fd, '-');
+	if (r != MAILIMAP_NO_ERROR)
+	    return r;
+	zone = -date_time->dt_zone;
+    }
+    else {
+	r = mailimap_char_send(fd, '+');
+	if (r != MAILIMAP_NO_ERROR)
+	    return r;
+	zone = date_time->dt_zone;
+    }
+    
+    r = mailimap_fixed_digit_send(fd, zone, 4);
+    if (r != MAILIMAP_NO_ERROR)
+	return r;
+    
+    r = mailimap_dquote_send(fd);
+    if (r != MAILIMAP_NO_ERROR)
+	return r;
+    
+    return MAILIMAP_NO_ERROR;
 }
 
 /*
