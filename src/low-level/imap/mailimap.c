@@ -1851,6 +1851,61 @@ int mailimap_authenticate(mailimap * session, const char * auth_type,
 #endif
 }
 
+LIBETPAN_EXPORT
+int mailimap_oauth2_authenticate(mailimap * session, const char *auth_user, const char * access_token)
+{
+  struct mailimap_response * response;
+  int r;
+  int error_code;
+  
+  if (session->imap_state != MAILIMAP_STATE_NON_AUTHENTICATED)
+    return MAILIMAP_ERROR_BAD_STATE;
+  
+  mailstream_set_privacy(session->imap_stream, 0);
+  r = mailimap_send_current_tag(session);
+  if (r != MAILIMAP_NO_ERROR) {
+    mailstream_set_privacy(session->imap_stream, 1);
+    return r;
+  }
+
+  r = mailimap_oauth2_authenticate_send(session, auth_user, access_token);
+  if (r != MAILIMAP_NO_ERROR) {
+    mailstream_set_privacy(session->imap_stream, 1);
+    return r;
+  }  
+  
+  r = mailimap_crlf_send(session->imap_stream);
+  if (r != MAILIMAP_NO_ERROR) {
+    mailstream_set_privacy(session->imap_stream, 1);
+    return r;
+  }
+  
+  if (mailstream_flush(session->imap_stream) == -1) {
+    mailstream_set_privacy(session->imap_stream, 1);
+    return MAILIMAP_ERROR_STREAM;
+  }
+  mailstream_set_privacy(session->imap_stream, 1);
+  
+  if (mailimap_read_line(session) == NULL)
+    return MAILIMAP_ERROR_STREAM;
+  
+  r = mailimap_parse_response(session, &response);
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+
+  error_code = response->rsp_resp_done->rsp_data.rsp_tagged->rsp_cond_state->rsp_type;
+  
+  mailimap_response_free(response);
+  
+  switch (error_code) {
+    case MAILIMAP_RESP_COND_STATE_OK:
+      session->imap_state = MAILIMAP_STATE_AUTHENTICATED;
+      return MAILIMAP_NO_ERROR;
+      
+    default:
+      return MAILIMAP_ERROR_LOGIN;
+  }
+}
 
 LIBETPAN_EXPORT
 int mailimap_lsub(mailimap * session, const char * mb,

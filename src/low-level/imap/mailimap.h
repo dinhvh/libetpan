@@ -394,6 +394,20 @@ int mailimap_authenticate(mailimap * session, const char * auth_type,
     const char * login, const char * auth_name,
     const char * password, const char * realm);
 
+  
+/*
+ mailimap_oauth2_authenticate()
+ Authenticates the client using using an oauth2 token
+ @param session       IMAP session
+ @param session       Authentication user (tipically an e-mail address, depends on server)
+ @param access_token  OAuth2 access token
+ @return the return code is one of MAILIMAP_ERROR_XXX or
+ MAILIMAP_NO_ERROR codes
+ */
+LIBETPAN_EXPORT
+int mailimap_oauth2_authenticate(mailimap * session, const char *auth_user,
+                                 const char * access_token);
+
 
 /*
    mailimap_lsub()
