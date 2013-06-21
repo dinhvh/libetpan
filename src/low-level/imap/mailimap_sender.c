@@ -42,10 +42,12 @@
 #include "mailimap_sender.h"
 #include "clist.h"
 #include "mail.h"
+#include "base64.h"
 #include <string.h>
 
 #include <stdio.h>
 #include <ctype.h>
+#include <stdlib.h>
 
 /*
   TODO :
@@ -456,6 +458,47 @@ int mailimap_authenticate_send(mailstream * fd,
     return r;
 
   return MAILIMAP_NO_ERROR;
+}
+
+int mailimap_oauth2_authenticate_send(mailimap * session,
+                                      const char *auth_user,
+                                      const char * access_token)
+{
+  int r;
+  char *ptr;
+  //Build client response string
+  char *full_auth_string, *full_auth_string_b64;
+  int auth_user_len, access_token_len, full_auth_string_len;
+  auth_user_len = strlen(auth_user);
+  access_token_len = strlen(access_token);
+  full_auth_string_len = 5 + auth_user_len + 1 + 12 + access_token_len + 2;
+  full_auth_string = (char *)malloc(full_auth_string_len + 1);
+  if (full_auth_string == NULL) {
+    return MAILIMAP_ERROR_MEMORY;
+  }
+  ptr = memcpy(full_auth_string, "user=", 5);
+  ptr = memcpy(ptr + 5, auth_user, auth_user_len);
+  ptr = memcpy(ptr + auth_user_len, "\1auth=Bearer ", 13);
+  ptr = memcpy(ptr + 13, access_token, access_token_len);
+  ptr = memcpy(ptr + access_token_len, "\1\1\0", 3);
+  //Convert to base64
+  full_auth_string_b64 = encode_base64(full_auth_string, full_auth_string_len);
+
+  r = mailimap_token_send(session->imap_stream, "AUTHENTICATE");
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+  r = mailimap_space_send(session->imap_stream);
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+  r = mailimap_token_send(session->imap_stream, "XOAUTH2");
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+  r = mailimap_space_send(session->imap_stream);
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+  r = mailimap_astring_send(session->imap_stream, full_auth_string_b64);
+  free(full_auth_string_b64);
+  return r;
 }
 
 int mailimap_authenticate_resp_send(mailstream * fd,
