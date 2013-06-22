@@ -6409,6 +6409,7 @@ mailimap_status_info_parse(mailstream * fd, MMAPString * buffer,
   if (r == MAILIMAP_ERROR_PARSE) {
     struct mailimap_extension_data * ext_data;
     
+    cur_token = * indx;
     r = mailimap_extension_data_parse(MAILIMAP_EXTENDED_PARSER_STATUS_ATT,
         fd, buffer, &cur_token, &ext_data,
         progr_rate, progr_fun);
