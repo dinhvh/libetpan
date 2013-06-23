@@ -43,7 +43,7 @@ extern "C" {
        }
       The access token is what we need to authenticate via XOAuth2 with Gmail.
    @param session       IMAP session
-   @param session       Authentication user (tipically an e-mail address, depends on server)
+   @param auth_user     Authentication user (tipically an e-mail address, depends on server)
    @param access_token  OAuth2 access token
    @return the return code is one of MAILIMAP_ERROR_XXX or
    MAILIMAP_NO_ERROR codes
