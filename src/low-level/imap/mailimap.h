@@ -394,6 +394,50 @@ int mailimap_authenticate(mailimap * session, const char * auth_type,
     const char * login, const char * auth_name,
     const char * password, const char * realm);
 
+/*
+   mailimap_oauth2_authenticate()
+   Authenticates the client using using an oauth2 token.
+   To gather a deeper understanding of the OAuth2 aunthentication
+   process refer to: https://developers.google.com/gmail/xoauth2_protocol
+   For a quick start you may follow this brief set of steps:
+   1. Set up a profile for your app in the Google 
+      API Console: https://code.google.com/apis/console
+   2. With your recently obtained client_id and secret 
+      load the following URL (everything goes ina single line):
+      https://accounts.google.com/o/oauth2/auth?client_id=[YOUR_CLIENT_ID]&
+          redirect_uri=urn%3Aietf%3Awg%3Aoauth%3A2.0%3Aoob&
+          response_type=code&scope=https%3A%2F%2Fmail.google.com%2F&
+          login_hint=[USER_EMAIL_ADDRESS]&access_type=offline
+   3. The user most follow instructions to authorize application access
+      to Gmail.
+   4. After the user hits the "Accept" button it will be redirected to another
+      page where the access token will be issued.
+   5. Now from the app we need and authorization token, to get one we issue a POST request
+      the following URL: https://accounts.google.com/o/oauth2/token using these parameters:
+      client_id: This is the client id we got from step 1
+      client_secret: Client secret as we got it from step 1
+      code: This is the code we received in step 4
+      redirect_uri: This is a redirect URI where the access token will be sent, for non 
+       web applications this is usually urn:ietf:wg:oauth:2.0:oob (as we got from step 1)
+      grant_type: Always use the authorization_code parameter to retrieve an access and refresh tokens
+   6. After step 5 completes we receive a JSON object similar to:
+       {
+         "access_token":"1/fFAGRNJru1FTz70BzhT3Zg",
+         "refresh_token":"1/fFAGRNJrufoiWEGIWEFJFJF",
+         "expires_in":3920,
+         "token_type":"Bearer"
+       }
+      The access token is what we need to authenticate via XOAuth2 with Gmail.
+   @param session       IMAP session
+   @param session       Authentication user (tipically an e-mail address, depends on server)
+   @param access_token  OAuth2 access token
+   @return the return code is one of MAILIMAP_ERROR_XXX or
+   MAILIMAP_NO_ERROR codes
+  */
+LIBETPAN_EXPORT
+int mailimap_oauth2_authenticate(mailimap * session, const char *auth_user,
+    const char * access_token);
+
 
 /*
    mailimap_lsub()
