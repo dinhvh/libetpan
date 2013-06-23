@@ -47,7 +47,8 @@ etpaninclude_HEADERS = \
 	enable.h condstore.h condstore_types.h \
 	qresync.h qresync_types.h \
 	mailimap_sort.h mailimap_sort_types.h \
-  mailimap_compress.h
+  mailimap_compress.h \
+  mailimap_oauth2.h
 
 AM_CPPFLAGS = -I$(top_builddir)/include \
 	-I$(top_srcdir)/src/data-types
@@ -99,4 +100,5 @@ libimap_la_SOURCES = \
 	qresync.h qresync.c qresync_types.h qresync_types.c qresync_private.h \
 	mailimap_sort.c mailimap_sort.h \
   mailimap_sort_types.c mailimap_sort_types.h \
-  mailimap_compress.c mailimap_compress.h
+  mailimap_compress.c mailimap_compress.h \
+  mailimap_oauth2.c mailimap_oauth2.h
