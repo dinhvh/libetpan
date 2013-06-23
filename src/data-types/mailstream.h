@@ -86,6 +86,9 @@ extern void (* mailstream_logger_id)(mailstream_low * s, int is_stream_data, int
 	const char * str, size_t size);
 #endif
 
+void mailstream_set_logger(mailstream * s, void (* logger)(mailstream * s, int log_type,
+  const char * str, size_t size, void * context), void * logger_context);
+
 /* can be run in thread */
 int mailstream_wait_idle(mailstream * s, int max_idle_delay);
 

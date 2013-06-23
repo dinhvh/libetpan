@@ -68,11 +68,17 @@ LIBETPAN_EXPORT
 void (* mailstream_logger_id)(mailstream_low * s, int is_stream_data, int direction,
     const char * str, size_t size) = NULL;
 
+static inline void mailstream_logger_internal(mailstream_low * s, int is_stream_data, int direction,
+    const char * buffer, size_t size);
+
 #define STREAM_LOG_ERROR(low, direction, buf, size) \
+  if (low->logger != NULL) { \
+    mailstream_logger_internal(low, 2, direction, buf, size); \
+  } \
   if (mailstream_debug) { \
-	if (mailstream_logger_id != NULL) { \
-	  mailstream_logger_id(low, 2, direction, buf, size); \
-	} \
+	  if (mailstream_logger_id != NULL) { \
+	    mailstream_logger_id(low, 2, direction, buf, size); \
+	  } \
     else if (mailstream_logger != NULL) { \
       mailstream_logger(direction, buf, size); \
     } \
@@ -94,10 +100,13 @@ void (* mailstream_logger_id)(mailstream_low * s, int is_stream_data, int direct
   }
 
 #define STREAM_LOG_BUF(low, direction, buf, size) \
+  if (low->logger != NULL) { \
+    mailstream_logger_internal(low, 1, direction, buf, size); \
+  } \
   if (mailstream_debug) { \
-	if (mailstream_logger_id != NULL) { \
-	  mailstream_logger_id(low, 1, direction, buf, size); \
-	} \
+  	if (mailstream_logger_id != NULL) { \
+  	  mailstream_logger_id(low, 1, direction, buf, size); \
+  	} \
     else if (mailstream_logger != NULL) { \
       mailstream_logger(direction, buf, size); \
     } \
@@ -119,10 +128,13 @@ void (* mailstream_logger_id)(mailstream_low * s, int is_stream_data, int direct
   }
 
 #define STREAM_LOG(low, direction, str) \
+  if (low->logger != NULL) { \
+    mailstream_logger_internal(low, 0, direction, buf, strlen(str)); \
+  } \
   if (mailstream_debug) { \
-	if (mailstream_logger_id != NULL) { \
-	  mailstream_logger_id(low, 0, direction, str, strlen(str)); \
-	} \
+  	if (mailstream_logger_id != NULL) { \
+  	  mailstream_logger_id(low, 0, direction, str, strlen(str)); \
+  	} \
     else if (mailstream_logger != NULL) { \
       mailstream_logger(direction, str, strlen(str)); \
     } \
@@ -145,6 +157,7 @@ void (* mailstream_logger_id)(mailstream_low * s, int is_stream_data, int direct
 
 #else
 
+#define STREAM_LOG_ERROR(low, direction, buf, size) do { } while (0)
 #define STREAM_LOG_BUF(low, direction, buf, size) do { } while (0)
 #define STREAM_LOG(low, direction, buf) do { } while (0)
 
@@ -167,6 +180,8 @@ mailstream_low * mailstream_low_new(void * data,
   s->privacy = 1;
 	s->identifier = NULL;
 	s->timeout = 0;
+  s->logger = NULL;
+  s->logger_context = NULL;
   
   return s;
 }
@@ -305,3 +320,87 @@ time_t mailstream_low_get_timeout(mailstream_low * s)
 	return s->timeout;
 }
 
+void mailstream_low_set_logger(mailstream_low * s, void (* logger)(mailstream_low * s, int log_type,
+  const char * str, size_t size, void * context), void * logger_context)
+{
+  s->logger = logger;
+  s->logger_context = logger_context;
+}
+
+static inline void mailstream_logger_internal(mailstream_low * s, int is_stream_data, int direction,
+  const char * buffer, size_t size)
+{
+  int log_type = -1;
+  
+  /*
+   stream data:
+  0: log
+  1: buffer
+  2: error
+  
+  direction:
+  4|1: send error
+  4: receive error
+  2: sent private data
+  1: sent data
+  0: received data
+  */
+  
+  switch (is_stream_data) {
+    case 0: {
+      switch (direction) {
+        case 1:
+        case 2:
+        case 4|1:
+          log_type = MAILSTREAM_LOG_TYPE_INFO_SENT;
+          break;
+        case 0:
+        case 4:
+          log_type = MAILSTREAM_LOG_TYPE_INFO_RECEIVED;
+          break;
+        default:
+          log_type = MAILSTREAM_LOG_TYPE_INFO_GENERIC;
+          break;
+      }
+    }
+    case 1: {
+      switch (direction) {
+        case 2:
+          log_type = MAILSTREAM_LOG_TYPE_DATA_SENT_PRIVATE;
+          break;
+        case 1:
+        case 4|1:
+          log_type = MAILSTREAM_LOG_TYPE_DATA_SENT;
+          break;
+        case 0:
+        case 4:
+        default:
+          log_type = MAILSTREAM_LOG_TYPE_DATA_RECEIVED;
+          break;
+      }
+      break;
+    }
+    case 2: {
+      switch (direction) {
+        case 2:
+        case 1:
+        case 4|1:
+          log_type = MAILSTREAM_LOG_TYPE_ERROR_SENT;
+          break;
+        case 0:
+        case 4:
+          log_type = MAILSTREAM_LOG_TYPE_ERROR_RECEIVED;
+          break;
+        default:
+          log_type = MAILSTREAM_LOG_TYPE_ERROR_GENERIC;
+          break;
+      }
+      break;
+    }
+  }
+  
+  if (log_type == -1)
+    return;
+  
+  s->logger(s, log_type, buffer, size, s->logger_context);
+}

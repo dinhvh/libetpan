@@ -43,7 +43,7 @@ extern "C" {
 
 #define LIBETPAN_MAILSTREAM_DEBUG
 #ifndef LIBETPAN_CONFIG_H
-#	include <libetpan/libetpan-config.h>
+#  include <libetpan/libetpan-config.h>
 #endif
 
 struct _mailstream;
@@ -53,6 +53,20 @@ typedef struct _mailstream mailstream;
 struct _mailstream_low;
 
 typedef struct _mailstream_low mailstream_low;
+
+enum {
+  MAILSTREAM_LOG_TYPE_INFO_GENERIC,
+  MAILSTREAM_LOG_TYPE_INFO_RECEIVED,
+  MAILSTREAM_LOG_TYPE_INFO_SENT,
+  
+  MAILSTREAM_LOG_TYPE_ERROR_GENERIC,
+  MAILSTREAM_LOG_TYPE_ERROR_RECEIVED,
+  MAILSTREAM_LOG_TYPE_ERROR_SENT,
+  
+  MAILSTREAM_LOG_TYPE_DATA_RECEIVED,
+  MAILSTREAM_LOG_TYPE_DATA_SENT,
+  MAILSTREAM_LOG_TYPE_DATA_SENT_PRIVATE,
+};
 
 struct _mailstream {
   size_t buffer_max_size;
@@ -67,6 +81,9 @@ struct _mailstream {
   
   struct mailstream_cancel * idle;
   int idling;
+  void (* logger)(mailstream * s, int log_type,
+      const char * str, size_t size, void * logger_context);
+  void * logger_context;
 };
 
 struct mailstream_low_driver {
@@ -87,6 +104,9 @@ struct _mailstream_low {
   int privacy;
   char * identifier;
   unsigned long timeout; /* in seconds, 0 will use the global value */
+  void (* logger)(mailstream_low * s, int log_type,
+      const char * str, size_t size, void * logger_context);
+  void * logger_context;
 };
 
 typedef void progress_function(size_t current, size_t maximum);
