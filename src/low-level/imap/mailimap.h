@@ -659,9 +659,38 @@ mailimap * mailimap_new(size_t imap_progr_rate,
 LIBETPAN_EXPORT
 void mailimap_free(mailimap * session);
 
+/*
+   mailimap_send_current_tag() send current IMAP tag. See RFC 3501.
+
+   @param session   IMAP session
+
+   @return MAILIMAP_NO_ERROR if the tag could be sent on the network.
+*/
+
 int mailimap_send_current_tag(mailimap * session);
 
+/*
+    mailimap_read_line() receive a line line buffer into memory.
+
+    It needs to be called before starting to parse a response.
+
+    @param session   IMAP session
+
+    @return MAILIMAP_NO_ERROR if a line could be buffered.
+*/
+
 char * mailimap_read_line(mailimap * session);
+
+/*
+    mailimap_parse_response() parse an IMAP response.
+
+    @param session   IMAP session
+    @param result    an IMAP response data structure will be allocated and
+      filled with the parsed response. The pointer to the
+      allocated data structure will be stored in result.
+
+    @return MAILIMAP_NO_ERROR if a line could be buffered.
+*/
 
 int mailimap_parse_response(mailimap * session,
     struct mailimap_response ** result);
@@ -682,6 +711,10 @@ void mailimap_set_timeout(mailimap * session, time_t timeout);;
 
 LIBETPAN_EXPORT
 time_t mailimap_get_timeout(mailimap * session);
+
+LIBETPAN_EXPORT
+void mailimap_set_logger(mailimap * session, void (* logger)(mailimap * session, int log_type,
+    const char * str, size_t size, void * context), void * logger_context);
 
 #ifdef __cplusplus
 }

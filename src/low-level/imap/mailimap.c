@@ -117,6 +117,9 @@
 http://www.ietf.org/ids.by.wg/imapext.html
 */
 
+static inline void imap_logger(mailstream * s, int log_type,
+    const char * str, size_t size, void * context);
+
 static int parse_greeting(mailimap * session,
 			   struct mailimap_greeting ** result);
 
@@ -534,6 +537,7 @@ int mailimap_connect(mailimap * session, mailstream * s)
     return MAILIMAP_ERROR_BAD_STATE;
 
   session->imap_stream = s;
+  mailstream_set_logger(s, imap_logger, session);
   
   if (session->imap_connection_info)
     mailimap_connection_info_free(session->imap_connection_info);
@@ -2633,6 +2637,9 @@ mailimap * mailimap_new(size_t imap_progr_rate,
   
 	f->imap_timeout = 0;
 
+  f->imap_logger = NULL;
+  f->imap_logger_context = NULL;
+
   return f;
   
  free_stream_buffer:
@@ -2697,8 +2704,25 @@ void mailimap_set_msg_att_handler(mailimap * session,
                                   mailimap_msg_att_handler * handler,
                                   void * context)
 {
-    session->imap_msg_att_handler = handler;
-    session->imap_msg_att_handler_context = context;
+  session->imap_msg_att_handler = handler;
+  session->imap_msg_att_handler_context = context;
 }
 
+static inline void imap_logger(mailstream * s, int log_type,
+    const char * str, size_t size, void * context)
+{
+  mailimap * session;
+  if (session->imap_logger == NULL)
+    return;
 
+  session = context;
+  session->imap_logger(session, log_type, str, size, session->imap_logger_context);
+}
+
+LIBETPAN_EXPORT
+void mailimap_set_logger(mailimap * session, void (* logger)(mailimap * session, int log_type,
+    const char * str, size_t size, void * context), void * logger_context)
+{
+  session->imap_logger = logger;
+  session->imap_logger_context = logger_context;
+}

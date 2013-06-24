@@ -3150,6 +3150,8 @@ enum {
 
 typedef void mailimap_msg_att_handler(struct mailimap_msg_att * msg_att, void * context);
 
+typedef struct mailimap mailimap;
+
 struct mailimap {
   char * imap_response;
   
@@ -3189,9 +3191,11 @@ struct mailimap {
   void * imap_msg_att_handler_context;
 
   time_t imap_timeout;
+  
+  void (* imap_logger)(mailimap * session, int log_type, const char * str, size_t size, void * context);
+  void * imap_logger_context;
 };
 
-typedef struct mailimap mailimap;
 
 
 /*
