@@ -187,6 +187,10 @@ int newsnntp_xover_range(newsnntp * f, uint32_t rangeinf, uint32_t rangesup,
 void xover_resp_item_free(struct newsnntp_xover_resp_item * n);
 void newsnntp_xover_resp_list_free(clist * l);
 
+LIBETPAN_EXPORT
+void newsnntp_set_logger(newsnntp * session, void (* logger)(newsnntp * session, int log_type,
+    const char * str, size_t size, void * context), void * logger_context);
+
 #ifdef __cplusplus
 }
 #endif

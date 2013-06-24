@@ -75,6 +75,8 @@ enum {
   NEWSNNTP_ERROR_AUTHENTICATION_OUT_OF_SEQUENCE,
 };
 
+typedef struct newsnntp newsnntp;
+
 struct newsnntp
 {
   mailstream * nntp_stream;
@@ -90,9 +92,10 @@ struct newsnntp
   char * nntp_response;
 
   time_t nntp_timeout;
+  
+  void (* nntp_logger)(newsnntp * session, int log_type, const char * str, size_t size, void * context);
+  void * nntp_logger_context;
 };
-
-typedef struct newsnntp newsnntp;
 
 struct newsnntp_group_info
 {

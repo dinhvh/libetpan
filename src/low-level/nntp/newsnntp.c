@@ -74,6 +74,8 @@
 #define NNTP_STRING_SIZE 513
 
 
+static inline void nntp_logger(mailstream * s, int log_type,
+    const char * str, size_t size, void * context);
 
 static char * read_line(newsnntp * f);
 static char * read_multiline(newsnntp * f, size_t size,
@@ -188,6 +190,7 @@ int newsnntp_connect(newsnntp * f, mailstream * s)
     return NEWSNNTP_ERROR_BAD_STATE;
 
   f->nntp_stream = s;
+  mailstream_set_logger(s, nntp_logger, f);
 
   response = read_line(f);
   if (response == NULL)
@@ -2535,4 +2538,23 @@ static int send_command_private(newsnntp * f, char * command, int can_be_publish
     return -1;
 
   return 0;
+}
+
+static inline void nntp_logger(mailstream * s, int log_type,
+    const char * str, size_t size, void * context)
+{
+  newsnntp * session;
+  if (session->nntp_logger == NULL)
+    return;
+
+  session = context;
+  session->nntp_logger(session, log_type, str, size, session->nntp_logger_context);
+}
+
+LIBETPAN_EXPORT
+void newsnntp_set_logger(newsnntp * session, void (* logger)(newsnntp * session, int log_type,
+    const char * str, size_t size, void * context), void * logger_context)
+{
+  session->nntp_logger = logger;
+  session->nntp_logger_context = logger_context;
 }
