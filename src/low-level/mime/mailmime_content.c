@@ -645,6 +645,15 @@ mailmime_body_part_dash2_close_parse(const char * message,
       return r;
     }
     
+    /*
+      There's no MIME multipart close bounary.
+      Ignore the issue and succeed.
+      https://github.com/MailCore/mailcore2/issues/122
+    */
+    if (cur_token >= length) {
+      break;
+    }
+    
     r = mailmime_multipart_close_parse(message, length, &cur_token);
     if (r == MAILIMF_NO_ERROR) {
       break;
