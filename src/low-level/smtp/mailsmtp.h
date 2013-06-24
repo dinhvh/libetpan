@@ -159,6 +159,10 @@ void mailsmtp_set_progress_callback(mailsmtp * session,
                                     mailprogress_function * progr_fun,
                                     void * context);
    
+LIBETPAN_EXPORT
+void mailsmtp_set_logger(mailsmtp * session, void (* logger)(mailsmtp * session, int log_type,
+    const char * str, size_t size, void * context), void * logger_context);
+   
 #ifdef __cplusplus
 }
 #endif

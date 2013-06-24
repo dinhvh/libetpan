@@ -98,6 +98,9 @@
      Messages
 */
 
+static inline void smtp_logger(mailstream * s, int log_type,
+    const char * str, size_t size, void * context);
+
 #define SMTP_STATUS_CONTINUE 0x1000
 
 mailsmtp * mailsmtp_new(size_t progr_rate,
@@ -128,9 +131,7 @@ mailsmtp * mailsmtp_new(size_t progr_rate,
   session->esmtp = 0;
   session->auth = MAILSMTP_AUTH_NOT_CHECKED;
   
-#ifdef USE_SASL
   session->smtp_sasl.sasl_conn = NULL;
-#endif
   
   session->smtp_max_msg_size = 0;
   session->smtp_progress_fun = NULL;
@@ -138,6 +139,9 @@ mailsmtp * mailsmtp_new(size_t progr_rate,
 
 	session->smtp_timeout = 0;
 
+  session->smtp_logger = NULL;
+  session->smtp_logger_context = NULL;
+  
   return session;
 
  free_line_buffer:
@@ -179,6 +183,7 @@ int mailsmtp_connect(mailsmtp * session, mailstream * s)
   int code;
 
   session->stream = s;
+  mailstream_set_logger(s, smtp_logger, session);
 
   code = read_response(session);
 
@@ -1452,3 +1457,21 @@ time_t mailsmtp_get_timeout(mailsmtp * session)
 	return session->smtp_timeout;
 }
 
+static inline void smtp_logger(mailstream * s, int log_type,
+    const char * str, size_t size, void * context)
+{
+  mailsmtp * session;
+  if (session->smtp_logger == NULL)
+    return;
+
+  session = context;
+  session->smtp_logger(session, log_type, str, size, session->smtp_logger_context);
+}
+
+LIBETPAN_EXPORT
+void mailsmtp_set_logger(mailsmtp * session, void (* logger)(mailsmtp * session, int log_type,
+    const char * str, size_t size, void * context), void * logger_context)
+{
+  session->smtp_logger = logger;
+  session->smtp_logger_context = logger_context;
+}

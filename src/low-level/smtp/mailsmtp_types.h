@@ -98,7 +98,9 @@ enum {
   MAILSMTP_ESMTP_DSN = 64,
   MAILSMTP_ESMTP_PIPELINING = 128
 };
-  
+
+typedef struct mailsmtp mailsmtp;
+
 struct mailsmtp {
   mailstream * stream;
 
@@ -131,9 +133,10 @@ struct mailsmtp {
 	int response_code;
 	
   time_t smtp_timeout;
+  
+  void (* smtp_logger)(mailsmtp * session, int log_type, const char * str, size_t size, void * context);
+  void * smtp_logger_context;
 };
-
-typedef struct mailsmtp mailsmtp;
 
 #define MAILSMTP_DSN_NOTIFY_SUCCESS 1
 #define MAILSMTP_DSN_NOTIFY_FAILURE 2
