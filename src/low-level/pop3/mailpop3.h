@@ -129,6 +129,10 @@ int mailpop3_auth(mailpop3 * f, const char * auth_type,
     const char * login, const char * auth_name,
     const char * password, const char * realm);
 
+LIBETPAN_EXPORT
+void mailpop3_set_logger(mailpop3 * session, void (* logger)(mailpop3 * session, int log_type,
+    const char * str, size_t size, void * context), void * logger_context);
+
 #ifdef __cplusplus
 }
 #endif

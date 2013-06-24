@@ -69,6 +69,8 @@ enum {
   POP3_STATE_TRANSACTION
 };
 
+static inline void pop3_logger(mailstream * s, int log_type,
+    const char * str, size_t size, void * context);
 
 
 /*
@@ -222,13 +224,14 @@ mailpop3 * mailpop3_new(size_t progr_rate, progress_function * progr_fun)
   f->pop3_deleted_count = 0;
   f->pop3_state = POP3_STATE_DISCONNECTED;
   
-#ifdef USE_SASL
   f->pop3_sasl.sasl_conn = NULL;
-#endif
 
 	f->pop3_timeout = 0;
 	f->pop3_progress_fun = NULL;
 	f->pop3_progress_context = NULL;
+  
+  f->pop3_logger = NULL;
+  f->pop3_logger_context = NULL;
   
   return f;
 
@@ -341,6 +344,7 @@ int mailpop3_connect(mailpop3 * f, mailstream * s)
     return MAILPOP3_ERROR_BAD_STATE;
 
   f->pop3_stream = s;
+  mailstream_set_logger(s, pop3_logger, f);
 
   response = read_line(f);
 
@@ -1590,3 +1594,21 @@ void mailpop3_set_progress_callback(mailpop3 * f, mailprogress_function * progr_
 	f->pop3_progress_context = context;
 }
 
+static inline void pop3_logger(mailstream * s, int log_type,
+    const char * str, size_t size, void * context)
+{
+  mailpop3 * session;
+  if (session->pop3_logger == NULL)
+    return;
+
+  session = context;
+  session->pop3_logger(session, log_type, str, size, session->pop3_logger_context);
+}
+
+LIBETPAN_EXPORT
+void mailpop3_set_logger(mailpop3 * session, void (* logger)(mailpop3 * session, int log_type,
+    const char * str, size_t size, void * context), void * logger_context)
+{
+  session->pop3_logger = logger;
+  session->pop3_logger_context = logger_context;
+}

@@ -66,6 +66,8 @@ enum {
   MAILPOP3_ERROR_QUIT_FAILED
 };
 
+typedef struct mailpop3 mailpop3;
+
 struct mailpop3
 {
   char * pop3_response;               /* response message */
@@ -97,9 +99,10 @@ struct mailpop3
   time_t pop3_timeout;
   mailprogress_function * pop3_progress_fun;
   void * pop3_progress_context;
+  
+  void (* pop3_logger)(mailpop3 * session, int log_type, const char * str, size_t size, void * context);
+  void * pop3_logger_context;
 };
-
-typedef struct mailpop3 mailpop3;
 
 struct mailpop3_msg_info
 {
