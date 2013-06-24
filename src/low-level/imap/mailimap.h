@@ -695,22 +695,67 @@ char * mailimap_read_line(mailimap * session);
 int mailimap_parse_response(mailimap * session,
     struct mailimap_response ** result);
 
+/*
+    mailimap_set_progress_callback() set IMAP progression callbacks.
+
+    @param session           IMAP session
+    @param body_progr_fun    set callback function for a progression of an imap
+      call that involves the download of a significant amount of data.
+    @param items_progr_fun   set callback function for a progression of an imap
+      call that involves the download of information of several items.
+*/
+
 LIBETPAN_EXPORT
 void mailimap_set_progress_callback(mailimap * session,
                                     mailprogress_function * body_progr_fun,
                                     mailprogress_function * items_progr_fun,
                                     void * context);
 
+/*
+    mailimap_set_msg_att_handler() set a callback when a message information is
+      downloaded using FETCH.
+
+    @param session    IMAP session
+    @param handler    set a callback function. This function will be called
+      during the download of the response each time a new message information
+      has just been downloaded.
+    @param context    parameter that's passed to the callback function.
+*/
+
 LIBETPAN_EXPORT
 void mailimap_set_msg_att_handler(mailimap * session,
                                   mailimap_msg_att_handler * handler,
                                   void * context);
 
+/*
+    mailimap_set_timeout() set the network timeout of the IMAP session.
+
+    @param session    IMAP session
+    @param timeout    value of the timeout in seconds.
+*/
+
 LIBETPAN_EXPORT
 void mailimap_set_timeout(mailimap * session, time_t timeout);;
 
+/*
+    mailimap_get_timeout() get the network timeout of the IMAP session.
+
+    @param session    IMAP session
+    @return the value of the timeout in seconds.
+*/
+
 LIBETPAN_EXPORT
 time_t mailimap_get_timeout(mailimap * session);
+
+/*
+    mailimap_set_logger() get the network timeout of the IMAP session.
+
+    @param session         IMAP session
+    @param logger          logger function. See mailstream_types.h to know possible log_type values.
+      str is the log, data received or data sent.
+    @param logger_context  parameter that is passed to the logger function.
+    @return the value of the timeout in seconds.
+*/
 
 LIBETPAN_EXPORT
 void mailimap_set_logger(mailimap * session, void (* logger)(mailimap * session, int log_type,
