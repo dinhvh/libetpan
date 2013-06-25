@@ -2544,10 +2544,11 @@ static inline void nntp_logger(mailstream * s, int log_type,
     const char * str, size_t size, void * context)
 {
   newsnntp * session;
+
+  session = context;
   if (session->nntp_logger == NULL)
     return;
 
-  session = context;
   session->nntp_logger(session, log_type, str, size, session->nntp_logger_context);
 }
 

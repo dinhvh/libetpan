@@ -2712,10 +2712,11 @@ static inline void imap_logger(mailstream * s, int log_type,
     const char * str, size_t size, void * context)
 {
   mailimap * session;
+
+  session = context;
   if (session->imap_logger == NULL)
     return;
 
-  session = context;
   session->imap_logger(session, log_type, str, size, session->imap_logger_context);
 }
 

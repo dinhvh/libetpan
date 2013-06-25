@@ -1461,10 +1461,11 @@ static inline void smtp_logger(mailstream * s, int log_type,
     const char * str, size_t size, void * context)
 {
   mailsmtp * session;
+
+  session = context;
   if (session->smtp_logger == NULL)
     return;
 
-  session = context;
   session->smtp_logger(session, log_type, str, size, session->smtp_logger_context);
 }
 

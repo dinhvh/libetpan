@@ -1598,10 +1598,11 @@ static inline void pop3_logger(mailstream * s, int log_type,
     const char * str, size_t size, void * context)
 {
   mailpop3 * session;
+
+  session = context;
   if (session->pop3_logger == NULL)
     return;
 
-  session = context;
   session->pop3_logger(session, log_type, str, size, session->pop3_logger_context);
 }
 
