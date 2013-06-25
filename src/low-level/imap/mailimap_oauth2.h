@@ -20,8 +20,8 @@ extern "C" {
       load the following URL (everything goes ina single line):
       https://accounts.google.com/o/oauth2/auth?client_id=[YOUR_CLIENT_ID]&
           redirect_uri=urn%3Aietf%3Awg%3Aoauth%3A2.0%3Aoob&
-          response_type=code&scope=https%3A%2F%2Fmail.google.com%2F&
-          login_hint=[USER_EMAIL_ADDRESS]&access_type=offline
+          response_type=code&scope=https%3A%2F%2Fmail.google.com%2F%20email&
+          &access_type=offline
    3. The user most follow instructions to authorize application access
       to Gmail.
    4. After the user hits the "Accept" button it will be redirected to another
@@ -41,7 +41,15 @@ extern "C" {
          "expires_in":3920,
          "token_type":"Bearer"
        }
-      The access token is what we need to authenticate via XOAuth2 with Gmail.
+      The above output gives us the access_token, now we need to also retrieve the user's e-mail, 
+      to do that we need to perform an HTTP GET request to Google's UserInfo API using this URL:
+       https://www.googleapis.com/oauth2/v1/userinfo?access_token=[YOUR_ACCESS_TOKEN]
+      this will return the following JSON output:
+       {
+        "id": "00000000000002222220000000",
+        "email": "email@example.com",
+        "verified_email": true
+       }
    @param session       IMAP session
    @param auth_user     Authentication user (tipically an e-mail address, depends on server)
    @param access_token  OAuth2 access token
