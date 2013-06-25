@@ -55,14 +55,17 @@ struct _mailstream_low;
 typedef struct _mailstream_low mailstream_low;
 
 enum {
+  // Buffer is a log text string.
   MAILSTREAM_LOG_TYPE_INFO_GENERIC,
   MAILSTREAM_LOG_TYPE_INFO_RECEIVED,
   MAILSTREAM_LOG_TYPE_INFO_SENT,
   
+  // Buffer is data sent over the network.
   MAILSTREAM_LOG_TYPE_ERROR_GENERIC,
   MAILSTREAM_LOG_TYPE_ERROR_RECEIVED,
   MAILSTREAM_LOG_TYPE_ERROR_SENT,
   
+  // Buffer is data sent over the network.
   MAILSTREAM_LOG_TYPE_DATA_RECEIVED,
   MAILSTREAM_LOG_TYPE_DATA_SENT,
   MAILSTREAM_LOG_TYPE_DATA_SENT_PRIVATE,

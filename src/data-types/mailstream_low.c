@@ -71,10 +71,9 @@ void (* mailstream_logger_id)(mailstream_low * s, int is_stream_data, int direct
 static inline void mailstream_logger_internal(mailstream_low * s, int is_stream_data, int direction,
     const char * buffer, size_t size);
 
+// Will log a buffer.
 #define STREAM_LOG_ERROR(low, direction, buf, size) \
-  if (low->logger != NULL) { \
-    mailstream_logger_internal(low, 2, direction, buf, size); \
-  } \
+  mailstream_logger_internal(low, 2, direction, buf, size); \
   if (mailstream_debug) { \
 	  if (mailstream_logger_id != NULL) { \
 	    mailstream_logger_id(low, 2, direction, buf, size); \
@@ -99,10 +98,9 @@ static inline void mailstream_logger_internal(mailstream_low * s, int is_stream_
     } \
   }
 
+// Will log a buffer.
 #define STREAM_LOG_BUF(low, direction, buf, size) \
-  if (low->logger != NULL) { \
-    mailstream_logger_internal(low, 1, direction, buf, size); \
-  } \
+  mailstream_logger_internal(low, 1, direction, buf, size); \
   if (mailstream_debug) { \
   	if (mailstream_logger_id != NULL) { \
   	  mailstream_logger_id(low, 1, direction, buf, size); \
@@ -127,10 +125,9 @@ static inline void mailstream_logger_internal(mailstream_low * s, int is_stream_
     } \
   }
 
+// Will log some log text string.
 #define STREAM_LOG(low, direction, str) \
-  if (low->logger != NULL) { \
-    mailstream_logger_internal(low, 0, direction, buf, strlen(str)); \
-  } \
+  mailstream_logger_internal(low, 0, direction, buf, strlen(str)); \
   if (mailstream_debug) { \
   	if (mailstream_logger_id != NULL) { \
   	  mailstream_logger_id(low, 0, direction, str, strlen(str)); \
@@ -331,6 +328,9 @@ static inline void mailstream_logger_internal(mailstream_low * s, int is_stream_
   const char * buffer, size_t size)
 {
   int log_type = -1;
+  
+  if (s->logger == NULL)
+    return;
   
   /*
    stream data:

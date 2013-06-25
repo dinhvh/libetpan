@@ -282,8 +282,9 @@ mailstream_low * mailstream_get_low(mailstream * s)
 static void low_logger(mailstream_low * s, int log_type,
   const char * str, size_t size, void * context)
 {
-  if (s->logger != NULL) {
-    s->logger(context, log_type, str, size, s->logger_context);
+  mailstream * stream = context;
+  if (stream->logger != NULL) {
+    stream->logger(context, log_type, str, size, stream->logger_context);
   }
 }
 
