@@ -35,7 +35,7 @@ if test x$ACTION = xbuild ; then
   
   md5 build-mac/autogen-result.tar.gz > build-mac/autogen-result.md5.new
   if ! cmp -s build-mac/autogen-result.md5 build-mac/autogen-result.md5.new ; then
-    rm Makefile
+    rm -f Makefile
   fi
   rm -f build-mac/autogen-result.md5.new
   if test ! -f Makefile ; then
