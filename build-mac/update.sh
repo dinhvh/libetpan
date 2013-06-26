@@ -32,9 +32,16 @@ if test x$ACTION = x ; then
 fi
 
 if test x$ACTION = xbuild ; then
+  
+  md5 build-mac/autogen-result.tar.gz > build-mac/autogen-result.md5.new
+  if ! cmp -s build-mac/autogen-result.md5 build-mac/autogen-result.md5.new ; then
+    rm Makefile
+  fi
+  rm -f build-mac/autogen-result.md5.new
   if test ! -f Makefile ; then
     echo configuring
     tar xzf build-mac/autogen-result.tar.gz
+    export SDKROOT=
     ./configure --enable-debug > "$logfile" 2>&1
     if [[ "$?" != "0" ]]; then
       echo "configure failed"
@@ -43,6 +50,7 @@ if test x$ACTION = xbuild ; then
 
     make stamp-prepare-target >> "$logfile" 2>&1
     make libetpan-config.h >> "$logfile" 2>&1
+    md5 build-mac/autogen-result.tar.gz > build-mac/autogen-result.md5
   fi
   if test x$PLATFORM_NAME = xiphoneos -o x$PLATFORM_NAME = xiphonesimulator ; then
     if test ! -d build-mac/libsasl-ios ; then
@@ -55,6 +63,7 @@ elif test x$ACTION = xclean ; then
   if test -f Makefile ; then
     make distclean >/dev/null
     cd build-mac
+    rm -f autogen-result.md5
     rm -rf libsasl-ios
     rm -rf dependencies/build
   fi
