@@ -44,7 +44,7 @@ if test x$ACTION = xbuild ; then
     make stamp-prepare-target >> "$logfile" 2>&1
     make libetpan-config.h >> "$logfile" 2>&1
   fi
-  if test x$PLATFORM_NAME = xiphoneos ; then
+  if test x$PLATFORM_NAME = xiphoneos -o x$PLATFORM_NAME = xiphonesimulator ; then
     if test ! -d build-mac/libsasl-ios ; then
       # build dependencies for iOS
       cd build-mac
