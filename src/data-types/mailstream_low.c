@@ -358,9 +358,6 @@ static inline void mailstream_logger_internal(mailstream_low * s, int is_stream_
         case 4:
           log_type = MAILSTREAM_LOG_TYPE_INFO_RECEIVED;
           break;
-        default:
-          log_type = MAILSTREAM_LOG_TYPE_INFO_GENERIC;
-          break;
       }
     }
     case 1: {
@@ -387,12 +384,11 @@ static inline void mailstream_logger_internal(mailstream_low * s, int is_stream_
         case 4|1:
           log_type = MAILSTREAM_LOG_TYPE_ERROR_SENT;
           break;
-        case 0:
         case 4:
           log_type = MAILSTREAM_LOG_TYPE_ERROR_RECEIVED;
           break;
-        default:
-          log_type = MAILSTREAM_LOG_TYPE_ERROR_GENERIC;
+        case 0:
+          log_type = MAILSTREAM_LOG_TYPE_ERROR_PARSE;
           break;
       }
       break;
