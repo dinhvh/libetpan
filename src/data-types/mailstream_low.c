@@ -127,7 +127,7 @@ static inline void mailstream_logger_internal(mailstream_low * s, int is_stream_
 
 // Will log some log text string.
 #define STREAM_LOG(low, direction, str) \
-  mailstream_logger_internal(low, 0, direction, buf, strlen(str)); \
+  mailstream_logger_internal(low, 0, direction, str, strlen(str)); \
   if (mailstream_debug) { \
   	if (mailstream_logger_id != NULL) { \
   	  mailstream_logger_id(low, 0, direction, str, strlen(str)); \
@@ -359,6 +359,7 @@ static inline void mailstream_logger_internal(mailstream_low * s, int is_stream_
           log_type = MAILSTREAM_LOG_TYPE_INFO_RECEIVED;
           break;
       }
+      break;
     }
     case 1: {
       switch (direction) {
