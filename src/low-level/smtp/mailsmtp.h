@@ -45,6 +45,7 @@ extern "C" {
 #include <libetpan/mailsmtp_helper.h>
 #include <libetpan/mailsmtp_socket.h>
 #include <libetpan/mailsmtp_ssl.h>
+#include <libetpan/mailsmtp_oauth2.h>
 
 
 LIBETPAN_EXPORT

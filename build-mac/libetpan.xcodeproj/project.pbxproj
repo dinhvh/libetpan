@@ -27,6 +27,9 @@
 		C64BB21B16E2FC2F000DB34C /* qresync.c in Sources */ = {isa = PBXBuildFile; fileRef = C64BB21616E2FC2F000DB34C /* qresync.c */; };
 		C64BB21C16E2FC2F000DB34C /* qresync.c in Sources */ = {isa = PBXBuildFile; fileRef = C64BB21616E2FC2F000DB34C /* qresync.c */; };
 		C64BB21D16E2FC2F000DB34C /* qresync.c in Sources */ = {isa = PBXBuildFile; fileRef = C64BB21616E2FC2F000DB34C /* qresync.c */; };
+		C64DC0181788AB3C0012CA0B /* mailsmtp_oauth2.c in Sources */ = {isa = PBXBuildFile; fileRef = C64DC0151788AB3C0012CA0B /* mailsmtp_oauth2.c */; };
+		C64DC0191788AB3C0012CA0B /* mailsmtp_oauth2.c in Sources */ = {isa = PBXBuildFile; fileRef = C64DC0151788AB3C0012CA0B /* mailsmtp_oauth2.c */; };
+		C64DC01A1788AB3C0012CA0B /* mailsmtp_oauth2.c in Sources */ = {isa = PBXBuildFile; fileRef = C64DC0151788AB3C0012CA0B /* mailsmtp_oauth2.c */; };
 		C64EA7B716A00CA700778456 /* xgmmsgid.c in Sources */ = {isa = PBXBuildFile; fileRef = 365DFFD115D1C93100F2DD85 /* xgmmsgid.c */; };
 		C64EA7B816A00CA700778456 /* xgmmsgid.c in Sources */ = {isa = PBXBuildFile; fileRef = 365DFFD115D1C93100F2DD85 /* xgmmsgid.c */; };
 		C64EA7C116A00CC500778456 /* mailimap_id_parser.c in Sources */ = {isa = PBXBuildFile; fileRef = C64EA7B916A00CC100778456 /* mailimap_id_parser.c */; };
@@ -589,6 +592,9 @@
 		C64BB21616E2FC2F000DB34C /* qresync.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = qresync.c; sourceTree = "<group>"; };
 		C64BB21716E2FC2F000DB34C /* qresync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qresync.h; sourceTree = "<group>"; };
 		C64BB21E16E32CDB000DB34C /* qresync_private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = qresync_private.h; sourceTree = "<group>"; };
+		C64DC0151788AB3C0012CA0B /* mailsmtp_oauth2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mailsmtp_oauth2.c; sourceTree = "<group>"; };
+		C64DC0161788AB3C0012CA0B /* mailsmtp_oauth2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mailsmtp_oauth2.h; sourceTree = "<group>"; };
+		C64DC0171788AB3C0012CA0B /* mailsmtp_private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mailsmtp_private.h; sourceTree = "<group>"; };
 		C64EA7B916A00CC100778456 /* mailimap_id_parser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mailimap_id_parser.c; sourceTree = "<group>"; };
 		C64EA7BA16A00CC100778456 /* mailimap_id_parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mailimap_id_parser.h; sourceTree = "<group>"; };
 		C64EA7BB16A00CC200778456 /* mailimap_id_sender.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mailimap_id_sender.c; sourceTree = "<group>"; };
@@ -1657,6 +1663,9 @@
 				C6F9EAB1105335BC0059C3BA /* mailsmtp.h */,
 				C6F9EAB2105335BC0059C3BA /* mailsmtp_helper.c */,
 				C6F9EAB3105335BC0059C3BA /* mailsmtp_helper.h */,
+				C64DC0151788AB3C0012CA0B /* mailsmtp_oauth2.c */,
+				C64DC0161788AB3C0012CA0B /* mailsmtp_oauth2.h */,
+				C64DC0171788AB3C0012CA0B /* mailsmtp_private.h */,
 				C6F9EAB4105335BC0059C3BA /* mailsmtp_socket.c */,
 				C6F9EAB5105335BC0059C3BA /* mailsmtp_socket.h */,
 				C6F9EAB6105335BC0059C3BA /* mailsmtp_ssl.c */,
@@ -2002,6 +2011,7 @@
 				C6F9ECB5105335BD0059C3BA /* mailimf_types.c in Sources */,
 				C6F9ECB7105335BD0059C3BA /* mailimf_types_helper.c in Sources */,
 				C6F9ECBA105335BD0059C3BA /* mailimf_write_file.c in Sources */,
+				C64DC0181788AB3C0012CA0B /* mailsmtp_oauth2.c in Sources */,
 				C6F9ECBC105335BD0059C3BA /* mailimf_write_generic.c in Sources */,
 				C6F9ECBE105335BD0059C3BA /* mailimf_write_mem.c in Sources */,
 				C6F9ECC6105335BD0059C3BA /* maildir.c in Sources */,
@@ -2185,6 +2195,7 @@
 				C682E29215B315EF00BE9DA7 /* mime_message_driver.c in Sources */,
 				C682E29315B315EF00BE9DA7 /* mmapstring.c in Sources */,
 				C682E29415B315EF00BE9DA7 /* newsfeed.c in Sources */,
+				C64DC01A1788AB3C0012CA0B /* mailsmtp_oauth2.c in Sources */,
 				C682E29515B315EF00BE9DA7 /* newsfeed_item.c in Sources */,
 				C682E29615B315EF00BE9DA7 /* newsfeed_item_enclosure.c in Sources */,
 				C682E29715B315EF00BE9DA7 /* newsfeed_private.c in Sources */,
@@ -2368,6 +2379,7 @@
 				C69AB29D1054704000F32FBD /* mime_message_driver.c in Sources */,
 				C69AB29F1054704000F32FBD /* mmapstring.c in Sources */,
 				C69AB2A21054704000F32FBD /* newsfeed.c in Sources */,
+				C64DC0191788AB3C0012CA0B /* mailsmtp_oauth2.c in Sources */,
 				C69AB2A41054704000F32FBD /* newsfeed_item.c in Sources */,
 				C69AB2A61054704000F32FBD /* newsfeed_item_enclosure.c in Sources */,
 				C69AB2A81054704000F32FBD /* newsfeed_private.c in Sources */,

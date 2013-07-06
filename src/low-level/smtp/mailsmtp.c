@@ -40,6 +40,7 @@
 #endif
 
 #include "mailsmtp.h"
+#include "mailsmtp_private.h"
 #include "connect.h"
 #include "base64.h"
 #include "mail.h"
@@ -1475,4 +1476,14 @@ void mailsmtp_set_logger(mailsmtp * session, void (* logger)(mailsmtp * session,
 {
   session->smtp_logger = logger;
   session->smtp_logger_context = logger_context;
+}
+
+int mailsmtp_send_command(mailsmtp * f, char * command)
+{
+  return send_command(f, command);
+}
+
+int mailsmtp_read_response(mailsmtp * session)
+{
+  return read_response(session);
 }
