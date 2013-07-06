@@ -5,6 +5,7 @@
 
 #include "base64.h"
 #include "mailimap_sender.h"
+#include "mailimap_parser.h"
 #include "mailimap.h"
 
 int mailimap_oauth2_authenticate_send(mailimap * session,
@@ -17,6 +18,8 @@ int mailimap_oauth2_authenticate(mailimap * session, const char *auth_user, cons
   struct mailimap_response * response;
   int r;
   int error_code;
+  size_t indx;
+  struct mailimap_continue_req * cont_req;
   
   if (session->imap_state != MAILIMAP_STATE_NON_AUTHENTICATED)
     return MAILIMAP_ERROR_BAD_STATE;
@@ -48,7 +51,33 @@ int mailimap_oauth2_authenticate(mailimap * session, const char *auth_user, cons
   
   if (mailimap_read_line(session) == NULL)
     return MAILIMAP_ERROR_STREAM;
+
+  indx = 0;
+  r = mailimap_continue_req_parse(session->imap_stream,
+      session->imap_stream_buffer,
+      &indx, &cont_req,
+      session->imap_progr_rate, session->imap_progr_fun);
+  if (r == MAILIMAP_NO_ERROR) {
+    mailimap_continue_req_free(cont_req);
+    
+    /* There's probably an error, send an empty line as acknowledgement. */
+    r = mailimap_crlf_send(session->imap_stream);
+    if (r != MAILIMAP_NO_ERROR) {
+      return r;
+    }
   
+    if (mailstream_flush(session->imap_stream) == -1) {
+      return MAILIMAP_ERROR_STREAM;
+    }
+  }
+  else if (r == MAILIMAP_ERROR_PARSE) {
+    r = MAILIMAP_NO_ERROR;
+  }
+
+  if (r != MAILIMAP_NO_ERROR) {
+    return r;
+  }
+
   r = mailimap_parse_response(session, &response);
   if (r != MAILIMAP_NO_ERROR)
     return r;
