@@ -131,9 +131,6 @@ int mailimap_namespace(mailimap * session, struct mailimap_namespace_data ** res
 static void
 mailimap_namespace_extension_data_free(struct mailimap_extension_data * ext_data)
 {
-  if (ext_data == NULL)
-    return;
-  
   if (ext_data->ext_data != NULL) {
     mailimap_namespace_data_free((struct mailimap_namespace_data *) ext_data->ext_data);
   }

@@ -8,6 +8,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "readmsg", "readmsg\readmsg.
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "smtpsend", "smtpsend\smtpsend.vcproj", "{FF9F45C9-74A0-4B4E-99E9-6ADE0EB6D8AC}"
+	ProjectSection(ProjectDependencies) = postProject
+		{BA4DED3C-E56F-4484-BFC3-9C13E461A1BE} = {BA4DED3C-E56F-4484-BFC3-9C13E461A1BE}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

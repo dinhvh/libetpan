@@ -5,6 +5,7 @@ ARCHIVE=cyrus-sasl-$version
 ARCHIVE_NAME=$ARCHIVE.tar.gz
 ARCHIVE_PATCH=$ARCHIVE.patch
 url=ftp://ftp.andrew.cmu.edu/pub/cyrus-mail/$ARCHIVE_NAME
+patchfile=cyrus-2.1.25-libetpan.patch
 
 scriptdir="`pwd`"
 
@@ -65,6 +66,7 @@ logfile="$srcdir/$ARCHIVE/build.log"
 echo "*** patching sources ***" > "$logfile" 2>&1
 
 cd "$srcdir/$ARCHIVE"
+patch -p1 < $current_dir/$patchfile
 # patch source files
 cd "$srcdir/$ARCHIVE/include"
 sed -E 's/\.\/makemd5 /.\/makemd5i386 /' < Makefile.am > Makefile.am.new
@@ -79,14 +81,19 @@ echo "building tools"
 echo "*** generating makemd5 ***" >> "$logfile" 2>&1
 
 cd "$srcdir/$ARCHIVE"
+export SDKROOT=
 ./configure > "$logfile" 2>&1
+if [[ "$?" != "0" ]]; then
+  echo "CONFIGURE FAILED"
+  exit 1
+fi
 cd include
-make install >> "$logfile" 2>&1
-cd ..
+make makemd5 >> "$logfile" 2>&1
 if [[ "$?" != "0" ]]; then
   echo "BUILD FAILED"
   exit 1
 fi
+cd ..
 echo generated makemd5i386 properly
 mv "$srcdir/$ARCHIVE/include/makemd5" "$srcdir/$ARCHIVE/include/makemd5i386"
 make clean >>"$logfile" 2>&1
@@ -107,19 +114,19 @@ INSTALL_PATH=${BUILD_DIR}/${LIB_NAME}/universal
 
 for TARGET in $TARGETS; do
 
-    TOOLCHAIN=`xcodebuild -version -sdk 2>/dev/null | egrep iPhoneOS -B 3 | egrep '^PlatformPath: ' | sort -u | tail -n 1 | cut -d ' ' -f 2`/Developer/usr/bin
+    TOOLCHAIN=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin
     SYSROOT=`xcodebuild -version -sdk 2>/dev/null | egrep $TARGET -B 3 | egrep '^Path: '| egrep $SDK_IOS_VERSION | sort -u | tail -n 1| cut -d ' ' -f 2`
 
     case $TARGET in
         (iPhoneOS) 
             ARCH=arm
-            MARCHS="armv6 armv7 armv7s"
+            MARCHS="armv7 armv7s"
             EXTRA_FLAGS="-miphoneos-version-min=$SDK_IOS_MIN_VERSION"
             ;;
         (iPhoneSimulator)
             ARCH=i386
             MARCHS=i386
-            EXTRA_FLAGS="-mmacosx-version-min=10.6"
+            EXTRA_FLAGS="-miphoneos-version-min=$SDK_IOS_MIN_VERSION"
             ;;
     esac
     
@@ -132,20 +139,23 @@ for TARGET in $TARGETS; do
 
         export CFLAGS="-arch ${MARCH} -isysroot ${SYSROOT} -Os ${EXTRA_FLAGS}"
 
-        export CC=${TOOLCHAIN}/clang
-        export LD=${TOOLCHAIN}/ld
+        if test -x ${TOOLCHAIN}/clang; then
+          export LD=${TOOLCHAIN}/clang
+        else
+          export LD=${TOOLCHAIN}/ld
+        fi
         export AR=${TOOLCHAIN}/ar
         export AS=${TOOLCHAIN}/as
-		if test -x ${TOOLCHAIN}/clang++; then
-			export CXX=${TOOLCHAIN}/clang++
-		else
-			export CXX=${TOOLCHAIN}/g++
-		fi
-		if test -x ${TOOLCHAIN}/clang; then
-			export CC=${TOOLCHAIN}/clang
-		else
-			export CC=${TOOLCHAIN}/gcc
-		fi
+        if test -x ${TOOLCHAIN}/clang++; then
+          export CXX=${TOOLCHAIN}/clang++
+        else
+          export CXX=${TOOLCHAIN}/g++
+        fi
+        if test -x ${TOOLCHAIN}/clang; then
+          export CC=${TOOLCHAIN}/clang
+        else
+          export CC=${TOOLCHAIN}/gcc
+        fi
         export NM=${TOOLCHAIN}/nm
         export LIBTOOL=${TOOLCHAIN}/libtool
         export RANLIB=${TOOLCHAIN}/ranlib
@@ -155,24 +165,28 @@ for TARGET in $TARGETS; do
         OPENSSL="--with-openssl=$BUILD_DIR/openssl-1.0.0d/universal"
         PLUGINS="--enable-otp=no --enable-digest=no --with-des=no --enable-login"
         ./configure --host=${ARCH} --prefix=$PREFIX --enable-shared=no --enable-static=yes --with-pam=$BUILD_DIR/openpam-20071221/universal $PLUGINS >> "$logfile" 2>&1
-		make -j 8 >> "$logfile" 2>&1
-		cd lib
+        make -j 8 >> "$logfile" 2>&1
+        if [[ "$?" != "0" ]]; then
+          echo "CONFIGURE FAILED"
+          exit 1
+        fi
+        cd lib
         make install >> "$logfile" 2>&1
         cd ..
-		cd include
+        cd include
         make install >> "$logfile" 2>&1
         cd ..
-		cd plugins
+        cd plugins
         make install >> "$logfile" 2>&1
         cd ..
         if [[ "$?" != "0" ]]; then
-            echo "BUILD FAILED"
-            exit 1
+          echo "BUILD FAILED"
+          exit 1
         fi
         make clean >> "$logfile" 2>&1
         make distclean >> "$logfile" 2>&1
         find . -name config.cache -print0 | xargs -0 rm
-    done
+      done
 done
 
 echo "*** creating universal libs ***" >> "$logfile" 2>&1

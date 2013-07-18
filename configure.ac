@@ -2,10 +2,10 @@
 # Process this file with autoconf to produce a configure script.
 
 m4_define([maj_version], [1])
-m4_define([min_version], [1])
-m4_define([api_current], [16])
+m4_define([min_version], [2])
+m4_define([api_current], [17])
 m4_define([api_revision], [0])
-m4_define([api_compatibility], [16])
+m4_define([api_compatibility], [17])
 dnl API version
 dnl 1. If you have changed any of the sources for this library, the revision
 dnl    number must be incremented. This is a new revision of the current
@@ -26,7 +26,7 @@ AC_PREREQ(2.61)
 AC_INIT([libetpan],[maj_version.min_version],[libetpan-devel@lists.sourceforge.net])
 AC_CONFIG_SRCDIR([src/main/libetpan_version.h.in])
 AC_CONFIG_MACRO_DIR([m4])
-AM_CONFIG_HEADER([config.h])
+AC_CONFIG_HEADER([config.h])
 AM_INIT_AUTOMAKE
 AM_MAINTAINER_MODE
 AC_CANONICAL_HOST
@@ -64,7 +64,7 @@ API_AGE=`expr $API_CURRENT - $API_COMPATIBILITY`
 API_VERSION="$API_CURRENT:$API_REVISION:$API_AGE"
 AC_SUBST(API_VERSION)
 
-dnl FIXME: This should be the CVS revision.
+dnl FIXME: This should be the git revision.
 BUILD_REVISION=0
 AC_SUBST(BUILD_REVISION)
 BUILD_TIMESTAMP=`date +'%Y-%m-%dT%H:%M%z'`
@@ -669,6 +669,46 @@ fi
 if test "x$libexpat" = "xyes" ; then
   AC_DEFINE([HAVE_EXPAT], 1, [Define to use expat])
 fi
+
+AC_ARG_WITH([zlib],
+  [AS_HELP_STRING([--with-zlib],
+    [include classes for streaming compressed data in and out @<:@default=check@:>@])],
+  [],[with_zlib=check])
+
+# Check for zlib.
+HAVE_ZLIB=0
+AS_IF([test "$with_zlib" != no], [
+  AC_MSG_CHECKING([zlib version])
+
+  # First check the zlib header version.
+  AC_COMPILE_IFELSE(
+    [AC_LANG_PROGRAM([[
+        #include <zlib.h>
+        #if !defined(ZLIB_VERNUM) || (ZLIB_VERNUM < 0x1204)
+        # error zlib version too old
+        #endif
+        ]], [])], [
+    AC_MSG_RESULT([ok (1.2.0.4 or later)])
+
+    # Also need to add -lz to the linker flags and make sure this succeeds.
+    AC_SEARCH_LIBS([zlibVersion], [z], [
+      AC_DEFINE([HAVE_ZLIB], [1], [Enable classes using zlib compression.])
+      HAVE_ZLIB=1
+      LDFLAGS="$LDFLAGS -lz"
+    ], [
+      AS_IF([test "$with_zlib" != check], [
+        AC_MSG_FAILURE([--with-zlib was given, but no working zlib library was found])
+      ])
+    ])
+  ], [
+    AS_IF([test "$with_zlib" = check], [
+      AC_MSG_RESULT([headers missing or too old (requires 1.2.0.4)])
+    ], [
+      AC_MSG_FAILURE([--with-zlib was given, but zlib headers were not present or were too old (requires 1.2.0.4)])
+    ])
+  ])
+])
+AM_CONDITIONAL([HAVE_ZLIB], [test $HAVE_ZLIB = 1])
 
 dnl Version
 VERSION="$VERSION_MAJOR.$VERSION_MINOR"

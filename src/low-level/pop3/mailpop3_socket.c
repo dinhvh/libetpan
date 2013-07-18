@@ -76,11 +76,11 @@ int mailpop3_socket_connect(mailpop3 * f, const char * server, uint16_t port)
   
   /* Connection */
 
-  s = mail_tcp_connect(server, port);
+  s = mail_tcp_connect_timeout(server, port, f->pop3_timeout);
   if (s == -1)
     return MAILPOP3_ERROR_CONNECTION_REFUSED;
 
-  stream = mailstream_socket_open(s);
+  stream = mailstream_socket_open_timeout(s, f->pop3_timeout);
   if (stream == NULL) {
 #ifdef WIN32
 	closesocket(s);
@@ -129,8 +129,8 @@ int mailpop3_socket_starttls_with_callback(mailpop3 * f,
   if (fd == -1)
     return MAILPOP3_ERROR_STREAM;
   
-  new_low = mailstream_low_tls_open_with_callback(fd,
-      callback, data);
+  new_low = mailstream_low_tls_open_with_callback_timeout(fd,
+      f->pop3_timeout, callback, data);
   if (new_low == NULL)
     return MAILPOP3_ERROR_SSL;
   
@@ -144,7 +144,7 @@ static int mailpop3_cfsocket_connect(mailpop3 * f, const char * server, uint16_t
 {
   mailstream * stream;
   
-  stream = mailstream_cfstream_open(server, port);
+  stream = mailstream_cfstream_open_timeout(server, port, f->pop3_timeout);
   if (stream == NULL) {
     return MAILPOP3_ERROR_CONNECTION_REFUSED;
   }

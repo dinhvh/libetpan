@@ -6,20 +6,66 @@ fi
 logfile="`pwd`/update.log"
 
 cd ..
-echo configuring
-./autogen.sh > "$logfile" 2>&1
-if [[ "$?" != "0" ]]; then
-    echo "configure failed"
-    exit 1
+
+if test x$1 = xprepare ; then
+  echo preparing
+  ./autogen.sh > "$logfile" 2>&1
+  tar czf build-mac/autogen-result.tar.gz `find . -name '*.in'` configure install-sh config.sub missing config.guess
+  exit 0
+elif test x$1 = xprepare-clean ; then
+  if test -f Makefile ; then
+    make maintainer-clean >/dev/null
+    cd build-mac
+    rm -rf libsasl-ios
+    rm -rf dependencies/build
+  fi
+  exit 0
 fi
 
-make stamp-prepare-target >> "$logfile" 2>&1
-make libetpan-config.h >> "$logfile" 2>&1
-cd build-mac
-mkdir -p include/libetpan >> "$logfile" 2>&1
-cp -r ../include/libetpan/ include/libetpan/
-cp ../config.h include
-cp ../libetpan-config.h include
+if test x$SRCROOT = x ; then
+  echo Should be run from Xcode
+  exit 1
+fi
 
-# build dependencies for iOS
-sh ./prepare-ios.sh
+if test x$ACTION = x ; then
+  ACTION=build
+fi
+
+if test x$ACTION = xbuild ; then
+  
+  md5 build-mac/autogen-result.tar.gz > build-mac/autogen-result.md5.new
+  if ! cmp -s build-mac/autogen-result.md5 build-mac/autogen-result.md5.new ; then
+    rm -f Makefile
+  fi
+  rm -f build-mac/autogen-result.md5.new
+  if test ! -f Makefile ; then
+    echo configuring
+    tar xzf build-mac/autogen-result.tar.gz
+    export SDKROOT=
+    ./configure --enable-debug > "$logfile" 2>&1
+    if [[ "$?" != "0" ]]; then
+      echo "configure failed"
+      exit 1
+    fi
+
+    make stamp-prepare-target >> "$logfile" 2>&1
+    make libetpan-config.h >> "$logfile" 2>&1
+    md5 build-mac/autogen-result.tar.gz > build-mac/autogen-result.md5
+  fi
+  if test x$PLATFORM_NAME = xiphoneos -o x$PLATFORM_NAME = xiphonesimulator ; then
+    if test ! -d build-mac/libsasl-ios ; then
+      # build dependencies for iOS
+      cd build-mac
+      sh ./prepare-ios.sh
+    fi
+  fi
+elif test x$ACTION = xclean ; then
+  if test -f Makefile ; then
+    make distclean >/dev/null
+    cd build-mac
+    rm -f autogen-result.md5
+    rm -rf libsasl-ios
+    rm -rf dependencies/build
+  fi
+fi
+

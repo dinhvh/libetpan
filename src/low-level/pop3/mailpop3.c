@@ -69,6 +69,8 @@ enum {
   POP3_STATE_TRANSACTION
 };
 
+static inline void pop3_logger(mailstream * s, int log_type,
+    const char * str, size_t size, void * context);
 
 
 /*
@@ -222,9 +224,14 @@ mailpop3 * mailpop3_new(size_t progr_rate, progress_function * progr_fun)
   f->pop3_deleted_count = 0;
   f->pop3_state = POP3_STATE_DISCONNECTED;
   
-#ifdef USE_SASL
   f->pop3_sasl.sasl_conn = NULL;
-#endif
+
+	f->pop3_timeout = 0;
+	f->pop3_progress_fun = NULL;
+	f->pop3_progress_context = NULL;
+  
+  f->pop3_logger = NULL;
+  f->pop3_logger_context = NULL;
   
   return f;
 
@@ -337,6 +344,7 @@ int mailpop3_connect(mailpop3 * f, mailstream * s)
     return MAILPOP3_ERROR_BAD_STATE;
 
   f->pop3_stream = s;
+  mailstream_set_logger(s, pop3_logger, f);
 
   response = read_line(f);
 
@@ -1283,7 +1291,7 @@ static char * read_multiline(mailpop3 * f, size_t size,
 {
   return mailstream_read_multiline(f->pop3_stream, size,
 				   f->pop3_stream_buffer, multiline_buffer,
-				   f->pop3_progr_rate, f->pop3_progr_fun);
+				   f->pop3_progr_rate, f->pop3_progr_fun, f->pop3_progress_fun, f->pop3_progress_context);
 }
 
 static int send_command(mailpop3 * f, char * command)
@@ -1394,16 +1402,16 @@ int mailpop3_auth(mailpop3 * f, const char * auth_type,
   unsigned int max_encoded;
   
   sasl_callback[0].id = SASL_CB_GETREALM;
-  sasl_callback[0].proc =  sasl_getrealm;
+  sasl_callback[0].proc =  (int(*)(void)) sasl_getrealm;
   sasl_callback[0].context = f;
   sasl_callback[1].id = SASL_CB_USER;
-  sasl_callback[1].proc =  sasl_getsimple;
+  sasl_callback[1].proc =  (int(*)(void)) sasl_getsimple;
   sasl_callback[1].context = f;
   sasl_callback[2].id = SASL_CB_AUTHNAME;
-  sasl_callback[2].proc =  sasl_getsimple;
+  sasl_callback[2].proc =  (int(*)(void)) sasl_getsimple;
   sasl_callback[2].context = f; 
   sasl_callback[3].id = SASL_CB_PASS;
-  sasl_callback[3].proc =  sasl_getsecret;
+  sasl_callback[3].proc =  (int(*)(void)) sasl_getsecret;
   sasl_callback[3].context = f;
   sasl_callback[4].id = SASL_CB_LIST_END;
   sasl_callback[4].proc =  NULL;
@@ -1568,4 +1576,40 @@ int mailpop3_auth(mailpop3 * f, const char * auth_type,
 #else
   return MAILPOP3_ERROR_BAD_USER;
 #endif
+}
+
+void mailpop3_set_timeout(mailpop3 * f, time_t timeout)
+{
+	f->pop3_timeout = timeout;
+}
+
+time_t mailpop3_get_timeout(mailpop3 * f)
+{
+	return f->pop3_timeout;
+}
+
+void mailpop3_set_progress_callback(mailpop3 * f, mailprogress_function * progr_fun, void * context)
+{
+	f->pop3_progress_fun = progr_fun;
+	f->pop3_progress_context = context;
+}
+
+static inline void pop3_logger(mailstream * s, int log_type,
+    const char * str, size_t size, void * context)
+{
+  mailpop3 * session;
+
+  session = context;
+  if (session->pop3_logger == NULL)
+    return;
+
+  session->pop3_logger(session, log_type, str, size, session->pop3_logger_context);
+}
+
+LIBETPAN_EXPORT
+void mailpop3_set_logger(mailpop3 * session, void (* logger)(mailpop3 * session, int log_type,
+    const char * str, size_t size, void * context), void * logger_context)
+{
+  session->pop3_logger = logger;
+  session->pop3_logger_context = logger_context;
 }

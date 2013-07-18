@@ -79,11 +79,11 @@ int mailimap_socket_connect_voip(mailimap * f, const char * server, uint16_t por
 
     /* Connection */
 
-    s = mail_tcp_connect(server, port);
+    s = mail_tcp_connect_timeout(server, port, f->imap_timeout);
     if (s == -1)
       return MAILIMAP_ERROR_CONNECTION_REFUSED;
 
-    stream = mailstream_socket_open(s);
+    stream = mailstream_socket_open_timeout(s, f->imap_timeout);
     if (stream == NULL) {
   #ifdef WIN32
   	closesocket(s);
@@ -137,7 +137,8 @@ int mailimap_socket_starttls_with_callback(mailimap * f,
   if (fd == -1)
     return MAILIMAP_ERROR_STREAM;
   
-  new_low = mailstream_low_tls_open_with_callback(fd, callback, data);
+  new_low = mailstream_low_tls_open_with_callback_timeout(fd, f->imap_timeout,
+    callback, data);
   if (new_low == NULL)
     return MAILIMAP_ERROR_STREAM;
   
@@ -151,7 +152,7 @@ static int mailimap_cfsocket_connect_voip(mailimap * f, const char * server, uin
 {
   mailstream * stream;
   
-  stream = mailstream_cfstream_open_voip(server, port, voip_enabled);
+  stream = mailstream_cfstream_open_voip_timeout(server, port, voip_enabled, f->imap_timeout);
   if (stream == NULL) {
     return MAILIMAP_ERROR_CONNECTION_REFUSED;
   }

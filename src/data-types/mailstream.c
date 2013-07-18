@@ -74,10 +74,15 @@ mailstream * mailstream_new(mailstream_low * low, size_t buffer_size)
   s->write_buffer_len = 0;
 
   s->buffer_max_size = buffer_size;
-  s->low = low;
+  s->low = NULL;
   
   s->idle = NULL;
   s->idling = 0;
+  
+  s->logger = NULL;
+  s->logger_context = NULL;
+  
+  mailstream_set_low(s, low);
   
   return s;
 
@@ -274,9 +279,19 @@ mailstream_low * mailstream_get_low(mailstream * s)
   return s->low;
 }
 
+static void low_logger(mailstream_low * s, int log_type,
+  const char * str, size_t size, void * context)
+{
+  mailstream * stream = context;
+  if (stream->logger != NULL) {
+    stream->logger(context, log_type, str, size, stream->logger_context);
+  }
+}
+
 void mailstream_set_low(mailstream * s, mailstream_low * low)
 {
   s->low = low;
+  mailstream_low_set_logger(low, low_logger, s);
 }
 
 int mailstream_close(mailstream * s)
@@ -295,8 +310,6 @@ int mailstream_close(mailstream * s)
 
   return 0;
 }
-
-
 
 ssize_t mailstream_feed_read_buffer(mailstream * s)
 {
@@ -450,4 +463,11 @@ void mailstream_unsetup_idle(mailstream * s)
   }
   
   s->idling = 0;
+}
+
+void mailstream_set_logger(mailstream * s, void (* logger)(mailstream * s, int log_type,
+  const char * str, size_t size, void * context), void * logger_context)
+{
+  s->logger = logger;
+  s->logger_context = logger_context;
 }

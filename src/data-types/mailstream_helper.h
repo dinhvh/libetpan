@@ -54,7 +54,8 @@ char * mailstream_read_multiline(mailstream * s, size_t size,
 				  MMAPString * stream_buffer,
 				  MMAPString * multiline_buffer,
 				  size_t progr_rate,
-				  progress_function * progr_fun);
+				  progress_function * progr_fun,
+				  mailprogress_function * body_progr_fun, void * context);
 
 int mailstream_is_end_multiline(const char * line);
 

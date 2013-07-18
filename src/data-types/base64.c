@@ -116,8 +116,10 @@ char * decode_base64(const char * in, int len)
     c4 = in[3];
     if (CHAR64(c1) == -1 || CHAR64(c2) == -1 || 
         (c3 != '=' && CHAR64(c3) == -1) || 
-        (c4 != '=' && CHAR64(c4) == -1))
+        (c4 != '=' && CHAR64(c4) == -1)) {
+      free(out);
       return NULL;
+    }
 
     in += 4;
     *output++ = (CHAR64(c1) << 2) | (CHAR64(c2) >> 4);

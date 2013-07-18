@@ -4,6 +4,7 @@
 	Version="9.00"
 	Name="readmsg"
 	ProjectGUID="{5FEA913A-5CE4-4DEB-B6BE-B8EA1BF6F653}"
+	RootNamespace="readmsg"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>

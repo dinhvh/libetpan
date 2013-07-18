@@ -156,9 +156,6 @@ void mailimap_acl_myrights_data_free(struct
 void
 mailimap_acl_free(struct mailimap_extension_data * ext_data)
 {
-  if (ext_data == NULL)
-    return;
-
   switch (ext_data->ext_type)
   {
     case MAILIMAP_ACL_TYPE_ACL_DATA:

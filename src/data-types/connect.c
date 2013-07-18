@@ -103,7 +103,7 @@ static int verify_sock_errors(int s)
 }
 #endif
 
-static int wait_connect(int s, int r)
+static int wait_connect(int s, int r, time_t timeout_seconds)
 {
   fd_set fds;
   struct timeval timeout;
@@ -123,8 +123,14 @@ static int wait_connect(int s, int r)
   
   FD_ZERO(&fds);
   FD_SET(s, &fds);
-  timeout = mailstream_network_delay;
-  /* TODO: how to cancel this ? */
+  if (timeout_seconds == 0) {
+		timeout = mailstream_network_delay;
+	}
+	else {
+		timeout.tv_sec = timeout_seconds;
+		timeout.tv_usec = 0;
+	}
+  /* TODO: how to cancel this ? -> could be cancelled using a cancel fd */
   r = select(s + 1, NULL, &fds, NULL, &timeout);
   if (r <= 0) {
     return -1;
@@ -143,8 +149,19 @@ int mail_tcp_connect(const char * server, uint16_t port)
   return mail_tcp_connect_with_local_address(server, port, NULL, 0);
 }
 
+int mail_tcp_connect_timeout(const char * server, uint16_t port, time_t timeout)
+{
+  return mail_tcp_connect_with_local_address_timeout(server, port, NULL, 0, timeout);
+}
+
 int mail_tcp_connect_with_local_address(const char * server, uint16_t port,
     const char * local_address, uint16_t local_port)
+{
+	return mail_tcp_connect_with_local_address_timeout(server, port, local_address, local_port, 0);
+}
+
+int mail_tcp_connect_with_local_address_timeout(const char * server, uint16_t port,
+    const char * local_address, uint16_t local_port, time_t timeout)
 {
 #ifndef HAVE_IPV6
   struct hostent * remotehost;
@@ -197,7 +214,7 @@ int mail_tcp_connect_with_local_address(const char * server, uint16_t port,
   }
   
   r = connect(s, (struct sockaddr *) &sa, sizeof(struct sockaddr_in));
-  r = wait_connect(s, r);
+  r = wait_connect(s, r, timeout);
   if (r == -1) {
     goto close_socket;
   }
@@ -263,7 +280,7 @@ int mail_tcp_connect_with_local_address(const char * server, uint16_t port,
     }
     
     r = connect(s, ai->ai_addr, ai->ai_addrlen);
-    r = wait_connect(s, r);
+    r = wait_connect(s, r, timeout);
     
     if (r != -1) {
       r = verify_sock_errors(s);

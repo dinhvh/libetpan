@@ -135,7 +135,8 @@ char * mailstream_read_multiline(mailstream * s, size_t size,
 				  MMAPString * stream_buffer,
 				  MMAPString * multiline_buffer,
 				  size_t progr_rate,
-				  progress_function * progr_fun)
+				  progress_function * progr_fun,
+				  mailprogress_function * body_progr_fun, void * context)
 {
   size_t count;
   char * line;
@@ -165,8 +166,13 @@ char * mailstream_read_multiline(mailstream * s, size_t size,
     count += strlen(line);
     if ((size != 0) && (progr_rate != 0) && (progr_fun != NULL))
       if (count - last >= progr_rate) {
-	(* progr_fun)(count, size);
-	last = count;
+	      if (progr_fun != NULL) {
+          (* progr_fun)(count, size);
+        }
+	      if (body_progr_fun != NULL) {
+					body_progr_fun(count, size, context);
+		    }
+        last = count;
       }
   }
 

@@ -44,6 +44,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdbool.h>
 
 /* ************************************************************************* */
 /* ************************************************************************* */
@@ -1272,7 +1273,8 @@ void mailimap_mailbox_free(char * mb)
 
 
 struct mailimap_status_info *
-mailimap_status_info_new(int st_att, uint32_t st_value)
+mailimap_status_info_new(int st_att, uint32_t st_value,
+  struct mailimap_extension_data * st_ext_data)
 {
   struct mailimap_status_info * info;
 
@@ -1281,12 +1283,16 @@ mailimap_status_info_new(int st_att, uint32_t st_value)
     return NULL;
   info->st_att = st_att;
   info->st_value = st_value;
+  info->st_ext_data = st_ext_data;
 
   return info;
 }
 
 void mailimap_status_info_free(struct mailimap_status_info * info)
 {
+  if (info->st_ext_data != NULL) {
+    mailimap_extension_data_free(info->st_ext_data);
+  }
   free(info);
 }
 
@@ -2829,13 +2835,15 @@ void mailimap_search_key_free(struct mailimap_search_key * key)
         (clist_func) mailimap_search_key_free, NULL);
     clist_free(key->sk_data.sk_multiple);
     break;
+	case MAILIMAP_SEARCH_KEY_MODSEQ:
+	  if (key->sk_data.sk_modseq.sk_entry_name != NULL) {
+			mailimap_flag_free(key->sk_data.sk_modseq.sk_entry_name);
+		}
+	  break;
   }
   
   free(key);
 }
-
-
-
 
 
 

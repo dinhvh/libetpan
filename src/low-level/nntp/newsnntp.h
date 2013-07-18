@@ -58,6 +58,9 @@ newsnntp * newsnntp_new(size_t nntp_progr_rate,
     progress_function * nntp_progr_fun);
 void newsnntp_free(newsnntp * f);
 
+void newsnntp_set_timeout(newsnntp * f, time_t timeout);
+time_t newsnntp_get_timeout(newsnntp * f);
+
 int newsnntp_quit(newsnntp * f);
 int newsnntp_connect(newsnntp * f, mailstream * s);
 
@@ -183,6 +186,10 @@ int newsnntp_xover_range(newsnntp * f, uint32_t rangeinf, uint32_t rangesup,
 			  clist ** result);
 void xover_resp_item_free(struct newsnntp_xover_resp_item * n);
 void newsnntp_xover_resp_list_free(clist * l);
+
+LIBETPAN_EXPORT
+void newsnntp_set_logger(newsnntp * session, void (* logger)(newsnntp * session, int log_type,
+    const char * str, size_t size, void * context), void * logger_context);
 
 #ifdef __cplusplus
 }

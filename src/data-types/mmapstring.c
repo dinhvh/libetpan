@@ -62,6 +62,10 @@
 
 #define MMAP_STRING_DEFAULT_CEIL (8 * 1024 * 1024)
 
+#ifndef MMAP_UNAVAILABLE
+#define MMAP_UNAVAILABLE 1
+#endif
+
 #define DEFAULT_TMP_PATH "/tmp"
 
 static char tmpdir[PATH_MAX] = DEFAULT_TMP_PATH;

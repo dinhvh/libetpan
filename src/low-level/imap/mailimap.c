@@ -42,6 +42,8 @@
 #include "mailimap_sender.h"
 #include "mailimap_extension.h"
 #include "mail.h"
+#include "condstore.h"
+#include "condstore_private.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -114,6 +116,9 @@
 
 http://www.ietf.org/ids.by.wg/imapext.html
 */
+
+static inline void imap_logger(mailstream * s, int log_type,
+    const char * str, size_t size, void * context);
 
 static int parse_greeting(mailimap * session,
 			   struct mailimap_greeting ** result);
@@ -359,15 +364,8 @@ static void mailbox_data_store(mailimap * session,
     }
     break;
   case MAILIMAP_MAILBOX_DATA_EXTENSION_DATA:
-    if (session->imap_response_info) {
-      r = clist_append(session->imap_response_info->rsp_extension_list,
-          mb_data->mbd_data.mbd_extension);
-      if (r == 0)
-	mb_data->mbd_data.mbd_extension = NULL;
-      else {
-	/* TODO must handle error case */	
-      }
-    }
+    mailimap_extension_data_store(session, &mb_data->mbd_data.mbd_extension);
+    break;
   }
 }
 
@@ -539,6 +537,7 @@ int mailimap_connect(mailimap * session, mailstream * s)
     return MAILIMAP_ERROR_BAD_STATE;
 
   session->imap_stream = s;
+  mailstream_set_logger(s, imap_logger, session);
   
   if (session->imap_connection_info)
     mailimap_connection_info_free(session->imap_connection_info);
@@ -1239,6 +1238,7 @@ int mailimap_delete(mailimap * session, const char * mb)
   }
 }
 
+#if 0
 LIBETPAN_EXPORT
 int mailimap_examine(mailimap * session, const char * mb)
 {
@@ -1292,12 +1292,21 @@ int mailimap_examine(mailimap * session, const char * mb)
     return MAILIMAP_ERROR_EXAMINE;
   }
 }
+#else
+LIBETPAN_EXPORT
+int mailimap_examine(mailimap * session, const char * mb)
+{
+	uint64_t dummy;
+	return mailimap_examine_condstore_optional(session, mb, 0, &dummy);
+}
+#endif
 
 LIBETPAN_EXPORT
 int
 mailimap_fetch(mailimap * session, struct mailimap_set * set,
 	       struct mailimap_fetch_type * fetch_type, clist ** result)
 {
+#if 0
   struct mailimap_response * response;
   int r;
   int error_code;
@@ -1347,6 +1356,9 @@ mailimap_fetch(mailimap * session, struct mailimap_set * set,
     mailimap_fetch_list_free(* result);
     return MAILIMAP_ERROR_FETCH;
   }
+#else
+  return mailimap_fetch_changedsince(session, set, fetch_type, 0, result);
+#endif
 }
 
 LIBETPAN_EXPORT
@@ -1362,6 +1374,7 @@ mailimap_uid_fetch(mailimap * session,
 		   struct mailimap_set * set,
 		   struct mailimap_fetch_type * fetch_type, clist ** result)
 {
+#if 0
   struct mailimap_response * response;
   int r;
   int error_code;
@@ -1410,8 +1423,12 @@ mailimap_uid_fetch(mailimap * session,
 
   default:
     mailimap_fetch_list_free(* result);
+    * result = NULL;
     return MAILIMAP_ERROR_UID_FETCH;
   }
+#else
+  return mailimap_uid_fetch_changedsince(session, set, fetch_type, 0, result);
+#endif
 }
 
 LIBETPAN_EXPORT
@@ -1611,16 +1628,16 @@ int mailimap_authenticate(mailimap * session, const char * auth_type,
   }
   
   sasl_callback[0].id = SASL_CB_GETREALM;
-  sasl_callback[0].proc =  sasl_getrealm;
+  sasl_callback[0].proc =  (int(*)(void)) sasl_getrealm;
   sasl_callback[0].context = session;
   sasl_callback[1].id = SASL_CB_USER;
-  sasl_callback[1].proc =  sasl_getsimple;
+  sasl_callback[1].proc =  (int(*)(void)) sasl_getsimple;
   sasl_callback[1].context = session;
   sasl_callback[2].id = SASL_CB_AUTHNAME;
-  sasl_callback[2].proc =  sasl_getsimple;
+  sasl_callback[2].proc =  (int(*)(void)) sasl_getsimple;
   sasl_callback[2].context = session; 
   sasl_callback[3].id = SASL_CB_PASS;
-  sasl_callback[3].proc =  sasl_getsecret;
+  sasl_callback[3].proc =  (int(*)(void)) sasl_getsecret;
   sasl_callback[3].context = session;
   sasl_callback[4].id = SASL_CB_LIST_END;
   sasl_callback[4].proc =  NULL;
@@ -1838,7 +1855,6 @@ int mailimap_authenticate(mailimap * session, const char * auth_type,
 #endif
 }
 
-
 LIBETPAN_EXPORT
 int mailimap_lsub(mailimap * session, const char * mb,
     const char * list_mb, clist ** result)
@@ -1948,6 +1964,7 @@ int
 mailimap_search(mailimap * session, const char * charset,
     struct mailimap_search_key * key, clist ** result)
 {
+#if 0
   struct mailimap_response * response;
   int r;
   int error_code;
@@ -1991,6 +2008,9 @@ mailimap_search(mailimap * session, const char * charset,
   default:
     return MAILIMAP_ERROR_SEARCH;
   }
+#else
+  return mailimap_search_modseq(session, charset, key, result, NULL);
+#endif
 }
 
 LIBETPAN_EXPORT
@@ -1998,6 +2018,7 @@ int
 mailimap_uid_search(mailimap * session, const char * charset,
     struct mailimap_search_key * key, clist ** result)
 {
+#if 0
   struct mailimap_response * response;
   int r;
   int error_code;
@@ -2041,6 +2062,9 @@ mailimap_uid_search(mailimap * session, const char * charset,
   default:
     return MAILIMAP_ERROR_UID_SEARCH;
   }
+#else
+  return mailimap_uid_search_modseq(session, charset, key, result, NULL);
+#endif
 }
 
 LIBETPAN_EXPORT
@@ -2050,6 +2074,7 @@ void mailimap_search_result_free(clist * search_result)
   clist_free(search_result);
 }
 
+#if 0
 LIBETPAN_EXPORT
 int
 mailimap_select(mailimap * session, const char * mb)
@@ -2104,6 +2129,15 @@ mailimap_select(mailimap * session, const char * mb)
     return MAILIMAP_ERROR_SELECT;
   }
 }
+#else
+LIBETPAN_EXPORT
+int
+mailimap_select(mailimap * session, const char * mb)
+{
+	uint64_t dummy;
+	return mailimap_select_condstore_optional(session, mb, 0, &dummy);
+}
+#endif
 
 LIBETPAN_EXPORT
 int
@@ -2164,6 +2198,7 @@ mailimap_store(mailimap * session,
 	       struct mailimap_set * set,
 	       struct mailimap_store_att_flags * store_att_flags)
 {
+#if 0
   struct mailimap_response * response;
   int r;
   int error_code;
@@ -2204,6 +2239,10 @@ mailimap_store(mailimap * session,
   default:
     return MAILIMAP_ERROR_STORE;
   }
+#else
+  return mailimap_store_unchangedsince_optional(session,
+  	set, 0, 0, store_att_flags);
+#endif
 }
 
 LIBETPAN_EXPORT
@@ -2212,6 +2251,7 @@ mailimap_uid_store(mailimap * session,
 		   struct mailimap_set * set,
 		   struct mailimap_store_att_flags * store_att_flags)
 {
+#if 0
   struct mailimap_response * response;
   int r;
   int error_code;
@@ -2252,6 +2292,10 @@ mailimap_uid_store(mailimap * session,
   default:
     return MAILIMAP_ERROR_UID_STORE;
   }
+#else
+  return mailimap_uid_store_unchangedsince_optional(session,
+  	set, 0, 0, store_att_flags);
+#endif
 }
 
 LIBETPAN_EXPORT
@@ -2591,6 +2635,11 @@ mailimap * mailimap_new(size_t imap_progr_rate,
   f->imap_msg_att_handler = NULL;
   f->imap_msg_att_handler_context = NULL;
   
+	f->imap_timeout = 0;
+
+  f->imap_logger = NULL;
+  f->imap_logger_context = NULL;
+
   return f;
   
  free_stream_buffer:
@@ -2628,6 +2677,18 @@ void mailimap_free(mailimap * session)
 }
 
 LIBETPAN_EXPORT
+void mailimap_set_timeout(mailimap * session, time_t timeout)
+{
+	session->imap_timeout = timeout;
+}
+
+LIBETPAN_EXPORT
+time_t mailimap_get_timeout(mailimap * session)
+{
+	return session->imap_timeout;
+}
+
+LIBETPAN_EXPORT
 void mailimap_set_progress_callback(mailimap * session,
                                     mailprogress_function * body_progr_fun,
                                     mailprogress_function * items_progr_fun,
@@ -2643,8 +2704,26 @@ void mailimap_set_msg_att_handler(mailimap * session,
                                   mailimap_msg_att_handler * handler,
                                   void * context)
 {
-    session->imap_msg_att_handler = handler;
-    session->imap_msg_att_handler_context = context;
+  session->imap_msg_att_handler = handler;
+  session->imap_msg_att_handler_context = context;
 }
 
+static inline void imap_logger(mailstream * s, int log_type,
+    const char * str, size_t size, void * context)
+{
+  mailimap * session;
 
+  session = context;
+  if (session->imap_logger == NULL)
+    return;
+
+  session->imap_logger(session, log_type, str, size, session->imap_logger_context);
+}
+
+LIBETPAN_EXPORT
+void mailimap_set_logger(mailimap * session, void (* logger)(mailimap * session, int log_type,
+    const char * str, size_t size, void * context), void * logger_context)
+{
+  session->imap_logger = logger;
+  session->imap_logger_context = logger_context;
+}
