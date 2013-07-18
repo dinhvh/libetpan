@@ -169,3 +169,7 @@ int mailimap_oauth2_authenticate_send(mailimap * session,
   return res;
 }
 
+int mailimap_has_xoauth2(mailimap * session)
+{
+  return mailimap_has_extension(session, "XOAUTH2");
+}
