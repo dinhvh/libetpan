@@ -171,5 +171,5 @@ int mailimap_oauth2_authenticate_send(mailimap * session,
 
 int mailimap_has_xoauth2(mailimap * session)
 {
-  return mailimap_has_extension(session, "XOAUTH2");
+  return mailimap_has_authentication(session, "XOAUTH2");
 }
