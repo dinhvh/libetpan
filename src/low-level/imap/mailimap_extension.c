@@ -229,18 +229,9 @@ int mailimap_has_authentication(mailimap * session, char * authentication_name)
         if (cap->cap_type != MAILIMAP_CAPABILITY_AUTH_TYPE)
           continue;
         
-        char *cap_name = cap->cap_data.cap_name;
-        if (!strncasecmp(cap_name, "AUTH ", 5)) {
-          cap_name += 5;
-          if (strcasecmp(cap_name, authentication_name) == 0)
-            return 1;
-        } else if (!strncasecmp(cap_name, "AUTH=", 5)) {
-          cap_name += 5;
-          if (strcasecmp(cap_name, authentication_name) == 0)
-            return 1;
-        } else if (strcasecmp(cap_name, authentication_name) == 0) {
+        if (strcasecmp(cap->cap_data.cap_name, authentication_name) == 0)
           return 1;
-        }
+        
       }
     }
   }
