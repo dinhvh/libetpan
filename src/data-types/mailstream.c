@@ -471,3 +471,22 @@ void mailstream_set_logger(mailstream * s, void (* logger)(mailstream * s, int l
   s->logger = logger;
   s->logger_context = logger_context;
 }
+
+carray * mailstream_get_certificate_chain(mailstream * s)
+{
+  return mailstream_low_get_certificate_chain(s->low);
+}
+
+void mailstream_certificate_chain_free(carray * certificate_chain)
+{
+  unsigned int i;
+  
+  if (certificate_chain == NULL)
+    return;
+  
+  for(i = 0 ; i < carray_count(certificate_chain) ; i ++) {
+    free(carray_get(certificate_chain, i));
+  }
+  carray_free(certificate_chain);
+}
+

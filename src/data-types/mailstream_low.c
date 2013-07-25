@@ -401,3 +401,14 @@ static inline void mailstream_logger_internal(mailstream_low * s, int is_stream_
   
   s->logger(s, log_type, buffer, size, s->logger_context);
 }
+
+carray * mailstream_low_get_certificate_chain(mailstream_low * s)
+{
+  if (s == NULL)
+    return NULL;
+
+  if (s->driver->mailstream_get_certificate_chain == NULL)
+    return NULL;
+
+  return s->driver->mailstream_get_certificate_chain(s);
+}

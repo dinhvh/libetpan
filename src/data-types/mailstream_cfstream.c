@@ -36,6 +36,7 @@
 #include <TargetConditionals.h>
 #if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
 #include <CFNetwork/CFNetwork.h>
+#include <Security/Security.h>
 #else
 #include <CoreServices/CoreServices.h>
 #endif
@@ -129,6 +130,7 @@ static ssize_t mailstream_low_cfstream_write(mailstream_low * s,
 static void mailstream_low_cfstream_free(mailstream_low * s);
 static int mailstream_low_cfstream_get_fd(mailstream_low * s);
 static void mailstream_low_cfstream_cancel(mailstream_low * s);
+static carray * mailstream_low_cfstream_get_certificate_chain(mailstream_low * s);
 
 static mailstream_low_driver local_mailstream_cfstream_driver = {
   /* mailstream_read */ mailstream_low_cfstream_read,
@@ -138,6 +140,7 @@ static mailstream_low_driver local_mailstream_cfstream_driver = {
   /* mailstream_free */ mailstream_low_cfstream_free,
   /* mailstream_cancel */ mailstream_low_cfstream_cancel,
   /* mailstream_get_cancel_fd */ NULL,
+  /* mailstream_get_certificate_chain */ mailstream_low_cfstream_get_certificate_chain,
 };
 
 mailstream_low_driver * mailstream_cfstream_driver =
@@ -1108,5 +1111,38 @@ void mailstream_cfstream_interrupt_idle(mailstream * s)
   }
   
   pthread_mutex_unlock(&cfstream_data->runloop_lock);
+#endif
+}
+
+static carray * mailstream_low_cfstream_get_certificate_chain(mailstream_low * s)
+{
+#if HAVE_CFNETWORK
+  struct mailstream_cfstream_data * cfstream_data;
+  CFArrayRef certs;
+  unsigned int i;
+  carray * result;
+  
+  cfstream_data = (struct mailstream_cfstream_data *) s->data;
+  certs = CFReadStreamCopyProperty(cfstream_data->readStream, kCFStreamPropertySSLPeerCertificates);
+  if (certs == NULL)
+    return NULL;
+  
+  result = carray_new(4);
+  for(i = 0 ; i < CFArrayGetCount(certs) ; i ++) {
+    SecCertificateRef cert = (SecCertificateRef) CFArrayGetValueAtIndex(certs, i);
+    CFDataRef data = SecCertificateCopyData(cert);
+    CFIndex length = CFDataGetLength(data);
+    const UInt8 * bytes = CFDataGetBytePtr(data);
+    MMAPString * str = mmap_string_sized_new(length);
+    mmap_string_append_len(str, (char*) bytes, length);
+    carray_add(result, str, NULL);
+    CFRelease(data);
+  }
+  
+  CFRelease(certs);
+  
+  return result;
+#else
+  return NULL;
 #endif
 }

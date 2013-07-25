@@ -92,6 +92,9 @@ time_t mailstream_low_get_timeout(mailstream_low * s);
 void mailstream_low_set_logger(mailstream_low * s, void (* logger)(mailstream_low * s, int log_type,
   const char * str, size_t size, void * context), void * logger_context);
 
+/* Get certificate chain. Returns an array of MMAPString containing DER data or NULL if it's not a SSL connection */
+carray * mailstream_low_get_certificate_chain(mailstream_low * s);
+
 #ifdef __cplusplus
 }
 #endif

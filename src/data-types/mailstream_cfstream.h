@@ -99,6 +99,8 @@ extern "C" {
   void mailstream_cfstream_interrupt_idle(mailstream * s);
   void mailstream_cfstream_unsetup_idle(mailstream * s);
   
+  /* SSL certificate */
+  
 #ifdef __cplusplus
 }
 #endif

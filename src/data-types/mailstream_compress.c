@@ -60,6 +60,7 @@ static int mailstream_low_compress_get_fd(mailstream_low * s);
 static struct mailstream_cancel * mailstream_low_compress_get_cancel(mailstream_low * s);
 static void mailstream_low_compress_free(mailstream_low * s);
 static void mailstream_low_compress_cancel(mailstream_low * s);
+static carray * mailstream_low_compress_get_certificate_chain(mailstream_low * s);
 
 typedef struct mailstream_compress_data
 {
@@ -78,11 +79,12 @@ static mailstream_low_driver local_mailstream_compress_driver = {
   /* mailstream_free */ mailstream_low_compress_free,
   /* mailstream_cancel */ mailstream_low_compress_cancel,
   /* mailstream_get_cancel */ mailstream_low_compress_get_cancel,
+  /* mailstream_get_certificate_chain */ mailstream_low_compress_get_certificate_chain,
 };
 
 mailstream_low_driver * mailstream_compress_driver = &local_mailstream_compress_driver;
 
-mailstream_low * mailstream_low_compress_open(mailstream_low * ms)
+static mailstream_low * mailstream_low_compress_open(mailstream_low * ms)
 {
   mailstream_low * s;
     
@@ -139,7 +141,7 @@ mailstream_low * mailstream_low_compress_open(mailstream_low * ms)
   return NULL;
 }
 
-ssize_t mailstream_low_compress_read(mailstream_low * s, void * buf, size_t count) {
+static ssize_t mailstream_low_compress_read(mailstream_low * s, void * buf, size_t count) {
   compress_data *data = s->data;
   data->ms->timeout = s->timeout;
   z_stream *strm = data->decompress_stream;
@@ -232,8 +234,7 @@ static int wait_write_compress(mailstream_low * s)
   return 1;
 }
 
-ssize_t mailstream_low_compress_write(mailstream_low * s,
-const void * buf, size_t count) {
+static ssize_t mailstream_low_compress_write(mailstream_low * s, const void * buf, size_t count) {
     
   int zr, wr;
   compress_data *data = s->data;
@@ -278,22 +279,22 @@ const void * buf, size_t count) {
   return compress_len - strm->avail_in;
 }
 
-int mailstream_low_compress_close(mailstream_low * s) {
+static int mailstream_low_compress_close(mailstream_low * s) {
   compress_data *data = s->data;
   return data->ms->driver->mailstream_close(data->ms);
 }
 
-int mailstream_low_compress_get_fd(mailstream_low * s) {
+static int mailstream_low_compress_get_fd(mailstream_low * s) {
   compress_data *data = s->data;
   return data->ms->driver->mailstream_get_fd(data->ms);
 }
 
-struct mailstream_cancel * mailstream_low_compress_get_cancel(mailstream_low * s) {
+static struct mailstream_cancel * mailstream_low_compress_get_cancel(mailstream_low * s) {
   compress_data *data = s->data;
   return data->ms->driver->mailstream_get_cancel(data->ms);
 }
 
-void mailstream_low_compress_free(mailstream_low * s) {
+static void mailstream_low_compress_free(mailstream_low * s) {
   compress_data *data = s->data;
   data->ms->driver->mailstream_free(data->ms);
   if (data->compress_stream) {
@@ -308,9 +309,14 @@ void mailstream_low_compress_free(mailstream_low * s) {
   free(s);
 }
 
-void mailstream_low_compress_cancel(mailstream_low * s) {
+static void mailstream_low_compress_cancel(mailstream_low * s) {
   compress_data *data = s->data;
   data->ms->driver->mailstream_cancel(data->ms);
+}
+
+static carray * mailstream_low_compress_get_certificate_chain(mailstream_low * s) {
+  compress_data *data = s->data;
+  data->ms->driver->mailstream_get_certificate_chain(data->ms);
 }
 
 #endif
