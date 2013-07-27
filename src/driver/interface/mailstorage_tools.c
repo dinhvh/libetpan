@@ -219,8 +219,8 @@ int mailstorage_generic_connect_with_local_address(mailsession_driver * driver,
 {
   int r;
   int res;
-  mailstream * stream;
-  int fd;
+  mailstream * stream = NULL;
+  int fd = 0;
   mailsession * session;
   int connect_result;
   
@@ -229,11 +229,23 @@ int mailstorage_generic_connect_with_local_address(mailsession_driver * driver,
   case CONNECTION_TYPE_TRY_STARTTLS:
   case CONNECTION_TYPE_STARTTLS:
   case CONNECTION_TYPE_TLS:
-    fd = mail_tcp_connect_with_local_address(servername, port,
-        local_address, local_port);
-    if (fd == -1) {
-      res = MAIL_ERROR_CONNECT;
-      goto err;
+#if HAVE_CFNETWORK
+    if (mailstream_cfstream_enabled) {
+      int voip_enabled = 0;
+      stream = mailstream_cfstream_open_voip(servername, port, mailstream_cfstream_voip_enabled);
+      if (stream == NULL) {
+        res = MAIL_ERROR_CONNECT;
+        goto err;
+      }
+    }
+#endif
+    if (stream == NULL) {
+      fd = mail_tcp_connect_with_local_address(servername, port,
+          local_address, local_port);
+      if (fd == -1) {
+        res = MAIL_ERROR_CONNECT;
+        goto err;
+      }
     }
     break;
 
@@ -252,7 +264,7 @@ int mailstorage_generic_connect_with_local_address(mailsession_driver * driver,
     res = MAIL_ERROR_INVAL;
     goto err;
   }
-  
+
   switch (connection_type) {
   case CONNECTION_TYPE_PLAIN:
   case CONNECTION_TYPE_TRY_STARTTLS:
@@ -260,19 +272,35 @@ int mailstorage_generic_connect_with_local_address(mailsession_driver * driver,
   case CONNECTION_TYPE_COMMAND:
   case CONNECTION_TYPE_COMMAND_TRY_STARTTLS:
   case CONNECTION_TYPE_COMMAND_STARTTLS:
-    stream = mailstream_socket_open(fd);
+    if (stream == NULL) {
+      stream = mailstream_socket_open(fd);
+    }
     break;
     
   case CONNECTION_TYPE_TLS:
   case CONNECTION_TYPE_COMMAND_TLS:
-    stream = mailstream_ssl_open(fd);
+#if HAVE_CFNETWORK
+    if (mailstream_cfstream_enabled) {
+      int ssl_level = MAILSTREAM_CFSTREAM_SSL_LEVEL_SSLv3;
+      mailstream_cfstream_set_ssl_level(stream, ssl_level);
+      mailstream_cfstream_set_ssl_verification_mask(stream, MAILSTREAM_CFSTREAM_SSL_NO_VERIFICATION);
+      r = mailstream_cfstream_set_ssl_enabled(stream, 1);
+      if (r < 0) {
+        mailstream_close(stream);
+        return MAIL_ERROR_SSL;
+      }
+    }
+#endif
+    if (stream == NULL) {
+      stream = mailstream_ssl_open(fd);
+    }
     break;
     
   default:
     stream = NULL;
     break;
   }
-
+  
   if (stream == NULL) {
     res = MAIL_ERROR_STREAM;
     close(fd);
