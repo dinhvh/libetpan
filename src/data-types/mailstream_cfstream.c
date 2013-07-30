@@ -960,15 +960,25 @@ int mailstream_cfstream_set_ssl_enabled(mailstream * s, int ssl_enabled)
     //fprintf(stderr, "is not ssl\n");
   }
   
-  r = wait_runloop(s->low, STATE_WAIT_SSL);
-  if (r != WAIT_RUNLOOP_EXIT_NO_ERROR) {
-    return -1;
+  // We need to investigate more about how to establish a STARTTLS connection.
+  // For now, wait until we get the certificate chain.
+  while (1) {
+    r = wait_runloop(s->low, STATE_WAIT_SSL);
+    if (r != WAIT_RUNLOOP_EXIT_NO_ERROR) {
+      return -1;
+    }
+    if (cfstream_data->writeSSLResult < 0)
+      return -1;
+    if (cfstream_data->readSSLResult < 0)
+      return -1;
+    CFArrayRef certs = CFReadStreamCopyProperty(cfstream_data->readStream, kCFStreamPropertySSLPeerCertificates);
+    if (certs == NULL) {
+      // No certificates, wait more.
+      continue;
+    }
+    CFRelease(certs);
+    break;
   }
-  
-  if (cfstream_data->writeSSLResult < 0)
-    return -1;
-  if (cfstream_data->readSSLResult < 0)
-    return -1;
   
   return 0;
 #else
