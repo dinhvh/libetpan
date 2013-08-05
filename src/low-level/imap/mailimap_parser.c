@@ -5990,13 +5990,13 @@ static int mailimap_literal_parse_progress(mailstream * fd, MMAPString * buffer,
     
     while (needed > 0) {
       ssize_t read_bytes;
+      size_t bytes_to_read;
       
-      if (needed > MAX_READ_PROGRESS) {
-        read_bytes = mailstream_read(fd, literal_p, MAX_READ_PROGRESS);
+      bytes_to_read = needed;
+      if (bytes_to_read > MAX_READ_PROGRESS) {
+        bytes_to_read = MAX_READ_PROGRESS;
       }
-      else {
-        read_bytes = mailstream_read(fd, literal_p, needed);
-      }
+      read_bytes = mailstream_read(fd, literal_p, bytes_to_read);
       if (read_bytes == -1) {
         res = MAILIMAP_ERROR_STREAM;
         goto free_literal;
