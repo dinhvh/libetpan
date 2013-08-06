@@ -316,7 +316,7 @@ static void mailstream_low_compress_cancel(mailstream_low * s) {
 
 static carray * mailstream_low_compress_get_certificate_chain(mailstream_low * s) {
   compress_data *data = s->data;
-  data->ms->driver->mailstream_get_certificate_chain(data->ms);
+  return data->ms->driver->mailstream_get_certificate_chain(data->ms);
 }
 
 #endif
