@@ -84,7 +84,7 @@ static mailstream_low_driver local_mailstream_compress_driver = {
 
 mailstream_low_driver * mailstream_compress_driver = &local_mailstream_compress_driver;
 
-static mailstream_low * mailstream_low_compress_open(mailstream_low * ms)
+mailstream_low * mailstream_low_compress_open(mailstream_low * ms)
 {
   mailstream_low * s;
     
