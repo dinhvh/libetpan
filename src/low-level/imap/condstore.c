@@ -384,7 +384,9 @@ int mailimap_search_modseq(mailimap * session, const char * charset,
 
   if (search_data == NULL) {
     * result = session->imap_response_info->rsp_search_result;
-    * p_mod_sequence_value = 0;
+    if (p_mod_sequence_value != NULL) {
+      * p_mod_sequence_value = 0;
+    }
     session->imap_response_info->rsp_search_result = NULL;
   }
   else {
