@@ -424,7 +424,7 @@ int mailimap_fetch_qresync_vanished(mailimap * session,
     if (* fetch_result != NULL) {
       mailimap_fetch_list_free(* fetch_result);
     }
-    if (* p_vanished != NULL) {
+    if (p_vanished != NULL && * p_vanished != NULL) {
       mailimap_qresync_vanished_free(* p_vanished);
     }
     return MAILIMAP_ERROR_FETCH;
