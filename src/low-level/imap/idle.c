@@ -84,6 +84,7 @@ int mailimap_idle(mailimap * session)
   if (r == MAILIMAP_NO_ERROR) {
     clist_foreach(resp_data_list,
 	  (clist_func) mailimap_response_data_free, NULL);
+    clist_free(resp_data_list);
   }
 
   r = mailimap_continue_req_parse(session->imap_stream,
