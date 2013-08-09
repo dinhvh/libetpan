@@ -485,7 +485,7 @@ void mailstream_certificate_chain_free(carray * certificate_chain)
     return;
   
   for(i = 0 ; i < carray_count(certificate_chain) ; i ++) {
-    free(carray_get(certificate_chain, i));
+    mmap_string_free(carray_get(certificate_chain, i));
   }
   carray_free(certificate_chain);
 }
