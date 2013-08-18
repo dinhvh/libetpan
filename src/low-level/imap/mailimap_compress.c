@@ -29,11 +29,18 @@
  * SUCH DAMAGE.
  */
 #include <stddef.h>
+
+#ifdef HAVE_CONFIG_H
+#	include <config.h>
+#endif
+
 #include "mailimap_compress.h"
 
 #include "mailimap.h"
 #include "mailimap_sender.h"
 #include "mailstream_compress.h"
+
+#include <stdio.h>
 
 int mailimap_compress(mailimap * session)
 {
@@ -99,4 +106,9 @@ int mailimap_compress(mailimap * session)
   
 err:
   return res;
+}
+
+int mailimap_has_compress_deflate(mailimap * session)
+{
+  return mailimap_has_extension(session, "COMPRESS=DEFLATE");
 }

@@ -203,6 +203,8 @@ struct mailstream_cancel * mailstream_low_get_cancel(mailstream_low * s)
 {
   if (s == NULL)
     return NULL;
+  if (s->driver->mailstream_get_cancel == NULL)
+    return NULL;
   return s->driver->mailstream_get_cancel(s);
 }
 

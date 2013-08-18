@@ -139,7 +139,7 @@ static mailstream_low_driver local_mailstream_cfstream_driver = {
   /* mailstream_get_fd */ mailstream_low_cfstream_get_fd,
   /* mailstream_free */ mailstream_low_cfstream_free,
   /* mailstream_cancel */ mailstream_low_cfstream_cancel,
-  /* mailstream_get_cancel_fd */ NULL,
+  /* mailstream_get_cancel */ NULL,
   /* mailstream_get_certificate_chain */ mailstream_low_cfstream_get_certificate_chain,
 };
 
