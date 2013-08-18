@@ -31,11 +31,11 @@
 
 /*  Created by Ian Ragsdale on 3/8/13. */
 
-#include "mailstream_compress.h"
-
 #ifdef HAVE_CONFIG_H
 #	include <config.h>
 #endif
+
+#include "mailstream_compress.h"
 
 #include <stddef.h>
 
