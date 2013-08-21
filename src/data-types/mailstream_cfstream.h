@@ -93,6 +93,7 @@ extern "C" {
   
   /* can be run in thread */
   int mailstream_cfstream_wait_idle(mailstream * s, int max_idle_delay);
+  int mailstream_low_cfstream_wait_idle(mailstream_low * low, int max_idle_delay);
   
   /* in main thread */
   void mailstream_cfstream_setup_idle(mailstream * s);

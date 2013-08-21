@@ -1042,14 +1042,19 @@ void mailstream_cfstream_set_ssl_level(mailstream * s, int ssl_level)
 
 int mailstream_cfstream_wait_idle(mailstream * s, int max_idle_delay)
 {
+  return mailstream_low_cfstream_wait_idle(s->low, max_idle_delay);
+}
+
+int mailstream_low_cfstream_wait_idle(mailstream_low * low, int max_idle_delay)
+{
 #if HAVE_CFNETWORK
   struct mailstream_cfstream_data * cfstream_data;
   int r;
   
-  cfstream_data = (struct mailstream_cfstream_data *) s->low->data;
+  cfstream_data = (struct mailstream_cfstream_data *) low->data;
   cfstream_data->idleMaxDelay = max_idle_delay;
   
-  r = wait_runloop(s->low, STATE_WAIT_IDLE);
+  r = wait_runloop(low, STATE_WAIT_IDLE);
   switch (r) {
     case WAIT_RUNLOOP_EXIT_TIMEOUT:
       return MAILSTREAM_IDLE_TIMEOUT;

@@ -56,6 +56,9 @@
 #	include "win_etpan.h"
 #endif
 
+#include "mailstream_cfstream.h"
+#include "mailstream_compress.h"
+
 #define LOG_FILE "libetpan-stream-debug.log"
 
 LIBETPAN_EXPORT
@@ -413,4 +416,74 @@ carray * mailstream_low_get_certificate_chain(mailstream_low * s)
     return NULL;
 
   return s->driver->mailstream_get_certificate_chain(s);
+}
+
+int mailstream_low_wait_idle(mailstream_low * low, struct mailstream_cancel * idle,
+                             int max_idle_delay)
+{
+  int fd;
+  int idle_fd;
+  int cancel_fd;
+  int maxfd;
+  fd_set readfds;
+  struct timeval delay;
+  int r;
+  
+  if (low->driver == mailstream_cfstream_driver) {
+    return mailstream_low_cfstream_wait_idle(low, max_idle_delay);
+  }
+  else if (low->driver == mailstream_compress_driver) {
+    return mailstream_low_compress_wait_idle(low, idle, max_idle_delay);
+  }
+  
+  if (idle == NULL) {
+		return MAILSTREAM_IDLE_ERROR;
+	}
+  if (mailstream_low_get_cancel(low) == NULL) {
+		return MAILSTREAM_IDLE_ERROR;
+	}
+  fd = mailstream_low_get_fd(low);
+  idle_fd = mailstream_cancel_get_fd(idle);
+  cancel_fd = mailstream_cancel_get_fd(mailstream_low_get_cancel(low));
+  
+  FD_ZERO(&readfds);
+  FD_SET(fd, &readfds);
+  FD_SET(idle_fd, &readfds);
+  FD_SET(cancel_fd, &readfds);
+  maxfd = fd;
+  if (idle_fd > maxfd) {
+    maxfd = idle_fd;
+  }
+  if (cancel_fd > maxfd) {
+    maxfd = cancel_fd;
+  }
+  delay.tv_sec = max_idle_delay;
+  delay.tv_usec = 0;
+  
+  r = select(maxfd + 1, &readfds, NULL, NULL, &delay);
+  if (r == 0) {
+    // timeout
+    return MAILSTREAM_IDLE_TIMEOUT;
+  }
+  else if (r == -1) {
+    // do nothing
+    return MAILSTREAM_IDLE_ERROR;
+  }
+  else {
+    if (FD_ISSET(fd, &readfds)) {
+      // has something on socket
+      return MAILSTREAM_IDLE_HASDATA;
+    }
+    if (FD_ISSET(idle_fd, &readfds)) {
+      // idle interrupted
+      mailstream_cancel_ack(idle);
+      return MAILSTREAM_IDLE_INTERRUPTED;
+    }
+    if (FD_ISSET(cancel_fd, &readfds)) {
+      // idle cancelled
+      mailstream_cancel_ack(mailstream_low_get_cancel(low));
+      return MAILSTREAM_IDLE_CANCELLED;
+    }
+    return MAILSTREAM_IDLE_ERROR;
+  }
 }
