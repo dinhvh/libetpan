@@ -123,6 +123,24 @@ static int mailimap_id_params_list_parse(mailstream * fd,
   int r;
   
   cur_token = * indx;
+
+  r = mailimap_nil_parse(fd, buffer, &cur_token);
+  if (r == MAILIMAP_NO_ERROR) {
+    items = clist_new();
+    if (items == NULL) {
+      return MAILIMAP_ERROR_MEMORY;
+    }
+    
+    params_list = mailimap_id_params_list_new(items);
+    if (params_list == NULL) {
+      clist_free(items);
+      return MAILIMAP_ERROR_MEMORY;
+    }
+    
+    * indx = cur_token;
+    * result = NULL;
+    return MAILIMAP_NO_ERROR;
+  }
   
   r = mailimap_oparenth_parse(fd, buffer, &cur_token);
   if (r != MAILIMAP_NO_ERROR)
@@ -139,6 +157,7 @@ static int mailimap_id_params_list_parse(mailstream * fd,
   params_list = mailimap_id_params_list_new(items);
   if (params_list == NULL) {
     clist_foreach(items, (clist_func) mailimap_id_param_free, NULL);
+    clist_free(items);
     return MAILIMAP_ERROR_MEMORY;
   }
 
