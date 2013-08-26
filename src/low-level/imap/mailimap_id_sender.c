@@ -34,6 +34,7 @@ static int mailimap_id_params_list_send(mailstream * fd, struct mailimap_id_para
     r = mailimap_token_send(fd, "NIL");
     if (r != MAILIMAP_NO_ERROR)
       return r;
+    return MAILIMAP_NO_ERROR;
   }
 
   r = mailimap_oparenth_send(fd);
