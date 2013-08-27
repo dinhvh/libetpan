@@ -73,10 +73,18 @@ void mailstream_cancel(mailstream * s);
 LIBETPAN_EXPORT
 void mailstream_set_privacy(mailstream * s, int can_be_public);
 
+/* 0 = no logging
+   1 = full logging
+   2 = brief logging (omit literal bodies)
+ */
 #ifdef LIBETPAN_MAILSTREAM_DEBUG
 LIBETPAN_EXPORT
 extern int mailstream_debug;
 
+LIBETPAN_EXPORT
+extern int mailstream_reading_literal;
+
+    
 /* direction is 1 for send, 0 for receive, -1 when it does not apply */
 LIBETPAN_EXPORT
 extern void (* mailstream_logger)(int direction,

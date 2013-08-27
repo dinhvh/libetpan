@@ -6024,6 +6024,7 @@ static int mailimap_literal_parse_progress(mailstream * fd, MMAPString * buffer,
     literal_p = literal->str + left;
     current_prog = left;
     
+    mailstream_reading_literal = 1; // mark parse state for debug logging
     while (needed > 0) {
       ssize_t read_bytes;
       
@@ -6052,7 +6053,7 @@ static int mailimap_literal_parse_progress(mailstream * fd, MMAPString * buffer,
         last_prog = current_prog;
       }
     }
-    
+    mailstream_reading_literal = 0;
     literal->str[number] = 0;
     
     if (mmap_string_truncate(buffer, number_token) == NULL) {
