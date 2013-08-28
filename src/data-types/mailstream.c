@@ -49,36 +49,8 @@
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <stdio.h>
 
 #define DEFAULT_NETWORK_TIMEOUT 300
-
-#define LOG_FILE "/tmp/libetpan-stream-debug.log"
-
-#define STREAM_LOG_BUF(low, direction, buf, size) \
-if (mailstream_debug) { \
-if (mailstream_logger_id != NULL) { \
-mailstream_logger_id(low, 1, direction, buf, size); \
-} \
-else if (mailstream_logger != NULL) { \
-mailstream_logger(direction, buf, size); \
-} \
-else { \
-FILE * f; \
-mode_t old_mask; \
-\
-old_mask = umask(0077); \
-f = fopen(LOG_FILE, "a"); \
-umask(old_mask); \
-if (f != NULL) { \
-int nmemb; \
-maillock_write_lock(LOG_FILE, fileno(f)); \
-nmemb = fwrite((buf), 1, (size), f); \
-maillock_write_unlock(LOG_FILE, fileno(f)); \
-fclose(f); \
-} \
-} \
-}
 
 struct timeval mailstream_network_delay =
 {  DEFAULT_NETWORK_TIMEOUT, 0 };
@@ -260,7 +232,7 @@ ssize_t mailstream_read(mailstream * s, void * buf, size_t count)
   left -= read_bytes;
 
   if (left == 0) {
-    goto log_and_return;
+    return read_bytes;
   }
 
   if (left > s->buffer_max_size) {
@@ -269,14 +241,14 @@ ssize_t mailstream_read(mailstream * s, void * buf, size_t count)
       if (count == left)
 	return -1;
       else {
-	goto log_and_return;
+	return count - left;
       }
     }
 
     cur_buf += read_bytes;
     left -= read_bytes;
 
-    goto log_and_return;
+    return count - left;
   }
 
   read_bytes = mailstream_low_read(s->low, s->read_buffer, s->buffer_max_size);
@@ -284,7 +256,7 @@ ssize_t mailstream_read(mailstream * s, void * buf, size_t count)
     if (left == count)
       return -1;
     else {
-      goto log_and_return;
+      return count - left;
     }
   }
   else
@@ -294,15 +266,7 @@ ssize_t mailstream_read(mailstream * s, void * buf, size_t count)
   cur_buf += read_bytes;
   left -= read_bytes;
 
-log_and_return:
-    read_bytes = count - left; // returned: bytes read
-
-    // don't log literals when mailstream_debug > 1
-    if (read_bytes > 0 && (mailstream_debug == 1 || !mailstream_reading_literal)) {
-	STREAM_LOG_BUF(s, 0, buf, read_bytes);
-    } 
-
-    return read_bytes;
+  return count - left;
 }
 
 mailstream_low * mailstream_get_low(mailstream * s)
