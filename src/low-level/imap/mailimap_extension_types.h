@@ -2,6 +2,10 @@
 
 #define MAILIMAP_EXTENSION_TYPES_H
 
+#include <libetpan/mailstream.h>
+
+struct mailimap_extension_data;
+
 /*
   this is the list of known extensions with the purpose to
   get integer identifers for the extensions.
@@ -16,7 +20,12 @@ enum {
   MAILIMAP_EXTENSION_XLIST,         /* XLIST (Gmail and Zimbra have this) */
   MAILIMAP_EXTENSION_XGMLABELS,     /* X-GM-LABELS (Gmail) */
   MAILIMAP_EXTENSION_XGMMSGID,      /* X-GM-MSGID (Gmail) */
-  MAILIMAP_EXTENSION_XGMTHRID       /* X-GM-THRID (Gmail) */
+  MAILIMAP_EXTENSION_XGMTHRID,      /* X-GM-THRID (Gmail) */
+  MAILIMAP_EXTENSION_ID,            /* ID */
+  MAILIMAP_EXTENSION_ENABLE,        /* ENABLE */
+  MAILIMAP_EXTENSION_CONDSTORE,     /* CONDSTORE */
+  MAILIMAP_EXTENSION_QRESYNC,       /* QRESYNC */
+  MAILIMAP_EXTENSION_SORT           /* SORT */
 };
 
 
@@ -29,7 +38,8 @@ enum {
   MAILIMAP_EXTENDED_PARSER_RESPONSE_DATA,
   MAILIMAP_EXTENDED_PARSER_RESP_TEXT_CODE,
   MAILIMAP_EXTENDED_PARSER_MAILBOX_DATA,
-  MAILIMAP_EXTENDED_PARSER_FETCH_DATA
+  MAILIMAP_EXTENDED_PARSER_FETCH_DATA,
+  MAILIMAP_EXTENDED_PARSER_STATUS_ATT
 };
 
 /*

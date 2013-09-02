@@ -679,6 +679,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\src\data-types\mailstream_compress.c"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\data-types\mailstream_helper.c"
 					>
 				</File>
@@ -782,23 +786,27 @@
 						>
 					</File>
 					<File
-						RelativePath="..\..\src\low-level\imap\namespace.c"
+						RelativePath="..\..\src\low-level\imap\condstore.c"
 						>
 					</File>
 					<File
-						RelativePath="..\..\src\low-level\imap\namespace_parser.c"
+						RelativePath="..\..\src\low-level\imap\condstore_types.c"
 						>
 					</File>
 					<File
-						RelativePath="..\..\src\low-level\imap\namespace_sender.c"
+						RelativePath="..\..\src\low-level\imap\enable.c"
 						>
 					</File>
 					<File
-						RelativePath="..\..\src\low-level\imap\namespace_types.c"
+						RelativePath="..\..\src\low-level\imap\idle.c"
 						>
 					</File>
 					<File
 						RelativePath="..\..\src\low-level\imap\mailimap.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\low-level\imap\mailimap_compress.c"
 						>
 					</File>
 					<File
@@ -807,6 +815,22 @@
 					</File>
 					<File
 						RelativePath="..\..\src\low-level\imap\mailimap_helper.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\low-level\imap\mailimap_id.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\low-level\imap\mailimap_id_parser.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\low-level\imap\mailimap_id_sender.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\low-level\imap\mailimap_id_types.c"
 						>
 					</File>
 					<File
@@ -830,6 +854,14 @@
 						>
 					</File>
 					<File
+						RelativePath="..\..\src\low-level\imap\mailimap_sort.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\low-level\imap\mailimap_sort_types.c"
+						>
+					</File>
+					<File
 						RelativePath="..\..\src\low-level\imap\mailimap_ssl.c"
 						>
 					</File>
@@ -839,6 +871,30 @@
 					</File>
 					<File
 						RelativePath="..\..\src\low-level\imap\mailimap_types_helper.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\low-level\imap\namespace.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\low-level\imap\namespace_parser.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\low-level\imap\namespace_sender.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\low-level\imap\namespace_types.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\low-level\imap\qresync.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\low-level\imap\qresync_types.c"
 						>
 					</File>
 					<File
@@ -875,6 +931,14 @@
 					</File>
 					<File
 						RelativePath="..\..\src\low-level\imap\xgmlabels.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\low-level\imap\xgmmsgid.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\low-level\imap\xgmthrid.c"
 						>
 					</File>
 					<File
@@ -1107,6 +1171,50 @@
 					</File>
 					<File
 						RelativePath="..\..\src\low-level\smtp\mailsmtp_ssl.c"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="feed"
+					>
+					<File
+						RelativePath="..\..\src\low-level\feed\date.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\low-level\feed\newsfeed.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\low-level\feed\newsfeed_item.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\low-level\feed\newsfeed_item_enclosure.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\low-level\feed\newsfeed_private.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\low-level\feed\parser.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\low-level\feed\parser_atom03.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\low-level\feed\parser_atom10.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\low-level\feed\parser_rdf.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\src\low-level\feed\parser_rss20.c"
 						>
 					</File>
 				</Filter>
@@ -1462,6 +1570,22 @@
 						</File>
 						<File
 							RelativePath="..\..\src\driver\implementation\pop3\pop3storage.c"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="feed"
+						>
+						<File
+							RelativePath="..\..\src\driver\implementation\feed\feeddriver.c"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\driver\implementation\feed\feeddriver_message.c"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\driver\implementation\feed\feedstorage.c"
 							>
 						</File>
 					</Filter>

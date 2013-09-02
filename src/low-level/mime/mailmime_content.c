@@ -645,6 +645,15 @@ mailmime_body_part_dash2_close_parse(const char * message,
       return r;
     }
     
+    /*
+      There's no MIME multipart close bounary.
+      Ignore the issue and succeed.
+      https://github.com/MailCore/mailcore2/issues/122
+    */
+    if (cur_token >= length) {
+      break;
+    }
+    
     r = mailmime_multipart_close_parse(message, length, &cur_token);
     if (r == MAILIMF_NO_ERROR) {
       break;
@@ -1254,7 +1263,6 @@ static int mailmime_parse_with_default(const char * message, size_t length,
   int res;
   struct mailmime_data * preamble;
   struct mailmime_data * epilogue;
-  int is_encoded;
 
   /*
     note that when this function is called, content type is always detached,

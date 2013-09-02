@@ -4,13 +4,17 @@
 *.la
 .deps
 .libs
-confz*
-
 .DS_Store
-autogen.out
-xcuserdata
 
+project.xcworkspace/
+xcuserdata/
+
+/build-mac/autogen-result.md5
 /build-mac/build
+/build-mac/include
+/build-mac/dependencies/build/
+/build-mac/libsasl-ios/
+/build-mac/update.log
 /config.guess
 /config.h.in
 /config.sub
@@ -118,3 +122,7 @@ xcuserdata
 /tests/readmsg-uid
 /tests/smime
 /tests/smtpsend
+/tests/imap-sample
+/tests/mime-create
+/tests/mime-parse
+/tests/pop-sample

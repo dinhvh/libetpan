@@ -45,6 +45,7 @@ extern "C" {
 #include <libetpan/mailsmtp_helper.h>
 #include <libetpan/mailsmtp_socket.h>
 #include <libetpan/mailsmtp_ssl.h>
+#include <libetpan/mailsmtp_oauth2.h>
 
 
 LIBETPAN_EXPORT
@@ -53,6 +54,12 @@ mailsmtp * mailsmtp_new(size_t progr_rate,
 
 LIBETPAN_EXPORT
 void mailsmtp_free(mailsmtp * session);
+
+LIBETPAN_EXPORT
+void mailsmtp_set_timeout(mailsmtp * session, time_t timeout);
+
+LIBETPAN_EXPORT
+time_t mailsmtp_get_timeout(mailsmtp * session);
 
 LIBETPAN_EXPORT
 int mailsmtp_connect(mailsmtp * session, mailstream * s);
@@ -152,6 +159,10 @@ LIBETPAN_EXPORT
 void mailsmtp_set_progress_callback(mailsmtp * session,
                                     mailprogress_function * progr_fun,
                                     void * context);
+   
+LIBETPAN_EXPORT
+void mailsmtp_set_logger(mailsmtp * session, void (* logger)(mailsmtp * session, int log_type,
+    const char * str, size_t size, void * context), void * logger_context);
    
 #ifdef __cplusplus
 }

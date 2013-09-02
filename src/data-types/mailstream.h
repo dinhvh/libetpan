@@ -86,6 +86,9 @@ extern void (* mailstream_logger_id)(mailstream_low * s, int is_stream_data, int
 	const char * str, size_t size);
 #endif
 
+void mailstream_set_logger(mailstream * s, void (* logger)(mailstream * s, int log_type,
+  const char * str, size_t size, void * context), void * logger_context);
+
 /* can be run in thread */
 int mailstream_wait_idle(mailstream * s, int max_idle_delay);
 
@@ -93,6 +96,10 @@ int mailstream_wait_idle(mailstream * s, int max_idle_delay);
 int mailstream_setup_idle(mailstream * s);
 void mailstream_unsetup_idle(mailstream * s);
 void mailstream_interrupt_idle(mailstream * s);
+
+/* Get certificate chain. Returns an array of MMAPString containing DER data or NULL if it's not a SSL connection */
+carray * mailstream_get_certificate_chain(mailstream * s);
+void mailstream_certificate_chain_free(carray * certificate_chain);
 
 #define LIBETPAN_MAILSTREAM_NETWORK_DELAY
 LIBETPAN_EXPORT

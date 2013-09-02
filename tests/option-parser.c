@@ -1,5 +1,9 @@
 #define _GNU_SOURCE
-#include "../config.h.in"
+
+#ifdef HAVE_CONFIG_H
+#include "../config.h" //this should be conditional for win builds.
+#endif
+
 #ifdef _MSC_VER
 #	include "../src/bsd/getopt.h"
 #else
@@ -12,6 +16,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
+#ifndef PATH_MAX
+#define PATH_MAX 4096
+#endif
 
 #include <libetpan/libetpan.h>
 

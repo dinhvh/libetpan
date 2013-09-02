@@ -1,4 +1,5 @@
 @mkdir include
 @mkdir include\libetpan
-@for /F "eol=" %%i in (build_headers.list) do @copy "%%i" include\libetpan
+@for /R ..\src\ %%x in (*.h) do @copy "%%x" include\libetpan
+@for %%x in (*.h) do @copy "%%x" include\libetpan
 @echo "done" >_headers_depends

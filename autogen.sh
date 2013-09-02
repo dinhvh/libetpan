@@ -7,7 +7,7 @@ srcdir=`dirname $0`
 PKG_NAME=`basename \`(cd $srcdir; pwd)\``
 
 # default configure options
-conf_flags="--enable-debug --with-debug"
+conf_flags="--enable-debug"
 
 DIE=0
 libtool=0

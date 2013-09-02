@@ -74,10 +74,15 @@ mailstream * mailstream_new(mailstream_low * low, size_t buffer_size)
   s->write_buffer_len = 0;
 
   s->buffer_max_size = buffer_size;
-  s->low = low;
+  s->low = NULL;
   
   s->idle = NULL;
   s->idling = 0;
+  
+  s->logger = NULL;
+  s->logger_context = NULL;
+  
+  mailstream_set_low(s, low);
   
   return s;
 
@@ -274,9 +279,19 @@ mailstream_low * mailstream_get_low(mailstream * s)
   return s->low;
 }
 
+static void low_logger(mailstream_low * s, int log_type,
+  const char * str, size_t size, void * context)
+{
+  mailstream * stream = context;
+  if (stream->logger != NULL) {
+    stream->logger(context, log_type, str, size, stream->logger_context);
+  }
+}
+
 void mailstream_set_low(mailstream * s, mailstream_low * low)
 {
   s->low = low;
+  mailstream_low_set_logger(low, low_logger, s);
 }
 
 int mailstream_close(mailstream * s)
@@ -295,8 +310,6 @@ int mailstream_close(mailstream * s)
 
   return 0;
 }
-
-
 
 ssize_t mailstream_feed_read_buffer(mailstream * s)
 {
@@ -334,71 +347,9 @@ void mailstream_set_privacy(mailstream * s, int can_be_public)
   mailstream_low_set_privacy(s->low, can_be_public);
 }
 
-
 int mailstream_wait_idle(mailstream * s, int max_idle_delay)
 {
-  int fd;
-  int idle_fd;
-  int cancel_fd;
-  int maxfd;
-  fd_set readfds;
-  struct timeval delay;
-  int r;
-  
-  if (s->low->driver == mailstream_cfstream_driver) {
-    return mailstream_cfstream_wait_idle(s, max_idle_delay);
-  }
-  
-  if (s->idle == NULL) {
-		return MAILSTREAM_IDLE_ERROR;
-	}
-  if (mailstream_low_get_cancel(mailstream_get_low(s)) == NULL) {
-		return MAILSTREAM_IDLE_ERROR;
-	}
-  fd = mailstream_low_get_fd(mailstream_get_low(s));
-  idle_fd = mailstream_cancel_get_fd(s->idle);
-  cancel_fd = mailstream_cancel_get_fd(mailstream_low_get_cancel(mailstream_get_low(s)));
-  
-  FD_ZERO(&readfds);
-  FD_SET(fd, &readfds);
-  FD_SET(idle_fd, &readfds);
-  FD_SET(cancel_fd, &readfds);
-  maxfd = fd;
-  if (idle_fd > maxfd) {
-    maxfd = idle_fd;
-  }
-  if (cancel_fd > maxfd) {
-    maxfd = cancel_fd;
-  }
-  delay.tv_sec = max_idle_delay;
-  delay.tv_usec = 0;
-  
-  r = select(maxfd + 1, &readfds, NULL, NULL, &delay);
-  if (r == 0) {
-    // timeout
-    return MAILSTREAM_IDLE_TIMEOUT;
-  }
-  else if (r == -1) {
-    // do nothing
-    return MAILSTREAM_IDLE_ERROR;
-  }
-  else {
-    if (FD_ISSET(fd, &readfds)) {
-      // has something on socket
-      return MAILSTREAM_IDLE_HASDATA;
-    }
-    if (FD_ISSET(idle_fd, &readfds)) {
-      // idle interrupted
-      mailstream_cancel_ack(s->idle);
-      return MAILSTREAM_IDLE_INTERRUPTED;
-    }
-    if (FD_ISSET(cancel_fd, &readfds)) {
-      // idle cancelled
-      mailstream_cancel_ack(mailstream_low_get_cancel(mailstream_get_low(s)));
-      return MAILSTREAM_IDLE_CANCELLED;
-    }
-    return MAILSTREAM_IDLE_ERROR;
-  }
+  return mailstream_low_wait_idle(s->low, s->idle, max_idle_delay);
 }
 
 int mailstream_setup_idle(mailstream * s)
@@ -451,3 +402,29 @@ void mailstream_unsetup_idle(mailstream * s)
   
   s->idling = 0;
 }
+
+void mailstream_set_logger(mailstream * s, void (* logger)(mailstream * s, int log_type,
+  const char * str, size_t size, void * context), void * logger_context)
+{
+  s->logger = logger;
+  s->logger_context = logger_context;
+}
+
+carray * mailstream_get_certificate_chain(mailstream * s)
+{
+  return mailstream_low_get_certificate_chain(s->low);
+}
+
+void mailstream_certificate_chain_free(carray * certificate_chain)
+{
+  unsigned int i;
+  
+  if (certificate_chain == NULL)
+    return;
+  
+  for(i = 0 ; i < carray_count(certificate_chain) ; i ++) {
+    mmap_string_free(carray_get(certificate_chain, i));
+  }
+  carray_free(certificate_chain);
+}
+

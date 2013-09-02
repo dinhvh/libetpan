@@ -40,6 +40,7 @@
 #endif
 
 #include "mailsmtp.h"
+#include "mailsmtp_private.h"
 #include "connect.h"
 #include "base64.h"
 #include "mail.h"
@@ -98,6 +99,9 @@
      Messages
 */
 
+static inline void smtp_logger(mailstream * s, int log_type,
+    const char * str, size_t size, void * context);
+
 #define SMTP_STATUS_CONTINUE 0x1000
 
 mailsmtp * mailsmtp_new(size_t progr_rate,
@@ -128,14 +132,17 @@ mailsmtp * mailsmtp_new(size_t progr_rate,
   session->esmtp = 0;
   session->auth = MAILSMTP_AUTH_NOT_CHECKED;
   
-#ifdef USE_SASL
   session->smtp_sasl.sasl_conn = NULL;
-#endif
   
   session->smtp_max_msg_size = 0;
   session->smtp_progress_fun = NULL;
   session->smtp_progress_context = NULL;
 
+	session->smtp_timeout = 0;
+
+  session->smtp_logger = NULL;
+  session->smtp_logger_context = NULL;
+  
   return session;
 
  free_line_buffer:
@@ -177,6 +184,7 @@ int mailsmtp_connect(mailsmtp * session, mailstream * s)
   int code;
 
   session->stream = s;
+  mailstream_set_logger(s, smtp_logger, session);
 
   code = read_response(session);
 
@@ -263,7 +271,7 @@ static int get_hostname(mailsmtp * session, int useip, char * buf, int len)
     if (r != 0)
       return MAILSMTP_ERROR_HOSTNAME;
 
-#ifdef __linux__
+#if (defined __linux__ || defined WIN32)
     r = getnameinfo(&addr, sizeof(addr), hostname, HOSTNAME_SIZE, NULL, 0, NI_NUMERICHOST);
 #else
     r = getnameinfo(&addr, addr.sa_len, hostname, HOSTNAME_SIZE, NULL, 0, NI_NUMERICHOST);
@@ -951,7 +959,8 @@ int mailsmtp_auth(mailsmtp * session, const char * user, const char * pass)
 
 /* TODO: add mailesmtp_etrn, mailssmtp_expn */
 
-int mailesmtp_starttls(mailsmtp * session) {
+int mailesmtp_starttls(mailsmtp * session)
+{
   int r;
 
   if (!(session->esmtp & MAILSMTP_ESMTP_STARTTLS))
@@ -1203,16 +1212,16 @@ int mailesmtp_auth_sasl(mailsmtp * session, const char * auth_type,
   unsigned int max_encoded;
   
   sasl_callback[0].id = SASL_CB_GETREALM;
-  sasl_callback[0].proc =  sasl_getrealm;
+  sasl_callback[0].proc =  (int(*)(void)) sasl_getrealm;
   sasl_callback[0].context = session;
   sasl_callback[1].id = SASL_CB_USER;
-  sasl_callback[1].proc =  sasl_getsimple;
+  sasl_callback[1].proc =  (int(*)(void)) sasl_getsimple;
   sasl_callback[1].context = session;
   sasl_callback[2].id = SASL_CB_AUTHNAME;
-  sasl_callback[2].proc =  sasl_getsimple;
+  sasl_callback[2].proc =  (int(*)(void)) sasl_getsimple;
   sasl_callback[2].context = session; 
   sasl_callback[3].id = SASL_CB_PASS;
-  sasl_callback[3].proc =  sasl_getsecret;
+  sasl_callback[3].proc =  (int(*)(void)) sasl_getsecret;
   sasl_callback[3].context = session;
   sasl_callback[4].id = SASL_CB_LIST_END;
   sasl_callback[4].proc =  NULL;
@@ -1437,4 +1446,44 @@ void mailsmtp_set_progress_callback(mailsmtp * session,
 {
   session->smtp_progress_fun = progr_fun;
   session->smtp_progress_context = context;
+}
+
+void mailsmtp_set_timeout(mailsmtp * session, time_t timeout)
+{
+	session->smtp_timeout = timeout;
+}
+
+time_t mailsmtp_get_timeout(mailsmtp * session)
+{
+	return session->smtp_timeout;
+}
+
+static inline void smtp_logger(mailstream * s, int log_type,
+    const char * str, size_t size, void * context)
+{
+  mailsmtp * session;
+
+  session = context;
+  if (session->smtp_logger == NULL)
+    return;
+
+  session->smtp_logger(session, log_type, str, size, session->smtp_logger_context);
+}
+
+LIBETPAN_EXPORT
+void mailsmtp_set_logger(mailsmtp * session, void (* logger)(mailsmtp * session, int log_type,
+    const char * str, size_t size, void * context), void * logger_context)
+{
+  session->smtp_logger = logger;
+  session->smtp_logger_context = logger_context;
+}
+
+int mailsmtp_send_command(mailsmtp * f, char * command)
+{
+  return send_command(f, command);
+}
+
+int mailsmtp_read_response(mailsmtp * session)
+{
+  return read_response(session);
 }

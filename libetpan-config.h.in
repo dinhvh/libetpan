@@ -15,6 +15,9 @@
 #ifdef HAVE_LIMITS_H
 @include <limits.h>
 #endif
+@ifndef PATH_MAX
+@define PATH_MAX 4096
+@endif
 #ifdef HAVE_SYS_PARAM_H
 /* support for ARM platforms with a 2.95.3 arm-gcc suite */
 @include <sys/param.h>

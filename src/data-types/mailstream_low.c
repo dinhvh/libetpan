@@ -56,7 +56,10 @@
 #	include "win_etpan.h"
 #endif
 
-#define LOG_FILE "/tmp/libetpan-stream-debug.log"
+#include "mailstream_cfstream.h"
+#include "mailstream_compress.h"
+
+#define LOG_FILE "libetpan-stream-debug.log"
 
 LIBETPAN_EXPORT
 int mailstream_debug = 0;
@@ -68,11 +71,16 @@ LIBETPAN_EXPORT
 void (* mailstream_logger_id)(mailstream_low * s, int is_stream_data, int direction,
     const char * str, size_t size) = NULL;
 
+static inline void mailstream_logger_internal(mailstream_low * s, int is_stream_data, int direction,
+    const char * buffer, size_t size);
+
+// Will log a buffer.
 #define STREAM_LOG_ERROR(low, direction, buf, size) \
+  mailstream_logger_internal(low, 2, direction, buf, size); \
   if (mailstream_debug) { \
-	if (mailstream_logger_id != NULL) { \
-	  mailstream_logger_id(low, 2, direction, buf, size); \
-	} \
+	  if (mailstream_logger_id != NULL) { \
+	    mailstream_logger_id(low, 2, direction, buf, size); \
+	  } \
     else if (mailstream_logger != NULL) { \
       mailstream_logger(direction, buf, size); \
     } \
@@ -93,11 +101,13 @@ void (* mailstream_logger_id)(mailstream_low * s, int is_stream_data, int direct
     } \
   }
 
+// Will log a buffer.
 #define STREAM_LOG_BUF(low, direction, buf, size) \
+  mailstream_logger_internal(low, 1, direction, buf, size); \
   if (mailstream_debug) { \
-	if (mailstream_logger_id != NULL) { \
-	  mailstream_logger_id(low, 1, direction, buf, size); \
-	} \
+  	if (mailstream_logger_id != NULL) { \
+  	  mailstream_logger_id(low, 1, direction, buf, size); \
+  	} \
     else if (mailstream_logger != NULL) { \
       mailstream_logger(direction, buf, size); \
     } \
@@ -118,11 +128,13 @@ void (* mailstream_logger_id)(mailstream_low * s, int is_stream_data, int direct
     } \
   }
 
+// Will log some log text string.
 #define STREAM_LOG(low, direction, str) \
+  mailstream_logger_internal(low, 0, direction, str, strlen(str)); \
   if (mailstream_debug) { \
-	if (mailstream_logger_id != NULL) { \
-	  mailstream_logger_id(low, 0, direction, str, strlen(str)); \
-	} \
+  	if (mailstream_logger_id != NULL) { \
+  	  mailstream_logger_id(low, 0, direction, str, strlen(str)); \
+  	} \
     else if (mailstream_logger != NULL) { \
       mailstream_logger(direction, str, strlen(str)); \
     } \
@@ -145,6 +157,7 @@ void (* mailstream_logger_id)(mailstream_low * s, int is_stream_data, int direct
 
 #else
 
+#define STREAM_LOG_ERROR(low, direction, buf, size) do { } while (0)
 #define STREAM_LOG_BUF(low, direction, buf, size) do { } while (0)
 #define STREAM_LOG(low, direction, buf) do { } while (0)
 
@@ -166,6 +179,9 @@ mailstream_low * mailstream_low_new(void * data,
   s->driver = driver;
   s->privacy = 1;
 	s->identifier = NULL;
+	s->timeout = 0;
+  s->logger = NULL;
+  s->logger_context = NULL;
   
   return s;
 }
@@ -189,6 +205,8 @@ int mailstream_low_get_fd(mailstream_low * s)
 struct mailstream_cancel * mailstream_low_get_cancel(mailstream_low * s)
 {
   if (s == NULL)
+    return NULL;
+  if (s->driver->mailstream_get_cancel == NULL)
     return NULL;
   return s->driver->mailstream_get_cancel(s);
 }
@@ -291,4 +309,181 @@ int mailstream_low_set_identifier(mailstream_low * s,
 const char * mailstream_low_get_identifier(mailstream_low * s)
 {
 	return s->identifier;
+}
+
+void mailstream_low_set_timeout(mailstream_low * s,
+  time_t timeout)
+{
+	s->timeout = timeout;
+}
+
+time_t mailstream_low_get_timeout(mailstream_low * s)
+{
+	return s->timeout;
+}
+
+void mailstream_low_set_logger(mailstream_low * s, void (* logger)(mailstream_low * s, int log_type,
+  const char * str, size_t size, void * context), void * logger_context)
+{
+  s->logger = logger;
+  s->logger_context = logger_context;
+}
+
+static inline void mailstream_logger_internal(mailstream_low * s, int is_stream_data, int direction,
+  const char * buffer, size_t size)
+{
+  int log_type = -1;
+  
+  if (s->logger == NULL)
+    return;
+  
+  /*
+   stream data:
+  0: log
+  1: buffer
+  2: error
+  
+  direction:
+  4|1: send error
+  4: receive error
+  2: sent private data
+  1: sent data
+  0: received data
+  */
+  
+  switch (is_stream_data) {
+    case 0: {
+      switch (direction) {
+        case 1:
+        case 2:
+        case 4|1:
+          log_type = MAILSTREAM_LOG_TYPE_INFO_SENT;
+          break;
+        case 0:
+        case 4:
+          log_type = MAILSTREAM_LOG_TYPE_INFO_RECEIVED;
+          break;
+      }
+      break;
+    }
+    case 1: {
+      switch (direction) {
+        case 2:
+          log_type = MAILSTREAM_LOG_TYPE_DATA_SENT_PRIVATE;
+          break;
+        case 1:
+        case 4|1:
+          log_type = MAILSTREAM_LOG_TYPE_DATA_SENT;
+          break;
+        case 0:
+        case 4:
+        default:
+          log_type = MAILSTREAM_LOG_TYPE_DATA_RECEIVED;
+          break;
+      }
+      break;
+    }
+    case 2: {
+      switch (direction) {
+        case 2:
+        case 1:
+        case 4|1:
+          log_type = MAILSTREAM_LOG_TYPE_ERROR_SENT;
+          break;
+        case 4:
+          log_type = MAILSTREAM_LOG_TYPE_ERROR_RECEIVED;
+          break;
+        case 0:
+          log_type = MAILSTREAM_LOG_TYPE_ERROR_PARSE;
+          break;
+      }
+      break;
+    }
+  }
+  
+  if (log_type == -1)
+    return;
+  
+  s->logger(s, log_type, buffer, size, s->logger_context);
+}
+
+carray * mailstream_low_get_certificate_chain(mailstream_low * s)
+{
+  if (s == NULL)
+    return NULL;
+
+  if (s->driver->mailstream_get_certificate_chain == NULL)
+    return NULL;
+
+  return s->driver->mailstream_get_certificate_chain(s);
+}
+
+int mailstream_low_wait_idle(mailstream_low * low, struct mailstream_cancel * idle,
+                             int max_idle_delay)
+{
+  int fd;
+  int idle_fd;
+  int cancel_fd;
+  int maxfd;
+  fd_set readfds;
+  struct timeval delay;
+  int r;
+  
+  if (low->driver == mailstream_cfstream_driver) {
+    return mailstream_low_cfstream_wait_idle(low, max_idle_delay);
+  }
+  else if (low->driver == mailstream_compress_driver) {
+    return mailstream_low_compress_wait_idle(low, idle, max_idle_delay);
+  }
+  
+  if (idle == NULL) {
+		return MAILSTREAM_IDLE_ERROR;
+	}
+  if (mailstream_low_get_cancel(low) == NULL) {
+		return MAILSTREAM_IDLE_ERROR;
+	}
+  fd = mailstream_low_get_fd(low);
+  idle_fd = mailstream_cancel_get_fd(idle);
+  cancel_fd = mailstream_cancel_get_fd(mailstream_low_get_cancel(low));
+  
+  FD_ZERO(&readfds);
+  FD_SET(fd, &readfds);
+  FD_SET(idle_fd, &readfds);
+  FD_SET(cancel_fd, &readfds);
+  maxfd = fd;
+  if (idle_fd > maxfd) {
+    maxfd = idle_fd;
+  }
+  if (cancel_fd > maxfd) {
+    maxfd = cancel_fd;
+  }
+  delay.tv_sec = max_idle_delay;
+  delay.tv_usec = 0;
+  
+  r = select(maxfd + 1, &readfds, NULL, NULL, &delay);
+  if (r == 0) {
+    // timeout
+    return MAILSTREAM_IDLE_TIMEOUT;
+  }
+  else if (r == -1) {
+    // do nothing
+    return MAILSTREAM_IDLE_ERROR;
+  }
+  else {
+    if (FD_ISSET(fd, &readfds)) {
+      // has something on socket
+      return MAILSTREAM_IDLE_HASDATA;
+    }
+    if (FD_ISSET(idle_fd, &readfds)) {
+      // idle interrupted
+      mailstream_cancel_ack(idle);
+      return MAILSTREAM_IDLE_INTERRUPTED;
+    }
+    if (FD_ISSET(cancel_fd, &readfds)) {
+      // idle cancelled
+      mailstream_cancel_ack(mailstream_low_get_cancel(low));
+      return MAILSTREAM_IDLE_CANCELLED;
+    }
+    return MAILSTREAM_IDLE_ERROR;
+  }
 }

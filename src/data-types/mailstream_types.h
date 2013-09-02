@@ -43,8 +43,9 @@ extern "C" {
 
 #define LIBETPAN_MAILSTREAM_DEBUG
 #ifndef LIBETPAN_CONFIG_H
-#	include <libetpan/libetpan-config.h>
+#  include <libetpan/libetpan-config.h>
 #endif
+#include <libetpan/carray.h>
 
 struct _mailstream;
 
@@ -53,6 +54,22 @@ typedef struct _mailstream mailstream;
 struct _mailstream_low;
 
 typedef struct _mailstream_low mailstream_low;
+
+enum {
+  /* Buffer is a log text string. */
+  MAILSTREAM_LOG_TYPE_INFO_RECEIVED,
+  MAILSTREAM_LOG_TYPE_INFO_SENT,
+  
+  /* Buffer is data sent over the network. */
+  MAILSTREAM_LOG_TYPE_ERROR_PARSE,
+  MAILSTREAM_LOG_TYPE_ERROR_RECEIVED, /* no data */
+  MAILSTREAM_LOG_TYPE_ERROR_SENT, /* no data */
+  
+  /* Buffer is data sent over the network. */
+  MAILSTREAM_LOG_TYPE_DATA_RECEIVED,
+  MAILSTREAM_LOG_TYPE_DATA_SENT,
+  MAILSTREAM_LOG_TYPE_DATA_SENT_PRIVATE,  /* data is private, for example a password. */
+};
 
 struct _mailstream {
   size_t buffer_max_size;
@@ -67,6 +84,9 @@ struct _mailstream {
   
   struct mailstream_cancel * idle;
   int idling;
+  void (* logger)(mailstream * s, int log_type,
+      const char * str, size_t size, void * logger_context);
+  void * logger_context;
 };
 
 struct mailstream_low_driver {
@@ -77,6 +97,8 @@ struct mailstream_low_driver {
   void (* mailstream_free)(mailstream_low *);
   void (* mailstream_cancel)(mailstream_low *);
   struct mailstream_cancel * (* mailstream_get_cancel)(mailstream_low *);
+  /* Returns an array of MMAPString containing DER data or NULL if it's not a SSL connection */
+  carray * (* mailstream_get_certificate_chain)(mailstream_low *);
 };
 
 typedef struct mailstream_low_driver mailstream_low_driver;
@@ -85,7 +107,11 @@ struct _mailstream_low {
   void * data;
   mailstream_low_driver * driver;
   int privacy;
-	char * identifier;
+  char * identifier;
+  unsigned long timeout; /* in seconds, 0 will use the global value */
+  void (* logger)(mailstream_low * s, int log_type,
+      const char * str, size_t size, void * logger_context);
+  void * logger_context;
 };
 
 typedef void progress_function(size_t current, size_t maximum);

@@ -3,7 +3,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <stdarg.h>
 
 #include "clist.h"
 #include "mailimap_types_helper.h"
@@ -55,19 +54,14 @@ struct mailimap_extension_api mailimap_extension_xgmmsgid = {
 
 static int fetch_data_xgmmsgid_parse(mailstream * fd,
                                       MMAPString * buffer, size_t * indx,
-                                      char ** result, size_t progr_rate, progress_function * progr_fun)
+                                      uint64_t * result, size_t progr_rate, progress_function * progr_fun)
 {
     size_t cur_token;
-    uint32_t uid;
-    char  *msgid_str;
+    uint64_t msgid;
     int r;
     
     cur_token = * indx;
-/*
-    r = mailimap_space_parse(fd, buffer, &cur_token);
-    if (r != MAILIMAP_NO_ERROR)
-        return r;
-*/
+    
     r = mailimap_token_case_insensitive_parse(fd, buffer,
                                               &cur_token, "X-GM-MSGID");
     if (r != MAILIMAP_NO_ERROR)
@@ -77,18 +71,12 @@ static int fetch_data_xgmmsgid_parse(mailstream * fd,
     if (r != MAILIMAP_NO_ERROR)
         return r;
     
-    r = mailimap_astring_parse(fd, buffer, &cur_token, &msgid_str, progr_rate, progr_fun);
+    r = mailimap_uint64_parse(fd, buffer, &cur_token, &msgid);
     if (r != MAILIMAP_NO_ERROR)
         return r;
-
-	//    log_to_file("thread id is now: %s", msgid_str);
-
-    r = mailimap_space_parse(fd, buffer, &cur_token);
-    if (r != MAILIMAP_NO_ERROR)
-        return r;
-
+    
     * indx = cur_token;
-    * result = msgid_str;
+    * result = msgid;
     
     return MAILIMAP_NO_ERROR;
 }
@@ -100,7 +88,8 @@ mailimap_xgmmsgid_extension_parse(int calling_parser, mailstream * fd,
                                    size_t progr_rate, progress_function * progr_fun)
 {
     size_t cur_token;
-    char * msgid;
+    uint64_t msgid;
+    uint64_t * data_msgid;
     struct mailimap_extension_data * ext_data;
     int r;
     
@@ -113,15 +102,20 @@ mailimap_xgmmsgid_extension_parse(int calling_parser, mailstream * fd,
             r = fetch_data_xgmmsgid_parse(fd, buffer, &cur_token, &msgid, progr_rate, progr_fun);
             if (r != MAILIMAP_NO_ERROR)
               return r;
-                                
+        
+            data_msgid = malloc(sizeof(* data_msgid));
+            if (data_msgid == NULL) {
+              return MAILIMAP_ERROR_MEMORY;
+            }
+            * data_msgid = msgid;
+            
             ext_data = mailimap_extension_data_new(&mailimap_extension_xgmmsgid,
-                                                   MAILIMAP_XGMMSGID_TYPE_MSGID, msgid);
+                                                   MAILIMAP_XGMMSGID_TYPE_MSGID, data_msgid);
             if (ext_data == NULL) {
+                free(data_msgid);
                 return MAILIMAP_ERROR_MEMORY;
             }
-
-//            log_to_file("mailimap_xgmmsgid_extension_parse thread id is now: %s", ext_data->ext_data);
-
+            
             * result = ext_data;
             * indx = cur_token;
             
@@ -136,7 +130,6 @@ mailimap_xgmmsgid_extension_parse(int calling_parser, mailstream * fd,
     Free mailimap_extension_data created for the xgmmsgid extension, including anything pointed to by
  ext_data->ext_data
  
- */
 static void
 mailimap_xgmmsgid_extension_data_free(struct mailimap_extension_data * ext_data)
 {
@@ -152,6 +145,13 @@ mailimap_xgmmsgid_extension_data_free(struct mailimap_extension_data * ext_data)
     
     free (ext_data);
 
+}
+ */
+static void
+mailimap_xgmmsgid_extension_data_free(struct mailimap_extension_data * ext_data)
+{
+  free(ext_data->ext_data);
+  free(ext_data);
 }
 
 int mailimap_fetch_xgmmsgid(mailimap * session,

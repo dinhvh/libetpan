@@ -49,6 +49,11 @@
 #include "xgmlabels.h"
 #include "xgmmsgid.h"
 #include "xgmthrid.h"
+#include "mailimap_id.h"
+#include "enable.h"
+#include "condstore.h"
+#include "qresync.h"
+#include "mailimap_sort.h"
 
 /*
   the list of registered extensions (struct mailimap_extension_api *)
@@ -67,7 +72,12 @@ static struct mailimap_extension_api * internal_extension_list[] = {
   &mailimap_extension_xlist,
   &mailimap_extension_xgmlabels,
   &mailimap_extension_xgmmsgid,
-  &mailimap_extension_xgmthrid
+  &mailimap_extension_xgmthrid,
+  &mailimap_extension_id,
+  &mailimap_extension_enable,
+  &mailimap_extension_condstore,
+  &mailimap_extension_qresync,
+  &mailimap_extension_sort
 };
 
 LIBETPAN_EXPORT
@@ -196,6 +206,32 @@ int mailimap_has_extension(mailimap * session, char * extension_name)
         
         if (strcasecmp(cap->cap_data.cap_name, extension_name) == 0)
           return 1;
+      }
+    }
+  }
+  
+  return 0;
+}
+
+LIBETPAN_EXPORT
+int mailimap_has_authentication(mailimap * session, char * authentication_name)
+{
+  if (session->imap_connection_info != NULL) {
+    if (session->imap_connection_info->imap_capability != NULL) {
+      clist * list;
+      clistiter * cur;
+      
+      list = session->imap_connection_info->imap_capability->cap_list;
+      for(cur = clist_begin(list) ; cur != NULL ; cur = clist_next(cur)) {
+        struct mailimap_capability * cap;
+        
+        cap = clist_content(cur);
+        if (cap->cap_type != MAILIMAP_CAPABILITY_AUTH_TYPE)
+          continue;
+        
+        if (strcasecmp(cap->cap_data.cap_name, authentication_name) == 0)
+          return 1;
+        
       }
     }
   }

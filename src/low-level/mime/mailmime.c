@@ -248,7 +248,7 @@ int mailmime_content_parse(const char * message, size_t length,
   parameters_list = clist_new();
   if (parameters_list == NULL) {
     res = MAILIMF_ERROR_MEMORY;
-    goto free_type;
+    goto free_subtype;
   }
 
   while (1) {
@@ -303,7 +303,7 @@ int mailmime_content_parse(const char * message, size_t length,
  free_parameters:
   clist_foreach(parameters_list, (clist_func) mailmime_parameter_free, NULL);
   clist_free(parameters_list);
-  
+ free_subtype:
   mailmime_subtype_free(subtype);
  free_type:
   mailmime_type_free(type);

@@ -33,7 +33,7 @@ EXTRA_DIST = TODO
 
 etpaninclude_HEADERS = \
 	mailsmtp.h mailsmtp_helper.h mailsmtp_socket.h mailsmtp_ssl.h \
-	mailsmtp_types.h
+	mailsmtp_types.h mailsmtp_oauth2.h
 
 AM_CPPFLAGS = -I$(top_builddir)/include \
 	-I$(top_srcdir)/src/data-types
@@ -41,4 +41,5 @@ AM_CPPFLAGS = -I$(top_builddir)/include \
 noinst_LTLIBRARIES = libsmtp.la
 
 libsmtp_la_SOURCES = \
-	mailsmtp.c mailsmtp_helper.c mailsmtp_socket.c mailsmtp_ssl.c
+	mailsmtp.c mailsmtp_helper.c mailsmtp_socket.c mailsmtp_ssl.c \
+	mailsmtp_oauth2.c

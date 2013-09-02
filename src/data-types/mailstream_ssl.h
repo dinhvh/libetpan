@@ -45,6 +45,10 @@ extern "C" {
 
 /* socket */
 
+#if LIBETPAN_IOS_DISABLE_SSL
+#undef USE_SSL
+#endif
+
 #ifdef USE_SSL
 extern mailstream_low_driver * mailstream_ssl_driver;
 #endif
@@ -55,13 +59,26 @@ LIBETPAN_EXPORT
 mailstream_low * mailstream_low_ssl_open(int fd);
 
 LIBETPAN_EXPORT
+mailstream_low * mailstream_low_ssl_open_timeout(int fd, time_t timeout);
+
+LIBETPAN_EXPORT
 mailstream_low * mailstream_low_tls_open(int fd);
+
+LIBETPAN_EXPORT
+mailstream_low * mailstream_low_tls_open_timeout(int fd, time_t timeout);
 
 LIBETPAN_EXPORT
 mailstream * mailstream_ssl_open(int fd);
 
 LIBETPAN_EXPORT
+mailstream * mailstream_ssl_open_timeout(int fd, time_t timeout);
+
+LIBETPAN_EXPORT
 mailstream * mailstream_ssl_open_with_callback(int fd,
+    void (* callback)(struct mailstream_ssl_context * ssl_context, void * data), void * data);
+
+LIBETPAN_EXPORT
+mailstream * mailstream_ssl_open_with_callback_timeout(int fd, time_t timeout,
     void (* callback)(struct mailstream_ssl_context * ssl_context, void * data), void * data);
 
 LIBETPAN_EXPORT
@@ -81,7 +98,15 @@ mailstream_low * mailstream_low_ssl_open_with_callback(int fd,
     void (* callback)(struct mailstream_ssl_context * ssl_context, void * data), void * data);
 
 LIBETPAN_EXPORT
+mailstream_low * mailstream_low_ssl_open_with_callback_timeout(int fd, time_t timeout,
+    void (* callback)(struct mailstream_ssl_context * ssl_context, void * data), void * data);
+
+LIBETPAN_EXPORT
 mailstream_low * mailstream_low_tls_open_with_callback(int fd,
+    void (* callback)(struct mailstream_ssl_context * ssl_context, void * data), void * data);
+
+LIBETPAN_EXPORT
+mailstream_low * mailstream_low_tls_open_with_callback_timeout(int fd, time_t timeout,
     void (* callback)(struct mailstream_ssl_context * ssl_context, void * data), void * data);
 
 LIBETPAN_EXPORT

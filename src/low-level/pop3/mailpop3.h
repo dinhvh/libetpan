@@ -58,6 +58,15 @@ LIBETPAN_EXPORT
 void mailpop3_free(mailpop3 * f);
 
 LIBETPAN_EXPORT
+void mailpop3_set_timeout(mailpop3 * f, time_t timeout);
+
+LIBETPAN_EXPORT
+time_t mailpop3_get_timeout(mailpop3 * f);
+
+LIBETPAN_EXPORT
+void mailpop3_set_progress_callback(mailpop3 * f, mailprogress_function * progr_fun, void * context);
+
+LIBETPAN_EXPORT
 int mailpop3_connect(mailpop3 * f, mailstream * s);
 
 LIBETPAN_EXPORT
@@ -119,6 +128,10 @@ int mailpop3_auth(mailpop3 * f, const char * auth_type,
     const char * remote_ip_port,
     const char * login, const char * auth_name,
     const char * password, const char * realm);
+
+LIBETPAN_EXPORT
+void mailpop3_set_logger(mailpop3 * session, void (* logger)(mailpop3 * session, int log_type,
+    const char * str, size_t size, void * context), void * logger_context);
 
 #ifdef __cplusplus
 }

@@ -55,6 +55,11 @@ int mailimap_authenticate_send(mailstream * fd,
 int mailimap_authenticate_resp_send(mailstream * fd,
 				const char * base64);
 
+int mailimap_oauth2_authenticate_send(mailimap * session,
+				const char * auth_user,
+				const char * access_token);
+
+
 int mailimap_noop_send(mailstream * fd);
 
 int mailimap_logout_send(mailstream * fd);
@@ -81,7 +86,7 @@ int mailimap_create_send(mailstream * fd,
 
 int mailimap_delete_send(mailstream * fd, const char * mb);
 
-int mailimap_examine_send(mailstream * fd, const char * mb);
+int mailimap_examine_send(mailstream * fd, const char * mb, int condstore);
 
 int
 mailimap_fetch_send(mailstream * fd,
@@ -113,22 +118,26 @@ int
 mailimap_uid_search_send(mailstream * fd, const char * raw, const char * charset,
 			 struct mailimap_search_key * key);
 
+  
+int mailimap_search_key_send(mailstream * fd,
+                             struct mailimap_search_key * key);
+  
 int
-mailimap_select_send(mailstream * fd, const char * mb);
+mailimap_select_send(mailstream * fd, const char * mb, int condstore);
 
 int
 mailimap_status_send(mailstream * fd, const char * mb,
 		     struct mailimap_status_att_list * status_att_list);
 
 int
-mailimap_store_send(mailstream * fd,
-		    struct mailimap_set * set,
-		    struct mailimap_store_att_flags * store_att_flags);
+  mailimap_store_send(mailstream * fd,
+  struct mailimap_set * set, int use_unchangedsince, uint64_t mod_sequence_valzer,
+  struct mailimap_store_att_flags * store_att_flags);
 
 int
-mailimap_uid_store_send(mailstream * fd,
-			struct mailimap_set * set,
-			struct mailimap_store_att_flags * store_att_flags);
+  mailimap_uid_store_send(mailstream * fd,
+  struct mailimap_set * set, int use_unchangedsince, uint64_t mod_sequence_valzer,
+  struct mailimap_store_att_flags * store_att_flags);
 
 int mailimap_subscribe_send(mailstream * fd, const char * mb);
 
@@ -183,6 +192,14 @@ int mailimap_astring_send(mailstream * fd, const char * astring);
 
 int mailimap_set_send(mailstream * fd,
     struct mailimap_set * set);
+
+int mailimap_oparenth_send(mailstream * fd);
+
+int mailimap_cparenth_send(mailstream * fd);
+
+int mailimap_mod_sequence_value_send(mailstream * fd, uint64_t modseq);
+
+int mailimap_number_send(mailstream * fd, uint32_t number);
 
 #ifdef __cplusplus
 }

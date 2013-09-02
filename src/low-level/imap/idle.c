@@ -46,6 +46,8 @@ int mailimap_idle(mailimap * session)
   struct mailimap_response * response;
   clist * resp_data_list;
   
+  session->imap_selection_info->sel_has_exists = 0;
+  session->imap_selection_info->sel_has_recent = 0;
   session->imap_idle_timestamp = time(NULL);
   
   r = mailimap_send_current_tag(session);
@@ -82,6 +84,7 @@ int mailimap_idle(mailimap * session)
   if (r == MAILIMAP_NO_ERROR) {
     clist_foreach(resp_data_list,
 	  (clist_func) mailimap_response_data_free, NULL);
+    clist_free(resp_data_list);
   }
 
   r = mailimap_continue_req_parse(session->imap_stream,

@@ -33,8 +33,8 @@ EXTRA_DIST = TODO
 
 etpaninclude_HEADERS = \
 	mailimap_helper.h mailimap.h \
-        mailimap_types.h mailimap_types_helper.h \
-        mailimap_socket.h mailimap_ssl.h \
+	mailimap_types.h mailimap_types_helper.h \
+	mailimap_socket.h mailimap_ssl.h \
 	mailimap_extension.h mailimap_extension_types.h \
 	annotatemore.h annotatemore_types.h \
 	acl.h acl_types.h \
@@ -42,7 +42,13 @@ etpaninclude_HEADERS = \
 	quota.h quota_parser.h quota_sender.h quota_types.h \
 	idle.h \
 	namespace.h namespace_parser.h namespace_sender.h namespace_types.h \
-	xlist.h xgmlabels.h xgmmsgid.h xgmthrid.h
+	xlist.h xgmlabels.h xgmmsgid.h xgmthrid.h \
+	mailimap_id.h mailimap_id_types.h \
+	enable.h condstore.h condstore_types.h \
+	qresync.h qresync_types.h \
+	mailimap_sort.h mailimap_sort_types.h \
+  mailimap_compress.h \
+  mailimap_oauth2.h
 
 AM_CPPFLAGS = -I$(top_builddir)/include \
 	-I$(top_srcdir)/src/data-types
@@ -83,6 +89,16 @@ libimap_la_SOURCES = \
 	namespace_types.c namespace_types.h \
 	xlist.c xlist.h \
 	xgmlabels.c xgmlabels.h \
-  xgmmsgid.c xgmmsgid.h \
-  xgmthrid.c xgmthrid.h
-
+	xgmmsgid.c xgmmsgid.h \
+	xgmthrid.c xgmthrid.h \
+	mailimap_id.h mailimap_id.c \
+	mailimap_id_types.h mailimap_id_types.c \
+	mailimap_id_sender.h mailimap_id_sender.c \
+	mailimap_id_parser.h mailimap_id_parser.c \
+	enable.h enable.c \
+	condstore.h condstore.c condstore_types.h condstore_types.c condstore_private.h \
+	qresync.h qresync.c qresync_types.h qresync_types.c qresync_private.h \
+	mailimap_sort.c mailimap_sort.h \
+  mailimap_sort_types.c mailimap_sort_types.h \
+  mailimap_compress.c mailimap_compress.h \
+  mailimap_oauth2.c mailimap_oauth2.h

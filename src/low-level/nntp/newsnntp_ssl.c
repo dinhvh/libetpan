@@ -84,11 +84,11 @@ int newsnntp_ssl_connect_with_callback(newsnntp * f, const char * server, uint16
 
   /* Connection */
 
-  s = mail_tcp_connect(server, port);
+  s = mail_tcp_connect_timeout(server, port, f->nntp_timeout);
   if (s == -1)
     return NEWSNNTP_ERROR_CONNECTION_REFUSED;
 
-  stream = mailstream_ssl_open_with_callback(s, callback, data);
+  stream = mailstream_ssl_open_with_callback_timeout(s, f->nntp_timeout, callback, data);
   if (stream == NULL) {
 #ifdef WIN32
 	closesocket(s);
@@ -106,7 +106,7 @@ static int newsnntp_cfssl_connect_ssl_level(newsnntp * f, const char * server, u
   mailstream * stream;
   int r;
   
-  stream = mailstream_cfstream_open(server, port);
+  stream = mailstream_cfstream_open_timeout(server, port, f->nntp_timeout);
   if (stream == NULL) {
     return NEWSNNTP_ERROR_CONNECTION_REFUSED;
   }

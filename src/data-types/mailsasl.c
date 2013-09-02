@@ -10,6 +10,7 @@
 #include <pthread.h>
 #endif
 #include <sasl/sasl.h>
+#include <stdlib.h>
 
 #ifdef LIBETPAN_REENTRANT
 static pthread_mutex_t sasl_lock = PTHREAD_MUTEX_INITIALIZER;

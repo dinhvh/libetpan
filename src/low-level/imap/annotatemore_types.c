@@ -377,9 +377,6 @@ int mailimap_annotatemore_entry_att_list_add(
 void
 mailimap_annotatemore_free(struct mailimap_extension_data * ext_data)
 {
-  if (ext_data == NULL)
-    return;
-
   switch (ext_data->ext_type)
   {
     case MAILIMAP_ANNOTATEMORE_TYPE_ANNOTATE_DATA:
