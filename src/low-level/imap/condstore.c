@@ -331,7 +331,7 @@ struct mailimap_search_key * mailimap_search_key_new_modseq(struct mailimap_flag
 	return key;
 }
 
-int mailimap_search_modseq(mailimap * session, const char * charset,
+int mailimap_search_modseq(mailimap * session, const char * raw, const char * charset,
 	struct mailimap_search_key * key, clist ** result, uint64_t * p_mod_sequence_value)
 {
   struct mailimap_response * response;
@@ -347,7 +347,7 @@ int mailimap_search_modseq(mailimap * session, const char * charset,
   if (r != MAILIMAP_NO_ERROR)
     return r;
 
-  r = mailimap_search_send(session->imap_stream, charset, key);
+  r = mailimap_search_send(session->imap_stream, raw, charset, key);
   if (r != MAILIMAP_NO_ERROR)
     return r;
 
@@ -409,7 +409,7 @@ int mailimap_search_modseq(mailimap * session, const char * charset,
   }
 }
 
-int mailimap_uid_search_modseq(mailimap * session, const char * charset,
+int mailimap_uid_search_modseq(mailimap * session, const char * raw, const char * charset,
 	struct mailimap_search_key * key, clist ** result, uint64_t * p_mod_sequence_value)
 {
   struct mailimap_response * response;
@@ -425,7 +425,7 @@ int mailimap_uid_search_modseq(mailimap * session, const char * charset,
   if (r != MAILIMAP_NO_ERROR)
     return r;
 
-  r = mailimap_uid_search_send(session->imap_stream, charset, key);
+  r = mailimap_uid_search_send(session->imap_stream, raw, charset, key);
   if (r != MAILIMAP_NO_ERROR)
     return r;
 

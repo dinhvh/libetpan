@@ -70,11 +70,11 @@ LIBETPAN_EXPORT
 struct mailimap_fetch_att * mailimap_fetch_att_new_modseq(void);
 
 LIBETPAN_EXPORT
-int mailimap_search_modseq(mailimap * session, const char * charset,
+int mailimap_search_modseq(mailimap * session, const char * raw, const char * charset,
 	struct mailimap_search_key * key, clist ** result, uint64_t * p_mod_sequence_value);
 
 LIBETPAN_EXPORT
-int mailimap_uid_search_modseq(mailimap * session, const char * charset,
+int mailimap_uid_search_modseq(mailimap * session, const char * raw, const char * charset,
 	struct mailimap_search_key * key, clist ** result, uint64_t * p_mod_sequence_value);
 
 LIBETPAN_EXPORT

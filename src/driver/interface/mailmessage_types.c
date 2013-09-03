@@ -58,6 +58,10 @@ mailmessage * mailmessage_new(void)
   msg_info->msg_index = 0;
   msg_info->msg_uid = NULL;
 
+  msg_info->msg_gmthrid = NULL;
+  msg_info->msg_gmmsgid = NULL;
+  msg_info->msg_gmlabels = NULL;
+
   msg_info->msg_cached = FALSE;
   msg_info->msg_size = 0;
   msg_info->msg_fields = NULL;
@@ -94,5 +98,13 @@ void mailmessage_free(mailmessage * msg_info)
     mail_flags_free(msg_info->msg_flags);
   if (msg_info->msg_uid != NULL)
     free(msg_info->msg_uid);
+
+  if (msg_info->msg_gmlabels != NULL)
+    clist_free(msg_info->msg_gmlabels);
+  if (msg_info->msg_gmthrid != NULL)
+    free(msg_info->msg_gmthrid);
+  if (msg_info->msg_gmmsgid != NULL)
+    free(msg_info->msg_gmmsgid);
+
   free(msg_info);
 }

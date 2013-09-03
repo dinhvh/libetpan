@@ -1961,7 +1961,7 @@ int mailimap_rename(mailimap * session,
 
 LIBETPAN_EXPORT
 int
-mailimap_search(mailimap * session, const char * charset,
+mailimap_search(mailimap * session, const char * raw, const char * charset,
     struct mailimap_search_key * key, clist ** result)
 {
 #if 0
@@ -1976,7 +1976,7 @@ mailimap_search(mailimap * session, const char * charset,
   if (r != MAILIMAP_NO_ERROR)
 	return r;
 
-  r = mailimap_search_send(session->imap_stream, charset, key);
+  r = mailimap_search_send(session->imap_stream, raw, charset, key);
   if (r != MAILIMAP_NO_ERROR)
 	return r;
 
@@ -2009,13 +2009,13 @@ mailimap_search(mailimap * session, const char * charset,
     return MAILIMAP_ERROR_SEARCH;
   }
 #else
-  return mailimap_search_modseq(session, charset, key, result, NULL);
+  return mailimap_search_modseq(session, raw, charset, key, result, NULL);
 #endif
 }
 
 LIBETPAN_EXPORT
 int
-mailimap_uid_search(mailimap * session, const char * charset,
+mailimap_uid_search(mailimap * session, const char * raw, const char * charset,
     struct mailimap_search_key * key, clist ** result)
 {
 #if 0
@@ -2030,7 +2030,7 @@ mailimap_uid_search(mailimap * session, const char * charset,
   if (r != MAILIMAP_NO_ERROR)
     return r;
 
-  r = mailimap_uid_search_send(session->imap_stream, charset, key);
+  r = mailimap_uid_search_send(session->imap_stream, raw, charset, key);
   if (r != MAILIMAP_NO_ERROR)
     return r;
 
@@ -2063,7 +2063,7 @@ mailimap_uid_search(mailimap * session, const char * charset,
     return MAILIMAP_ERROR_UID_SEARCH;
   }
 #else
-  return mailimap_uid_search_modseq(session, charset, key, result, NULL);
+  return mailimap_uid_search_modseq(session, raw, charset, key, result, NULL);
 #endif
 }
 

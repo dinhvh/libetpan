@@ -358,33 +358,62 @@ static mailmessage * mailmessage_build(mailmessage * msg)
   if (new_msg == NULL)
     goto err;
 
+    // Start by initializing everything that does not involve allocating memory
   new_msg->msg_session = msg->msg_session;
   new_msg->msg_driver = msg->msg_driver;
   new_msg->msg_index = msg->msg_index;
-  if (msg->msg_uid == NULL)
-    new_msg->msg_uid = NULL;
-  else {
+  new_msg->msg_uid = NULL;
+  new_msg->msg_gmthrid = NULL;
+  new_msg->msg_gmmsgid = NULL;
+  new_msg->msg_gmlabels = NULL;
+  new_msg->msg_flags = NULL;
+  new_msg->msg_cached = msg->msg_cached;
+  new_msg->msg_size = msg->msg_size;
+  new_msg->msg_fields = NULL;
+  new_msg->msg_mime = NULL;
+  new_msg->msg_data = NULL;
+    
+  // Now, duplicate each string, checking for errors & cleaning up
+  if (msg->msg_uid != NULL) {
     new_msg->msg_uid = strdup(msg->msg_uid);
     if (new_msg->msg_uid == NULL)
       goto free;
   }
+  if (msg->msg_gmthrid != NULL) {
+	new_msg->msg_gmthrid = strdup(msg->msg_gmthrid);
+	if (new_msg->msg_gmthrid == NULL)
+	    goto free;
+  }
+    if (msg->msg_gmmsgid != NULL) {
+	new_msg->msg_gmmsgid = strdup(msg->msg_gmmsgid);
+	if (new_msg->msg_gmmsgid == NULL)
+	    goto free;
+    }
+    
+  // gmlabels - deep copy of list
+  if (msg->msg_gmlabels != NULL) {
+	new_msg->msg_gmlabels = clist_new();
+        clistiter * cur;
+        for (cur = clist_begin(msg->msg_gmlabels) ; cur != NULL ; cur = clist_next(cur)) {
+	  char *label_copy = strdup(clist_content(cur));
+	  if (label_copy == NULL)
+	      goto free;
+	  clist_append(new_msg->msg_gmlabels, label_copy);
+      }
+  }
 
-  new_msg->msg_cached = msg->msg_cached;
-  new_msg->msg_size = msg->msg_size;
-  new_msg->msg_fields = NULL;
+
   new_msg->msg_flags = mail_flags_dup(msg->msg_flags);
   if (new_msg->msg_flags == NULL) {
     free(new_msg->msg_uid);
     goto free;
   }
 
-  new_msg->msg_mime = NULL;
-  new_msg->msg_data = NULL;
 
   return new_msg;
 
  free:
-  free(new_msg);
+    mailmessage_free(new_msg);
  err:
   return NULL;
 }

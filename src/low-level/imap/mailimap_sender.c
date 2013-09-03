@@ -1876,7 +1876,7 @@ int mailimap_rename_send(mailstream * fd, const char * mb,
 */
 
 int
-mailimap_search_send(mailstream * fd, const char * charset,
+mailimap_search_send(mailstream * fd, const char * raw, const char * charset,
 		     struct mailimap_search_key * key)
 {
   int r;
@@ -1884,6 +1884,24 @@ mailimap_search_send(mailstream * fd, const char * charset,
   r = mailimap_token_send(fd, "SEARCH");
   if (r != MAILIMAP_NO_ERROR)
     return r;
+
+  if (raw != NULL) {
+    r = mailimap_space_send(fd);
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+
+  r = mailimap_token_send(fd, "X-GM-RAW");
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+
+  r = mailimap_space_send(fd);
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+
+  r = mailimap_astring_send(fd, raw);
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+  }
 
   if (charset != NULL) {
     r = mailimap_space_send(fd);
@@ -1901,19 +1919,21 @@ mailimap_search_send(mailstream * fd, const char * charset,
       return r;
   }
 
-  r = mailimap_space_send(fd);
-  if (r != MAILIMAP_NO_ERROR)
-    return r;
+  if (key != NULL) {
+    r = mailimap_space_send(fd);
+    if (r != MAILIMAP_NO_ERROR)
+      return r;
   
-  r = mailimap_search_key_send(fd, key);
-  if (r != MAILIMAP_NO_ERROR)
-    return r;
-
+    r = mailimap_search_key_send(fd, key);
+    if (r != MAILIMAP_NO_ERROR)
+      return r;
+  }
+ 
   return MAILIMAP_NO_ERROR;
 }
 
 int
-mailimap_uid_search_send(mailstream * fd, const char * charset,
+mailimap_uid_search_send(mailstream * fd, const char * raw, const char * charset,
    				struct mailimap_search_key * key)
 {
   int r;
@@ -1926,7 +1946,7 @@ mailimap_uid_search_send(mailstream * fd, const char * charset,
   if (r != MAILIMAP_NO_ERROR)
     return r;
 
-  return mailimap_search_send(fd, charset, key);
+  return mailimap_search_send(fd, raw, charset, key);
 }
 
 
