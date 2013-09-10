@@ -371,6 +371,7 @@
 		C69AB2DC1054704000F32FBD /* uidplus_sender.c in Sources */ = {isa = PBXBuildFile; fileRef = C6F9EA1F105335BC0059C3BA /* uidplus_sender.c */; };
 		C69AB2DE1054704000F32FBD /* uidplus_types.c in Sources */ = {isa = PBXBuildFile; fileRef = C6F9EA21105335BC0059C3BA /* uidplus_types.c */; };
 		C69AD25F14AB2062003D04D5 /* xgmlabels.c in Sources */ = {isa = PBXBuildFile; fileRef = C6CE9B1514AA9C8900D20BA6 /* xgmlabels.c */; };
+		C69BA86017DF63CA00D601B7 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C69BA85F17DF63C900D601B7 /* libz.dylib */; };
 		C6CC501516E11074001E7392 /* condstore.c in Sources */ = {isa = PBXBuildFile; fileRef = C6635C3816DFF10E0066276E /* condstore.c */; };
 		C6CC501616E11074001E7392 /* condstore.c in Sources */ = {isa = PBXBuildFile; fileRef = C6635C3816DFF10E0066276E /* condstore.c */; };
 		C6CC501716E11079001E7392 /* condstore_types.c in Sources */ = {isa = PBXBuildFile; fileRef = C6635C3616DFF10E0066276E /* condstore_types.c */; };
@@ -623,6 +624,7 @@
 		C668E2D91736004400A2BB47 /* mailimap_compress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mailimap_compress.h; sourceTree = "<group>"; };
 		C682E2C015B315EF00BE9DA7 /* libetpan-ios.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libetpan-ios.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C69AB10A10546FE500F32FBD /* libetpan.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libetpan.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		C69BA85F17DF63C900D601B7 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		C6CE9B1514AA9C8900D20BA6 /* xgmlabels.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = xgmlabels.c; sourceTree = "<group>"; };
 		C6CE9B1814AA9C9C00D20BA6 /* xgmlabels.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = xgmlabels.h; sourceTree = "<group>"; };
 		C6E571FA110376F200897274 /* quota_parser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = quota_parser.c; sourceTree = "<group>"; };
@@ -981,6 +983,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C69BA86017DF63CA00D601B7 /* libz.dylib in Frameworks */,
 				C6F9ED9E105339200059C3BA /* libssl.dylib in Frameworks */,
 				C6F9EDA6105339380059C3BA /* libsasl2.dylib in Frameworks */,
 				C6F9EDAB1053394C0059C3BA /* libiconv.dylib in Frameworks */,
@@ -1697,6 +1700,7 @@
 				C6F9EDAA1053394C0059C3BA /* libiconv.dylib */,
 				C6F9EDA5105339380059C3BA /* libsasl2.dylib */,
 				C6F9ED9D105339200059C3BA /* libssl.dylib */,
+				C69BA85F17DF63C900D601B7 /* libz.dylib */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";

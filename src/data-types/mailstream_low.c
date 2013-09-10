@@ -58,6 +58,7 @@
 
 #include "mailstream_cfstream.h"
 #include "mailstream_compress.h"
+#include "mailstream_cancel.h"
 
 #define LOG_FILE "libetpan-stream-debug.log"
 
