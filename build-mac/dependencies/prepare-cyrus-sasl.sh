@@ -114,7 +114,8 @@ INSTALL_PATH=${BUILD_DIR}/${LIB_NAME}/universal
 
 for TARGET in $TARGETS; do
 
-    TOOLCHAIN=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin
+    DEVELOPER=$(xcode-select --print-path)
+    TOOLCHAIN="$DEVELOPER/Toolchains/XcodeDefault.xctoolchain/usr/bin"
     SYSROOT=`xcodebuild -version -sdk 2>/dev/null | egrep $TARGET -B 3 | egrep '^Path: '| egrep $SDK_IOS_VERSION | sort -u | tail -n 1| cut -d ' ' -f 2`
 
     case $TARGET in
