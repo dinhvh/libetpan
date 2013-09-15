@@ -20,7 +20,10 @@ It provides an API for C language.
 
 ### Unix
 
-    $ ./configure
+You need to install autoconf, automake and libtool.
+They can be installed using [brew](http://brew.sh/).
+
+    $ ./autogen.sh
     $ make
 
 ### How to link with it
