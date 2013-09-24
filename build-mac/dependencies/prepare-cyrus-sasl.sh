@@ -121,7 +121,7 @@ for TARGET in $TARGETS; do
     case $TARGET in
         (iPhoneOS) 
             ARCH=arm
-            MARCHS="armv7 armv7s"
+            MARCHS="armv7 armv7s arm64"
             EXTRA_FLAGS="-miphoneos-version-min=$SDK_IOS_MIN_VERSION"
             ;;
         (iPhoneSimulator)
@@ -139,6 +139,7 @@ for TARGET in $TARGETS; do
         rm -rf $PREFIX
 
         export CFLAGS="-arch ${MARCH} -isysroot ${SYSROOT} -Os ${EXTRA_FLAGS}"
+        echo $CFLAGS
 
         if test -x ${TOOLCHAIN}/clang; then
           export LD=${TOOLCHAIN}/clang
