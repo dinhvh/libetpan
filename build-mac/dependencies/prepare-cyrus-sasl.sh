@@ -107,7 +107,7 @@ export LANG=en_US.US-ASCII
 LIB_NAME=$ARCHIVE
 TARGETS="iPhoneOS iPhoneSimulator"
 
-SDK_IOS_MIN_VERSION=4.3
+SDK_IOS_MIN_VERSION=6.0
 SDK_IOS_VERSION=`xcodebuild -version -sdk 2>/dev/null | egrep SDKVersion | tail -n 1 | sed -E -n -e 's|SDKVersion: *(.*) *$|\1|p'`
 BUILD_DIR="$tmpdir/build"
 INSTALL_PATH=${BUILD_DIR}/${LIB_NAME}/universal
@@ -121,7 +121,7 @@ for TARGET in $TARGETS; do
     case $TARGET in
         (iPhoneOS) 
             ARCH=arm
-            MARCHS="armv7 armv7s"
+            MARCHS="armv7 armv7s arm64"
             EXTRA_FLAGS="-miphoneos-version-min=$SDK_IOS_MIN_VERSION"
             ;;
         (iPhoneSimulator)
@@ -139,6 +139,7 @@ for TARGET in $TARGETS; do
         rm -rf $PREFIX
 
         export CFLAGS="-arch ${MARCH} -isysroot ${SYSROOT} -Os ${EXTRA_FLAGS}"
+        echo $CFLAGS
 
         if test -x ${TOOLCHAIN}/clang; then
           export LD=${TOOLCHAIN}/clang
