@@ -107,7 +107,7 @@ export LANG=en_US.US-ASCII
 LIB_NAME=$ARCHIVE
 TARGETS="iPhoneOS iPhoneSimulator"
 
-SDK_IOS_MIN_VERSION=6.0
+SDK_IOS_MIN_VERSION=7.0
 SDK_IOS_VERSION=`xcodebuild -version -sdk 2>/dev/null | egrep SDKVersion | tail -n 1 | sed -E -n -e 's|SDKVersion: *(.*) *$|\1|p'`
 BUILD_DIR="$tmpdir/build"
 INSTALL_PATH=${BUILD_DIR}/${LIB_NAME}/universal
