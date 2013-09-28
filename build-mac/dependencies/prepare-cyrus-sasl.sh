@@ -82,6 +82,7 @@ echo "*** generating makemd5 ***" >> "$logfile" 2>&1
 
 cd "$srcdir/$ARCHIVE"
 export SDKROOT=
+export IPHONEOS_DEPLOYMENT_TARGET=
 ./configure > "$logfile" 2>&1
 if [[ "$?" != "0" ]]; then
   echo "CONFIGURE FAILED"
