@@ -127,7 +127,7 @@ for TARGET in $TARGETS; do
             ;;
         (iPhoneSimulator)
             ARCH=i386
-            MARCHS="i386 x86"
+            MARCHS="i386 x86_64"
             EXTRA_FLAGS="-miphoneos-version-min=$SDK_IOS_MIN_VERSION"
             ;;
     esac
