@@ -2680,7 +2680,7 @@ static int mailimf_zone_parse(const char * message, size_t length,
   cur_token = * indx;
 
   if (cur_token + 1 < length) {
-    if ((message[cur_token] == 'U') && (message[cur_token] == 'T')) {
+    if ((message[cur_token] == 'U') && (message[cur_token + 1] == 'T')) {
       * result = TRUE;
       * indx = cur_token + 2;
 
