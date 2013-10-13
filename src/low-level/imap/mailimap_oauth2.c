@@ -41,6 +41,8 @@
 int mailimap_oauth2_authenticate_send(mailimap * session,
                                       const char * auth_user,
                                       const char * access_token);
+static bool is_too_many_simultaneous_connections_alert(struct mailimap_resp_text* rsp_text);
+
 
 LIBETPAN_EXPORT
 int mailimap_oauth2_authenticate(mailimap * session, const char *auth_user, const char * access_token)
@@ -111,9 +113,12 @@ int mailimap_oauth2_authenticate(mailimap * session, const char *auth_user, cons
   r = mailimap_parse_response(session, &response);
   if (r != MAILIMAP_NO_ERROR)
     return r;
-  
-  error_code = response->rsp_resp_done->rsp_data.rsp_tagged->rsp_cond_state->rsp_type;
-  
+
+  struct mailimap_resp_cond_state * cond_state = response->rsp_resp_done->rsp_data.rsp_tagged->rsp_cond_state;
+  error_code = cond_state->rsp_type;
+  struct mailimap_resp_text * rsp_text = cond_state->rsp_text;
+  bool is_too_many_simulaneous = is_too_many_simultaneous_connections_alert(rsp_text);
+
   mailimap_response_free(response);
   
   switch (error_code) {
@@ -122,9 +127,19 @@ int mailimap_oauth2_authenticate(mailimap * session, const char *auth_user, cons
       return MAILIMAP_NO_ERROR;
       
     default:
-      return MAILIMAP_ERROR_LOGIN;
+      return is_too_many_simulaneous ? MAILIMAP_ERROR_TOO_MANY_SIMULTANEOUS_CONNECTIONS : MAILIMAP_ERROR_LOGIN;
   }
 }
+
+
+// Gmail gives this response.
+static bool is_too_many_simultaneous_connections_alert(struct mailimap_resp_text* rsp_text) {
+  return (rsp_text != NULL &&
+          rsp_text->rsp_code != NULL &&
+          rsp_text->rsp_code->rc_type == MAILIMAP_RESP_TEXT_CODE_ALERT &&
+          NULL != strstr(rsp_text->rsp_text, "Too many simultaneous connections"));
+}
+
 
 int mailimap_oauth2_authenticate_send(mailimap * session,
                                       const char * auth_user,
