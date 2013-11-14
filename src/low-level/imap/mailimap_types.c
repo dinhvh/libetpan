@@ -2765,7 +2765,7 @@ mailimap_search_key_new(int sk_type,
 }
 
 struct mailimap_search_key *
-mailimap_search_key_xgmthrid_new(uint64_t sk_xgmthrid)
+mailimap_search_key_new_xgmthrid(uint64_t sk_xgmthrid)
 {
   struct mailimap_search_key * key;
   

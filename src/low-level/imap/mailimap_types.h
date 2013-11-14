@@ -2997,9 +2997,14 @@ mailimap_search_key_new(int sk_type,
     uint32_t sk_smaller, struct mailimap_set * sk_uid,
     struct mailimap_set * sk_set, clist * sk_multiple);
   
+/*
+  this function creates a condition structure to match messages with
+  the given gmail thread id
+*/
+
 LIBETPAN_EXPORT
 struct mailimap_search_key *
-mailimap_search_key_xgmthrid_new(uint64_t sk_xgmthrid);
+mailimap_search_key_new_xgmthrid(uint64_t sk_xgmthrid);
 
 LIBETPAN_EXPORT
 void mailimap_search_key_free(struct mailimap_search_key * key);
