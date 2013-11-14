@@ -2927,7 +2927,7 @@ enum {
   - set is a set of messages when type is MAILIMAP_SEARCH_KEY_SET
  
   - xgmthrid is a number of the gmail thread id when type is MAILIMAP_SEARCH_KEY_XGMTHRID
-    use mailimap_search_key_xgm_new() with this key
+    use mailimap_search_key_xgmthrid_new() for this key
 
   - multiple is a set of message when type is MAILIMAP_SEARCH_KEY_MULTIPLE
 */
@@ -2999,7 +2999,7 @@ mailimap_search_key_new(int sk_type,
   
 LIBETPAN_EXPORT
 struct mailimap_search_key *
-mailimap_search_key_xgm_new(int sk_type, uint64_t sk_xgmthrid);
+mailimap_search_key_xgmthrid_new(uint64_t sk_xgmthrid);
 
 LIBETPAN_EXPORT
 void mailimap_search_key_free(struct mailimap_search_key * key);

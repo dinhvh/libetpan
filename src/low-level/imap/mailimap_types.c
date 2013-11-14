@@ -2765,7 +2765,7 @@ mailimap_search_key_new(int sk_type,
 }
 
 struct mailimap_search_key *
-mailimap_search_key_xgm_new(int sk_type, uint64_t sk_xgmthrid)
+mailimap_search_key_xgmthrid_new(uint64_t sk_xgmthrid)
 {
   struct mailimap_search_key * key;
   
@@ -2773,13 +2773,9 @@ mailimap_search_key_xgm_new(int sk_type, uint64_t sk_xgmthrid)
   if (key == NULL)
     return NULL;
   
-  key->sk_type = sk_type;
-  switch (sk_type) {
-  case MAILIMAP_SEARCH_KEY_XGMTHRID:
-    key->sk_data.sk_xgmthrid = sk_xgmthrid;
-    break;
-  }
-  
+  key->sk_type = MAILIMAP_SEARCH_KEY_XGMTHRID;
+  key->sk_data.sk_xgmthrid = sk_xgmthrid;
+
   return key;
 }
 

@@ -871,7 +871,7 @@ mailimap_search_key_new_larger(uint32_t sk_larger)
 struct mailimap_search_key *
 mailimap_search_key_xgmthrid(uint64_t sk_xgmthrid)
 {
-  return mailimap_search_key_xgm_new(MAILIMAP_SEARCH_KEY_XGMTHRID, sk_xgmthrid);
+  return mailimap_search_key_xgmthrid_new(sk_xgmthrid);
 }
 
 struct mailimap_search_key *
