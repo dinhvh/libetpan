@@ -101,6 +101,9 @@ void mailimap_extension_data_store(mailimap * session,
 LIBETPAN_EXPORT
 int mailimap_has_extension(mailimap * session, char * extension_name);
 
+LIBETPAN_EXPORT
+int mailimap_has_authentication(mailimap * session, char * authentication_name);
+  
 #ifdef __cplusplus
 }
 #endif

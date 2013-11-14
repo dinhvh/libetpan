@@ -45,6 +45,7 @@ extern "C" {
 #ifndef LIBETPAN_CONFIG_H
 #  include <libetpan/libetpan-config.h>
 #endif
+#include <libetpan/carray.h>
 
 struct _mailstream;
 
@@ -96,6 +97,8 @@ struct mailstream_low_driver {
   void (* mailstream_free)(mailstream_low *);
   void (* mailstream_cancel)(mailstream_low *);
   struct mailstream_cancel * (* mailstream_get_cancel)(mailstream_low *);
+  /* Returns an array of MMAPString containing DER data or NULL if it's not a SSL connection */
+  carray * (* mailstream_get_certificate_chain)(mailstream_low *);
 };
 
 typedef struct mailstream_low_driver mailstream_low_driver;

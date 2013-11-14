@@ -93,6 +93,7 @@
 # endif
 #endif
 
+#include "mmapstring.h"
 #include "mailstream_cancel.h"
 
 struct mailstream_ssl_context
@@ -341,6 +342,7 @@ static void mailstream_low_ssl_free(mailstream_low * s);
 static int mailstream_low_ssl_get_fd(mailstream_low * s);
 static void mailstream_low_ssl_cancel(mailstream_low * s);
 static struct mailstream_cancel * mailstream_low_ssl_get_cancel(mailstream_low * s);
+static carray * mailstream_low_ssl_get_certificate_chain(mailstream_low * s);
 
 static mailstream_low_driver local_mailstream_ssl_driver = {
   /* mailstream_read */ mailstream_low_ssl_read,
@@ -350,6 +352,7 @@ static mailstream_low_driver local_mailstream_ssl_driver = {
   /* mailstream_free */ mailstream_low_ssl_free,
   /* mailstream_cancel */ mailstream_low_ssl_cancel,
   /* mailstream_get_cancel */ mailstream_low_ssl_get_cancel,
+  /* mailstream_get_certificate_chain */ mailstream_low_ssl_get_certificate_chain,
 };
 
 mailstream_low_driver * mailstream_ssl_driver = &local_mailstream_ssl_driver;
@@ -1328,6 +1331,43 @@ static struct mailstream_cancel * mailstream_low_ssl_get_cancel(mailstream_low *
   
   data = s->data;
   return data->cancel;
+#else
+  return NULL;
+#endif
+}
+
+carray * mailstream_low_ssl_get_certificate_chain(mailstream_low * s)
+{
+#ifdef USE_SSL
+#ifndef USE_GNUTLS
+  STACK_OF(X509) * skx;
+  struct mailstream_ssl_data * ssl_data;
+  carray * result;
+  int skpos;
+  
+  ssl_data = (struct mailstream_ssl_data *) s->data;
+  if (!(skx = SSL_get_peer_cert_chain(ssl_data->ssl_conn))) {
+    return NULL;
+  }
+  
+  result = carray_new(4);
+  for(skpos = 0 ; skpos < sk_num(skx) ; skpos ++) {
+    X509 * x = (X509 *) sk_value(skx, skpos);
+    unsigned char * p;
+    MMAPString * str;
+    int length = i2d_X509(x, NULL);
+    str = mmap_string_sized_new(length);
+    p = (unsigned char *) str->str;
+    str->len = length;
+    i2d_X509(x, &p);
+    carray_add(result, str, NULL);
+  }
+  
+  return result;
+#else
+  /* TODO: GnuTLS implementation */
+  return NULL;
+#endif
 #else
   return NULL;
 #endif

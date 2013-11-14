@@ -95,6 +95,7 @@ static mailstream_low_driver local_mailstream_socket_driver = {
   /* mailstream_free */ mailstream_low_socket_free,
   /* mailstream_cancel */ mailstream_low_socket_cancel,
   /* mailstream_get_cancel */ mailstream_low_socket_get_cancel,
+  /* mailstream_get_certificate_chain */ NULL,
 };
 
 mailstream_low_driver * mailstream_socket_driver =

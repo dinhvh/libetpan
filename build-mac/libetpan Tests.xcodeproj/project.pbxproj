@@ -40,36 +40,29 @@
 		3678612116AB411F002F2B96 /* libssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678612016AB411F002F2B96 /* libssl.dylib */; };
 		3678612316AB4131002F2B96 /* libsasl2.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678612216AB4131002F2B96 /* libsasl2.2.dylib */; };
 		3678612516AB4142002F2B96 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678612416AB4142002F2B96 /* libcrypto.dylib */; };
-		3678612716AB4169002F2B96 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678612616AB4169002F2B96 /* CFNetwork.framework */; };
 		3678612C16AB4314002F2B96 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678611E16AB410C002F2B96 /* CoreFoundation.framework */; };
-		3678612D16AB4314002F2B96 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678612616AB4169002F2B96 /* CFNetwork.framework */; };
 		3678612E16AB4314002F2B96 /* libssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678612016AB411F002F2B96 /* libssl.dylib */; };
 		3678612F16AB4314002F2B96 /* libsasl2.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678612216AB4131002F2B96 /* libsasl2.2.dylib */; };
 		3678613016AB4314002F2B96 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678612416AB4142002F2B96 /* libcrypto.dylib */; };
 		3678613E16AB4411002F2B96 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678611E16AB410C002F2B96 /* CoreFoundation.framework */; };
-		3678613F16AB4411002F2B96 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678612616AB4169002F2B96 /* CFNetwork.framework */; };
 		3678614016AB4411002F2B96 /* libssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678612016AB411F002F2B96 /* libssl.dylib */; };
 		3678614116AB4411002F2B96 /* libsasl2.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678612216AB4131002F2B96 /* libsasl2.2.dylib */; };
 		3678614216AB4411002F2B96 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678612416AB4142002F2B96 /* libcrypto.dylib */; };
 		3678614A16AB4426002F2B96 /* mime-parse.c in Sources */ = {isa = PBXBuildFile; fileRef = 367860E916AB36DF002F2B96 /* mime-parse.c */; };
 		3678614B16AB442A002F2B96 /* mime-create.c in Sources */ = {isa = PBXBuildFile; fileRef = 367860E816AB36DF002F2B96 /* mime-create.c */; };
 		3678615016AB44A6002F2B96 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678611E16AB410C002F2B96 /* CoreFoundation.framework */; };
-		3678615116AB44A6002F2B96 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678612616AB4169002F2B96 /* CFNetwork.framework */; };
 		3678615216AB44A6002F2B96 /* libssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678612016AB411F002F2B96 /* libssl.dylib */; };
 		3678615316AB44A6002F2B96 /* libsasl2.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678612216AB4131002F2B96 /* libsasl2.2.dylib */; };
 		3678615416AB44A6002F2B96 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678612416AB4142002F2B96 /* libcrypto.dylib */; };
 		3678616116AB4547002F2B96 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678611E16AB410C002F2B96 /* CoreFoundation.framework */; };
-		3678616216AB4547002F2B96 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678612616AB4169002F2B96 /* CFNetwork.framework */; };
 		3678616316AB4547002F2B96 /* libssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678612016AB411F002F2B96 /* libssl.dylib */; };
 		3678616416AB4547002F2B96 /* libsasl2.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678612216AB4131002F2B96 /* libsasl2.2.dylib */; };
 		3678616516AB4547002F2B96 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678612416AB4142002F2B96 /* libcrypto.dylib */; };
 		3678617116AB4551002F2B96 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678611E16AB410C002F2B96 /* CoreFoundation.framework */; };
-		3678617216AB4551002F2B96 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678612616AB4169002F2B96 /* CFNetwork.framework */; };
 		3678617316AB4551002F2B96 /* libssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678612016AB411F002F2B96 /* libssl.dylib */; };
 		3678617416AB4551002F2B96 /* libsasl2.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678612216AB4131002F2B96 /* libsasl2.2.dylib */; };
 		3678617516AB4551002F2B96 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678612416AB4142002F2B96 /* libcrypto.dylib */; };
 		3678618116AB4559002F2B96 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678611E16AB410C002F2B96 /* CoreFoundation.framework */; };
-		3678618216AB4559002F2B96 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678612616AB4169002F2B96 /* CFNetwork.framework */; };
 		3678618316AB4559002F2B96 /* libssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678612016AB411F002F2B96 /* libssl.dylib */; };
 		3678618416AB4559002F2B96 /* libsasl2.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678612216AB4131002F2B96 /* libsasl2.2.dylib */; };
 		3678618516AB4559002F2B96 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678612416AB4142002F2B96 /* libcrypto.dylib */; };
@@ -86,7 +79,6 @@
 		3678619816AB4685002F2B96 /* libiconv.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678619616AB4671002F2B96 /* libiconv.2.dylib */; };
 		3678619916AB4689002F2B96 /* libiconv.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678619616AB4671002F2B96 /* libiconv.2.dylib */; };
 		3678619E16AB470B002F2B96 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678611E16AB410C002F2B96 /* CoreFoundation.framework */; };
-		3678619F16AB470B002F2B96 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678612616AB4169002F2B96 /* CFNetwork.framework */; };
 		367861A016AB470B002F2B96 /* libssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678612016AB411F002F2B96 /* libssl.dylib */; };
 		367861A116AB470B002F2B96 /* libsasl2.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678612216AB4131002F2B96 /* libsasl2.2.dylib */; };
 		367861A216AB470B002F2B96 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678612416AB4142002F2B96 /* libcrypto.dylib */; };
@@ -95,12 +87,10 @@
 		367861AC16AB47CA002F2B96 /* readmsg-common.c in Sources */ = {isa = PBXBuildFile; fileRef = 367860EF16AB36DF002F2B96 /* readmsg-common.c */; };
 		367861AD16AB47DC002F2B96 /* libiconv.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678619616AB4671002F2B96 /* libiconv.2.dylib */; };
 		367861B316AB48E1002F2B96 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678611E16AB410C002F2B96 /* CoreFoundation.framework */; };
-		367861B416AB48E1002F2B96 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678612616AB4169002F2B96 /* CFNetwork.framework */; };
 		367861B516AB48E1002F2B96 /* libssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678612016AB411F002F2B96 /* libssl.dylib */; };
 		367861B616AB48E1002F2B96 /* libsasl2.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678612216AB4131002F2B96 /* libsasl2.2.dylib */; };
 		367861B716AB48E1002F2B96 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678612416AB4142002F2B96 /* libcrypto.dylib */; };
 		367861C316AB48E4002F2B96 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678611E16AB410C002F2B96 /* CoreFoundation.framework */; };
-		367861C416AB48E4002F2B96 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678612616AB4169002F2B96 /* CFNetwork.framework */; };
 		367861C516AB48E4002F2B96 /* libssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678612016AB411F002F2B96 /* libssl.dylib */; };
 		367861C616AB48E4002F2B96 /* libsasl2.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678612216AB4131002F2B96 /* libsasl2.2.dylib */; };
 		367861C716AB48E4002F2B96 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678612416AB4142002F2B96 /* libcrypto.dylib */; };
@@ -111,32 +101,27 @@
 		367861D316AB4BDA002F2B96 /* libiconv.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678619616AB4671002F2B96 /* libiconv.2.dylib */; };
 		367861D416AB4BE9002F2B96 /* readmsg-common.c in Sources */ = {isa = PBXBuildFile; fileRef = 367860EF16AB36DF002F2B96 /* readmsg-common.c */; };
 		367861F116AB4D4F002F2B96 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678611E16AB410C002F2B96 /* CoreFoundation.framework */; };
-		367861F216AB4D4F002F2B96 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678612616AB4169002F2B96 /* CFNetwork.framework */; };
 		367861F316AB4D4F002F2B96 /* libssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678612016AB411F002F2B96 /* libssl.dylib */; };
 		367861F416AB4D4F002F2B96 /* libsasl2.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678612216AB4131002F2B96 /* libsasl2.2.dylib */; };
 		367861F516AB4D4F002F2B96 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678612416AB4142002F2B96 /* libcrypto.dylib */; };
 		367861FF16AB4D81002F2B96 /* decrypt.c in Sources */ = {isa = PBXBuildFile; fileRef = 367860DD16AB36DF002F2B96 /* decrypt.c */; };
 		3678620016AB4D96002F2B96 /* compose-msg.c in Sources */ = {isa = PBXBuildFile; fileRef = 367860DC16AB36DF002F2B96 /* compose-msg.c */; };
 		3678620516AB4DFE002F2B96 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678611E16AB410C002F2B96 /* CoreFoundation.framework */; };
-		3678620616AB4DFE002F2B96 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678612616AB4169002F2B96 /* CFNetwork.framework */; };
 		3678620716AB4DFE002F2B96 /* libssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678612016AB411F002F2B96 /* libssl.dylib */; };
 		3678620816AB4DFE002F2B96 /* libsasl2.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678612216AB4131002F2B96 /* libsasl2.2.dylib */; };
 		3678620916AB4DFE002F2B96 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678612416AB4142002F2B96 /* libcrypto.dylib */; };
 		3678621116AB4E16002F2B96 /* pgp.c in Sources */ = {isa = PBXBuildFile; fileRef = 367860EC16AB36DF002F2B96 /* pgp.c */; };
 		3678621816AB4E63002F2B96 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678611E16AB410C002F2B96 /* CoreFoundation.framework */; };
-		3678621916AB4E63002F2B96 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678612616AB4169002F2B96 /* CFNetwork.framework */; };
 		3678621A16AB4E63002F2B96 /* libssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678612016AB411F002F2B96 /* libssl.dylib */; };
 		3678621B16AB4E63002F2B96 /* libsasl2.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678612216AB4131002F2B96 /* libsasl2.2.dylib */; };
 		3678621C16AB4E63002F2B96 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678612416AB4142002F2B96 /* libcrypto.dylib */; };
 		3678622616AB4E97002F2B96 /* pop-sample.c in Sources */ = {isa = PBXBuildFile; fileRef = 367860ED16AB36DF002F2B96 /* pop-sample.c */; };
 		3678622B16AB4EE6002F2B96 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678611E16AB410C002F2B96 /* CoreFoundation.framework */; };
-		3678622C16AB4EE6002F2B96 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678612616AB4169002F2B96 /* CFNetwork.framework */; };
 		3678622D16AB4EE6002F2B96 /* libssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678612016AB411F002F2B96 /* libssl.dylib */; };
 		3678622E16AB4EE6002F2B96 /* libsasl2.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678612216AB4131002F2B96 /* libsasl2.2.dylib */; };
 		3678622F16AB4EE6002F2B96 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678612416AB4142002F2B96 /* libcrypto.dylib */; };
 		3678623716AB4EF6002F2B96 /* smime.c in Sources */ = {isa = PBXBuildFile; fileRef = 367860F416AB36DF002F2B96 /* smime.c */; };
 		3678623E16AB4F32002F2B96 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678611E16AB410C002F2B96 /* CoreFoundation.framework */; };
-		3678623F16AB4F32002F2B96 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678612616AB4169002F2B96 /* CFNetwork.framework */; };
 		3678624016AB4F32002F2B96 /* libssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678612016AB411F002F2B96 /* libssl.dylib */; };
 		3678624116AB4F32002F2B96 /* libsasl2.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678612216AB4131002F2B96 /* libsasl2.2.dylib */; };
 		3678624216AB4F32002F2B96 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678612416AB4142002F2B96 /* libcrypto.dylib */; };
@@ -156,6 +141,36 @@
 		367863A616AB61F6002F2B96 /* libetpan.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678639816AB61BA002F2B96 /* libetpan.a */; };
 		367863A816AB61F9002F2B96 /* libetpan.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678639816AB61BA002F2B96 /* libetpan.a */; };
 		367863A916AB61FA002F2B96 /* libetpan.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678639816AB61BA002F2B96 /* libetpan.a */; };
+		C6ED6CF917A1862C00A4A14C /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6ED6CF817A1862C00A4A14C /* Security.framework */; };
+		C6ED6CFA17A1863E00A4A14C /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6ED6CF817A1862C00A4A14C /* Security.framework */; };
+		C6ED6CFB17A1865600A4A14C /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6ED6CF817A1862C00A4A14C /* Security.framework */; };
+		C6ED6CFC17A1865700A4A14C /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6ED6CF817A1862C00A4A14C /* Security.framework */; };
+		C6ED6CFD17A1865700A4A14C /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6ED6CF817A1862C00A4A14C /* Security.framework */; };
+		C6ED6CFE17A1865800A4A14C /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6ED6CF817A1862C00A4A14C /* Security.framework */; };
+		C6ED6CFF17A1865900A4A14C /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6ED6CF817A1862C00A4A14C /* Security.framework */; };
+		C6ED6D0017A1865900A4A14C /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6ED6CF817A1862C00A4A14C /* Security.framework */; };
+		C6ED6D0117A1865B00A4A14C /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6ED6CF817A1862C00A4A14C /* Security.framework */; };
+		C6ED6D0217A1865C00A4A14C /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6ED6CF817A1862C00A4A14C /* Security.framework */; };
+		C6ED6D0317A1865C00A4A14C /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6ED6CF817A1862C00A4A14C /* Security.framework */; };
+		C6ED6D0417A1865D00A4A14C /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6ED6CF817A1862C00A4A14C /* Security.framework */; };
+		C6ED6D0517A1865E00A4A14C /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6ED6CF817A1862C00A4A14C /* Security.framework */; };
+		C6ED6D0617A1865E00A4A14C /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6ED6CF817A1862C00A4A14C /* Security.framework */; };
+		C6ED6D0717A1865F00A4A14C /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6ED6CF817A1862C00A4A14C /* Security.framework */; };
+		C6ED6D0917A1883000A4A14C /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6ED6D0817A1883000A4A14C /* CoreServices.framework */; };
+		C6ED6D0A17A1884200A4A14C /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6ED6D0817A1883000A4A14C /* CoreServices.framework */; };
+		C6ED6D0B17A1884200A4A14C /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6ED6D0817A1883000A4A14C /* CoreServices.framework */; };
+		C6ED6D0D17A1884400A4A14C /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6ED6D0817A1883000A4A14C /* CoreServices.framework */; };
+		C6ED6D0E17A1884800A4A14C /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6ED6D0817A1883000A4A14C /* CoreServices.framework */; };
+		C6ED6D0F17A1884800A4A14C /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6ED6D0817A1883000A4A14C /* CoreServices.framework */; };
+		C6ED6D1017A1884900A4A14C /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6ED6D0817A1883000A4A14C /* CoreServices.framework */; };
+		C6ED6D1117A1884A00A4A14C /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6ED6D0817A1883000A4A14C /* CoreServices.framework */; };
+		C6ED6D1217A1884A00A4A14C /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6ED6D0817A1883000A4A14C /* CoreServices.framework */; };
+		C6ED6D1317A1884B00A4A14C /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6ED6D0817A1883000A4A14C /* CoreServices.framework */; };
+		C6ED6D1417A1884C00A4A14C /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6ED6D0817A1883000A4A14C /* CoreServices.framework */; };
+		C6ED6D1517A1884D00A4A14C /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6ED6D0817A1883000A4A14C /* CoreServices.framework */; };
+		C6ED6D1617A1884E00A4A14C /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6ED6D0817A1883000A4A14C /* CoreServices.framework */; };
+		C6ED6D1717A1884E00A4A14C /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6ED6D0817A1883000A4A14C /* CoreServices.framework */; };
+		C6ED6D1817A1884F00A4A14C /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6ED6D0817A1883000A4A14C /* CoreServices.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -432,7 +447,6 @@
 		3678612016AB411F002F2B96 /* libssl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libssl.dylib; path = usr/lib/libssl.dylib; sourceTree = SDKROOT; };
 		3678612216AB4131002F2B96 /* libsasl2.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsasl2.2.dylib; path = usr/lib/libsasl2.2.dylib; sourceTree = SDKROOT; };
 		3678612416AB4142002F2B96 /* libcrypto.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcrypto.dylib; path = usr/lib/libcrypto.dylib; sourceTree = SDKROOT; };
-		3678612616AB4169002F2B96 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		3678613616AB4314002F2B96 /* mime-parse */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "mime-parse"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3678614816AB4411002F2B96 /* mime-create */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "mime-create"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3678615A16AB44A7002F2B96 /* compose-msg */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "compose-msg"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -449,6 +463,8 @@
 		3678623516AB4EE6002F2B96 /* smime */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = smime; sourceTree = BUILT_PRODUCTS_DIR; };
 		3678624816AB4F32002F2B96 /* smtpsend */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = smtpsend; sourceTree = BUILT_PRODUCTS_DIR; };
 		3678639816AB61BA002F2B96 /* libetpan.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libetpan.a; path = "../../../Library/Developer/Xcode/DerivedData/libetpan-dazyuihjymonnybirhcistixjbll/Build/Products/Debug/libetpan.a"; sourceTree = "<group>"; };
+		C6ED6CF817A1862C00A4A14C /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		C6ED6D0817A1883000A4A14C /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = System/Library/Frameworks/CoreServices.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -456,8 +472,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C6ED6D0917A1883000A4A14C /* CoreServices.framework in Frameworks */,
 				3678611F16AB410C002F2B96 /* CoreFoundation.framework in Frameworks */,
-				3678612716AB4169002F2B96 /* CFNetwork.framework in Frameworks */,
+				C6ED6CF917A1862C00A4A14C /* Security.framework in Frameworks */,
 				3678612116AB411F002F2B96 /* libssl.dylib in Frameworks */,
 				3678612316AB4131002F2B96 /* libsasl2.2.dylib in Frameworks */,
 				3678612516AB4142002F2B96 /* libcrypto.dylib in Frameworks */,
@@ -470,10 +487,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				3678612C16AB4314002F2B96 /* CoreFoundation.framework in Frameworks */,
-				3678612D16AB4314002F2B96 /* CFNetwork.framework in Frameworks */,
+				C6ED6CFA17A1863E00A4A14C /* Security.framework in Frameworks */,
 				3678612E16AB4314002F2B96 /* libssl.dylib in Frameworks */,
 				3678612F16AB4314002F2B96 /* libsasl2.2.dylib in Frameworks */,
 				3678613016AB4314002F2B96 /* libcrypto.dylib in Frameworks */,
+				C6ED6D0A17A1884200A4A14C /* CoreServices.framework in Frameworks */,
 				3678639B16AB61D3002F2B96 /* libetpan.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -483,10 +501,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				3678613E16AB4411002F2B96 /* CoreFoundation.framework in Frameworks */,
-				3678613F16AB4411002F2B96 /* CFNetwork.framework in Frameworks */,
 				3678614016AB4411002F2B96 /* libssl.dylib in Frameworks */,
 				3678614116AB4411002F2B96 /* libsasl2.2.dylib in Frameworks */,
+				C6ED6CFB17A1865600A4A14C /* Security.framework in Frameworks */,
 				3678614216AB4411002F2B96 /* libcrypto.dylib in Frameworks */,
+				C6ED6D0B17A1884200A4A14C /* CoreServices.framework in Frameworks */,
 				3678639C16AB61D7002F2B96 /* libetpan.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -496,10 +515,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				3678615016AB44A6002F2B96 /* CoreFoundation.framework in Frameworks */,
-				3678615116AB44A6002F2B96 /* CFNetwork.framework in Frameworks */,
 				3678615216AB44A6002F2B96 /* libssl.dylib in Frameworks */,
 				3678615316AB44A6002F2B96 /* libsasl2.2.dylib in Frameworks */,
+				C6ED6CFC17A1865700A4A14C /* Security.framework in Frameworks */,
 				3678615416AB44A6002F2B96 /* libcrypto.dylib in Frameworks */,
+				C6ED6D0D17A1884400A4A14C /* CoreServices.framework in Frameworks */,
 				3678639D16AB61DB002F2B96 /* libetpan.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -509,12 +529,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				3678616116AB4547002F2B96 /* CoreFoundation.framework in Frameworks */,
-				3678616216AB4547002F2B96 /* CFNetwork.framework in Frameworks */,
 				3678616316AB4547002F2B96 /* libssl.dylib in Frameworks */,
 				3678616416AB4547002F2B96 /* libsasl2.2.dylib in Frameworks */,
 				3678616516AB4547002F2B96 /* libcrypto.dylib in Frameworks */,
 				3678619716AB4671002F2B96 /* libiconv.2.dylib in Frameworks */,
+				C6ED6CFD17A1865700A4A14C /* Security.framework in Frameworks */,
 				3678639E16AB61DE002F2B96 /* libetpan.a in Frameworks */,
+				C6ED6D0E17A1884800A4A14C /* CoreServices.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -523,12 +544,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				3678617116AB4551002F2B96 /* CoreFoundation.framework in Frameworks */,
-				3678617216AB4551002F2B96 /* CFNetwork.framework in Frameworks */,
 				3678617316AB4551002F2B96 /* libssl.dylib in Frameworks */,
 				3678617416AB4551002F2B96 /* libsasl2.2.dylib in Frameworks */,
 				3678617516AB4551002F2B96 /* libcrypto.dylib in Frameworks */,
 				3678619816AB4685002F2B96 /* libiconv.2.dylib in Frameworks */,
+				C6ED6CFE17A1865800A4A14C /* Security.framework in Frameworks */,
 				3678639F16AB61E1002F2B96 /* libetpan.a in Frameworks */,
+				C6ED6D0F17A1884800A4A14C /* CoreServices.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -537,12 +559,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				3678618116AB4559002F2B96 /* CoreFoundation.framework in Frameworks */,
-				3678618216AB4559002F2B96 /* CFNetwork.framework in Frameworks */,
 				3678618316AB4559002F2B96 /* libssl.dylib in Frameworks */,
 				3678618416AB4559002F2B96 /* libsasl2.2.dylib in Frameworks */,
 				3678618516AB4559002F2B96 /* libcrypto.dylib in Frameworks */,
 				3678619916AB4689002F2B96 /* libiconv.2.dylib in Frameworks */,
+				C6ED6CFF17A1865900A4A14C /* Security.framework in Frameworks */,
 				367863A016AB61E5002F2B96 /* libetpan.a in Frameworks */,
+				C6ED6D1017A1884900A4A14C /* CoreServices.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -551,12 +574,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				3678619E16AB470B002F2B96 /* CoreFoundation.framework in Frameworks */,
-				3678619F16AB470B002F2B96 /* CFNetwork.framework in Frameworks */,
 				367861A016AB470B002F2B96 /* libssl.dylib in Frameworks */,
 				367861A116AB470B002F2B96 /* libsasl2.2.dylib in Frameworks */,
 				367861A216AB470B002F2B96 /* libcrypto.dylib in Frameworks */,
 				367861AD16AB47DC002F2B96 /* libiconv.2.dylib in Frameworks */,
+				C6ED6D0017A1865900A4A14C /* Security.framework in Frameworks */,
 				367863A116AB61E9002F2B96 /* libetpan.a in Frameworks */,
+				C6ED6D1117A1884A00A4A14C /* CoreServices.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -565,10 +589,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				367861B316AB48E1002F2B96 /* CoreFoundation.framework in Frameworks */,
-				367861B416AB48E1002F2B96 /* CFNetwork.framework in Frameworks */,
 				367861B516AB48E1002F2B96 /* libssl.dylib in Frameworks */,
 				367861B616AB48E1002F2B96 /* libsasl2.2.dylib in Frameworks */,
+				C6ED6D0117A1865B00A4A14C /* Security.framework in Frameworks */,
 				367861B716AB48E1002F2B96 /* libcrypto.dylib in Frameworks */,
+				C6ED6D1217A1884A00A4A14C /* CoreServices.framework in Frameworks */,
 				367863A216AB61EE002F2B96 /* libetpan.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -578,12 +603,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				367861C316AB48E4002F2B96 /* CoreFoundation.framework in Frameworks */,
-				367861C416AB48E4002F2B96 /* CFNetwork.framework in Frameworks */,
 				367861C516AB48E4002F2B96 /* libssl.dylib in Frameworks */,
 				367861C616AB48E4002F2B96 /* libsasl2.2.dylib in Frameworks */,
 				367861C716AB48E4002F2B96 /* libcrypto.dylib in Frameworks */,
 				367861D316AB4BDA002F2B96 /* libiconv.2.dylib in Frameworks */,
+				C6ED6D0217A1865C00A4A14C /* Security.framework in Frameworks */,
 				367863A316AB61F5002F2B96 /* libetpan.a in Frameworks */,
+				C6ED6D1317A1884B00A4A14C /* CoreServices.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -592,10 +618,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				367861F116AB4D4F002F2B96 /* CoreFoundation.framework in Frameworks */,
-				367861F216AB4D4F002F2B96 /* CFNetwork.framework in Frameworks */,
 				367861F316AB4D4F002F2B96 /* libssl.dylib in Frameworks */,
 				367861F416AB4D4F002F2B96 /* libsasl2.2.dylib in Frameworks */,
+				C6ED6D0317A1865C00A4A14C /* Security.framework in Frameworks */,
 				367861F516AB4D4F002F2B96 /* libcrypto.dylib in Frameworks */,
+				C6ED6D1517A1884D00A4A14C /* CoreServices.framework in Frameworks */,
 				367863A416AB61F5002F2B96 /* libetpan.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -605,10 +632,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				3678620516AB4DFE002F2B96 /* CoreFoundation.framework in Frameworks */,
-				3678620616AB4DFE002F2B96 /* CFNetwork.framework in Frameworks */,
 				3678620716AB4DFE002F2B96 /* libssl.dylib in Frameworks */,
 				3678620816AB4DFE002F2B96 /* libsasl2.2.dylib in Frameworks */,
+				C6ED6D0517A1865E00A4A14C /* Security.framework in Frameworks */,
 				3678620916AB4DFE002F2B96 /* libcrypto.dylib in Frameworks */,
+				C6ED6D1417A1884C00A4A14C /* CoreServices.framework in Frameworks */,
 				367863A516AB61F6002F2B96 /* libetpan.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -618,10 +646,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				3678621816AB4E63002F2B96 /* CoreFoundation.framework in Frameworks */,
-				3678621916AB4E63002F2B96 /* CFNetwork.framework in Frameworks */,
 				3678621A16AB4E63002F2B96 /* libssl.dylib in Frameworks */,
 				3678621B16AB4E63002F2B96 /* libsasl2.2.dylib in Frameworks */,
+				C6ED6D0417A1865D00A4A14C /* Security.framework in Frameworks */,
 				3678621C16AB4E63002F2B96 /* libcrypto.dylib in Frameworks */,
+				C6ED6D1617A1884E00A4A14C /* CoreServices.framework in Frameworks */,
 				367863A616AB61F6002F2B96 /* libetpan.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -631,10 +660,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				3678622B16AB4EE6002F2B96 /* CoreFoundation.framework in Frameworks */,
-				3678622C16AB4EE6002F2B96 /* CFNetwork.framework in Frameworks */,
 				3678622D16AB4EE6002F2B96 /* libssl.dylib in Frameworks */,
 				3678622E16AB4EE6002F2B96 /* libsasl2.2.dylib in Frameworks */,
+				C6ED6D0717A1865F00A4A14C /* Security.framework in Frameworks */,
 				3678622F16AB4EE6002F2B96 /* libcrypto.dylib in Frameworks */,
+				C6ED6D1717A1884E00A4A14C /* CoreServices.framework in Frameworks */,
 				367863A816AB61F9002F2B96 /* libetpan.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -644,10 +674,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				3678623E16AB4F32002F2B96 /* CoreFoundation.framework in Frameworks */,
-				3678623F16AB4F32002F2B96 /* CFNetwork.framework in Frameworks */,
 				3678624016AB4F32002F2B96 /* libssl.dylib in Frameworks */,
 				3678624116AB4F32002F2B96 /* libsasl2.2.dylib in Frameworks */,
+				C6ED6D0617A1865E00A4A14C /* Security.framework in Frameworks */,
 				3678624216AB4F32002F2B96 /* libcrypto.dylib in Frameworks */,
+				C6ED6D1817A1884F00A4A14C /* CoreServices.framework in Frameworks */,
 				367863A916AB61FA002F2B96 /* libetpan.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -731,7 +762,8 @@
 			isa = PBXGroup;
 			children = (
 				3678611E16AB410C002F2B96 /* CoreFoundation.framework */,
-				3678612616AB4169002F2B96 /* CFNetwork.framework */,
+				C6ED6D0817A1883000A4A14C /* CoreServices.framework */,
+				C6ED6CF817A1862C00A4A14C /* Security.framework */,
 				3678612416AB4142002F2B96 /* libcrypto.dylib */,
 				3678612216AB4131002F2B96 /* libsasl2.2.dylib */,
 				3678612016AB411F002F2B96 /* libssl.dylib */,

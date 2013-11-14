@@ -30,8 +30,14 @@
  */
 
 /*  Created by Ian Ragsdale on 3/8/13. */
-#include <stddef.h>
+
+#ifdef HAVE_CONFIG_H
+#	include <config.h>
+#endif
+
 #include "mailstream_compress.h"
+
+#include <stddef.h>
 
 #if !HAVE_ZLIB
 
@@ -60,9 +66,9 @@ static int mailstream_low_compress_get_fd(mailstream_low * s);
 static struct mailstream_cancel * mailstream_low_compress_get_cancel(mailstream_low * s);
 static void mailstream_low_compress_free(mailstream_low * s);
 static void mailstream_low_compress_cancel(mailstream_low * s);
+static carray * mailstream_low_compress_get_certificate_chain(mailstream_low * s);
 
-typedef struct mailstream_compress_data
-{
+typedef struct mailstream_compress_data {
   mailstream_low * ms;
   z_stream *compress_stream;
   z_stream *decompress_stream;
@@ -78,6 +84,7 @@ static mailstream_low_driver local_mailstream_compress_driver = {
   /* mailstream_free */ mailstream_low_compress_free,
   /* mailstream_cancel */ mailstream_low_compress_cancel,
   /* mailstream_get_cancel */ mailstream_low_compress_get_cancel,
+  /* mailstream_get_certificate_chain */ mailstream_low_compress_get_certificate_chain,
 };
 
 mailstream_low_driver * mailstream_compress_driver = &local_mailstream_compress_driver;
@@ -139,10 +146,11 @@ mailstream_low * mailstream_low_compress_open(mailstream_low * ms)
   return NULL;
 }
 
-ssize_t mailstream_low_compress_read(mailstream_low * s, void * buf, size_t count) {
-  compress_data *data = s->data;
+static ssize_t mailstream_low_compress_read(mailstream_low * s, void * buf, size_t count)
+{
+  compress_data * data = s->data;
   data->ms->timeout = s->timeout;
-  z_stream *strm = data->decompress_stream;
+  z_stream * strm = data->decompress_stream;
     
   int zr;
 
@@ -179,66 +187,13 @@ ssize_t mailstream_low_compress_read(mailstream_low * s, void * buf, size_t coun
   return count - strm->avail_out;
 }
 
-/*
- mostly copied from mailstream_ssl.c
- removed their windows support - we only need iOS
-*/
-static int wait_write_compress(mailstream_low * s)
-{
-  fd_set fds_read;
-  fd_set fds_write;
-  struct timeval timeout;
-  int r;
-  int fd;
-  int max_fd;
-  int cancelled;
-  int write_enabled;
+static ssize_t mailstream_low_compress_write(mailstream_low * s, const void * buf, size_t count) {
     
-  // use the session timeout if set
-  if (s->timeout) {
-    timeout.tv_sec = s->timeout;
-    timeout.tv_usec = 0;
-  } else {
-    timeout = mailstream_network_delay;
-  }
-    
-  FD_ZERO(&fds_read);
-  struct mailstream_cancel * cancel = mailstream_low_compress_get_cancel(s);
-  fd = mailstream_cancel_get_fd(cancel);
-  FD_SET(fd, &fds_read);
-  FD_ZERO(&fds_write);
-  FD_SET(mailstream_low_compress_get_fd(s), &fds_write);
-    
-  max_fd = mailstream_low_compress_get_fd(s);
-  if (fd > max_fd)
-    max_fd = fd;
-    
-  r = select(max_fd + 1, &fds_read, &fds_write, NULL, &timeout);
-  if (r <= 0)
-    return -1;
-    
-  cancelled = FD_ISSET(fd, &fds_read);
-  write_enabled = FD_ISSET(mailstream_low_compress_get_fd(s), &fds_write);
-    
-  if (cancelled) {
-    /* cancelled */
-    mailstream_cancel_ack(cancel);
-    return -1;
-  }
-    
-  if (!write_enabled)
-    return 0;
-    
-  return 1;
-}
-
-ssize_t mailstream_low_compress_write(mailstream_low * s,
-const void * buf, size_t count) {
-    
-  int zr, wr;
-  compress_data *data = s->data;
+  int zr;
+  //int wr;
+  compress_data * data = s->data;
   data->ms->timeout = s->timeout;
-  z_stream *strm = data->compress_stream;
+  z_stream * strm = data->compress_stream;
 
   strm->next_in = (Bytef *)buf;
   /* we won't try to compress more than CHUNK_SIZE at a time so we always have enough buffer space */
@@ -253,48 +208,44 @@ const void * buf, size_t count) {
     printf("Error deflating: %d %s", zr, strm->msg);
     return -1;
   }
-
-  /*
-   wait until we can write to the buffer - we want to avoid any situation where we can have a partial write,
-   because with a partial write we can't tell the caller how much uncompressed data was written
-  */
-  wait_write_compress(s);
-
-  /* write the data to the underlying mailstream */
-  wr = data->ms->driver->mailstream_write(data->ms, data->output_buf, CHUNK_SIZE - strm->avail_out);
-
-  /*
-   if we were unable to write all the compressed data to the underlying stream, we're in a bit of trouble
-   we don't know how much UNcompressed data was written, so we can't let the client know how much to retry
-   so, we return -1 and hope that the wait_write call ensures this never happens
-  */
-  int len = CHUNK_SIZE-strm->avail_out;
-  if (wr < len) {
-    return -1;
-    assert(0);
+  
+  unsigned char * p = data->output_buf;
+  size_t remaining = CHUNK_SIZE - strm->avail_out;
+  while (remaining > 0) {
+    ssize_t wr = data->ms->driver->mailstream_write(data->ms, p, remaining);
+    if (wr < 0) {
+      return -1;
+    }
+    
+    p += wr;
+    remaining -= wr;
   }
-
+  
   /* let the caller know how much data we wrote */
   return compress_len - strm->avail_in;
 }
 
-int mailstream_low_compress_close(mailstream_low * s) {
-  compress_data *data = s->data;
+static int mailstream_low_compress_close(mailstream_low * s)
+{
+  compress_data * data = s->data;
   return data->ms->driver->mailstream_close(data->ms);
 }
 
-int mailstream_low_compress_get_fd(mailstream_low * s) {
-  compress_data *data = s->data;
+static int mailstream_low_compress_get_fd(mailstream_low * s)
+{
+  compress_data * data = s->data;
   return data->ms->driver->mailstream_get_fd(data->ms);
 }
 
-struct mailstream_cancel * mailstream_low_compress_get_cancel(mailstream_low * s) {
-  compress_data *data = s->data;
+static struct mailstream_cancel * mailstream_low_compress_get_cancel(mailstream_low * s)
+{
+  compress_data * data = s->data;
   return data->ms->driver->mailstream_get_cancel(data->ms);
 }
 
-void mailstream_low_compress_free(mailstream_low * s) {
-  compress_data *data = s->data;
+static void mailstream_low_compress_free(mailstream_low * s)
+{
+  compress_data * data = s->data;
   data->ms->driver->mailstream_free(data->ms);
   if (data->compress_stream) {
     deflateEnd(data->compress_stream);
@@ -308,9 +259,24 @@ void mailstream_low_compress_free(mailstream_low * s) {
   free(s);
 }
 
-void mailstream_low_compress_cancel(mailstream_low * s) {
-  compress_data *data = s->data;
+static void mailstream_low_compress_cancel(mailstream_low * s)
+{
+  compress_data * data = s->data;
   data->ms->driver->mailstream_cancel(data->ms);
+}
+
+static carray * mailstream_low_compress_get_certificate_chain(mailstream_low * s)
+{
+  compress_data * data = s->data;
+  return data->ms->driver->mailstream_get_certificate_chain(data->ms);
+}
+
+int mailstream_low_compress_wait_idle(mailstream_low * low,
+                                      struct mailstream_cancel * idle,
+                                      int max_idle_delay)
+{
+  compress_data * data = low->data;
+  return mailstream_low_wait_idle(data->ms, idle, max_idle_delay);
 }
 
 #endif

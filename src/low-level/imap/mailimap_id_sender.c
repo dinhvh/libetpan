@@ -29,7 +29,14 @@ int mailimap_id_send(mailstream * fd, struct mailimap_id_params_list * client_id
 static int mailimap_id_params_list_send(mailstream * fd, struct mailimap_id_params_list * list)
 {
   int r;
-  
+
+  if ((list == NULL) || (clist_count(list->idpa_list) == 0)) {
+    r = mailimap_token_send(fd, "NIL");
+    if (r != MAILIMAP_NO_ERROR)
+      return r;
+    return MAILIMAP_NO_ERROR;
+  }
+
   r = mailimap_oparenth_send(fd);
   if (r != MAILIMAP_NO_ERROR)
     return r;

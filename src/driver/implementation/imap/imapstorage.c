@@ -276,10 +276,14 @@ int imap_mailstorage_init_sasl_with_local_address(struct mailstorage * storage,
   else {
     imap_storage->imap_login = NULL;
   }
+
   if (imap_storage->imap_sasl.sasl_password != NULL) {
     imap_storage->imap_password = strdup(imap_storage->imap_sasl.sasl_password);
     if (imap_storage->imap_password == NULL)
       goto free_copy_login;
+  }
+  else {
+    imap_storage->imap_password = NULL;
   }
   
   storage->sto_data = imap_storage;

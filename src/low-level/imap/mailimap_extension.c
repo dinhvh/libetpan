@@ -212,3 +212,29 @@ int mailimap_has_extension(mailimap * session, char * extension_name)
   
   return 0;
 }
+
+LIBETPAN_EXPORT
+int mailimap_has_authentication(mailimap * session, char * authentication_name)
+{
+  if (session->imap_connection_info != NULL) {
+    if (session->imap_connection_info->imap_capability != NULL) {
+      clist * list;
+      clistiter * cur;
+      
+      list = session->imap_connection_info->imap_capability->cap_list;
+      for(cur = clist_begin(list) ; cur != NULL ; cur = clist_next(cur)) {
+        struct mailimap_capability * cap;
+        
+        cap = clist_content(cur);
+        if (cap->cap_type != MAILIMAP_CAPABILITY_AUTH_TYPE)
+          continue;
+        
+        if (strcasecmp(cap->cap_data.cap_name, authentication_name) == 0)
+          return 1;
+        
+      }
+    }
+  }
+  
+  return 0;
+}

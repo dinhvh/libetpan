@@ -347,71 +347,9 @@ void mailstream_set_privacy(mailstream * s, int can_be_public)
   mailstream_low_set_privacy(s->low, can_be_public);
 }
 
-
 int mailstream_wait_idle(mailstream * s, int max_idle_delay)
 {
-  int fd;
-  int idle_fd;
-  int cancel_fd;
-  int maxfd;
-  fd_set readfds;
-  struct timeval delay;
-  int r;
-  
-  if (s->low->driver == mailstream_cfstream_driver) {
-    return mailstream_cfstream_wait_idle(s, max_idle_delay);
-  }
-  
-  if (s->idle == NULL) {
-		return MAILSTREAM_IDLE_ERROR;
-	}
-  if (mailstream_low_get_cancel(mailstream_get_low(s)) == NULL) {
-		return MAILSTREAM_IDLE_ERROR;
-	}
-  fd = mailstream_low_get_fd(mailstream_get_low(s));
-  idle_fd = mailstream_cancel_get_fd(s->idle);
-  cancel_fd = mailstream_cancel_get_fd(mailstream_low_get_cancel(mailstream_get_low(s)));
-  
-  FD_ZERO(&readfds);
-  FD_SET(fd, &readfds);
-  FD_SET(idle_fd, &readfds);
-  FD_SET(cancel_fd, &readfds);
-  maxfd = fd;
-  if (idle_fd > maxfd) {
-    maxfd = idle_fd;
-  }
-  if (cancel_fd > maxfd) {
-    maxfd = cancel_fd;
-  }
-  delay.tv_sec = max_idle_delay;
-  delay.tv_usec = 0;
-  
-  r = select(maxfd + 1, &readfds, NULL, NULL, &delay);
-  if (r == 0) {
-    // timeout
-    return MAILSTREAM_IDLE_TIMEOUT;
-  }
-  else if (r == -1) {
-    // do nothing
-    return MAILSTREAM_IDLE_ERROR;
-  }
-  else {
-    if (FD_ISSET(fd, &readfds)) {
-      // has something on socket
-      return MAILSTREAM_IDLE_HASDATA;
-    }
-    if (FD_ISSET(idle_fd, &readfds)) {
-      // idle interrupted
-      mailstream_cancel_ack(s->idle);
-      return MAILSTREAM_IDLE_INTERRUPTED;
-    }
-    if (FD_ISSET(cancel_fd, &readfds)) {
-      // idle cancelled
-      mailstream_cancel_ack(mailstream_low_get_cancel(mailstream_get_low(s)));
-      return MAILSTREAM_IDLE_CANCELLED;
-    }
-    return MAILSTREAM_IDLE_ERROR;
-  }
+  return mailstream_low_wait_idle(s->low, s->idle, max_idle_delay);
 }
 
 int mailstream_setup_idle(mailstream * s)
@@ -471,3 +409,22 @@ void mailstream_set_logger(mailstream * s, void (* logger)(mailstream * s, int l
   s->logger = logger;
   s->logger_context = logger_context;
 }
+
+carray * mailstream_get_certificate_chain(mailstream * s)
+{
+  return mailstream_low_get_certificate_chain(s->low);
+}
+
+void mailstream_certificate_chain_free(carray * certificate_chain)
+{
+  unsigned int i;
+  
+  if (certificate_chain == NULL)
+    return;
+  
+  for(i = 0 ; i < carray_count(certificate_chain) ; i ++) {
+    mmap_string_free(carray_get(certificate_chain, i));
+  }
+  carray_free(certificate_chain);
+}
+

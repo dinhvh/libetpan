@@ -50,4 +50,17 @@
 
 int mailimap_compress(mailimap * session);
 
+/*
+   mailimap_has_compress_deflate()
+
+   This function will return 1 if compression deflate is available
+   on the server else it will return 0.
+
+   @param session IMAP session
+
+   @return returns 1 if compression deflate is available on the server.
+ */
+
+int mailimap_has_compress_deflate(mailimap * session);
+
 #endif

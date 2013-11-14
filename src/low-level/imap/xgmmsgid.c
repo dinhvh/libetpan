@@ -39,7 +39,6 @@ static int fetch_data_xgmmsgid_parse(mailstream * fd,
 {
     size_t cur_token;
     uint64_t msgid;
-    uint32_t uid;
     int r;
     
     cur_token = * indx;

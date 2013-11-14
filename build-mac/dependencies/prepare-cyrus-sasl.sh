@@ -82,6 +82,7 @@ echo "*** generating makemd5 ***" >> "$logfile" 2>&1
 
 cd "$srcdir/$ARCHIVE"
 export SDKROOT=
+export IPHONEOS_DEPLOYMENT_TARGET=
 ./configure > "$logfile" 2>&1
 if [[ "$?" != "0" ]]; then
   echo "CONFIGURE FAILED"
@@ -107,25 +108,26 @@ export LANG=en_US.US-ASCII
 LIB_NAME=$ARCHIVE
 TARGETS="iPhoneOS iPhoneSimulator"
 
-SDK_IOS_MIN_VERSION=4.3
+SDK_IOS_MIN_VERSION=7.0
 SDK_IOS_VERSION=`xcodebuild -version -sdk 2>/dev/null | egrep SDKVersion | tail -n 1 | sed -E -n -e 's|SDKVersion: *(.*) *$|\1|p'`
 BUILD_DIR="$tmpdir/build"
 INSTALL_PATH=${BUILD_DIR}/${LIB_NAME}/universal
 
 for TARGET in $TARGETS; do
 
-    TOOLCHAIN=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin
+    DEVELOPER=$(xcode-select --print-path)
+    TOOLCHAIN="$DEVELOPER/Toolchains/XcodeDefault.xctoolchain/usr/bin"
     SYSROOT=`xcodebuild -version -sdk 2>/dev/null | egrep $TARGET -B 3 | egrep '^Path: '| egrep $SDK_IOS_VERSION | sort -u | tail -n 1| cut -d ' ' -f 2`
 
     case $TARGET in
         (iPhoneOS) 
             ARCH=arm
-            MARCHS="armv7 armv7s"
+            MARCHS="armv7 armv7s arm64"
             EXTRA_FLAGS="-miphoneos-version-min=$SDK_IOS_MIN_VERSION"
             ;;
         (iPhoneSimulator)
             ARCH=i386
-            MARCHS=i386
+            MARCHS="i386 x86_64"
             EXTRA_FLAGS="-miphoneos-version-min=$SDK_IOS_MIN_VERSION"
             ;;
     esac
@@ -138,6 +140,7 @@ for TARGET in $TARGETS; do
         rm -rf $PREFIX
 
         export CFLAGS="-arch ${MARCH} -isysroot ${SYSROOT} -Os ${EXTRA_FLAGS}"
+        echo $CFLAGS
 
         if test -x ${TOOLCHAIN}/clang; then
           export LD=${TOOLCHAIN}/clang

@@ -36,6 +36,7 @@
 #include <TargetConditionals.h>
 #if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
 #include <CFNetwork/CFNetwork.h>
+#include <Security/Security.h>
 #else
 #include <CoreServices/CoreServices.h>
 #endif
@@ -129,6 +130,7 @@ static ssize_t mailstream_low_cfstream_write(mailstream_low * s,
 static void mailstream_low_cfstream_free(mailstream_low * s);
 static int mailstream_low_cfstream_get_fd(mailstream_low * s);
 static void mailstream_low_cfstream_cancel(mailstream_low * s);
+static carray * mailstream_low_cfstream_get_certificate_chain(mailstream_low * s);
 
 static mailstream_low_driver local_mailstream_cfstream_driver = {
   /* mailstream_read */ mailstream_low_cfstream_read,
@@ -137,7 +139,8 @@ static mailstream_low_driver local_mailstream_cfstream_driver = {
   /* mailstream_get_fd */ mailstream_low_cfstream_get_fd,
   /* mailstream_free */ mailstream_low_cfstream_free,
   /* mailstream_cancel */ mailstream_low_cfstream_cancel,
-  /* mailstream_get_cancel_fd */ NULL,
+  /* mailstream_get_cancel */ NULL,
+  /* mailstream_get_certificate_chain */ mailstream_low_cfstream_get_certificate_chain,
 };
 
 mailstream_low_driver * mailstream_cfstream_driver =
@@ -957,15 +960,25 @@ int mailstream_cfstream_set_ssl_enabled(mailstream * s, int ssl_enabled)
     //fprintf(stderr, "is not ssl\n");
   }
   
-  r = wait_runloop(s->low, STATE_WAIT_SSL);
-  if (r != WAIT_RUNLOOP_EXIT_NO_ERROR) {
-    return -1;
+  // We need to investigate more about how to establish a STARTTLS connection.
+  // For now, wait until we get the certificate chain.
+  while (1) {
+    r = wait_runloop(s->low, STATE_WAIT_SSL);
+    if (r != WAIT_RUNLOOP_EXIT_NO_ERROR) {
+      return -1;
+    }
+    if (cfstream_data->writeSSLResult < 0)
+      return -1;
+    if (cfstream_data->readSSLResult < 0)
+      return -1;
+    CFArrayRef certs = CFReadStreamCopyProperty(cfstream_data->readStream, kCFStreamPropertySSLPeerCertificates);
+    if (certs == NULL) {
+      // No certificates, wait more.
+      continue;
+    }
+    CFRelease(certs);
+    break;
   }
-  
-  if (cfstream_data->writeSSLResult < 0)
-    return -1;
-  if (cfstream_data->readSSLResult < 0)
-    return -1;
   
   return 0;
 #else
@@ -1029,14 +1042,19 @@ void mailstream_cfstream_set_ssl_level(mailstream * s, int ssl_level)
 
 int mailstream_cfstream_wait_idle(mailstream * s, int max_idle_delay)
 {
+  return mailstream_low_cfstream_wait_idle(s->low, max_idle_delay);
+}
+
+int mailstream_low_cfstream_wait_idle(mailstream_low * low, int max_idle_delay)
+{
 #if HAVE_CFNETWORK
   struct mailstream_cfstream_data * cfstream_data;
   int r;
   
-  cfstream_data = (struct mailstream_cfstream_data *) s->low->data;
+  cfstream_data = (struct mailstream_cfstream_data *) low->data;
   cfstream_data->idleMaxDelay = max_idle_delay;
   
-  r = wait_runloop(s->low, STATE_WAIT_IDLE);
+  r = wait_runloop(low, STATE_WAIT_IDLE);
   switch (r) {
     case WAIT_RUNLOOP_EXIT_TIMEOUT:
       return MAILSTREAM_IDLE_TIMEOUT;
@@ -1108,5 +1126,38 @@ void mailstream_cfstream_interrupt_idle(mailstream * s)
   }
   
   pthread_mutex_unlock(&cfstream_data->runloop_lock);
+#endif
+}
+
+static carray * mailstream_low_cfstream_get_certificate_chain(mailstream_low * s)
+{
+#if HAVE_CFNETWORK
+  struct mailstream_cfstream_data * cfstream_data;
+  CFArrayRef certs;
+  unsigned int i;
+  carray * result;
+  
+  cfstream_data = (struct mailstream_cfstream_data *) s->data;
+  certs = CFReadStreamCopyProperty(cfstream_data->readStream, kCFStreamPropertySSLPeerCertificates);
+  if (certs == NULL)
+    return NULL;
+  
+  result = carray_new(4);
+  for(i = 0 ; i < CFArrayGetCount(certs) ; i ++) {
+    SecCertificateRef cert = (SecCertificateRef) CFArrayGetValueAtIndex(certs, i);
+    CFDataRef data = SecCertificateCopyData(cert);
+    CFIndex length = CFDataGetLength(data);
+    const UInt8 * bytes = CFDataGetBytePtr(data);
+    MMAPString * str = mmap_string_sized_new(length);
+    mmap_string_append_len(str, (char*) bytes, length);
+    carray_add(result, str, NULL);
+    CFRelease(data);
+  }
+  
+  CFRelease(certs);
+  
+  return result;
+#else
+  return NULL;
 #endif
 }

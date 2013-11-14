@@ -148,9 +148,10 @@ int mailimap_enable(mailimap * session, struct mailimap_capability_data * capabi
   if (r != MAILIMAP_NO_ERROR)
     return r;
   
+
+  cap_data = NULL;
   for(cur = clist_begin(session->imap_response_info->rsp_extension_list) ; cur != NULL ; cur = clist_next(cur)) {
     struct mailimap_extension_data * ext_data;
-    struct mailimap_capability_data * cap_data;
     
     ext_data = clist_content(cur);
     if (ext_data->ext_extension->ext_id != MAILIMAP_EXTENSION_ENABLE) {
@@ -160,9 +161,25 @@ int mailimap_enable(mailimap * session, struct mailimap_capability_data * capabi
       continue;
     }
     
+    if (cap_data != NULL) {
+      mailimap_capability_data_free(cap_data);
+    }
     cap_data = ext_data->ext_data;
     ext_data->ext_data = NULL;
 		break;
+  }
+  if (cap_data == NULL) {
+    clist * list;
+    
+    list = clist_new();
+    if (list == NULL) {
+      return MAILIMAP_ERROR_MEMORY;
+    }
+    cap_data = mailimap_capability_data_new(list);
+    if (cap_data == NULL) {
+      clist_free(list);
+      return MAILIMAP_ERROR_MEMORY;
+    }
   }
   
   error_code = response->rsp_resp_done->rsp_data.rsp_tagged->rsp_cond_state->rsp_type;

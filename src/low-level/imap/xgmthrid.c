@@ -39,7 +39,6 @@ static int fetch_data_xgmthrid_parse(mailstream * fd,
 {
     size_t cur_token;
     uint64_t thrid;
-    uint32_t uid;
     int r;
     
     cur_token = * indx;

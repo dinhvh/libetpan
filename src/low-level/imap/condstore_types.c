@@ -86,6 +86,7 @@ void mailimap_condstore_resptextcode_free(struct mailimap_condstore_resptextcode
       mailimap_set_free(resptextcode->cs_data.cs_modified_set);
       break;
   }
+  free(resptextcode);
 }
 
 struct mailimap_condstore_search * mailimap_condstore_search_new(clist * cs_search_result, uint64_t cs_modseq_value)
