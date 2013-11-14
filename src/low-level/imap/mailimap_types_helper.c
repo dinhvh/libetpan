@@ -711,7 +711,7 @@ mailimap_search_key_new_all(void)
 				 NULL, NULL, NULL, NULL, NULL,
 				 NULL, 0, NULL,
 				 NULL, NULL, NULL, NULL, NULL,
-				 0, NULL, NULL, 0, NULL);
+				 0, NULL, NULL, NULL);
 }
 
 struct mailimap_search_key *
@@ -722,7 +722,7 @@ mailimap_search_key_new_bcc(char * sk_bcc)
 				 NULL, NULL, NULL, NULL, NULL,
 				 NULL, 0, NULL,
 				 NULL, NULL, NULL, NULL, NULL,
-				 0, NULL, NULL, 0, NULL);
+				 0, NULL, NULL, NULL);
 }
 
 struct mailimap_search_key *
@@ -733,7 +733,7 @@ mailimap_search_key_new_before(struct mailimap_date * sk_before)
 				 NULL, NULL, NULL, NULL, NULL,
 				 NULL, 0, NULL,
 				 NULL, NULL, NULL, NULL, NULL,
-				 0, NULL, NULL, 0, NULL);
+				 0, NULL, NULL, NULL);
 }
 
 struct mailimap_search_key *
@@ -744,7 +744,7 @@ mailimap_search_key_new_body(char * sk_body)
 				 NULL, NULL, NULL, NULL, NULL,
 				 NULL, 0, NULL,
 				 NULL, NULL, NULL, NULL, NULL,
-				 0, NULL, NULL, 0, NULL);
+				 0, NULL, NULL, NULL);
 }
 
 struct mailimap_search_key *
@@ -755,7 +755,7 @@ mailimap_search_key_new_cc(char * sk_cc)
 				 NULL, NULL, NULL, NULL, NULL,
 				 NULL, 0, NULL,
 				 NULL, NULL, NULL, NULL, NULL,
-				 0, NULL, NULL, 0, NULL);
+				 0, NULL, NULL, NULL);
 }
 
 struct mailimap_search_key *
@@ -766,7 +766,7 @@ mailimap_search_key_new_from(char * sk_from)
 				 NULL, NULL, NULL, NULL, NULL,
 				 NULL, 0, NULL,
 				 NULL, NULL, NULL, NULL, NULL,
-				 0, NULL, NULL, 0, NULL);
+				 0, NULL, NULL, NULL);
 }
 
 struct mailimap_search_key *
@@ -777,7 +777,7 @@ mailimap_search_key_new_keyword(char * sk_keyword)
 				 NULL, NULL, NULL, NULL, NULL,
 				 NULL, 0, NULL,
 				 NULL, NULL, NULL, NULL, NULL,
-				 0, NULL, NULL, 0, NULL);
+				 0, NULL, NULL, NULL);
 }
 
 struct mailimap_search_key *
@@ -788,7 +788,7 @@ mailimap_search_key_new_on(struct mailimap_date * sk_on)
 				 NULL, NULL, NULL, NULL, NULL,
 				 NULL, 0, NULL,
 				 NULL, NULL, NULL, NULL, NULL,
-				 0, NULL, NULL, 0, NULL);
+				 0, NULL, NULL, NULL);
 }
 
 struct mailimap_search_key *
@@ -799,7 +799,7 @@ mailimap_search_key_new_since(struct mailimap_date * sk_since)
 				 NULL, NULL, NULL, NULL, NULL,
 				 NULL, 0, NULL,
 				 NULL, NULL, NULL, NULL, NULL,
-				 0, NULL, NULL, 0, NULL);
+				 0, NULL, NULL, NULL);
 }
 
 struct mailimap_search_key *
@@ -810,7 +810,7 @@ mailimap_search_key_new_subject(char * sk_subject)
 				 sk_subject, NULL, NULL, NULL, NULL,
 				 NULL, 0, NULL,
 				 NULL, NULL, NULL, NULL, NULL,
-				 0, NULL, NULL, 0, NULL);
+				 0, NULL, NULL, NULL);
 }
 
 struct mailimap_search_key *
@@ -821,7 +821,7 @@ mailimap_search_key_new_text(char * sk_text)
 				 NULL, sk_text, NULL, NULL, NULL,
 				 NULL, 0, NULL,
 				 NULL, NULL, NULL, NULL, NULL,
-				 0, NULL, NULL, 0, NULL);
+				 0, NULL, NULL, NULL);
 }
 
 struct mailimap_search_key *
@@ -832,7 +832,7 @@ mailimap_search_key_new_to(char * sk_to)
 				 NULL, NULL, sk_to, NULL, NULL,
 				 NULL, 0, NULL,
 				 NULL, NULL, NULL, NULL, NULL,
-				 0, NULL, NULL, 0, NULL);
+				 0, NULL, NULL, NULL);
 }
 
 struct mailimap_search_key *
@@ -843,7 +843,7 @@ mailimap_search_key_new_unkeyword(char * sk_unkeyword)
 				 NULL, NULL, NULL, sk_unkeyword, NULL,
 				 NULL, 0, NULL,
 				 NULL, NULL, NULL, NULL, NULL,
-				 0, NULL, NULL, 0, NULL);
+				 0, NULL, NULL, NULL);
 }
 
 struct mailimap_search_key *
@@ -854,7 +854,7 @@ mailimap_search_key_new_header(char * sk_header_name, char * sk_header_value)
 				 NULL, NULL, NULL, NULL, sk_header_name,
 				 sk_header_value, 0, NULL,
 				 NULL, NULL, NULL, NULL, NULL,
-				 0, NULL, NULL, 0, NULL);
+				 0, NULL, NULL, NULL);
 }
 
 struct mailimap_search_key *
@@ -865,18 +865,13 @@ mailimap_search_key_new_larger(uint32_t sk_larger)
 				 NULL, NULL, NULL, NULL, NULL,
 				 NULL, sk_larger, NULL,
 				 NULL, NULL, NULL, NULL, NULL,
-				 0, NULL, NULL, 0, NULL);
+				 0, NULL, NULL, NULL);
 }
 
 struct mailimap_search_key *
 mailimap_search_key_xgmthrid(uint64_t sk_xgmthrid)
 {
-  return mailimap_search_key_new(MAILIMAP_SEARCH_KEY_XGMTHRID, NULL, NULL,
-                                 NULL, NULL, NULL, NULL, NULL, NULL,
-                                 NULL, NULL, NULL, NULL, NULL,
-                                 NULL, 0, NULL,
-                                 NULL, NULL, NULL, NULL, NULL,
-                                 0, NULL, NULL, sk_xgmthrid, NULL);
+  return mailimap_search_key_xgm_new(MAILIMAP_SEARCH_KEY_XGMTHRID, sk_xgmthrid);
 }
 
 struct mailimap_search_key *
@@ -887,7 +882,7 @@ mailimap_search_key_new_not(struct mailimap_search_key * sk_not)
 				 NULL, NULL, NULL, NULL, NULL,
 				 NULL, 0, sk_not,
 				 NULL, NULL, NULL, NULL, NULL,
-				 0, NULL, NULL, 0, NULL);
+				 0, NULL, NULL, NULL);
 }
 
 struct mailimap_search_key *
@@ -899,7 +894,7 @@ mailimap_search_key_new_or(struct mailimap_search_key * sk_or1,
 				 NULL, NULL, NULL, NULL, NULL,
 				 NULL, 0, NULL,
 				 sk_or1, sk_or2, NULL, NULL, NULL,
-				 0, NULL, NULL, 0, NULL);
+				 0, NULL, NULL, NULL);
 }
 
 struct mailimap_search_key *
@@ -910,7 +905,7 @@ mailimap_search_key_new_sentbefore(struct mailimap_date * sk_sentbefore)
 				 NULL, NULL, NULL, NULL, NULL,
 				 NULL, 0, NULL,
 				 NULL, NULL, sk_sentbefore, NULL, NULL,
-				 0, NULL, NULL, 0, NULL);
+				 0, NULL, NULL, NULL);
 }
 
 struct mailimap_search_key *
@@ -921,7 +916,7 @@ mailimap_search_key_new_senton(struct mailimap_date * sk_senton)
 				 NULL, NULL, NULL, NULL, NULL,
 				 NULL, 0, NULL,
 				 NULL, NULL, NULL, sk_senton, NULL,
-				 0, NULL, NULL, 0, NULL);
+				 0, NULL, NULL, NULL);
 }
 
 struct mailimap_search_key *
@@ -932,7 +927,7 @@ mailimap_search_key_new_sentsince(struct mailimap_date * sk_sentsince)
 				 NULL, NULL, NULL, NULL, NULL,
 				 NULL, 0, NULL,
 				 NULL, NULL, NULL, NULL, sk_sentsince,
-				 0, NULL, NULL, 0, NULL);
+				 0, NULL, NULL, NULL);
 }
 
 struct mailimap_search_key *
@@ -943,7 +938,7 @@ mailimap_search_key_new_smaller(uint32_t sk_smaller)
 				 NULL, NULL, NULL, NULL, NULL,
 				 NULL, 0, NULL,
 				 NULL, NULL, NULL, NULL, NULL,
-				 sk_smaller, NULL, NULL, 0, NULL);
+				 sk_smaller, NULL, NULL, NULL);
 }
 
 struct mailimap_search_key *
@@ -954,7 +949,7 @@ mailimap_search_key_new_uid(struct mailimap_set * sk_uid)
 				 NULL, NULL, NULL, NULL, NULL,
 				 NULL, 0, NULL,
 				 NULL, NULL, NULL, NULL, NULL,
-				 0, sk_uid, NULL, 0, NULL);
+				 0, sk_uid, NULL, NULL);
 }
 
 struct mailimap_search_key *
@@ -965,7 +960,7 @@ mailimap_search_key_new_set(struct mailimap_set * sk_set)
 				 NULL, NULL, NULL, NULL, NULL,
 				 NULL, 0, NULL,
 				 NULL, NULL, NULL, NULL, NULL,
-				 0, NULL, sk_set, 0, NULL);
+				 0, NULL, sk_set, NULL);
 }
 
 struct mailimap_search_key *
@@ -976,7 +971,7 @@ mailimap_search_key_new_multiple(clist * sk_multiple)
 				 NULL, NULL, NULL, NULL, NULL,
 				 NULL, 0, NULL,
 				 NULL, NULL, NULL, NULL, NULL,
-				 0, NULL, NULL, 0, sk_multiple);
+				 0, NULL, NULL, sk_multiple);
 }
 
 struct mailimap_search_key *

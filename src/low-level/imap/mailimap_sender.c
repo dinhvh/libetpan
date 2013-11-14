@@ -2276,7 +2276,7 @@ int mailimap_search_key_send(mailstream * fd,
     r = mailimap_space_send(fd);
     if (r != MAILIMAP_NO_ERROR)
       return r;
-    r = mailimap_long_number_send(fd, key->sk_data.sk_xgmthrid);
+    r = mailimap_uint64_send(fd, key->sk_data.sk_xgmthrid);
     if (r != MAILIMAP_NO_ERROR)
       return r;
     return MAILIMAP_NO_ERROR;
@@ -2347,7 +2347,7 @@ int mailimap_search_key_send(mailstream * fd,
     if (r != MAILIMAP_NO_ERROR)
       return r;
     
-    r = mailimap_long_number_send(fd, key->sk_data.sk_modseq.sk_modseq_valzer);
+    r = mailimap_mod_sequence_value_send(fd, key->sk_data.sk_modseq.sk_modseq_valzer);
     if (r != MAILIMAP_NO_ERROR)
       return r;
     
@@ -2359,7 +2359,12 @@ int mailimap_search_key_send(mailstream * fd,
   }
 }
 
-int mailimap_long_number_send(mailstream * fd, uint64_t number)
+int mailimap_mod_sequence_value_send(mailstream * fd, uint64_t number)
+{
+  return mailimap_uint64_send(fd, number);
+}
+
+int mailimap_uint64_send(mailstream * fd, uint64_t number)
 {
   char numberval[30];
   snprintf(numberval, sizeof(numberval), "%llu", (long long unsigned) number);
@@ -2734,7 +2739,7 @@ mailimap_store_send(mailstream * fd,
     if (r != MAILIMAP_NO_ERROR)
       return r;
     
-    r = mailimap_long_number_send(fd, mod_sequence_valzer);
+    r = mailimap_mod_sequence_value_send(fd, mod_sequence_valzer);
 		if (r != MAILIMAP_NO_ERROR)
 			return r;
 		

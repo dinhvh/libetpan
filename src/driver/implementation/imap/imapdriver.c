@@ -494,7 +494,7 @@ static int status_selected_folder(mailsession * session, const char * mb,
       NULL, NULL, NULL, NULL, NULL,
       NULL, NULL, NULL, NULL, 0,
       NULL, NULL, NULL, NULL, NULL,
-      NULL, 0, NULL, NULL, 0, NULL);
+      NULL, 0, NULL, NULL, NULL);
   if (search_key == NULL) {
     res = MAIL_ERROR_MEMORY;
     goto err;

@@ -197,7 +197,9 @@ int mailimap_oparenth_send(mailstream * fd);
 
 int mailimap_cparenth_send(mailstream * fd);
 
-int mailimap_long_number_send(mailstream * fd, uint64_t number);
+int mailimap_mod_sequence_value_send(mailstream * fd, uint64_t modseq);
+  
+int mailimap_uint64_send(mailstream * fd, uint64_t number);
 
 int mailimap_number_send(mailstream * fd, uint32_t number);
 

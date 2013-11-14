@@ -2679,7 +2679,7 @@ mailimap_search_key_new(int sk_type,
     struct mailimap_date * sk_senton,
     struct mailimap_date * sk_sentsince,
     uint32_t sk_smaller, struct mailimap_set * sk_uid,
-    struct mailimap_set * sk_set, uint64_t sk_xgmthrid, clist * sk_multiple)
+    struct mailimap_set * sk_set, clist * sk_multiple)
 {
   struct mailimap_search_key * key;
 
@@ -2729,9 +2729,6 @@ mailimap_search_key_new(int sk_type,
     key->sk_data.sk_header.sk_header_name = sk_header_name;
     key->sk_data.sk_header.sk_header_value = sk_header_value;
     break;
-  case MAILIMAP_SEARCH_KEY_XGMTHRID:
-    key->sk_data.sk_xgmthrid = sk_xgmthrid;
-    break;
   case MAILIMAP_SEARCH_KEY_LARGER:
     key->sk_data.sk_larger = sk_larger;
     break;
@@ -2767,6 +2764,24 @@ mailimap_search_key_new(int sk_type,
   return key;
 }
 
+struct mailimap_search_key *
+mailimap_search_key_xgm_new(int sk_type, uint64_t sk_xgmthrid)
+{
+  struct mailimap_search_key * key;
+  
+  key = malloc(sizeof(* key));
+  if (key == NULL)
+    return NULL;
+  
+  key->sk_type = sk_type;
+  switch (sk_type) {
+  case MAILIMAP_SEARCH_KEY_XGMTHRID:
+    key->sk_data.sk_xgmthrid = sk_xgmthrid;
+    break;
+  }
+  
+  return key;
+}
 
 void mailimap_search_key_free(struct mailimap_search_key * key)
 {
