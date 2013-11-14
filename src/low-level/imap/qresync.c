@@ -139,7 +139,7 @@ int mailimap_select_qresync_send(mailstream * fd, const char * mb,
   r = mailimap_space_send(fd);
   if (r != MAILIMAP_NO_ERROR)
     return r;
-  r = mailimap_mod_sequence_value_send(fd, modseq_value);
+  r = mailimap_long_number_send(fd, modseq_value);
 	if (r != MAILIMAP_NO_ERROR)
 		return r;
 	if (known_uids != NULL) {
@@ -343,7 +343,7 @@ static int send_fetch_param(mailstream * fd, uint64_t mod_sequence_value, int va
   if (r != MAILIMAP_NO_ERROR)
     return r;
   
-  r = mailimap_mod_sequence_value_send(fd, mod_sequence_value);
+  r = mailimap_long_number_send(fd, mod_sequence_value);
   if (r != MAILIMAP_NO_ERROR)
     return r;
   

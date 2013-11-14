@@ -570,7 +570,14 @@ mailimap_search_key_new_unkeyword(char * sk_unkeyword);
 
 struct mailimap_search_key *
 mailimap_search_key_new_header(char * sk_header_name, char * sk_header_value);
+  
+/*
+ this function creates a condition structure to match messages with
+ the given gmail thread id
+ */
 
+struct mailimap_search_key *
+mailimap_search_key_xgmthrid(uint64_t sk_xgmthrid);
 
 /*
   this function creates a condition structure to match messages with size

@@ -2858,7 +2858,8 @@ enum {
                                      in the given range */
   MAILIMAP_SEARCH_KEY_MULTIPLE,   /* the boolean operator between the
                                      conditions is AND */
-  MAILIMAP_SEARCH_KEY_MODSEQ      /* mod sequence */
+  MAILIMAP_SEARCH_KEY_MODSEQ,     /* mod sequence */
+  MAILIMAP_SEARCH_KEY_XGMTHRID    /* Gmail thread id */
 };
 
 /*
@@ -2924,6 +2925,8 @@ enum {
   - uid is a set of messages when type is MAILIMAP_SEARCH_KEY_UID
 
   - set is a set of messages when type is MAILIMAP_SEARCH_KEY_SET
+ 
+  - xgmthrid is a number of the gmail thread id when type is MAILIMAP_SEARCH_KEY_XGMTHRID
 
   - multiple is a set of message when type is MAILIMAP_SEARCH_KEY_MULTIPLE
 */
@@ -2965,6 +2968,7 @@ struct mailimap_search_key {
     uint32_t sk_smaller;
     struct mailimap_set * sk_uid;
     struct mailimap_set * sk_set;
+    uint64_t sk_xgmthrid;
     clist * sk_multiple; /* list of (struct mailimap_search_key *) */
     struct {
       struct mailimap_flag * sk_entry_name;
@@ -2990,7 +2994,7 @@ mailimap_search_key_new(int sk_type,
     struct mailimap_date * sk_senton,
     struct mailimap_date * sk_sentsince,
     uint32_t sk_smaller, struct mailimap_set * sk_uid,
-    struct mailimap_set * sk_set, clist * sk_multiple);
+    struct mailimap_set * sk_set, uint64_t sk_xgmthrid, clist * sk_multiple);
 
 
 LIBETPAN_EXPORT
