@@ -139,8 +139,8 @@ for TARGET in $TARGETS; do
         PREFIX=${BUILD_DIR}/${LIB_NAME}/${TARGET}${SDK_IOS_VERSION}${MARCH}
         rm -rf $PREFIX
 
-        export CFLAGS="-arch ${MARCH} -isysroot ${SYSROOT} -Os ${EXTRA_FLAGS}"
-        echo $CFLAGS
+        export CPPFLAGS="-arch ${MARCH} -isysroot ${SYSROOT}"
+        export CFLAGS="${CPPFLAGS} -Os ${EXTRA_FLAGS}"
 
         if test -x ${TOOLCHAIN}/clang; then
           export LD=${TOOLCHAIN}/clang
