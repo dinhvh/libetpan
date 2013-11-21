@@ -154,6 +154,7 @@ static int openssl_init_done = 0;
 #endif
 
 // Used to make OpenSSL thread safe
+#ifndef USE_GNUTLS
 #if defined (HAVE_PTHREAD_H) && !defined (WIN32) && defined (USE_SSL) && defined (LIBETPAN_REENTRANT)
   struct CRYPTO_dynlock_value
   {
@@ -223,6 +224,7 @@ static int openssl_init_done = 0;
     CRYPTO_set_dynlock_lock_callback(dyn_lock_function);
     CRYPTO_set_dynlock_destroy_callback(dyn_destroy_function);
   }
+#endif
 #endif
 
 void mailstream_ssl_init_lock(void)
