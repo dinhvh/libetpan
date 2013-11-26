@@ -572,7 +572,9 @@ static struct mailstream_ssl_data * ssl_data_new(int fd, time_t timeout,
   else {
 		timeout_value = timeout;
   }
+#if GNUTLS_VERSION_NUMBER >= 0x030100
 	gnutls_handshake_set_timeout(session, timeout_value);
+#endif
 
   do {
     r = gnutls_handshake(session);
