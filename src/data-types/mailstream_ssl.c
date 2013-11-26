@@ -521,6 +521,7 @@ static struct mailstream_ssl_data * ssl_data_new(int fd, time_t timeout,
   gnutls_certificate_credentials_t xcred;
   int r;
   struct mailstream_ssl_context * ssl_context = NULL;
+  unsigned int timeout_value;
   
   mailstream_ssl_init();
   
@@ -552,7 +553,7 @@ static struct mailstream_ssl_data * ssl_data_new(int fd, time_t timeout,
   gnutls_dh_set_prime_bits(session, 512);
   
   if (timeout == 0) {
-		timeout_value = mailstream_network_delay.tv_sec * 1000 + timeout.tv_usec / 1000;
+		timeout_value = mailstream_network_delay.tv_sec * 1000 + mailstream_network_delay.tv_usec / 1000;
   }
   else {
 		timeout_value = timeout;
