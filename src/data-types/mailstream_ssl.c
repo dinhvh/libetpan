@@ -489,10 +489,17 @@ static struct mailstream_ssl_data * tls_data_new(int fd, time_t timeout,
 static struct mailstream_ssl_context * mailstream_ssl_context_new(gnutls_session session, int fd);
 static void mailstream_ssl_context_free(struct mailstream_ssl_context * ssl_ctx);
 
+#if GNUTLS_VERSION_NUMBER <= 0x020c00
 static int mailstream_gnutls_client_cert_cb(gnutls_session session,
                                const gnutls_datum *req_ca_rdn, int nreqs,
                                const gnutls_pk_algorithm *sign_algos,
                                int sign_algos_length, gnutls_retr_st *st)
+#else
+static int mailstream_gnutls_client_cert_cb(gnutls_session session,
+                               const gnutls_datum *req_ca_rdn, int nreqs,
+                               const gnutls_pk_algorithm *sign_algos,
+                               int sign_algos_length, gnutls_retr2_st *st)
+#endif
 {
 	struct mailstream_ssl_context * ssl_context = (struct mailstream_ssl_context *)gnutls_session_get_ptr(session);
 	gnutls_certificate_type type = gnutls_certificate_type_get(session);
@@ -504,7 +511,11 @@ static int mailstream_gnutls_client_cert_cb(gnutls_session session,
 
 	if (type == GNUTLS_CRT_X509 && ssl_context->client_x509 && ssl_context->client_pkey) {
 		st->ncerts = 1;
+#if GNUTLS_VERSION_NUMBER <= 0x020c00
 		st->type = type;
+#else
+		st->key_type = type;
+#endif
 		st->cert.x509 = &(ssl_context->client_x509);
 		st->key.x509 = ssl_context->client_pkey;
 		st->deinit_all = 0;
@@ -539,8 +550,11 @@ static struct mailstream_ssl_data * ssl_data_new(int fd, time_t timeout,
   
   gnutls_session_set_ptr(session, ssl_context);
   gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE, xcred);
+#if GNUTLS_VERSION_NUMBER <= 0x020c00
   gnutls_certificate_client_set_retrieve_function(xcred, mailstream_gnutls_client_cert_cb);
-
+#else
+  gnutls_certificate_set_retrieve_function(xcred, mailstream_gnutls_client_cert_cb);
+#endif
   gnutls_set_default_priority(session);
   gnutls_priority_set_direct(session, "NORMAL", NULL);
 
@@ -558,7 +572,9 @@ static struct mailstream_ssl_data * ssl_data_new(int fd, time_t timeout,
   else {
 		timeout_value = timeout;
   }
+#if GNUTLS_VERSION_NUMBER >= 0x030100
 	gnutls_handshake_set_timeout(session, timeout_value);
+#endif
 
   do {
     r = gnutls_handshake(session);
