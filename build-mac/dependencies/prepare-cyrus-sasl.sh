@@ -109,15 +109,15 @@ LIB_NAME=$ARCHIVE
 TARGETS="iPhoneOS iPhoneSimulator"
 
 SDK_IOS_MIN_VERSION=7.0
-SDK_IOS_VERSION=`xcodebuild -version -sdk 2>/dev/null | egrep SDKVersion | tail -n 1 | sed -E -n -e 's|SDKVersion: *(.*) *$|\1|p'`
+SDK_IOS_VERSION="`xcodebuild -version -sdk 2>/dev/null | egrep SDKVersion | tail -n 1 | sed -E -n -e 's|SDKVersion: *(.*) *$|\1|p'`"
 BUILD_DIR="$tmpdir/build"
-INSTALL_PATH=${BUILD_DIR}/${LIB_NAME}/universal
+INSTALL_PATH="${BUILD_DIR}/${LIB_NAME}/universal"
 
 for TARGET in $TARGETS; do
 
-    DEVELOPER=$(xcode-select --print-path)
+    DEVELOPER="$(xcode-select --print-path)"
     TOOLCHAIN="$DEVELOPER/Toolchains/XcodeDefault.xctoolchain/usr/bin"
-    SYSROOT=`xcodebuild -version -sdk 2>/dev/null | egrep $TARGET -B 3 | egrep '^Path: '| egrep $SDK_IOS_VERSION | sort -u | tail -n 1| cut -d ' ' -f 2`
+    SYSROOT="`xcodebuild -version -sdk 2>/dev/null | egrep $TARGET -B 3 | egrep '^Path: '| egrep $SDK_IOS_VERSION | sort -u | tail -n 1| cut -d ' ' -f 2`"
 
     case $TARGET in
         (iPhoneOS) 
@@ -139,31 +139,31 @@ for TARGET in $TARGETS; do
         PREFIX=${BUILD_DIR}/${LIB_NAME}/${TARGET}${SDK_IOS_VERSION}${MARCH}
         rm -rf $PREFIX
 
-        export CFLAGS="-arch ${MARCH} -isysroot ${SYSROOT} -Os ${EXTRA_FLAGS}"
-        echo $CFLAGS
+        export CPPFLAGS="-arch ${MARCH} -isysroot ${SYSROOT}"
+        export CFLAGS="${CPPFLAGS} -Os ${EXTRA_FLAGS}"
 
-        if test -x ${TOOLCHAIN}/clang; then
-          export LD=${TOOLCHAIN}/clang
+        if test -x "${TOOLCHAIN}/clang"; then
+          export LD="${TOOLCHAIN}/clang"
         else
-          export LD=${TOOLCHAIN}/ld
+          export LD="${TOOLCHAIN}/ld"
         fi
-        export AR=${TOOLCHAIN}/ar
-        export AS=${TOOLCHAIN}/as
-        if test -x ${TOOLCHAIN}/clang++; then
-          export CXX=${TOOLCHAIN}/clang++
+        export AR="${TOOLCHAIN}/ar"
+        export AS="${TOOLCHAIN}/as"
+        if test -x "${TOOLCHAIN}/clang++"; then
+          export CXX="${TOOLCHAIN}/clang++"
         else
-          export CXX=${TOOLCHAIN}/g++
+          export CXX="${TOOLCHAIN}/g++"
         fi
-        if test -x ${TOOLCHAIN}/clang; then
-          export CC=${TOOLCHAIN}/clang
+        if test -x "${TOOLCHAIN}/clang"; then
+          export CC="${TOOLCHAIN}/clang"
         else
-          export CC=${TOOLCHAIN}/gcc
+          export CC="${TOOLCHAIN}/gcc"
         fi
-        export NM=${TOOLCHAIN}/nm
-        export LIBTOOL=${TOOLCHAIN}/libtool
-        export RANLIB=${TOOLCHAIN}/ranlib
-        export OTOOL=${TOOLCHAIN}/otool
-        export STRIP=${TOOLCHAIN}/strip
+        export NM="${TOOLCHAIN}/nm"
+        export LIBTOOL="${TOOLCHAIN}/libtool"
+        export RANLIB="${TOOLCHAIN}/ranlib"
+        export OTOOL="${TOOLCHAIN}/otool"
+        export STRIP="${TOOLCHAIN}/strip"
 
         OPENSSL="--with-openssl=$BUILD_DIR/openssl-1.0.0d/universal"
         PLUGINS="--enable-otp=no --enable-digest=no --with-des=no --enable-login"
@@ -194,14 +194,14 @@ done
 
 echo "*** creating universal libs ***" >> "$logfile" 2>&1
 
-rm -rf $INSTALL_PATH
-mkdir -p $INSTALL_PATH
-mkdir -p $INSTALL_PATH/lib
-mkdir -p $INSTALL_PATH/include/sasl
-cp `find ./include -name '*.h'` ${INSTALL_PATH}/include/sasl
+rm -rf "$INSTALL_PATH"
+mkdir -p "$INSTALL_PATH"
+mkdir -p "$INSTALL_PATH/lib"
+mkdir -p "$INSTALL_PATH/include/sasl"
+cp `find ./include -name '*.h'` "${INSTALL_PATH}/include/sasl"
 ALL_LIBS="libsasl2.a sasl2/libanonymous.a sasl2/libcrammd5.a sasl2/libplain.a sasl2/libsasldb.a sasl2/liblogin.a"
 for lib in $ALL_LIBS; do
-    dir=`dirname $lib`
+    dir="`dirname $lib`"
     if [[ "$dir" != "." ]]; then
         mkdir -p ${INSTALL_PATH}/lib/$dir
     fi
@@ -209,7 +209,7 @@ for lib in $ALL_LIBS; do
     for TARGET in $TARGETS; do
         LIBS="$LIBS ${BUILD_DIR}/${LIB_NAME}/${TARGET}${SDK_IOS_VERSION}*/lib/${lib}"
     done
-    lipo -create ${LIBS} -output ${INSTALL_PATH}/lib/${lib}
+    lipo -create ${LIBS} -output "${INSTALL_PATH}/lib/${lib}"
 done
 
 echo "*** creating built package ***" >> "$logfile" 2>&1
