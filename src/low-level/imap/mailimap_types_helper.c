@@ -894,7 +894,7 @@ mailimap_search_key_new_or(struct mailimap_search_key * sk_or1,
 struct mailimap_search_key *
 mailimap_search_key_new_sentbefore(struct mailimap_date * sk_sentbefore)
 {
-  return mailimap_search_key_new(MAILIMAP_SEARCH_KEY_NOT, NULL, NULL,
+  return mailimap_search_key_new(MAILIMAP_SEARCH_KEY_SENTBEFORE, NULL, NULL,
 				 NULL, NULL, NULL, NULL, NULL, NULL,
 				 NULL, NULL, NULL, NULL, NULL,
 				 NULL, 0, NULL,
