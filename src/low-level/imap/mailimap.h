@@ -60,6 +60,7 @@ extern "C" {
 #include <libetpan/xgmlabels.h>
 #include <libetpan/xgmmsgid.h>
 #include <libetpan/xgmthrid.h>
+#include <libetpan/xgmraw.h>
 #include <libetpan/condstore.h>
 #include <libetpan/qresync.h>
 #include <libetpan/mailimap_sort.h>

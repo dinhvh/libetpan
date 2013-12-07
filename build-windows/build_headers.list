@@ -137,6 +137,8 @@ libetpan_version.h
 ..\src\low-level\imap\uidplus_types.h
 ..\src\low-level\imap\xgmlabels.h
 ..\src\low-level\imap\xlist.h
+..\src\low-level\imap\xgmraw.h
+..\src\low-level\imap\xgmraw_types.h
 ..\src\low-level\imf\mailimf.h
 ..\src\low-level\imf\mailimf_types.h
 ..\src\low-level\imf\mailimf_types_helper.h

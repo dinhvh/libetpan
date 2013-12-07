@@ -43,6 +43,7 @@ etpaninclude_HEADERS = \
 	idle.h \
 	namespace.h namespace_parser.h namespace_sender.h namespace_types.h \
 	xlist.h xgmlabels.h xgmmsgid.h xgmthrid.h \
+	xgmraw.h xgmraw_types.h \
 	mailimap_id.h mailimap_id_types.h \
 	enable.h condstore.h condstore_types.h \
 	qresync.h qresync_types.h \
@@ -91,6 +92,8 @@ libimap_la_SOURCES = \
 	xgmlabels.c xgmlabels.h \
 	xgmmsgid.c xgmmsgid.h \
 	xgmthrid.c xgmthrid.h \
+	xgmraw.c xgmraw.h \
+	xgmraw_types.c xgmraw_types.h \
 	mailimap_id.h mailimap_id.c \
 	mailimap_id_types.h mailimap_id_types.c \
 	mailimap_id_sender.h mailimap_id_sender.c \

@@ -9,6 +9,12 @@
 /* Begin PBXBuildFile section */
 		2307A00C170AAA5500C43C59 /* mailstream_compress.c in Sources */ = {isa = PBXBuildFile; fileRef = 2307A00A170AAA5500C43C59 /* mailstream_compress.c */; };
 		365DFFD215D1C93100F2DD85 /* xgmmsgid.c in Sources */ = {isa = PBXBuildFile; fileRef = 365DFFD115D1C93100F2DD85 /* xgmmsgid.c */; };
+		8405B8CB184FF083003CFB35 /* xgmraw.c in Sources */ = {isa = PBXBuildFile; fileRef = 8405B8C9184FF083003CFB35 /* xgmraw.c */; };
+		8405B8CC184FF532003CFB35 /* xgmraw.c in Sources */ = {isa = PBXBuildFile; fileRef = 8405B8C9184FF083003CFB35 /* xgmraw.c */; };
+		8405B8CD184FF533003CFB35 /* xgmraw.c in Sources */ = {isa = PBXBuildFile; fileRef = 8405B8C9184FF083003CFB35 /* xgmraw.c */; };
+		847F141D18539B5B00299E8A /* xgmraw_types.c in Sources */ = {isa = PBXBuildFile; fileRef = 847F141B18539B5B00299E8A /* xgmraw_types.c */; };
+		847F141E18539B5B00299E8A /* xgmraw_types.c in Sources */ = {isa = PBXBuildFile; fileRef = 847F141B18539B5B00299E8A /* xgmraw_types.c */; };
+		847F141F18539B5B00299E8A /* xgmraw_types.c in Sources */ = {isa = PBXBuildFile; fileRef = 847F141B18539B5B00299E8A /* xgmraw_types.c */; };
 		8A75ECDA17040F92007F9972 /* mailimap_sort.c in Sources */ = {isa = PBXBuildFile; fileRef = 8A75ECD917040F91007F9972 /* mailimap_sort.c */; };
 		8A75ECDB17040F92007F9972 /* mailimap_sort.c in Sources */ = {isa = PBXBuildFile; fileRef = 8A75ECD917040F91007F9972 /* mailimap_sort.c */; };
 		8A75ECDC17040F92007F9972 /* mailimap_sort.c in Sources */ = {isa = PBXBuildFile; fileRef = 8A75ECD917040F91007F9972 /* mailimap_sort.c */; };
@@ -579,6 +585,10 @@
 		2307A00B170AAA5500C43C59 /* mailstream_compress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mailstream_compress.h; sourceTree = "<group>"; };
 		365DFFD115D1C93100F2DD85 /* xgmmsgid.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = xgmmsgid.c; sourceTree = "<group>"; };
 		365DFFD815D1CF1800F2DD85 /* xgmmsgid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = xgmmsgid.h; sourceTree = "<group>"; };
+		8405B8C9184FF083003CFB35 /* xgmraw.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = xgmraw.c; sourceTree = "<group>"; };
+		8405B8CA184FF083003CFB35 /* xgmraw.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = xgmraw.h; sourceTree = "<group>"; };
+		847F141B18539B5B00299E8A /* xgmraw_types.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = xgmraw_types.c; sourceTree = "<group>"; };
+		847F141C18539B5B00299E8A /* xgmraw_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = xgmraw_types.h; sourceTree = "<group>"; };
 		8A75ECD917040F91007F9972 /* mailimap_sort.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mailimap_sort.c; sourceTree = "<group>"; };
 		8A75ECDD17040FBD007F9972 /* mailimap_sort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mailimap_sort.h; sourceTree = "<group>"; };
 		8A75ECE5170414B8007F9972 /* mailimap_sort_types.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mailimap_sort_types.c; sourceTree = "<group>"; };
@@ -1545,6 +1555,10 @@
 				365DFFD815D1CF1800F2DD85 /* xgmmsgid.h */,
 				C6F61F721701409B0073032E /* xgmthrid.c */,
 				C6F61F731701409B0073032E /* xgmthrid.h */,
+				8405B8C9184FF083003CFB35 /* xgmraw.c */,
+				8405B8CA184FF083003CFB35 /* xgmraw.h */,
+				847F141B18539B5B00299E8A /* xgmraw_types.c */,
+				847F141C18539B5B00299E8A /* xgmraw_types.h */,
 				C6667DED1342ACCD00969A8E /* xlist.c */,
 				C6667DEE1342ACCD00969A8E /* xlist.h */,
 				8A75ECD917040F91007F9972 /* mailimap_sort.c */,
@@ -1980,6 +1994,7 @@
 				C6F9EC2E105335BD0059C3BA /* mailprivacy.c in Sources */,
 				C6F9EC30105335BD0059C3BA /* mailprivacy_gnupg.c in Sources */,
 				C6F9EC32105335BD0059C3BA /* mailprivacy_smime.c in Sources */,
+				847F141D18539B5B00299E8A /* xgmraw_types.c in Sources */,
 				C6F9EC34105335BD0059C3BA /* mailprivacy_tools.c in Sources */,
 				C6F9EC46105335BD0059C3BA /* date.c in Sources */,
 				C6F9EC4B105335BD0059C3BA /* newsfeed.c in Sources */,
@@ -2011,6 +2026,7 @@
 				C6F9EC9A105335BD0059C3BA /* mailimap_ssl.c in Sources */,
 				C6F9EC9C105335BD0059C3BA /* mailimap_types.c in Sources */,
 				C6F9EC9E105335BD0059C3BA /* mailimap_types_helper.c in Sources */,
+				8405B8CB184FF083003CFB35 /* xgmraw.c in Sources */,
 				C6F9ECA4105335BD0059C3BA /* uidplus.c in Sources */,
 				C6F9ECA6105335BD0059C3BA /* uidplus_parser.c in Sources */,
 				C6F9ECA8105335BD0059C3BA /* uidplus_sender.c in Sources */,
@@ -2115,6 +2131,7 @@
 				C682E23A15B315EF00BE9DA7 /* imapstorage.c in Sources */,
 				C682E23B15B315EF00BE9DA7 /* imfcache.c in Sources */,
 				C682E23C15B315EF00BE9DA7 /* libetpan_version.c in Sources */,
+				8405B8CD184FF533003CFB35 /* xgmraw.c in Sources */,
 				C682E23D15B315EF00BE9DA7 /* mail_cache_db.c in Sources */,
 				C682E23E15B315EF00BE9DA7 /* maildir.c in Sources */,
 				C682E23F15B315EF00BE9DA7 /* maildirdriver.c in Sources */,
@@ -2163,6 +2180,7 @@
 				C682E26A15B315EF00BE9DA7 /* mailmime_write_file.c in Sources */,
 				C682E26B15B315EF00BE9DA7 /* mailmime_write_generic.c in Sources */,
 				C682E26C15B315EF00BE9DA7 /* mailmime_write_mem.c in Sources */,
+				847F141F18539B5B00299E8A /* xgmraw_types.c in Sources */,
 				C682E26D15B315EF00BE9DA7 /* mailpop3.c in Sources */,
 				C682E26E15B315EF00BE9DA7 /* mailpop3_helper.c in Sources */,
 				C682E26F15B315EF00BE9DA7 /* mailpop3_socket.c in Sources */,
@@ -2299,6 +2317,7 @@
 				C69AB1DA1054704000F32FBD /* imapstorage.c in Sources */,
 				C69AB1DC1054704000F32FBD /* imfcache.c in Sources */,
 				C69AB1DF1054704000F32FBD /* libetpan_version.c in Sources */,
+				8405B8CC184FF532003CFB35 /* xgmraw.c in Sources */,
 				C69AB1E11054704000F32FBD /* mail_cache_db.c in Sources */,
 				C69AB1E41054704000F32FBD /* maildir.c in Sources */,
 				C69AB1E71054704000F32FBD /* maildirdriver.c in Sources */,
@@ -2347,6 +2366,7 @@
 				C69AB2421054704000F32FBD /* mailmime_write_file.c in Sources */,
 				C69AB2441054704000F32FBD /* mailmime_write_generic.c in Sources */,
 				C69AB2461054704000F32FBD /* mailmime_write_mem.c in Sources */,
+				847F141E18539B5B00299E8A /* xgmraw_types.c in Sources */,
 				C69AB2481054704000F32FBD /* mailpop3.c in Sources */,
 				C69AB24A1054704000F32FBD /* mailpop3_helper.c in Sources */,
 				C69AB24C1054704000F32FBD /* mailpop3_socket.c in Sources */,
