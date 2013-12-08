@@ -7,8 +7,8 @@
 struct xgmraw_search_key *
 xgmraw_search_key_new(int sk_type,
                       char * sk_bcc, struct mailimap_date * sk_before, char * sk_cc,
-                      char * sk_filename,
-                      char * sk_from, char * sk_keyword, struct mailimap_date * sk_since,
+                      char * sk_filename, char * sk_from, char * sk_has, char * sk_in,
+                      char * sk_keyword, char * sk_label, struct mailimap_date * sk_since,
                       char * sk_subject, char * sk_to, struct xgmraw_search_key * sk_not,
                       struct xgmraw_search_key * sk_or1,
                       struct xgmraw_search_key * sk_or2,
@@ -37,8 +37,17 @@ xgmraw_search_key_new(int sk_type,
     case XGMRAW_SEARCH_KEY_FROM:
       key->sk_data.sk_from = sk_from;
       break;
+    case XGMRAW_SEARCH_KEY_HAS:
+      key->sk_data.sk_has = sk_has;
+      break;
+    case XGMRAW_SEARCH_KEY_IN:
+      key->sk_data.sk_in = sk_in;
+      break;
     case XGMRAW_SEARCH_KEY_KEYWORD:
       key->sk_data.sk_keyword = sk_keyword;
+      break;
+    case XGMRAW_SEARCH_KEY_LABEL:
+      key->sk_data.sk_label = sk_label;
       break;
     case XGMRAW_SEARCH_KEY_SINCE:
       key->sk_data.sk_since = sk_since;
@@ -78,8 +87,17 @@ void xgmraw_search_key_free(struct xgmraw_search_key * key)
     case XGMRAW_SEARCH_KEY_FROM:
       mailimap_astring_free(key->sk_data.sk_from);
       break;
+    case XGMRAW_SEARCH_KEY_HAS:
+      mailimap_astring_free(key->sk_data.sk_has);
+      break;
+    case XGMRAW_SEARCH_KEY_IN:
+      mailimap_astring_free(key->sk_data.sk_in);
+      break;
     case XGMRAW_SEARCH_KEY_KEYWORD:
       mailimap_flag_keyword_free(key->sk_data.sk_keyword);
+      break;
+    case XGMRAW_SEARCH_KEY_LABEL:
+      mailimap_astring_free(key->sk_data.sk_label);
       break;
     case XGMRAW_SEARCH_KEY_SINCE:
       mailimap_date_free(key->sk_data.sk_since);

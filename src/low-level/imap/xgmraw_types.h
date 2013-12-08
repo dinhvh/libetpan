@@ -38,6 +38,7 @@
 /* this is the condition of the SEARCH operation */
 
 enum {
+  XGMRAW_SEARCH_KEY_ALL,        /* all messages */
   XGMRAW_SEARCH_KEY_ANYWHERE,   /* all messages except spam and trash */
   XGMRAW_SEARCH_KEY_BCC,        /* messages whose Bcc field contains the
                                    given string */
@@ -46,19 +47,23 @@ enum {
   XGMRAW_SEARCH_KEY_CC,         /* messages whose Cc field contains the
                                    given string */
   XGMRAW_SEARCH_KEY_FILENAME,   /* messages with an attachment named like the
-                                   given string */ 
-  XGMRAW_SEARCH_KEY_FLAGGED,    /* messages with the flag \Flagged */ 
+                                   given string */
+  XGMRAW_SEARCH_KEY_FLAGGED,    /* messages with a flag in Gmail */
   XGMRAW_SEARCH_KEY_FROM,       /* messages whose From field contains the
                                    given string */
+  XGMRAW_SEARCH_KEY_HAS,        /* messages that have a given attribute */
+  XGMRAW_SEARCH_KEY_IN,         /* messages in a given mailbox */
   XGMRAW_SEARCH_KEY_KEYWORD,    /* messages containing the keyword */
-  XGMRAW_SEARCH_KEY_SEEN,       /* messages with the flag \Seen */
+  XGMRAW_SEARCH_KEY_LABEL,      /* messages in a given label */
+  XGMRAW_SEARCH_KEY_READ,       /* messages marked read in Gmail */
   XGMRAW_SEARCH_KEY_SINCE,      /* messages whose internal date is later
                                    than specified date */
+  XGMRAW_SEARCH_KEY_STARRED,    /* messages with a star in Gmail */
   XGMRAW_SEARCH_KEY_SUBJECT,    /* messages whose Subject field contains the
                                    given string */
   XGMRAW_SEARCH_KEY_TO,         /* messages whose To field contains the
                                    given string */
-  XGMRAW_SEARCH_KEY_DRAFT,      /* messages with no flag \Draft */
+  XGMRAW_SEARCH_KEY_UNREAD,     /* messages marked unread in Gmail */
   XGMRAW_SEARCH_KEY_NOT,        /* not operation of the condition */
   XGMRAW_SEARCH_KEY_OR,         /* or operation between two conditions */
   XGMRAW_SEARCH_KEY_MULTIPLE,   /* the boolean operator between the
@@ -73,7 +78,10 @@ struct xgmraw_search_key {
     char * sk_cc;
     char * sk_filename;
     char * sk_from;
+    char * sk_has;
+    char * sk_in;
     char * sk_keyword;
+    char * sk_label;
     struct mailimap_date * sk_since;
     char * sk_subject;
     char * sk_to;
@@ -90,8 +98,8 @@ LIBETPAN_EXPORT
 struct xgmraw_search_key *
 xgmraw_search_key_new(int sk_type,
                       char * sk_bcc, struct mailimap_date * sk_before, char * sk_cc,
-                      char * sk_filename,
-                      char * sk_from, char * sk_keyword, struct mailimap_date * sk_since,
+                      char * sk_filename, char * sk_from, char * sk_has, char * sk_in,
+                      char * sk_keyword, char * sk_label, struct mailimap_date * sk_since,
                       char * sk_subject, char * sk_to, struct xgmraw_search_key * sk_not,
                       struct xgmraw_search_key * sk_or1,
                       struct xgmraw_search_key * sk_or2,

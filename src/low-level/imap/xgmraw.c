@@ -16,8 +16,7 @@
  =>   date            = YYYY/­MM/DD
  */
 
-static int xgmraw_date_send(mailstream * fd,
-                            struct mailimap_date * date)
+static int xgmraw_date_send(mailstream * fd, struct mailimap_date * date)
 {
   int r;
   
@@ -49,6 +48,8 @@ int xgmraw_search_key_send(mailstream * fd, struct xgmraw_search_key * key)
   int r;
   
   switch (key->sk_type) {
+    case XGMRAW_SEARCH_KEY_ALL:
+      return mailimap_token_send(fd, "in:all");
       
     case XGMRAW_SEARCH_KEY_ANYWHERE:
       return mailimap_token_send(fd, "in:anywhere");
@@ -116,10 +117,34 @@ int xgmraw_search_key_send(mailstream * fd, struct xgmraw_search_key * key)
         return r;
       return MAILIMAP_NO_ERROR;
       
+    case XGMRAW_SEARCH_KEY_IN:
+      r = mailimap_token_send(fd, "in");
+      if (r != MAILIMAP_NO_ERROR)
+        return r;
+      r = mailimap_char_send(fd, ':');
+      if (r != MAILIMAP_NO_ERROR)
+        return r;
+      r = mailimap_astring_send(fd, key->sk_data.sk_in);
+      if (r != MAILIMAP_NO_ERROR)
+        return r;
+      return MAILIMAP_NO_ERROR;
+      
     case XGMRAW_SEARCH_KEY_KEYWORD:
       return mailimap_token_send(fd, key->sk_data.sk_keyword);
       
-    case XGMRAW_SEARCH_KEY_SEEN:
+    case XGMRAW_SEARCH_KEY_LABEL:
+      r = mailimap_token_send(fd, "label");
+      if (r != MAILIMAP_NO_ERROR)
+        return r;
+      r = mailimap_char_send(fd, ':');
+      if (r != MAILIMAP_NO_ERROR)
+        return r;
+      r = mailimap_astring_send(fd, key->sk_data.sk_label);
+      if (r != MAILIMAP_NO_ERROR)
+        return r;
+      return MAILIMAP_NO_ERROR;
+      
+    case XGMRAW_SEARCH_KEY_READ:
       return mailimap_token_send(fd, "is:read");
       
     case XGMRAW_SEARCH_KEY_SINCE:
@@ -146,6 +171,9 @@ int xgmraw_search_key_send(mailstream * fd, struct xgmraw_search_key * key)
         return r;
       return MAILIMAP_NO_ERROR;
       
+    case XGMRAW_SEARCH_KEY_STARRED:
+      return mailimap_token_send(fd, "is:starred");
+      
     case XGMRAW_SEARCH_KEY_TO:
       r = mailimap_token_send(fd, "to");
       if (r != MAILIMAP_NO_ERROR)
@@ -158,8 +186,8 @@ int xgmraw_search_key_send(mailstream * fd, struct xgmraw_search_key * key)
         return r;
       return MAILIMAP_NO_ERROR;
       
-    case XGMRAW_SEARCH_KEY_DRAFT:
-      return mailimap_token_send(fd, "is:draft");
+    case XGMRAW_SEARCH_KEY_UNREAD:
+      return mailimap_token_send(fd, "is:unread");
       
     case XGMRAW_SEARCH_KEY_NOT:
       r = mailimap_char_send(fd, '-');
@@ -177,7 +205,7 @@ int xgmraw_search_key_send(mailstream * fd, struct xgmraw_search_key * key)
       r = mailimap_space_send(fd);
       if (r != MAILIMAP_NO_ERROR)
         return r;
-      r = mailimap_token_send(fd, "OR");
+      r = mailimap_token_send(fd, "or");
       if (r != MAILIMAP_NO_ERROR)
         return r;
       r = mailimap_space_send(fd);
@@ -193,12 +221,12 @@ int xgmraw_search_key_send(mailstream * fd, struct xgmraw_search_key * key)
                                            (mailimap_struct_sender *) xgmraw_search_key_send);
       
     default:
-      /* should not happend */
+      /* should not happen */
       return MAILIMAP_ERROR_INVAL;
   }
 }
 
-int xgmraw_search_send(mailstream * fd, const char * charset, struct xgmraw_search_key * key)
+int xgmraw_search_send(mailstream * fd, struct xgmraw_search_key * key)
 {
   int r;
   
@@ -206,40 +234,36 @@ int xgmraw_search_send(mailstream * fd, const char * charset, struct xgmraw_sear
   if (r != MAILIMAP_NO_ERROR)
     return r;
   
-  if (charset != NULL) {
-    r = mailimap_space_send(fd);
-    if (r != MAILIMAP_NO_ERROR)
-      return r;
-    
-    r = mailimap_token_send(fd, "CHARSET");
-    if (r != MAILIMAP_NO_ERROR)
-      return r;
-    r = mailimap_space_send(fd);
-    if (r != MAILIMAP_NO_ERROR)
-      return r;
-    r = mailimap_astring_send(fd, charset);
-    if (r != MAILIMAP_NO_ERROR)
-      return r;
-  }
+  r = mailimap_space_send(fd);
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+  
+  r = mailimap_token_send(fd, "X-GM-RAW");
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
   
   r = mailimap_space_send(fd);
   if (r != MAILIMAP_NO_ERROR)
     return r;
   
+  r = mailimap_char_send(fd, '"');
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
   r = xgmraw_search_key_send(fd, key);
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+  r = mailimap_char_send(fd, '"');
   if (r != MAILIMAP_NO_ERROR)
     return r;
   
   return MAILIMAP_NO_ERROR;
 }
 
-int xgmraw_search(mailimap * session, const char * charset, struct xgmraw_search_key * key, clist ** result)
+int xgmraw_search(mailimap * session, struct xgmraw_search_key * key, clist ** result)
 {
   struct mailimap_response * response;
   int r;
   int error_code;
-  struct mailimap_condstore_search * search_data;
-  clistiter * cur;
   
   if (session->imap_state != MAILIMAP_STATE_SELECTED)
     return MAILIMAP_ERROR_BAD_STATE;
@@ -248,7 +272,7 @@ int xgmraw_search(mailimap * session, const char * charset, struct xgmraw_search
   if (r != MAILIMAP_NO_ERROR)
     return r;
   
-  r = xgmraw_search_send(session->imap_stream, charset, key);
+  r = xgmraw_search_send(session->imap_stream, key);
   if (r != MAILIMAP_NO_ERROR)
     return r;
   
@@ -266,32 +290,8 @@ int xgmraw_search(mailimap * session, const char * charset, struct xgmraw_search
   if (r != MAILIMAP_NO_ERROR)
     return r;
   
-  search_data = NULL;
-  for(cur = clist_begin(session->imap_response_info->rsp_extension_list) ; cur != NULL ; cur = clist_next(cur)) {
-    struct mailimap_extension_data * ext_data;
-    
-    ext_data = clist_content(cur);
-    if (ext_data->ext_extension->ext_id != MAILIMAP_EXTENSION_CONDSTORE) {
-      continue;
-    }
-    if (ext_data->ext_type != MAILIMAP_CONDSTORE_TYPE_SEARCH_DATA) {
-      continue;
-    }
-    
-    search_data = ext_data->ext_data;
-    ext_data->ext_data = NULL;
-    break;
-  }
-  
-  if (search_data == NULL) {
-    * result = session->imap_response_info->rsp_search_result;
-    session->imap_response_info->rsp_search_result = NULL;
-  }
-  else {
-    * result = search_data->cs_search_result;
-    search_data->cs_search_result = NULL;
-    mailimap_condstore_search_free(search_data);
-  }
+  * result = session->imap_response_info->rsp_search_result;
+  session->imap_response_info->rsp_search_result = NULL;
   
   error_code = response->rsp_resp_done->rsp_data.rsp_tagged->rsp_cond_state->rsp_type;
   
@@ -304,5 +304,4 @@ int xgmraw_search(mailimap * session, const char * charset, struct xgmraw_search
     default:
       return MAILIMAP_ERROR_SEARCH;
   }
-
 }

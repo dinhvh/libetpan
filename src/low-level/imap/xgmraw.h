@@ -45,8 +45,7 @@ LIBETPAN_EXPORT
 extern struct mailimap_extension_api mailimap_extension_xgmraw;
   
 LIBETPAN_EXPORT
-int xgmraw_search(mailimap * session, const char * charset,
-                  struct xgmraw_search_key * key, clist ** result);
+int xgmraw_search(mailimap * session, struct xgmraw_search_key * key, clist ** result);
 
 #ifdef __cplusplus
 }
