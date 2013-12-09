@@ -330,39 +330,10 @@ mailimap_xgmraw_extension_parse(int calling_parser, mailstream * fd,
                                struct mailimap_extension_data ** result,
                                size_t progr_rate, progress_function * progr_fun)
 {
-  size_t cur_token;
-  uint64_t msgid;
-  int r;
-  
-  cur_token = * indx;
-  
-  r = mailimap_token_case_insensitive_parse(fd, buffer,
-                                            &cur_token, "X-GM-RAW");
-  if (r != MAILIMAP_NO_ERROR)
-    return r;
-  
-  r = mailimap_space_parse(fd, buffer, &cur_token);
-  if (r != MAILIMAP_NO_ERROR)
-    return r;
-  
-  r = mailimap_uint64_parse(fd, buffer, &cur_token, &msgid);
-  if (r != MAILIMAP_NO_ERROR)
-    return r;
-  
-  * indx = cur_token;
-  * result = msgid;
-  
-  return MAILIMAP_NO_ERROR;
-}
-
-int mailimap_has_xgmraw(mailimap * session)
-{
-  return mailimap_has_extension(session, "X-GM-RAW");
+  return MAILIMAP_ERROR_PARSE;
 }
 
 static void
 mailimap_xgmraw_extension_data_free(struct mailimap_extension_data * ext_data)
 {
-  free(ext_data->ext_data);
-  free(ext_data);
 }
