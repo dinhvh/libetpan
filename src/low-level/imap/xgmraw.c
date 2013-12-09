@@ -6,11 +6,29 @@
 
 #include "mailimap_sender.h"
 #include "mailimap.h"
-#include "condstore_types.h"
 #include "mailimap_keywords.h"
 #include "mailimap_parser.h"
-#include "qresync.h"
-#include "qresync_private.h"
+#include "mailimap_extension.h"
+
+enum {
+  MAILIMAP_XGMRAW_TYPE_XGMRAW
+};
+
+static int
+mailimap_xgmraw_extension_parse(int calling_parser, mailstream * fd,
+                                  MMAPString * buffer, size_t * indx,
+                                  struct mailimap_extension_data ** result,
+                                  size_t progr_rate, progress_function * progr_fun);
+
+static void
+mailimap_xgmraw_extension_data_free(struct mailimap_extension_data * ext_data);
+
+struct mailimap_extension_api mailimap_extension_xgmraw = {
+  /* name */          "X-GM-RAW",
+  /* extension_id */  MAILIMAP_EXTENSION_XGMRAW,
+  /* parser */        mailimap_xgmraw_extension_parse,
+  /* free */          mailimap_xgmraw_extension_data_free
+};
 
 /*
  =>   date            = YYYY/­MM/DD
@@ -304,4 +322,47 @@ int xgmraw_search(mailimap * session, struct xgmraw_search_key * key, clist ** r
     default:
       return MAILIMAP_ERROR_SEARCH;
   }
+}
+
+static int
+mailimap_xgmraw_extension_parse(int calling_parser, mailstream * fd,
+                               MMAPString * buffer, size_t * indx,
+                               struct mailimap_extension_data ** result,
+                               size_t progr_rate, progress_function * progr_fun)
+{
+  size_t cur_token;
+  uint64_t msgid;
+  int r;
+  
+  cur_token = * indx;
+  
+  r = mailimap_token_case_insensitive_parse(fd, buffer,
+                                            &cur_token, "X-GM-RAW");
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+  
+  r = mailimap_space_parse(fd, buffer, &cur_token);
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+  
+  r = mailimap_uint64_parse(fd, buffer, &cur_token, &msgid);
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+  
+  * indx = cur_token;
+  * result = msgid;
+  
+  return MAILIMAP_NO_ERROR;
+}
+
+int mailimap_has_xgmraw(mailimap * session)
+{
+  return mailimap_has_extension(session, "X-GM-RAW");
+}
+
+static void
+mailimap_xgmraw_extension_data_free(struct mailimap_extension_data * ext_data)
+{
+  free(ext_data->ext_data);
+  free(ext_data);
 }
