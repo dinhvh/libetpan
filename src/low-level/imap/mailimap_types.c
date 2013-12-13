@@ -2870,7 +2870,7 @@ void mailimap_search_key_free(struct mailimap_search_key * key)
     }
     break;
   case MAILIMAP_SEARCH_KEY_XGMRAW:
-    mailimap_flag_keyword_free(key->sk_data.sk_xgmraw);
+    mailimap_astring_free(key->sk_data.sk_xgmraw);
     break;
   }
   
