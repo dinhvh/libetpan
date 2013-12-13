@@ -2931,7 +2931,7 @@ enum {
     use mailimap_search_key_new_xgmthrid() for this key
  
   - xgmraw is a raw gmail search expression when type is MAILIMAP_SEARCH_KEY_XGMRAW
-    use mailimap_search_key_new_xgmraw();
+    use mailimap_search_key_new_xgmraw() for this key
  
   - multiple is a set of message when type is MAILIMAP_SEARCH_KEY_MULTIPLE
 */
