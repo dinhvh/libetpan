@@ -91,7 +91,7 @@ static int prepare_fd(int fd)
 #ifdef HAVE_IPV6
 static int verify_sock_errors(int s)
 {
-  uint len;
+  unsigned int len;
   int val;
   len = sizeof(val);
   if (getsockopt(s, SOL_SOCKET, SO_ERROR, &val, &len) < 0) {
