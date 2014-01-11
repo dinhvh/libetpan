@@ -59,6 +59,10 @@ mailstream_low * mailstream_low_compress_open(mailstream_low * ms)
 
 #define CHUNK_SIZE 1024
 
+#ifndef MIN
+#define MIN(x, y) ((x) < (y) ? (x) : (y))
+#endif
+
 static ssize_t mailstream_low_compress_read(mailstream_low * s, void * buf, size_t count);
 static ssize_t mailstream_low_compress_write(mailstream_low * s, const void * buf, size_t count);
 static int mailstream_low_compress_close(mailstream_low * s);

@@ -89,6 +89,9 @@
 # ifdef LIBETPAN_REENTRANT
 #	if HAVE_PTHREAD_H
 #	  include <pthread.h>
+#   elif defined(WIN32)
+      void mailprivacy_gnupg_init_lock();
+      void mailprivacy_smime_init_lock();
 #	endif
 # endif
 #endif
@@ -133,24 +136,23 @@ struct mailstream_ssl_data {
 #endif
 
 #ifdef USE_SSL
-#ifdef LIBETPAN_REENTRANT
-#	if HAVE_PTHREAD_H
-#		define MUTEX_LOCK(x) pthread_mutex_lock(x)
-#		define MUTEX_UNLOCK(x) pthread_mutex_unlock(x)
-		static pthread_mutex_t ssl_lock = PTHREAD_MUTEX_INITIALIZER;
-#	elif (defined WIN32)
-#		define MUTEX_LOCK(x) EnterCriticalSection(x);
-#		define MUTEX_UNLOCK(x) LeaveCriticalSection(x);
-		static CRITICAL_SECTION ssl_lock;
-#	else
-#		error "What are your threads?"
-#	endif
-#else
-#	define MUTEX_LOCK(x)
-#	define MUTEX_UNLOCK(x)
-#endif
-static int gnutls_init_not_required = 0;
-static int openssl_init_done = 0;
+#   ifdef LIBETPAN_REENTRANT
+#	    if HAVE_PTHREAD_H
+#		    define MUTEX_LOCK(x) pthread_mutex_lock(x)
+#		    define MUTEX_UNLOCK(x) pthread_mutex_unlock(x)
+		    static pthread_mutex_t ssl_lock = PTHREAD_MUTEX_INITIALIZER;
+#	    elif defined (WIN32)
+#		    define MUTEX_LOCK(x) EnterCriticalSection(x);
+#		    define MUTEX_UNLOCK(x) LeaveCriticalSection(x);
+		    static CRITICAL_SECTION ssl_lock;
+		    void mailsasl_init_lock();
+#	    endif
+#   else
+#	    define MUTEX_LOCK(x)
+#	    define MUTEX_UNLOCK(x)
+#   endif
+    static int gnutls_init_not_required = 0;
+    static int openssl_init_done = 0;
 #endif
 
 // Used to make OpenSSL thread safe
@@ -227,10 +229,17 @@ static int openssl_init_done = 0;
 #endif
 #endif
 
-void mailstream_ssl_init_lock(void)
+long mailstream_ssl_init_lock(void)
 {
 #if !defined (HAVE_PTHREAD_H) && defined (WIN32) && defined (USE_SSL)
-  InitializeCriticalSection(&ssl_lock);
+	static long volatile mailstream_ssl_init_lock_done = 0;
+	long result = 0;
+	if ((result = InterlockedExchange(&mailstream_ssl_init_lock_done, 1)) == 0){
+		InitializeCriticalSection(&ssl_lock);
+	}
+	return result == 0 ? 1 : 0;
+#else
+	return 1;
 #endif
 }
 
@@ -260,9 +269,21 @@ void mailstream_ssl_init_not_required(void)
 
 static inline void mailstream_ssl_init(void)
 {
+	if (!mailstream_ssl_init_lock()){
+		return;
+	}
 #ifdef USE_SSL
   MUTEX_LOCK(&ssl_lock);
 #ifndef USE_GNUTLS
+
+#if defined(HAVE_PTHREAD_H) && !defined(IGNORE_PTHREAD_H)
+#elif (defined WIN32)
+  	mailprivacy_gnupg_init_lock();
+  	mailprivacy_smime_init_lock();
+  	mailsasl_init_lock();
+  	mmapstring_init_lock();
+#endif
+
   if (!openssl_init_done) {
     #if defined (HAVE_PTHREAD_H) && !defined (WIN32) && defined (USE_SSL) && defined (LIBETPAN_REENTRANT)
       mailstream_openssl_reentrant_setup();
