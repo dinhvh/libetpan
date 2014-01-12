@@ -269,7 +269,7 @@ void mailstream_ssl_init_not_required(void)
 
 static inline void mailstream_ssl_init(void)
 {
-	if (!mailstream_ssl_init_lock()){
+	if (mailstream_ssl_init_lock() == -1){
 		return;
 	}
 #ifdef USE_SSL
