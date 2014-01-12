@@ -74,6 +74,12 @@ struct mailsem_internal {
 #endif
 };
 
+enum {
+  SEMKIND_SEMOPEN,
+  SEMKIND_SEMINIT,
+  SEMKIND_INTERNAL
+};
+
 #if (defined(LIBETPAN_REENTRANT) && defined(HAVE_PTHREAD_H) && !defined(IGNORE_PTHREAD_H)) || !defined(LIBETPAN_REENTRANT)
 
 	static int mailsem_internal_init(struct mailsem_internal * s,
@@ -187,13 +193,6 @@ struct mailsem_internal {
 	#endif
 	}
 
-	enum {
-	  SEMKIND_SEMOPEN,
-	  SEMKIND_SEMINIT,
-	  SEMKIND_INTERNAL
-	};
-
-
 #elif (defined WIN32)
 
 	static int mailsem_internal_init(struct mailsem_internal * s,
@@ -241,12 +240,6 @@ struct mailsem_internal {
 			return 0;
 		}
 #endif
-
-enum {
-  SEMKIND_SEMOPEN,
-  SEMKIND_SEMINIT,
-  SEMKIND_INTERNAL
-};
 
 #if 0
 #define SEMNAME_LEN 64
