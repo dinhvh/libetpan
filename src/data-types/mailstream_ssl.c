@@ -239,7 +239,7 @@ int mailstream_ssl_init_lock(void)
 	}
 	return result != 0 ? -1 : 0;
 #else
-	return 1;
+	return 0;
 #endif
 }
 
