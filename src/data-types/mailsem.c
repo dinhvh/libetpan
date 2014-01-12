@@ -47,10 +47,8 @@
 
 #ifdef LIBETPAN_REENTRANT
 #if defined(HAVE_PTHREAD_H) && !defined(IGNORE_PTHREAD_H)
-  #ifdef LIBETPAN_REENTRANT
   #include <pthread.h>
   #include <semaphore.h>
-  #endif
 #elif (defined WIN32)
   #include <windows.h>
 #endif
@@ -76,8 +74,7 @@ struct mailsem_internal {
 #endif
 };
 
-#ifdef LIBETPAN_REENTRANT
-#if defined(HAVE_PTHREAD_H) && !defined(IGNORE_PTHREAD_H)
+#if (defined(LIBETPAN_REENTRANT) && defined(HAVE_PTHREAD_H) && !defined(IGNORE_PTHREAD_H)) || !defined(LIBETPAN_REENTRANT)
 
 	static int mailsem_internal_init(struct mailsem_internal * s,
 		unsigned int initial_count)
@@ -209,7 +206,6 @@ struct mailsem_internal {
 		        NULL);          // unnamed semaphore
 
 		  return s->semaphore == NULL ? -1 : 0;
-		#endif
 		}
 
 		static void mailsem_internal_destroy(struct mailsem_internal * s)
