@@ -229,15 +229,15 @@ struct mailstream_ssl_data {
 #endif
 #endif
 
-long mailstream_ssl_init_lock(void)
+int mailstream_ssl_init_lock(void)
 {
 #if !defined (HAVE_PTHREAD_H) && defined (WIN32) && defined (USE_SSL)
 	static long volatile mailstream_ssl_init_lock_done = 0;
-	long result = 0;
+	int result = 0;
 	if ((result = InterlockedExchange(&mailstream_ssl_init_lock_done, 1)) == 0){
 		InitializeCriticalSection(&ssl_lock);
 	}
-	return result == 0 ? 1 : 0;
+	return result != 0 ? -1 : 0;
 #else
 	return 1;
 #endif

@@ -82,163 +82,163 @@ enum {
 
 #if (defined(LIBETPAN_REENTRANT) && defined(HAVE_PTHREAD_H) && !defined(IGNORE_PTHREAD_H)) || !defined(LIBETPAN_REENTRANT)
 
-	static int mailsem_internal_init(struct mailsem_internal * s,
-		unsigned int initial_count)
-	{
-	#ifdef LIBETPAN_REENTRANT
-	  int r;
+static int mailsem_internal_init(struct mailsem_internal * s,
+	unsigned int initial_count)
+{
+#ifdef LIBETPAN_REENTRANT
+  int r;
 
-	  r = pthread_mutex_init(&s->lock, NULL);
-	  if (r != 0)
-		goto err;
+  r = pthread_mutex_init(&s->lock, NULL);
+  if (r != 0)
+	goto err;
 
-	  r = pthread_cond_init(&s->count_nonzero, NULL);
-	  if (r != 0)
-		goto destroy_mutex;
+  r = pthread_cond_init(&s->count_nonzero, NULL);
+  if (r != 0)
+	goto destroy_mutex;
 
-	  s->count = initial_count;
-	  s->waiters_count = 0;
+  s->count = initial_count;
+  s->waiters_count = 0;
 
-	  return 0;
+  return 0;
 
-	 destroy_mutex:
-	  pthread_mutex_destroy(&s->lock);
-	 err:
-	  return -1;
-	#else
-	  return -1;
-	#endif
-	}
+ destroy_mutex:
+  pthread_mutex_destroy(&s->lock);
+ err:
+  return -1;
+#else
+  return -1;
+#endif
+}
 
-	static void mailsem_internal_destroy(struct mailsem_internal * s)
-	{
-	#ifdef LIBETPAN_REENTRANT
-	  pthread_cond_destroy(&s->count_nonzero);
-	  pthread_mutex_destroy(&s->lock);
-	#endif
-	}
+static void mailsem_internal_destroy(struct mailsem_internal * s)
+{
+#ifdef LIBETPAN_REENTRANT
+  pthread_cond_destroy(&s->count_nonzero);
+  pthread_mutex_destroy(&s->lock);
+#endif
+}
 
-	int mailsem_internal_wait(struct mailsem_internal * s)
-	{
-	#ifdef LIBETPAN_REENTRANT
-	  int r;
+int mailsem_internal_wait(struct mailsem_internal * s)
+{
+#ifdef LIBETPAN_REENTRANT
+  int r;
 
-	  /* Acquire mutex to enter critical section. */
-	  r = pthread_mutex_lock(&s->lock);
-	  if (r != 0)
-		goto err;
+  /* Acquire mutex to enter critical section. */
+  r = pthread_mutex_lock(&s->lock);
+  if (r != 0)
+	goto err;
 
-	  /* Keep track of the number of waiters so that <sema_post> works correctly. */
-	  s->waiters_count ++;
+  /* Keep track of the number of waiters so that <sema_post> works correctly. */
+  s->waiters_count ++;
 
-	  /* Wait until the semaphore count is > 0, then atomically release */
-	  /* <lock> and wait for <count_nonzero> to be signaled. */
-	  while (s->count == 0) {
-		r = pthread_cond_wait(&s->count_nonzero, &s->lock);
-		if (r != 0)
-		  goto unlock;
-	  }
+  /* Wait until the semaphore count is > 0, then atomically release */
+  /* <lock> and wait for <count_nonzero> to be signaled. */
+  while (s->count == 0) {
+	r = pthread_cond_wait(&s->count_nonzero, &s->lock);
+	if (r != 0)
+	  goto unlock;
+  }
 
-	  /* <s->lock> is now held. */
+  /* <s->lock> is now held. */
 
-	  /* Decrement the waiters count. */
-	  s->waiters_count --;
+  /* Decrement the waiters count. */
+  s->waiters_count --;
 
-	  /* Decrement the semaphore's count. */
-	  s->count --;
+  /* Decrement the semaphore's count. */
+  s->count --;
 
-	  /* Release mutex to leave critical section. */
-	  pthread_mutex_unlock(&s->lock);
+  /* Release mutex to leave critical section. */
+  pthread_mutex_unlock(&s->lock);
 
-	  return 0;
+  return 0;
 
-	 unlock:
-	  pthread_mutex_unlock(&s->lock);
-	 err:
-	  return -1;
-	#else
-	  return -1;
-	#endif
-	}
+ unlock:
+  pthread_mutex_unlock(&s->lock);
+ err:
+  return -1;
+#else
+  return -1;
+#endif
+}
 
-	static int mailsem_internal_post(struct mailsem_internal * s)
-	{
-	#ifdef LIBETPAN_REENTRANT
-	  int r;
+static int mailsem_internal_post(struct mailsem_internal * s)
+{
+#ifdef LIBETPAN_REENTRANT
+  int r;
 
-	  r = pthread_mutex_lock(&s->lock);
-	  if (r != 0)
-		goto err;
+  r = pthread_mutex_lock(&s->lock);
+  if (r != 0)
+	goto err;
 
-	  /* Always allow one thread to continue if it is waiting. */
-	  if (s->waiters_count > 0) {
-		r = pthread_cond_signal(&s->count_nonzero);
-		if (r != 0)
-		  goto unlock;
-	  }
+  /* Always allow one thread to continue if it is waiting. */
+  if (s->waiters_count > 0) {
+	r = pthread_cond_signal(&s->count_nonzero);
+	if (r != 0)
+	  goto unlock;
+  }
 
-	  /* Increment the semaphore's count. */
-	  s->count ++;
+  /* Increment the semaphore's count. */
+  s->count ++;
 
-	  pthread_mutex_unlock(&s->lock);
+  pthread_mutex_unlock(&s->lock);
 
-	  return 0;
+  return 0;
 
-	 unlock:
-	  pthread_mutex_unlock(&s->lock);
-	 err:
-	  return -1;
-	#else
-	  return -1;
-	#endif
-	}
+ unlock:
+  pthread_mutex_unlock(&s->lock);
+ err:
+  return -1;
+#else
+  return -1;
+#endif
+}
 
 #elif (defined WIN32)
 
-	static int mailsem_internal_init(struct mailsem_internal * s,
-			unsigned int initial_count)
-		{
-			s->semaphore = CreateSemaphore(
-		        NULL,           // default security attributes
-		        initial_count,  // initial count
-		        0x7FFFFFFF,  // maximum count
-		        NULL);          // unnamed semaphore
+static int mailsem_internal_init(struct mailsem_internal * s,
+	unsigned int initial_count)
+{
+	s->semaphore = CreateSemaphore(
+		NULL,           // default security attributes
+		initial_count,  // initial count
+		0x7FFFFFFF,  // maximum count
+		NULL);          // unnamed semaphore
 
-		  return s->semaphore == NULL ? -1 : 0;
-		}
+  return s->semaphore == NULL ? -1 : 0;
+}
 
-		static void mailsem_internal_destroy(struct mailsem_internal * s)
-		{
-			if (s->semaphore != NULL){
-				CloseHandle(s->semaphore);
-			}
-		}
+static void mailsem_internal_destroy(struct mailsem_internal * s)
+{
+	if (s->semaphore != NULL){
+		CloseHandle(s->semaphore);
+	}
+}
 
-		int mailsem_internal_wait(struct mailsem_internal * s)
-		{
+int mailsem_internal_wait(struct mailsem_internal * s)
+{
 
-		  DWORD dwWaitResult = WAIT_TIMEOUT;
+  DWORD dwWaitResult = WAIT_TIMEOUT;
 
-		  while (dwWaitResult != WAIT_OBJECT_0 && dwWaitResult != WAIT_FAILED){
-			  dwWaitResult = WaitForSingleObject(
-						  s->semaphore,   // handle to semaphore
-						  INFINITE);           // zero-second time-out interval
-		  }
+  while (dwWaitResult != WAIT_OBJECT_0 && dwWaitResult != WAIT_FAILED){
+	  dwWaitResult = WaitForSingleObject(
+				  s->semaphore,   // handle to semaphore
+				  INFINITE);           // zero-second time-out interval
+  }
 
-		  return dwWaitResult == WAIT_FAILED ? -1 : 0;
-		}
+  return dwWaitResult == WAIT_FAILED ? -1 : 0;
+}
 
-		static int mailsem_internal_post(struct mailsem_internal * s)
-		{
-			if (!ReleaseSemaphore(
-					s->semaphore,  // handle to semaphore
-					1,            // increase count by one
-					NULL) )       // not interested in previous count
-			{
-				return -1;
-			}
-			return 0;
-		}
+static int mailsem_internal_post(struct mailsem_internal * s)
+{
+	if (!ReleaseSemaphore(
+			s->semaphore,  // handle to semaphore
+			1,            // increase count by one
+			NULL) )       // not interested in previous count
+	{
+		return -1;
+	}
+	return 0;
+}
 #endif
 
 #if 0
@@ -252,34 +252,34 @@ struct mailsem * mailsem_new(void)
 
   sem = malloc(sizeof(* sem));
   if (sem == NULL)
-	goto err;
+      goto err;
 
   sem->sem_sem = malloc(sizeof(sem_t));
   if (sem->sem_sem == NULL)
-	goto free_sem;
+      goto free_sem;
 
   r = sem_init(sem->sem_sem, 0, 0);
   if (r < 0) {
-	char name[SEMNAME_LEN];
-	pid_t pid;
+    char name[SEMNAME_LEN];
+    pid_t pid;
 
-	free(sem->sem_sem);
+    free(sem->sem_sem);
 
-	pid = getpid();
-	snprintf(name, sizeof(name), "sem-%p-%i", sem, pid);
+    pid = getpid();
+    snprintf(name, sizeof(name), "sem-%p-%i", sem, pid);
 
 #ifndef __CYGWIN__
-	sem->sem_sem = sem_open(name, O_CREAT | O_EXCL, 0700, 0);
-	if (sem->sem_sem == (sem_t *) SEM_FAILED)
-	  goto free_sem;
+    sem->sem_sem = sem_open(name, O_CREAT | O_EXCL, 0700, 0);
+    if (sem->sem_sem == (sem_t *) SEM_FAILED)
+        goto free_sem;
 
-	sem->sem_kind = SEMKIND_SEMOPEN;
+    sem->sem_kind = SEMKIND_SEMOPEN;
 #else
-	goto free_sem;
+    goto free_sem;
 #endif
   }
   else {
-	sem->sem_kind = SEMKIND_SEMINIT;
+     sem->sem_kind = SEMKIND_SEMINIT;
   }
 
   return sem;

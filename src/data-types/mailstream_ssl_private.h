@@ -2,6 +2,6 @@
 
 #define MAILSTREAM_SSL_PRIVATE_H
 
-extern long mailstream_ssl_init_lock(void);
+extern int mailstream_ssl_init_lock(void);
 
 #endif
