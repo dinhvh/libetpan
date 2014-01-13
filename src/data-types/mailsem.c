@@ -83,18 +83,18 @@ enum {
 #if (defined(LIBETPAN_REENTRANT) && defined(HAVE_PTHREAD_H) && !defined(IGNORE_PTHREAD_H)) || !defined(LIBETPAN_REENTRANT)
 
 static int mailsem_internal_init(struct mailsem_internal * s,
-  unsigned int initial_count)
+   unsigned int initial_count)
 {
 #ifdef LIBETPAN_REENTRANT
   int r;
 
   r = pthread_mutex_init(&s->lock, NULL);
   if (r != 0)
-  goto err;
+     goto err;
 
   r = pthread_cond_init(&s->count_nonzero, NULL);
   if (r != 0)
-  goto destroy_mutex;
+     goto destroy_mutex;
 
   s->count = initial_count;
   s->waiters_count = 0;
@@ -134,9 +134,9 @@ int mailsem_internal_wait(struct mailsem_internal * s)
   /* Wait until the semaphore count is > 0, then atomically release */
   /* <lock> and wait for <count_nonzero> to be signaled. */
   while (s->count == 0) {
-  r = pthread_cond_wait(&s->count_nonzero, &s->lock);
-  if (r != 0)
-    goto unlock;
+     r = pthread_cond_wait(&s->count_nonzero, &s->lock);
+     if (r != 0)
+       goto unlock;
   }
 
   /* <s->lock> is now held. */
@@ -168,13 +168,13 @@ static int mailsem_internal_post(struct mailsem_internal * s)
 
   r = pthread_mutex_lock(&s->lock);
   if (r != 0)
-  goto err;
+     goto err;
 
   /* Always allow one thread to continue if it is waiting. */
   if (s->waiters_count > 0) {
-  r = pthread_cond_signal(&s->count_nonzero);
-  if (r != 0)
-    goto unlock;
+     r = pthread_cond_signal(&s->count_nonzero);
+     if (r != 0)
+       goto unlock;
   }
 
   /* Increment the semaphore's count. */
@@ -252,11 +252,11 @@ struct mailsem * mailsem_new(void)
 
   sem = malloc(sizeof(* sem));
   if (sem == NULL)
-      goto err;
+     goto err;
 
   sem->sem_sem = malloc(sizeof(sem_t));
   if (sem->sem_sem == NULL)
-      goto free_sem;
+     goto free_sem;
 
   r = sem_init(sem->sem_sem, 0, 0);
   if (r < 0) {
@@ -271,7 +271,7 @@ struct mailsem * mailsem_new(void)
 #ifndef __CYGWIN__
     sem->sem_sem = sem_open(name, O_CREAT | O_EXCL, 0700, 0);
     if (sem->sem_sem == (sem_t *) SEM_FAILED)
-        goto free_sem;
+       goto free_sem;
 
     sem->sem_kind = SEMKIND_SEMOPEN;
 #else
@@ -297,20 +297,20 @@ void mailsem_free(struct mailsem * sem)
 {
 #ifdef LIBETPAN_REENTRANT
   if (sem->sem_kind == SEMKIND_SEMOPEN) {
-  char name[SEMNAME_LEN];
-  pid_t pid;
+     char name[SEMNAME_LEN];
+     pid_t pid;
 
-  pid = getpid();
+     pid = getpid();
 
 #ifndef __CYGWIN__
-  sem_close((sem_t *) sem->sem_sem);
-  snprintf(name, sizeof(name), "sem-%p-%i", sem, pid);
-  sem_unlink(name);
+     sem_close((sem_t *) sem->sem_sem);
+     snprintf(name, sizeof(name), "sem-%p-%i", sem, pid);
+     sem_unlink(name);
 #endif
   }
   else {
-  sem_destroy((sem_t *) sem->sem_sem);
-  free(sem->sem_sem);
+     sem_destroy((sem_t *) sem->sem_sem);
+     free(sem->sem_sem);
   }
   free(sem);
 #endif
