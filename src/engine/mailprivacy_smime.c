@@ -68,7 +68,7 @@
 
 /*
   global variable
-  
+
   TODO : instance of privacy drivers
 */
 
@@ -100,31 +100,31 @@ static int smime_is_signed(struct mailmime * mime)
     if ((strcasecmp(mime->mm_content_type->ct_subtype, "x-pkcs7-mime") == 0) ||
         (strcasecmp(mime->mm_content_type->ct_subtype, "pkcs7-mime") == 0)) {
       clistiter * cur;
-      
+
       for(cur = clist_begin(mime->mm_content_type->ct_parameters) ;
           cur != NULL ;
           cur = clist_next(cur)) {
         struct mailmime_parameter * param;
-        
+
         param = cur->data;
-        
+
         if ((strcasecmp(param->pa_name, "smime-type") == 0) &&
             (strcasecmp(param->pa_value, "signed-data") == 0))
           return 1;
       }
-      
+
       return 0;
     }
     else {
       clistiter * cur;
-      
+
       for(cur = clist_begin(mime->mm_content_type->ct_parameters) ;
           cur != NULL ;
           cur = clist_next(cur)) {
         struct mailmime_parameter * param;
-        
+
         param = cur->data;
-        
+
         if ((strcasecmp(param->pa_name, "protocol") == 0) &&
             ((strcasecmp(param->pa_value,
                   "application/x-pkcs7-signature") == 0) ||
@@ -134,7 +134,7 @@ static int smime_is_signed(struct mailmime * mime)
       }
     }
   }
-  
+
   return 0;
 }
 
@@ -144,23 +144,23 @@ static int smime_is_encrypted(struct mailmime * mime)
     if ((strcasecmp(mime->mm_content_type->ct_subtype, "x-pkcs7-mime") == 0) ||
         (strcasecmp(mime->mm_content_type->ct_subtype, "pkcs7-mime") == 0)) {
       clistiter * cur;
-      
+
       for(cur = clist_begin(mime->mm_content_type->ct_parameters) ;
           cur != NULL ;
           cur = clist_next(cur)) {
         struct mailmime_parameter * param;
-        
+
         param = cur->data;
-        
+
         if ((strcasecmp(param->pa_name, "smime-type") == 0) &&
             (strcasecmp(param->pa_value, "signed-data") == 0))
           return 0;
       }
-      
+
       return 1;
     }
   }
-  
+
   return 0;
 }
 
@@ -181,28 +181,28 @@ static char * get_first_from_addr(struct mailmime * mime)
   struct mailimf_single_fields single_fields;
   struct mailimf_fields * fields;
   struct mailimf_mailbox * mb;
-  
+
   while (mime->mm_parent != NULL)
     mime = mime->mm_parent;
-  
+
   if (mime->mm_type != MAILMIME_MESSAGE)
     return NULL;
-  
+
   fields = mime->mm_data.mm_message.mm_fields;
   if (fields == NULL)
     return NULL;
-  
+
   mailimf_single_fields_init(&single_fields, fields);
-  
+
   if (single_fields.fld_from == NULL)
     return NULL;
-  
+
   cur = clist_begin(single_fields.fld_from->frm_mb_list->mb_list);
   if (cur == NULL)
     return NULL;
-  
+
   mb = clist_content(cur);
-  
+
   return mb->mb_addr_spec;
 }
 
@@ -233,9 +233,9 @@ static int smime_decrypt(struct mailprivacy * privacy,
   char quoted_smime_key[PATH_MAX];
   char * email;
   chashiter * iter;
-  
+
   /* fetch the whole multipart and write it to a file */
-  
+
   r = mailprivacy_fetch_mime_body_to_file(privacy,
       smime_filename, sizeof(smime_filename),
       msg, mime);
@@ -243,77 +243,77 @@ static int smime_decrypt(struct mailprivacy * privacy,
     res = r;
     goto err;
   }
-  
+
   /* we are in a safe directory */
-  
+
   r = mailprivacy_get_tmp_filename(privacy, decrypted_filename,
       sizeof(decrypted_filename));
   if (r != MAIL_NO_ERROR) {
     res = MAIL_ERROR_FILE;
     goto unlink_smime;
   }
-  
+
   /* description */
-  
+
   r = mailprivacy_get_tmp_filename(privacy, description_filename,
       sizeof(description_filename));
   if (r != MAIL_NO_ERROR) {
     res = MAIL_ERROR_FILE;
     goto unlink_decrypted;
   }
-  
+
   sign_ok = 0;
   for(iter = chash_begin(private_keys) ; iter != NULL ;
       iter = chash_next(private_keys, iter)) {
     chashdatum key;
     char email_buf[BUF_SIZE];
-    
+
     chash_key(iter, &key);
-    
+
     if (key.len >= sizeof(email_buf))
       continue;
-    
+
     strncpy(email_buf, key.data, key.len);
     email_buf[key.len] = '\0';
     email = email_buf;
-    
+
     /* get encryption key */
-    
+
     smime_key = get_private_key_file(email);
     smime_cert = get_cert_file(email);
     if ((smime_cert == NULL) || (smime_key == NULL)) {
       res = MAIL_ERROR_INVAL;
       goto unlink_description;
     }
-  
+
     r = mail_quote_filename(quoted_smime_cert, sizeof(quoted_smime_cert),
         smime_cert);
     if (r < 0) {
       res = MAIL_ERROR_MEMORY;
       goto unlink_description;
     }
-  
+
     r = mail_quote_filename(quoted_smime_key, sizeof(quoted_smime_key),
         smime_key);
     if (r < 0) {
       res = MAIL_ERROR_MEMORY;
       goto unlink_description;
     }
-  
+
     /* run the command */
-  
+
     r = mail_quote_filename(quoted_smime_filename,
         sizeof(quoted_smime_filename), smime_filename);
     if (r < 0) {
       res = MAIL_ERROR_MEMORY;
       goto unlink_description;
     }
-    
+
     sign_ok = 0;
     snprintf(command, sizeof(command),
         "openssl smime -decrypt -passin fd:0 -in '%s' -inkey '%s' -recip '%s'",
         quoted_smime_filename, quoted_smime_key, quoted_smime_cert);
-    
+
     unlink(description_filename);
     r = smime_command_passphrase(privacy, msg, command,
         email, decrypted_filename, description_filename);
@@ -332,16 +332,16 @@ static int smime_decrypt(struct mailprivacy * privacy,
       res = MAIL_ERROR_FILE;
       goto unlink_description;
     }
-    
+
     if (sign_ok) {
       break;
     }
   }
-  
+
   if (!sign_ok) {
     if (chash_count(private_keys) == 0) {
       FILE * description_f;
-      
+
       description_f = mailprivacy_get_tmp_file(privacy, description_filename,
           sizeof(description_filename));
       if (description_f == NULL) {
@@ -355,7 +355,7 @@ static int smime_decrypt(struct mailprivacy * privacy,
   else {
     mailprivacy_smime_encryption_id_list_clear(privacy, msg);
   }
-  
+
   /* building multipart */
 
   r = mailmime_new_with_content("multipart/x-decrypted", NULL, &multipart);
@@ -363,9 +363,9 @@ static int smime_decrypt(struct mailprivacy * privacy,
     res = MAIL_ERROR_MEMORY;
     goto unlink_description;
   }
-  
+
   /* building the description part */
-  
+
   description_mime = mailprivacy_new_file_part(privacy,
       description_filename,
       "text/plain", MAILMIME_MECHANISM_8BIT);
@@ -375,9 +375,9 @@ static int smime_decrypt(struct mailprivacy * privacy,
     res = MAIL_ERROR_MEMORY;
     goto unlink_description;
   }
-  
+
   /* adds the description part */
-  
+
   r = mailmime_smart_add_part(multipart, description_mime);
   if (r != MAIL_NO_ERROR) {
     mailprivacy_mime_clear(description_mime);
@@ -387,14 +387,14 @@ static int smime_decrypt(struct mailprivacy * privacy,
     res = MAIL_ERROR_MEMORY;
     goto unlink_description;
   }
-  
+
   /* building the decrypted part */
-  
+
   r = mailprivacy_get_part_from_file(privacy, 1, 0,
       decrypted_filename, &decrypted_mime);
   if (r == MAIL_NO_ERROR) {
     /* adds the decrypted part */
-    
+
     r = mailmime_smart_add_part(multipart, decrypted_mime);
     if (r != MAIL_NO_ERROR) {
       mailprivacy_mime_clear(decrypted_mime);
@@ -405,15 +405,15 @@ static int smime_decrypt(struct mailprivacy * privacy,
       goto unlink_description;
     }
   }
-  
+
   unlink(description_filename);
   unlink(decrypted_filename);
   unlink(smime_filename);
-  
+
   * result = multipart;
-  
+
   return MAIL_NO_ERROR;
-  
+
  unlink_description:
   unlink(description_filename);
  unlink_decrypted:
@@ -452,10 +452,10 @@ smime_verify(struct mailprivacy * privacy,
   char check_CA[PATH_MAX];
   char quoted_CAfile[PATH_MAX];
   char noverify[PATH_MAX];
-  
+
   if (store_cert)
     get_cert_from_sig(privacy, msg, mime);
-  
+
   * check_CA = '\0';
   if (CAfile != NULL) {
     r = mail_quote_filename(quoted_CAfile, sizeof(quoted_CAfile), CAfile);
@@ -463,17 +463,17 @@ smime_verify(struct mailprivacy * privacy,
       res = MAIL_ERROR_MEMORY;
       goto err;
     }
-    
+
     snprintf(check_CA, sizeof(check_CA), "-CAfile '%s'", quoted_CAfile);
   }
-  
+
   * noverify = '\0';
   if (!CA_check) {
     snprintf(noverify, sizeof(noverify), "-noverify");
   }
-  
+
   /* fetch the whole multipart and write it to a file */
-  
+
   r = mailprivacy_fetch_mime_body_to_file(privacy,
       smime_filename, sizeof(smime_filename),
       msg, mime);
@@ -481,23 +481,23 @@ smime_verify(struct mailprivacy * privacy,
     res = r;
     goto err;
   }
-  
+
   r = mailprivacy_get_tmp_filename(privacy,stripped_filename,
       sizeof(stripped_filename));
   if (r != MAIL_NO_ERROR) {
     res = r;
     goto unlink_smime;
   }
-  
+
   /* description */
-  
+
   r = mailprivacy_get_tmp_filename(privacy, description_filename,
       sizeof(description_filename));
   if (r != MAIL_NO_ERROR) {
     res = r;
     goto unlink_stripped;
   }
-  
+
   /* run the command */
 
   r = mail_quote_filename(quoted_smime_filename,
@@ -510,7 +510,7 @@ smime_verify(struct mailprivacy * privacy,
   sign_ok = 0;
   snprintf(command, sizeof(command), "openssl smime -verify -in '%s' %s %s",
       quoted_smime_filename, check_CA, noverify);
-  
+
   r = smime_command_passphrase(privacy, msg, command,
       NULL, stripped_filename, description_filename);
   switch (r) {
@@ -528,17 +528,17 @@ smime_verify(struct mailprivacy * privacy,
     res = MAIL_ERROR_FILE;
     goto unlink_description;
   }
-  
+
   /* building multipart */
-  
+
   r = mailmime_new_with_content("multipart/x-verified", NULL, &multipart);
   if (r != MAILIMF_NO_ERROR) {
     res = MAIL_ERROR_MEMORY;
     goto unlink_description;
   }
-  
+
   /* building the description part */
-  
+
   description_mime = mailprivacy_new_file_part(privacy,
       description_filename,
       "text/plain", MAILMIME_MECHANISM_8BIT);
@@ -548,9 +548,9 @@ smime_verify(struct mailprivacy * privacy,
     res = MAIL_ERROR_MEMORY;
     goto unlink_description;
   }
-  
+
   /* adds the description part */
-  
+
   r = mailmime_smart_add_part(multipart, description_mime);
   if (r != MAIL_NO_ERROR) {
     mailprivacy_mime_clear(description_mime);
@@ -560,22 +560,22 @@ smime_verify(struct mailprivacy * privacy,
     res = MAIL_ERROR_MEMORY;
     goto unlink_description;
   }
-  
+
   /* insert the signed part */
   if (!sign_ok) {
     if (mime->mm_type == MAILMIME_MULTIPLE) {
       clistiter * child_iter;
       struct mailmime * child;
-      
+
       child_iter = clist_begin(mime->mm_data.mm_multipart.mm_mp_list);
       child = clist_content(child_iter);
-      
+
       r = mailprivacy_fetch_mime_body_to_file(privacy,
           stripped_filename, sizeof(stripped_filename),
           msg, child);
     }
   }
-  
+
   r = mailprivacy_get_part_from_file(privacy, 1, 0,
       stripped_filename, &stripped_mime);
   if (r != MAIL_NO_ERROR) {
@@ -584,7 +584,7 @@ smime_verify(struct mailprivacy * privacy,
     res = r;
     goto unlink_description;
   }
-  
+
   r = mailmime_smart_add_part(multipart, stripped_mime);
   if (r != MAIL_NO_ERROR) {
     mailprivacy_mime_clear(stripped_mime);
@@ -594,15 +594,15 @@ smime_verify(struct mailprivacy * privacy,
     res = MAIL_ERROR_MEMORY;
     goto unlink_description;
   }
-  
+
   unlink(description_filename);
   unlink(stripped_filename);
   /* unlink(smime_filename); */
-  
+
   * result = multipart;
-  
+
   return MAIL_NO_ERROR;
-  
+
  unlink_description:
   unlink(description_filename);
  unlink_stripped:
@@ -620,11 +620,11 @@ static int smime_test_encrypted(struct mailprivacy * privacy,
   switch (mime->mm_type) {
   case MAILMIME_MULTIPLE:
     return smime_is_signed(mime);
-    
+
   case MAILMIME_SINGLE:
     return smime_is_encrypted(mime) || smime_is_signed(mime);
   }
-  
+
   return 0;
 }
 
@@ -634,36 +634,36 @@ static int smime_handler(struct mailprivacy * privacy,
 {
   int r;
   struct mailmime * alternative_mime;
-  
+
   alternative_mime = NULL;
   switch (mime->mm_type) {
   case MAILMIME_MULTIPLE:
     r = MAIL_ERROR_INVAL;
     if (smime_is_signed(mime))
       r = smime_verify(privacy, msg, mime, &alternative_mime);
-    
+
     if (r != MAIL_NO_ERROR)
       return r;
 
     * result = alternative_mime;
-    
+
     return MAIL_NO_ERROR;
-    
+
   case MAILMIME_SINGLE:
     r = MAIL_ERROR_INVAL;
     if (smime_is_encrypted(mime))
       r = smime_decrypt(privacy, msg, mime, &alternative_mime);
     else if (smime_is_signed(mime))
       r = smime_verify(privacy, msg, mime, &alternative_mime);
-    
+
     if (r != MAIL_NO_ERROR)
       return r;
 
     * result = alternative_mime;
-    
+
     return MAIL_NO_ERROR;
   }
-  
+
   return MAIL_ERROR_INVAL;
 }
 
@@ -674,18 +674,18 @@ static void strip_mime_headers(struct mailmime * mime)
 {
   struct mailmime_fields * fields;
   clistiter * cur;
-  
+
   fields = mime->mm_mime_fields;
-  
+
   if (fields == NULL)
     return;
-  
+
   for(cur = clist_begin(fields->fld_list) ; cur != NULL ;
       cur = clist_next(cur)) {
     struct mailmime_field * field;
-    
+
     field = clist_content(cur);
-    
+
     if (field->fld_type == MAILMIME_FIELD_VERSION) {
       mailmime_field_free(field);
       clist_delete(fields->fld_list, cur);
@@ -715,15 +715,15 @@ static int smime_sign(struct mailprivacy * privacy,
   char quoted_smime_cert[PATH_MAX];
   char quoted_smime_key[PATH_MAX];
   char * email;
-  
+
   /* get signing key */
-  
+
   email = get_first_from_addr(mime);
   if (email == NULL) {
     res = MAIL_ERROR_INVAL;
     goto err;
   }
-  
+
   smime_key = get_private_key_file(email);
   smime_cert = get_cert_file(email);
   if ((smime_cert == NULL) || (smime_key == NULL)) {
@@ -734,16 +734,16 @@ static int smime_sign(struct mailprivacy * privacy,
   /* part to sign */
 
   /* encode quoted printable all text parts */
-  
+
   mailprivacy_prepare_mime(mime);
-  
+
   signed_f = mailprivacy_get_tmp_file(privacy,
       signed_filename, sizeof(signed_filename));
   if (signed_f == NULL) {
     res = MAIL_ERROR_FILE;
     goto err;
   }
-  
+
   col = 0;
   r = mailmime_write(signed_f, &col, mime);
   if (r != MAILIMF_NO_ERROR) {
@@ -751,11 +751,11 @@ static int smime_sign(struct mailprivacy * privacy,
     res = MAIL_ERROR_FILE;
     goto unlink_signed;
   }
-  
+
   fclose(signed_f);
-  
+
   /* prepare destination file for signature */
-  
+
   r = mailprivacy_get_tmp_filename(privacy, signature_filename,
       sizeof(signature_filename));
   if (r != MAIL_NO_ERROR) {
@@ -769,14 +769,14 @@ static int smime_sign(struct mailprivacy * privacy,
     res = r;
     goto unlink_signature;
   }
-  
+
   r = mail_quote_filename(quoted_signed_filename,
        sizeof(quoted_signed_filename), signed_filename);
   if (r < 0) {
     res = MAIL_ERROR_MEMORY;
     goto unlink_description;
   }
-  
+
   r = mail_quote_filename(quoted_smime_key,
        sizeof(quoted_smime_key), smime_key);
   if (r < 0) {
@@ -813,9 +813,9 @@ static int smime_sign(struct mailprivacy * privacy,
     res = MAIL_ERROR_FILE;
     goto unlink_description;
   }
-  
+
   /* signature part */
-  
+
   r = mailprivacy_get_part_from_file(privacy, 0, 0,
       signature_filename, &signed_mime);
   if (r != MAIL_NO_ERROR) {
@@ -823,15 +823,15 @@ static int smime_sign(struct mailprivacy * privacy,
     goto unlink_description;
   }
   strip_mime_headers(signed_mime);
-  
+
   unlink(description_filename);
   /* unlink(signature_filename); */
   /* unlink(signed_filename); */
-  
+
   * result = signed_mime;
-  
+
   return MAIL_NO_ERROR;
-  
+
  unlink_description:
   unlink(description_filename);
  unlink_signature:
@@ -853,23 +853,23 @@ static int recipient_add_mb(char * recipient, size_t * len,
   char quoted_filename[PATH_MAX];
   size_t buflen;
   int r;
-  
+
   if (mb->mb_addr_spec == NULL)
     return MAIL_NO_ERROR;
-  
+
   filename = get_cert_file(mb->mb_addr_spec);
   if (filename == NULL)
     return MAIL_ERROR_INVAL;
-  
+
   r = mail_quote_filename(quoted_filename, sizeof(quoted_filename),
       filename);
   if (r < 0)
     return MAIL_ERROR_MEMORY;
-    
+
   buflen = strlen(quoted_filename + 1);
   if (buflen >= * len)
     return MAIL_ERROR_MEMORY;
-  
+
   strncat(recipient, "\'", * len);
   (* len) --;
   strncat(recipient, quoted_filename, * len);
@@ -878,7 +878,7 @@ static int recipient_add_mb(char * recipient, size_t * len,
   (* len) --;
   strncat(recipient, " ", * len);
   (* len) --;
-  
+
   return MAIL_NO_ERROR;
 }
 
@@ -943,7 +943,7 @@ static int recipient_add_addr_list(char * recipient, size_t * len,
     if (r != MAIL_NO_ERROR)
       return r;
   }
-  
+
   return MAIL_NO_ERROR;
 }
 
@@ -954,12 +954,12 @@ static int collect_smime_cert(char * recipient, size_t size,
   int r;
   size_t remaining;
   int res;
-  
+
   * recipient = '\0';
   remaining = size;
-  
-	mailimf_single_fields_init(&single_fields, fields);
-  
+
+  mailimf_single_fields_init(&single_fields, fields);
+
   if (single_fields.fld_to != NULL) {
     r = recipient_add_addr_list(recipient, &remaining,
         single_fields.fld_to->to_addr_list);
@@ -968,7 +968,7 @@ static int collect_smime_cert(char * recipient, size_t size,
       goto err;
     }
   }
-  
+
   if (single_fields.fld_cc != NULL) {
     r = recipient_add_addr_list(recipient, &remaining,
         single_fields.fld_cc->cc_addr_list);
@@ -977,7 +977,7 @@ static int collect_smime_cert(char * recipient, size_t size,
       goto err;
     }
   }
-  
+
   if (single_fields.fld_bcc != NULL) {
     if (single_fields.fld_bcc->bcc_addr_list != NULL) {
       r = recipient_add_addr_list(recipient, &remaining,
@@ -988,9 +988,9 @@ static int collect_smime_cert(char * recipient, size_t size,
       }
     }
   }
-  
+
   return MAIL_NO_ERROR;
-  
+
  err:
   return res;
 }
@@ -1014,11 +1014,11 @@ static int smime_encrypt(struct mailprivacy * privacy,
   struct mailmime * root;
   struct mailimf_fields * fields;
   char recipient[PATH_MAX];
-  
+
   root = mime;
   while (root->mm_parent != NULL)
     root = root->mm_parent;
-  
+
   fields = NULL;
   if (root->mm_type == MAILMIME_MESSAGE)
     fields = root->mm_data.mm_message.mm_fields;
@@ -1033,9 +1033,9 @@ static int smime_encrypt(struct mailprivacy * privacy,
   /* part to encrypt */
 
   /* encode quoted printable all text parts */
-  
+
   mailprivacy_prepare_mime(mime);
-  
+
   decrypted_f = mailprivacy_get_tmp_file(privacy,
       decrypted_filename,
       sizeof(decrypted_filename));
@@ -1043,7 +1043,7 @@ static int smime_encrypt(struct mailprivacy * privacy,
     res = MAIL_ERROR_FILE;
     goto err;
   }
-  
+
   col = 0;
   r = mailmime_write(decrypted_f, &col, mime);
   if (r != MAILIMF_NO_ERROR) {
@@ -1051,35 +1051,35 @@ static int smime_encrypt(struct mailprivacy * privacy,
     res = MAIL_ERROR_FILE;
     goto unlink_decrypted;
   }
-  
+
   fclose(decrypted_f);
-  
+
   /* prepare destination file for encryption */
-  
+
   r = mailprivacy_get_tmp_filename(privacy, encrypted_filename,
       sizeof(encrypted_filename));
   if (r != MAIL_NO_ERROR) {
     res = MAIL_ERROR_FILE;
     goto unlink_decrypted;
   }
-  
+
   r = mailprivacy_get_tmp_filename(privacy, description_filename,
       sizeof(description_filename));
   if (r != MAIL_NO_ERROR) {
     res = MAIL_ERROR_FILE;
     goto unlink_encrypted;
   }
-  
+
   r = mail_quote_filename(quoted_decrypted_filename,
       sizeof(quoted_decrypted_filename), decrypted_filename);
   if (r < 0) {
     res = MAIL_ERROR_MEMORY;
     goto unlink_description;
   }
-  
+
   snprintf(command, sizeof(command), "openssl smime -encrypt -in '%s' %s",
       quoted_decrypted_filename, recipient);
-  
+
   r = smime_command_passphrase(privacy, msg, command,
       NULL, encrypted_filename, description_filename);
   switch (r) {
@@ -1097,9 +1097,9 @@ static int smime_encrypt(struct mailprivacy * privacy,
     res = MAIL_ERROR_FILE;
     goto unlink_description;
   }
-  
+
   /* encrypted part */
-  
+
   r = mailprivacy_get_part_from_file(privacy, 0, 0,
       encrypted_filename, &encrypted_mime);
   if (r != MAIL_NO_ERROR) {
@@ -1111,9 +1111,9 @@ static int smime_encrypt(struct mailprivacy * privacy,
   unlink(description_filename);
   unlink(encrypted_filename);
   unlink(decrypted_filename);
-  
+
   * result = encrypted_mime;
-  
+
   return MAIL_NO_ERROR;
 
  unlink_description:
@@ -1137,23 +1137,23 @@ static int smime_sign_encrypt(struct mailprivacy * privacy,
   struct mailmime * encrypted;
   int r;
   int res;
-  
+
   r = smime_sign(privacy, msg, mime, &signed_part);
   if (r != MAIL_NO_ERROR) {
     res = r;
     goto err;
   }
-  
+
   r = smime_encrypt(privacy, msg, signed_part, &encrypted);
   if (r != MAIL_NO_ERROR) {
     res = r;
     goto free_signed;
   }
-  
+
   * result = encrypted;
-  
+
   return MAIL_NO_ERROR;
-  
+
  free_signed:
   mailprivacy_mime_clear(signed_part);
   mailmime_free(signed_part);
@@ -1169,9 +1169,9 @@ static struct mailprivacy_encryption smime_encryption_tab[] = {
     /* description */ "S/MIME signed part",
     /* encrypt */ smime_sign
   },
-  
+
   /* S/MIME encrypted part */
-  
+
   {
     /* name */ "encrypted",
     /* description */ "S/MIME encrypted part",
@@ -1179,7 +1179,7 @@ static struct mailprivacy_encryption smime_encryption_tab[] = {
   },
 
   /* S/MIME signed & encrypted part */
-  
+
   {
     /* name */ "signed-encrypted",
     /* description */ "S/MIME signed & encrypted part",
@@ -1190,21 +1190,21 @@ static struct mailprivacy_encryption smime_encryption_tab[] = {
 static struct mailprivacy_protocol smime_protocol = {
   /* name */ "smime",
   /* description */ "S/MIME",
-  
+
   /* is_encrypted */ smime_test_encrypted,
   /* decrypt */ smime_handler,
-  
+
   /* encryption_count */
   (sizeof(smime_encryption_tab) / sizeof(smime_encryption_tab[0])),
-  
+
   /* encryption_tab */ smime_encryption_tab
 };
 
 #ifdef LIBETPAN_REENTRANT
 #if defined(HAVE_PTHREAD_H) && !defined(IGNORE_PTHREAD_H)
-	static pthread_mutex_t encryption_id_hash_lock = PTHREAD_MUTEX_INITIALIZER;
+  static pthread_mutex_t encryption_id_hash_lock = PTHREAD_MUTEX_INITIALIZER;
 #elif (defined WIN32)
-	static CRITICAL_SECTION encryption_id_hash_lock = {0};
+  static CRITICAL_SECTION encryption_id_hash_lock = {0};
 #endif
 #endif
 
@@ -1212,10 +1212,10 @@ void mailprivacy_smime_init_lock(){
 #ifdef LIBETPAN_REENTRANT
 #if defined(HAVE_PTHREAD_H) && !defined(IGNORE_PTHREAD_H)
 #elif (defined WIN32)
-	static int mailprivacy_smime_init_lock_done = 0;
-	if (InterlockedExchange(&mailprivacy_smime_init_lock_done, 1) == 0){
-		InitializeCriticalSection(&encryption_id_hash_lock);
-	}
+  static int mailprivacy_smime_init_lock_done = 0;
+  if (InterlockedExchange(&mailprivacy_smime_init_lock_done, 1) == 0){
+    InitializeCriticalSection(&encryption_id_hash_lock);
+  }
 #endif
 #endif
 }
@@ -1230,11 +1230,11 @@ int mailprivacy_smime_init(struct mailprivacy * privacy)
   private_keys = chash_new(CHASH_DEFAULTSIZE, CHASH_COPYALL);
   if (private_keys == NULL)
     goto free_cert;
-  
+
   CAcert_dir[0] = '\0';
-  
+
   return mailprivacy_register(privacy, &smime_protocol);
-  
+
  free_cert:
   chash_free(certificates);
  err:
@@ -1274,22 +1274,22 @@ static void strip_string(char * str)
   while ((* p == ' ') || (* p == '\t')) {
     p ++;
   }
-  
+
   len = strlen(p);
   memmove(str, p, len);
   str[len] = 0;
-  
+
   if (len == 0)
     return;
-  
+
   p = str;
   len = len - 1;
   while ((p[len] == ' ') || (p[len] == '\t')) {
     p[len] = '\0';
-    
+
     if (len == 0)
       break;
-    
+
     len --;
   }
 }
@@ -1310,12 +1310,12 @@ static void set_file(chash * hash, char * email, char * filename)
   for(n = buf ; * n != '\0' ; n ++)
     * n = toupper((unsigned char) * n);
   strip_string(buf);
-  
+
   key.data = buf;
   key.len = strlen(buf);
   data.data = filename;
   data.len = strlen(filename) + 1;
-  
+
   chash_set(hash, &key, &data, NULL);
 }
 
@@ -1326,19 +1326,19 @@ static char * get_file(chash * hash, char * email)
   char buf[MAX_EMAIL_SIZE];
   char * n;
   int r;
-  
+
   strncpy(buf, email, sizeof(buf));
   buf[sizeof(buf) - 1] = '\0';
   for(n = buf ; * n != '\0' ; n ++)
     * n = toupper((unsigned char) * n);
-  
+
   strip_string(buf);
   key.data = buf;
   key.len = strlen(buf);
   r = chash_get(hash, &key, &data);
   if (r < 0)
     return NULL;
-  
+
   return data.data;
 }
 
@@ -1351,20 +1351,20 @@ void mailprivacy_smime_set_cert_dir(struct mailprivacy * privacy,
   struct dirent * ent;
 
   chash_clear(certificates);
-  
+
   if (directory == NULL)
     return;
-  
+
   if (* directory == '\0')
     return;
 
   strncpy(cert_dir, directory, sizeof(cert_dir));
   cert_dir[sizeof(cert_dir) - 1] = '\0';
-  
+
   dir = opendir(directory);
   if (dir == NULL)
     return;
-  
+
   while ((ent = readdir(dir)) != NULL) {
 #if 0
     char quoted_filename[PATH_MAX];
@@ -1373,46 +1373,46 @@ void mailprivacy_smime_set_cert_dir(struct mailprivacy * privacy,
     char buf[MAX_EMAIL_SIZE];
     FILE * p;
     int r;
-    
+
     snprintf(filename, sizeof(filename),
         "%s/%s", directory, ent->d_name);
-    
+
     r = mail_quote_filename(quoted_filename, sizeof(quoted_filename), filename);
-    
+
     snprintf(command, sizeof(command),
         "openssl x509 -email -noout -in '%s' 2>/dev/null", quoted_filename);
-    
+
     p = popen(command, "r");
     if (p == NULL)
       continue;
-    
+
     while (fgets(buf, sizeof(buf), p) != NULL)
       set_file(certificates, buf, filename);
-    
+
     pclose(p);
 #endif
     char filename[PATH_MAX];
     char email[PATH_MAX];
     char * p;
-    
+
     snprintf(filename, sizeof(filename),
         "%s/%s", directory, ent->d_name);
-    
+
     strncpy(email, ent->d_name, sizeof(email));
     email[sizeof(email) - 1] = '\0';
-    
+
     p = strstr(email, CERTIFICATE_SUFFIX);
     if (p == NULL)
       continue;
-    
+
     if (strlen(p) != sizeof(CERTIFICATE_SUFFIX) - 1)
       continue;
-    
+
     * p = 0;
-    
+
     if (* email == '\0')
       continue;
-    
+
     set_file(certificates, email, filename);
   }
   closedir(dir);
@@ -1442,62 +1442,62 @@ void mailprivacy_smime_set_CA_dir(struct mailprivacy * privacy,
   struct dirent * ent;
   FILE * f_CA;
   char CA_filename[PATH_MAX];
-  
+
   if (directory == NULL)
     return;
-  
+
   if (* directory == '\0')
     return;
-  
+
   /* make a temporary file that contains all the CAs */
-  
+
   if (CAfile != NULL) {
     unlink(CAfile);
     free(CAfile);
     CAfile = NULL;
   }
-  
+
   f_CA = mailprivacy_get_tmp_file(privacy, CA_filename, sizeof(CA_filename));
   if (f_CA == NULL)
     return;
-  
+
   strncpy(CAcert_dir, directory, sizeof(CAcert_dir));
   CAcert_dir[sizeof(CAcert_dir) - 1] = '\0';
-  
+
   dir = opendir(directory);
   if (dir == NULL) {
     fclose(f_CA);
     goto unlink_CA;
   }
-  
+
   while ((ent = readdir(dir)) != NULL) {
     char filename[PATH_MAX];
     char buf[MAX_BUF];
     FILE * f;
-    
+
     snprintf(filename, sizeof(filename),
         "%s/%s", directory, ent->d_name);
-    
+
     f = fopen(filename, "r");
     if (f == NULL)
       continue;
-    
+
     while (fgets(buf, sizeof(buf), f) != NULL)
       fputs(buf, f_CA);
-    
+
     fclose(f);
   }
-  
+
   closedir(dir);
-  
+
   fclose(f_CA);
-  
+
   CAfile = strdup(CA_filename);
   if (CAfile == NULL)
     goto unlink_CA;
-  
+
   return;
-  
+
  unlink_CA:
   unlink(CA_filename);
 }
@@ -1540,19 +1540,19 @@ static int get_cert_from_sig(struct mailprivacy * privacy,
   email = get_first_from_addr(mime);
   if (email == NULL)
     return MAIL_ERROR_INVAL;
-  
+
   cert_file = get_cert_file(email);
   if (cert_file != NULL)
     return MAIL_NO_ERROR;
 
   /* get the two parts of the S/MIME message */
-  
+
   cur = clist_begin(mime->mm_data.mm_multipart.mm_mp_list);
   if (cur == NULL) {
     res = MAIL_ERROR_INVAL;
     goto err;
   }
-  
+
   signed_mime = cur->data;
   cur = clist_next(cur);
   if (cur == NULL) {
@@ -1561,7 +1561,7 @@ static int get_cert_from_sig(struct mailprivacy * privacy,
   }
 
   signature_mime = cur->data;
-  
+
   r = mailprivacy_fetch_decoded_to_file(privacy,
       signature_filename, sizeof(signature_filename),
       msg, signature_mime);
@@ -1569,28 +1569,28 @@ static int get_cert_from_sig(struct mailprivacy * privacy,
     res = r;
     goto err;
   }
-  
+
   r = mail_quote_filename(quoted_signature_filename,
        sizeof(quoted_signature_filename), signature_filename);
   if (r < 0) {
     res = MAIL_ERROR_MEMORY;
     goto unlink_signature;
   }
-  
+
   snprintf(store_cert_filename, sizeof(store_cert_filename),
       "%s/%s" CERTIFICATE_SUFFIX, cert_dir, email);
-  
+
   r = mail_quote_filename(quoted_store_cert_filename,
        sizeof(quoted_store_cert_filename), store_cert_filename);
   if (r < 0) {
     res = MAIL_ERROR_MEMORY;
     goto unlink_signature;
   }
-  
+
   snprintf(command, sizeof(command),
       "openssl pkcs7 -inform DER -in '%s' -out '%s' -print_certs 2>/dev/null",
       quoted_signature_filename, quoted_store_cert_filename);
-  
+
   r = system(command);
   if (WEXITSTATUS(r) != 0) {
     res = MAIL_ERROR_COMMAND;
@@ -1598,11 +1598,11 @@ static int get_cert_from_sig(struct mailprivacy * privacy,
   }
 
   unlink(signature_filename);
-  
+
   set_file(certificates, email, store_cert_filename);
-  
+
   return MAIL_NO_ERROR;
-  
+
  unlink_signature:
   unlink(signature_filename);
  err:
@@ -1625,16 +1625,16 @@ void mailprivacy_smime_set_private_keys_dir(struct mailprivacy * privacy,
   struct dirent * ent;
 
   chash_clear(private_keys);
-  
+
   if (directory == NULL)
     return;
-  
+
   if (* directory == '\0')
     return;
 
   strncpy(private_keys_dir, directory, sizeof(private_keys_dir));
   private_keys_dir[sizeof(private_keys_dir) - 1] = '\0';
-  
+
   dir = opendir(directory);
   if (dir == NULL)
     return;
@@ -1643,25 +1643,25 @@ void mailprivacy_smime_set_private_keys_dir(struct mailprivacy * privacy,
     char filename[PATH_MAX];
     char email[PATH_MAX];
     char * p;
-    
+
     snprintf(filename, sizeof(filename),
         "%s/%s", directory, ent->d_name);
-    
+
     strncpy(email, ent->d_name, sizeof(email));
     email[sizeof(email) - 1] = '\0';
-    
+
     p = strstr(email, PRIVATE_KEY_SUFFIX);
     if (p == NULL)
       continue;
-    
+
     if (strlen(p) != sizeof(PRIVATE_KEY_SUFFIX) - 1)
       continue;
-    
+
     * p = 0;
-    
+
     if (* email == '\0')
       continue;
-    
+
     set_private_key(privacy, email, filename);
   }
   closedir(dir);
@@ -1688,13 +1688,13 @@ static int smime_command_passphrase(struct mailprivacy * privacy,
   int bad_passphrase;
 
   bad_passphrase = 0;
-  
+
   passphrase = NULL;
   if (userid != NULL)
     passphrase = get_passphrase(privacy, userid);
-  
+
   res = mailprivacy_spawn_and_wait(command, passphrase, stdoutfile, stderrfile,
-		       &bad_passphrase);
+           &bad_passphrase);
   if (res != NO_ERROR_PASSPHRASE) {
     switch (res) {
     case ERROR_PASSPHRASE_COMMAND:
@@ -1712,10 +1712,10 @@ static int smime_command_passphrase(struct mailprivacy * privacy,
       mailprivacy_smime_add_encryption_id(privacy, msg, userid);
       return ERROR_SMIME_NOPASSPHRASE;
     }
-    
+
     return ERROR_SMIME_CHECK;
   }
-  
+
   return NO_ERROR_SMIME;
 }
 
@@ -1724,13 +1724,13 @@ static chash * encryption_id_hash = NULL;
 static clist * get_list(struct mailprivacy * privacy, mailmessage * msg)
 {
   clist * encryption_id_list;
-  
+
   encryption_id_list = NULL;
   if (encryption_id_hash != NULL) {
     chashdatum key;
     chashdatum value;
     int r;
-    
+
     key.data = &msg;
     key.len = sizeof(msg);
     r = chash_get(encryption_id_hash, &key, &value);
@@ -1738,7 +1738,7 @@ static clist * get_list(struct mailprivacy * privacy, mailmessage * msg)
       encryption_id_list = value.data;
     }
   }
-  
+
   return encryption_id_list;
 }
 
@@ -1747,7 +1747,7 @@ void mailprivacy_smime_encryption_id_list_clear(struct mailprivacy * privacy,
 {
   clist * encryption_id_list;
   clistiter * iter;
-  
+
 #ifdef LIBETPAN_REENTRANT
 #if defined(HAVE_PTHREAD_H) && !defined(IGNORE_PTHREAD_H)
   pthread_mutex_lock(&encryption_id_hash_lock);
@@ -1759,20 +1759,20 @@ void mailprivacy_smime_encryption_id_list_clear(struct mailprivacy * privacy,
   encryption_id_list = get_list(privacy, msg);
   if (encryption_id_list != NULL) {
     chashdatum key;
-    
+
     for(iter = clist_begin(encryption_id_list) ;
         iter != NULL ; iter = clist_next(iter)) {
       char * str;
-      
+
       str = clist_content(iter);
       free(str);
     }
     clist_free(encryption_id_list);
-    
+
     key.data = &msg;
     key.len = sizeof(msg);
     chash_delete(encryption_id_hash, &key, NULL);
-    
+
     if (chash_count(encryption_id_hash) == 0) {
       chash_free(encryption_id_hash);
       encryption_id_hash = NULL;
@@ -1792,7 +1792,7 @@ clist * mailprivacy_smime_encryption_id_list(struct mailprivacy * privacy,
     mailmessage * msg)
 {
   clist * encryption_id_list;
-  
+
 #ifdef LIBETPAN_REENTRANT
 #if defined(HAVE_PTHREAD_H) && !defined(IGNORE_PTHREAD_H)
   pthread_mutex_lock(&encryption_id_hash_lock);
@@ -1808,7 +1808,7 @@ clist * mailprivacy_smime_encryption_id_list(struct mailprivacy * privacy,
   LeaveCriticalSection(&encryption_id_hash_lock);
 #endif
 #endif
-  
+
   return encryption_id_list;
 }
 
@@ -1818,7 +1818,7 @@ static int mailprivacy_smime_add_encryption_id(struct mailprivacy * privacy,
   clist * encryption_id_list;
   int r;
   int res;
-  
+
 #ifdef LIBETPAN_REENTRANT
 #if defined(HAVE_PTHREAD_H) && !defined(IGNORE_PTHREAD_H)
   pthread_mutex_lock(&encryption_id_hash_lock);
@@ -1826,20 +1826,20 @@ static int mailprivacy_smime_add_encryption_id(struct mailprivacy * privacy,
   EnterCriticalSection(&encryption_id_hash_lock);
 #endif
 #endif
-  
+
   res = -1;
-  
+
   encryption_id_list = get_list(privacy, msg);
   if (encryption_id_list == NULL) {
     if (encryption_id_hash == NULL)
       encryption_id_hash = chash_new(CHASH_DEFAULTSIZE, CHASH_COPYKEY);
-    
+
     if (encryption_id_hash != NULL) {
       encryption_id_list = clist_new();
       if (encryption_id_list != NULL) {
         chashdatum key;
         chashdatum value;
-        
+
         key.data = &msg;
         key.len = sizeof(msg);
         value.data = encryption_id_list;
@@ -1850,11 +1850,11 @@ static int mailprivacy_smime_add_encryption_id(struct mailprivacy * privacy,
       }
     }
   }
-  
+
   encryption_id_list = get_list(privacy, msg);
   if (encryption_id_list != NULL) {
     char * str;
-    
+
     str = strdup(encryption_id);
     if (str != NULL) {
       r = clist_append(encryption_id_list, str);
@@ -1866,7 +1866,7 @@ static int mailprivacy_smime_add_encryption_id(struct mailprivacy * privacy,
       }
     }
   }
-  
+
 #ifdef LIBETPAN_REENTRANT
 #if defined(HAVE_PTHREAD_H) && !defined(IGNORE_PTHREAD_H)
   pthread_mutex_unlock(&encryption_id_hash_lock);
@@ -1874,7 +1874,7 @@ static int mailprivacy_smime_add_encryption_id(struct mailprivacy * privacy,
   LeaveCriticalSection(&encryption_id_hash_lock);
 #endif
 #endif
-  
+
   return res;
 }
 
@@ -1888,28 +1888,28 @@ int mailprivacy_smime_set_encryption_id(struct mailprivacy * privacy,
   int r;
   char buf[MAX_EMAIL_SIZE];
   char * n;
-  
+
   strncpy(buf, user_id, sizeof(buf));
   buf[sizeof(buf) - 1] = '\0';
   for(n = buf ; * n != '\0' ; n ++)
     * n = toupper((unsigned char) * n);
-  
+
   if (passphrase_hash == NULL) {
     passphrase_hash = chash_new(CHASH_DEFAULTSIZE, CHASH_COPYALL);
     if (passphrase_hash == NULL)
       return MAIL_ERROR_MEMORY;
   }
-  
+
   key.data = buf;
   key.len = strlen(buf) + 1;
   value.data = passphrase;
   value.len = strlen(passphrase) + 1;
-  
+
   r = chash_set(passphrase_hash, &key, &value, NULL);
   if (r < 0) {
     return MAIL_ERROR_MEMORY;
   }
-  
+
   return MAIL_NO_ERROR;
 }
 
@@ -1922,23 +1922,23 @@ static char * get_passphrase(struct mailprivacy * privacy,
   char * passphrase;
   char buf[MAX_EMAIL_SIZE];
   char * n;
-  
+
   strncpy(buf, user_id, sizeof(buf));
   buf[sizeof(buf) - 1] = '\0';
   for(n = buf ; * n != '\0' ; n ++)
     * n = toupper((unsigned char) * n);
-  
+
   if (passphrase_hash == NULL)
     return NULL;
-  
+
   key.data = buf;
   key.len = strlen(buf) + 1;
-  
+
   r = chash_get(passphrase_hash, &key, &value);
   if (r < 0)
     return NULL;
-  
+
   passphrase = strdup(value.data);
-  
+
   return passphrase;
 }

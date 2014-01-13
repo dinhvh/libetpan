@@ -34,10 +34,10 @@ static int sasl_use_count = 0;
 #if defined(HAVE_PTHREAD_H) && !defined(IGNORE_PTHREAD_H)
 #elif (defined WIN32)
 void mailsasl_init_lock(){
-	static int mainsasl_init_lock_done = 0;
-	if (InterlockedExchange(&mainsasl_init_lock_done, 1) == 0){
-		InitializeCriticalSection(&sasl_lock);
-	}
+  static int mainsasl_init_lock_done = 0;
+  if (InterlockedExchange(&mainsasl_init_lock_done, 1) == 0){
+    InitializeCriticalSection(&sasl_lock);
+  }
 }
 #endif
 #endif
@@ -46,9 +46,9 @@ void mailsasl_external_ref(void)
 {
 #ifdef LIBETPAN_REENTRANT
 #if defined(HAVE_PTHREAD_H) && !defined(IGNORE_PTHREAD_H)
-	pthread_mutex_lock(&sasl_lock);
+  pthread_mutex_lock(&sasl_lock);
 #elif (defined WIN32)
-	EnterCriticalSection(&sasl_lock);
+  EnterCriticalSection(&sasl_lock);
 #endif
 #endif
   sasl_use_count ++;
@@ -65,9 +65,9 @@ void mailsasl_ref(void)
 {
 #ifdef LIBETPAN_REENTRANT
 #if defined(HAVE_PTHREAD_H) && !defined(IGNORE_PTHREAD_H)
-	pthread_mutex_lock(&sasl_lock);
+  pthread_mutex_lock(&sasl_lock);
 #elif (defined WIN32)
-	EnterCriticalSection(&sasl_lock);
+  EnterCriticalSection(&sasl_lock);
 #endif
 #endif
   sasl_use_count ++;
@@ -86,9 +86,9 @@ void mailsasl_unref(void)
 {
 #ifdef LIBETPAN_REENTRANT
 #if defined(HAVE_PTHREAD_H) && !defined(IGNORE_PTHREAD_H)
-	pthread_mutex_lock(&sasl_lock);
+  pthread_mutex_lock(&sasl_lock);
 #elif (defined WIN32)
-	EnterCriticalSection(&sasl_lock);
+  EnterCriticalSection(&sasl_lock);
 #endif
 #endif
   sasl_use_count --;

@@ -96,7 +96,7 @@ mailstream_low_driver * mailstream_compress_driver = &local_mailstream_compress_
 mailstream_low * mailstream_low_compress_open(mailstream_low * ms)
 {
   mailstream_low * s;
-    
+
   /* stores the original mailstream */
   struct mailstream_compress_data * compress_data = malloc(sizeof(* compress_data));
   if (compress_data == NULL)
@@ -133,9 +133,9 @@ mailstream_low * mailstream_low_compress_open(mailstream_low * ms)
   s = mailstream_low_new(compress_data, mailstream_compress_driver);
   if (s == NULL)
     goto free_compress_data;
-    
+
   return s;
-    
+
   free_compress_data:
   if (compress_data->compress_stream) {
     deflateEnd(compress_data->compress_stream);
@@ -155,7 +155,7 @@ static ssize_t mailstream_low_compress_read(mailstream_low * s, void * buf, size
   compress_data * data = s->data;
   data->ms->timeout = s->timeout;
   z_stream * strm = data->decompress_stream;
-    
+
   int zr;
 
   do {
@@ -192,7 +192,7 @@ static ssize_t mailstream_low_compress_read(mailstream_low * s, void * buf, size
 }
 
 static ssize_t mailstream_low_compress_write(mailstream_low * s, const void * buf, size_t count) {
-    
+
   int zr;
   //int wr;
   compress_data * data = s->data;
@@ -212,7 +212,7 @@ static ssize_t mailstream_low_compress_write(mailstream_low * s, const void * bu
     printf("Error deflating: %d %s", zr, strm->msg);
     return -1;
   }
-  
+
   unsigned char * p = data->output_buf;
   size_t remaining = CHUNK_SIZE - strm->avail_out;
   while (remaining > 0) {
@@ -220,11 +220,11 @@ static ssize_t mailstream_low_compress_write(mailstream_low * s, const void * bu
     if (wr < 0) {
       return -1;
     }
-    
+
     p += wr;
     remaining -= wr;
   }
-  
+
   /* let the caller know how much data we wrote */
   return compress_len - strm->avail_in;
 }
