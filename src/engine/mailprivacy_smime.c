@@ -47,7 +47,13 @@
 #	include <sys/wait.h>
 #	include <dirent.h>
 #endif
-#include <pthread.h>
+#ifdef LIBETPAN_REENTRANT
+#if defined(HAVE_PTHREAD_H) && !defined(IGNORE_PTHREAD_H)
+  #include <pthread.h>
+#elif (defined WIN32)
+  #include <windows.h>
+#endif
+#endif
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -1194,8 +1200,29 @@ static struct mailprivacy_protocol smime_protocol = {
   /* encryption_tab */ smime_encryption_tab
 };
 
+#ifdef LIBETPAN_REENTRANT
+#if defined(HAVE_PTHREAD_H) && !defined(IGNORE_PTHREAD_H)
+	static pthread_mutex_t encryption_id_hash_lock = PTHREAD_MUTEX_INITIALIZER;
+#elif (defined WIN32)
+	static CRITICAL_SECTION encryption_id_hash_lock = {0};
+#endif
+#endif
+
+void mailprivacy_smime_init_lock(){
+#ifdef LIBETPAN_REENTRANT
+#if defined(HAVE_PTHREAD_H) && !defined(IGNORE_PTHREAD_H)
+#elif (defined WIN32)
+	static int mailprivacy_smime_init_lock_done = 0;
+	if (InterlockedExchange(&mailprivacy_smime_init_lock_done, 1) == 0){
+		InitializeCriticalSection(&encryption_id_hash_lock);
+	}
+#endif
+#endif
+}
+
 int mailprivacy_smime_init(struct mailprivacy * privacy)
 {
+  mailprivacy_smime_init_lock();
   certificates = chash_new(CHASH_DEFAULTSIZE, CHASH_COPYALL);
   if (certificates == NULL)
     goto err;
@@ -1692,11 +1719,6 @@ static int smime_command_passphrase(struct mailprivacy * privacy,
   return NO_ERROR_SMIME;
 }
 
-
-
-#ifdef LIBETPAN_REENTRANT
-static pthread_mutex_t encryption_id_hash_lock = PTHREAD_MUTEX_INITIALIZER;
-#endif
 static chash * encryption_id_hash = NULL;
 
 static clist * get_list(struct mailprivacy * privacy, mailmessage * msg)
@@ -1727,8 +1749,13 @@ void mailprivacy_smime_encryption_id_list_clear(struct mailprivacy * privacy,
   clistiter * iter;
   
 #ifdef LIBETPAN_REENTRANT
+#if defined(HAVE_PTHREAD_H) && !defined(IGNORE_PTHREAD_H)
   pthread_mutex_lock(&encryption_id_hash_lock);
+#elif (defined WIN32)
+  EnterCriticalSection(&encryption_id_hash_lock);
 #endif
+#endif
+
   encryption_id_list = get_list(privacy, msg);
   if (encryption_id_list != NULL) {
     chashdatum key;
@@ -1751,8 +1778,13 @@ void mailprivacy_smime_encryption_id_list_clear(struct mailprivacy * privacy,
       encryption_id_hash = NULL;
     }
   }
+
 #ifdef LIBETPAN_REENTRANT
+#if defined(HAVE_PTHREAD_H) && !defined(IGNORE_PTHREAD_H)
   pthread_mutex_unlock(&encryption_id_hash_lock);
+#elif (defined WIN32)
+  LeaveCriticalSection(&encryption_id_hash_lock);
+#endif
 #endif
 }
 
@@ -1762,11 +1794,19 @@ clist * mailprivacy_smime_encryption_id_list(struct mailprivacy * privacy,
   clist * encryption_id_list;
   
 #ifdef LIBETPAN_REENTRANT
+#if defined(HAVE_PTHREAD_H) && !defined(IGNORE_PTHREAD_H)
   pthread_mutex_lock(&encryption_id_hash_lock);
+#elif (defined WIN32)
+  EnterCriticalSection(&encryption_id_hash_lock);
+#endif
 #endif
   encryption_id_list = get_list(privacy, msg);
 #ifdef LIBETPAN_REENTRANT
+#if defined(HAVE_PTHREAD_H) && !defined(IGNORE_PTHREAD_H)
   pthread_mutex_unlock(&encryption_id_hash_lock);
+#elif (defined WIN32)
+  LeaveCriticalSection(&encryption_id_hash_lock);
+#endif
 #endif
   
   return encryption_id_list;
@@ -1780,7 +1820,11 @@ static int mailprivacy_smime_add_encryption_id(struct mailprivacy * privacy,
   int res;
   
 #ifdef LIBETPAN_REENTRANT
+#if defined(HAVE_PTHREAD_H) && !defined(IGNORE_PTHREAD_H)
   pthread_mutex_lock(&encryption_id_hash_lock);
+#elif (defined WIN32)
+  EnterCriticalSection(&encryption_id_hash_lock);
+#endif
 #endif
   
   res = -1;
@@ -1824,7 +1868,11 @@ static int mailprivacy_smime_add_encryption_id(struct mailprivacy * privacy,
   }
   
 #ifdef LIBETPAN_REENTRANT
+#if defined(HAVE_PTHREAD_H) && !defined(IGNORE_PTHREAD_H)
   pthread_mutex_unlock(&encryption_id_hash_lock);
+#elif (defined WIN32)
+  LeaveCriticalSection(&encryption_id_hash_lock);
+#endif
 #endif
   
   return res;
