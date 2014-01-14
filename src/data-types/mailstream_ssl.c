@@ -87,10 +87,13 @@
 #  include <gnutls/x509.h>
 # endif
 # ifdef LIBETPAN_REENTRANT
-#	if HAVE_PTHREAD_H
+#	 if HAVE_PTHREAD_H
 #	  include <pthread.h>
+#  elif defined(WIN32)
+    void mailprivacy_gnupg_init_lock();
+    void mailprivacy_smime_init_lock();
+#  endif
 #	endif
-# endif
 #endif
 
 #include "mmapstring.h"
@@ -230,7 +233,10 @@ static int openssl_init_done = 0;
 void mailstream_ssl_init_lock(void)
 {
 #if !defined (HAVE_PTHREAD_H) && defined (WIN32) && defined (USE_SSL)
-  InitializeCriticalSection(&ssl_lock);
+  static long volatile mailstream_ssl_init_lock_done = 0;
+  if ((result = InterlockedExchange(&mailstream_ssl_init_lock_done, 1)) == 0) {
+    InitializeCriticalSection(&ssl_lock);
+  }
 #endif
 }
 
@@ -261,6 +267,7 @@ void mailstream_ssl_init_not_required(void)
 static inline void mailstream_ssl_init(void)
 {
 #ifdef USE_SSL
+  mailstream_ssl_init_lock();
   MUTEX_LOCK(&ssl_lock);
 #ifndef USE_GNUTLS
   if (!openssl_init_done) {

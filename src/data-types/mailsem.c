@@ -46,8 +46,12 @@
 #include <unistd.h>
 
 #ifdef LIBETPAN_REENTRANT
+#if defined(HAVE_PTHREAD_H) && !defined(IGNORE_PTHREAD_H)
 #include <pthread.h>
 #include <semaphore.h>
+#elif (defined WIN32)
+#include <windows.h>
+#endif
 #endif
 
 struct mailsem_internal {
@@ -58,13 +62,19 @@ struct mailsem_internal {
   unsigned long waiters_count;
   
 #ifdef LIBETPAN_REENTRANT
+#if defined(HAVE_PTHREAD_H) && !defined(IGNORE_PTHREAD_H)
   /* Serialize access to <count> and <waiters_count>. */
   pthread_mutex_t lock;
   
    /* Condition variable that blocks the <count> 0. */
   pthread_cond_t count_nonzero;
+#elif (defined WIN32)
+  HANDLE semaphore;
+#endif
 #endif
 };
+
+#if (defined(LIBETPAN_REENTRANT) && defined(HAVE_PTHREAD_H) && !defined(IGNORE_PTHREAD_H)) || !defined(LIBETPAN_REENTRANT)
 
 static int mailsem_internal_init(struct mailsem_internal * s,
     unsigned int initial_count)
@@ -177,104 +187,52 @@ static int mailsem_internal_post(struct mailsem_internal * s)
 #endif
 }
 
-enum {
-  SEMKIND_SEMOPEN,
-  SEMKIND_SEMINIT,
-  SEMKIND_INTERNAL
-};
+#elif (defined WIN32)
 
-#if 0
-#define SEMNAME_LEN 64
-
-struct mailsem * mailsem_new(void)
+static int mailsem_internal_init(struct mailsem_internal * s,
+  unsigned int initial_count)
 {
-#ifdef LIBETPAN_REENTRANT
-  struct mailsem * sem;
-  int r;
-  
-  sem = malloc(sizeof(* sem));
-  if (sem == NULL)
-    goto err;
-  
-  sem->sem_sem = malloc(sizeof(sem_t));
-  if (sem->sem_sem == NULL)
-    goto free_sem;
-  
-  r = sem_init(sem->sem_sem, 0, 0);
-  if (r < 0) {
-    char name[SEMNAME_LEN];
-    pid_t pid;
-    
-    free(sem->sem_sem);
-    
-    pid = getpid();
-    snprintf(name, sizeof(name), "sem-%p-%i", sem, pid);
-    
-#ifndef __CYGWIN__
-    sem->sem_sem = sem_open(name, O_CREAT | O_EXCL, 0700, 0);
-    if (sem->sem_sem == (sem_t *) SEM_FAILED)
-      goto free_sem;
-    
-    sem->sem_kind = SEMKIND_SEMOPEN;
-#else
-    goto free_sem;
-#endif
-  }
-  else {
-    sem->sem_kind = SEMKIND_SEMINIT;
-  }
-  
-  return sem;
-  
- free_sem:
-    free(sem);
- err:
-  return NULL;
-#else
-  return NULL;
-#endif
+  s->semaphore = CreateSemaphore(
+    NULL,           // default security attributes
+    initial_count,  // initial count
+    0x7FFFFFFF,  // maximum count
+    NULL);          // unnamed semaphore
+
+  return s->semaphore == NULL ? -1 : 0;
 }
 
-void mailsem_free(struct mailsem * sem)
+static void mailsem_internal_destroy(struct mailsem_internal * s)
 {
-#ifdef LIBETPAN_REENTRANT
-  if (sem->sem_kind == SEMKIND_SEMOPEN) {
-    char name[SEMNAME_LEN];
-    pid_t pid;
-    
-    pid = getpid();
-    
-#ifndef __CYGWIN__
-    sem_close((sem_t *) sem->sem_sem);
-    snprintf(name, sizeof(name), "sem-%p-%i", sem, pid);
-    sem_unlink(name);
-#endif
+  if (s->semaphore != NULL){
+    CloseHandle(s->semaphore);
   }
-  else {
-    sem_destroy((sem_t *) sem->sem_sem);
-    free(sem->sem_sem);
-  }
-  free(sem);
-#endif
 }
 
-int mailsem_up(struct mailsem * sem)
+int mailsem_internal_wait(struct mailsem_internal * s)
 {
-#ifdef LIBETPAN_REENTRANT
-  return sem_post((sem_t *) sem->sem_sem);
-#else
-  return -1;
-#endif
+  DWORD dwWaitResult = WAIT_TIMEOUT;
+
+  while (dwWaitResult != WAIT_OBJECT_0 && dwWaitResult != WAIT_FAILED){
+    dwWaitResult = WaitForSingleObject(
+          s->semaphore,   // handle to semaphore
+          INFINITE);           // zero-second time-out interval
+  }
+
+  return dwWaitResult == WAIT_FAILED ? -1 : 0;
 }
 
-int mailsem_down(struct mailsem * sem)
+static int mailsem_internal_post(struct mailsem_internal * s)
 {
-#ifdef LIBETPAN_REENTRANT
-  return sem_wait((sem_t *) sem->sem_sem);
-#else
-  return -1;
-#endif
+  if (!ReleaseSemaphore(
+      s->semaphore,  // handle to semaphore
+      1,            // increase count by one
+      NULL) )       // not interested in previous count
+  {
+    return -1;
+  }
+  return 0;
 }
+
 #endif
 
 struct mailsem * mailsem_new(void)
