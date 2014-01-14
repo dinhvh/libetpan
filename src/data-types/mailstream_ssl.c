@@ -230,13 +230,17 @@ static int openssl_init_done = 0;
 #endif
 #endif
 
-void mailstream_ssl_init_lock(void)
+int mailstream_ssl_init_lock(void)
 {
 #if !defined (HAVE_PTHREAD_H) && defined (WIN32) && defined (USE_SSL)
   static long volatile mailstream_ssl_init_lock_done = 0;
+  int result = -1;
   if ((result = InterlockedExchange(&mailstream_ssl_init_lock_done, 1)) == 0) {
     InitializeCriticalSection(&ssl_lock);
   }
+  return result == 0 ? 0 : -1;
+#else
+  return 0;
 #endif
 }
 
@@ -267,7 +271,9 @@ void mailstream_ssl_init_not_required(void)
 static inline void mailstream_ssl_init(void)
 {
 #ifdef USE_SSL
-  mailstream_ssl_init_lock();
+  if (mailstream_ssl_init_lock() == -1){
+	  return;
+  }
   MUTEX_LOCK(&ssl_lock);
 #ifndef USE_GNUTLS
   if (!openssl_init_done) {
