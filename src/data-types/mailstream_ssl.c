@@ -234,7 +234,7 @@ void mailstream_ssl_init_lock(void)
 {
 #if !defined (HAVE_PTHREAD_H) && defined (WIN32) && defined (USE_SSL)
   static long volatile mailstream_ssl_init_lock_done = 0;
-  if ((result = InterlockedExchange(&mailstream_ssl_init_lock_done, 1)) == 0) {
+  if (InterlockedExchange(&mailstream_ssl_init_lock_done, 1) == 0) {
     InitializeCriticalSection(&ssl_lock);
   }
 #endif
