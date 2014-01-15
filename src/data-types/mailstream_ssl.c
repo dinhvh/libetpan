@@ -241,7 +241,7 @@ void mailstream_ssl_init_lock(void)
     mailstream_ssl_init_lock_doneInit = 1;
   } else {
     while (mailstream_ssl_init_lock_doneInit == 0){
-      sleep(100);
+      Sleep(100);
     }
   }
 #endif
