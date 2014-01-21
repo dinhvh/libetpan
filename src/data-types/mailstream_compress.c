@@ -41,9 +41,17 @@
 
 #if !HAVE_ZLIB
 
+mailstream_low_driver * mailstream_compress_driver;
 mailstream_low * mailstream_low_compress_open(mailstream_low * ms)
 {
   return NULL;
+}
+
+int mailstream_low_compress_wait_idle(mailstream_low * low,
+                                      struct mailstream_cancel * idle,
+                                      int max_idle_delay)
+{
+  return mailstream_low_wait_idle(low, idle, max_idle_delay);
 }
 
 #else
