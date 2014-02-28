@@ -403,6 +403,9 @@ static struct mailstream_ssl_data * ssl_data_new_full(int fd, time_t timeout,
   SSL_CTX * tmp_ctx;
   struct mailstream_cancel * cancel;
   struct mailstream_ssl_context * ssl_context = NULL;
+#ifdef SSL_MODE_RELEASE_BUFFERS
+  long mode = 0;
+#endif
   
   mailstream_ssl_init();
   
@@ -420,7 +423,7 @@ static struct mailstream_ssl_data * ssl_data_new_full(int fd, time_t timeout,
   ssl_conn = (SSL *) SSL_new(tmp_ctx);
   
 #ifdef SSL_MODE_RELEASE_BUFFERS
-  long mode = SSL_get_mode(ssl_conn);
+  mode = SSL_get_mode(ssl_conn);
   SSL_set_mode(ssl_conn, mode | SSL_MODE_RELEASE_BUFFERS);
 #endif
   
