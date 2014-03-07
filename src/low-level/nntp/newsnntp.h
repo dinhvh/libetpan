@@ -151,8 +151,8 @@ int newsnntp_quit(newsnntp * session);
    @param result      the header data.
    @param result_len  the length of the result data.
    
-   @return the return code is one of MAILIMAP_ERROR_XXX or
-   MAILIMAP_NO_ERROR codes
+   @return the return code is one of NEWSNNTP_ERROR_XXX or
+   NEWSNNTP_NO_ERROR codes
 */
 
 LIBETPAN_EXPORT
@@ -179,8 +179,8 @@ void newsnntp_head_free(char * str);
    @param result      the article data.
    @param result_len  the length of the result data.
    
-   @return the return code is one of MAILIMAP_ERROR_XXX or
-   MAILIMAP_NO_ERROR codes
+   @return the return code is one of NEWSNNTP_ERROR_XXX or
+   NEWSNNTP_NO_ERROR codes
 */
 
 LIBETPAN_EXPORT
@@ -196,8 +196,8 @@ int newsnntp_article(newsnntp * session, uint32_t indx,
    @param result      The article data.
    @param result_len  The length of the result data.
    
-   @return the return code is one of MAILIMAP_ERROR_XXX or
-   MAILIMAP_NO_ERROR codes
+   @return the return code is one of NEWSNNTP_ERROR_XXX or
+   NEWSNNTP_NO_ERROR codes
 */
 
 LIBETPAN_EXPORT
@@ -224,8 +224,8 @@ void newsnntp_article_free(char * str);
    @param result      body data.
    @param result_len  length of the result data.
    
-   @return the return code is one of MAILIMAP_ERROR_XXX or
-   MAILIMAP_NO_ERROR codes
+   @return the return code is one of NEWSNNTP_ERROR_XXX or
+   NEWSNNTP_NO_ERROR codes
 */
 
 LIBETPAN_EXPORT
@@ -250,8 +250,8 @@ void newsnntp_body_free(char * str);
    
    @param session    NNTP session
    
-   @return the return code is one of MAILIMAP_ERROR_XXX or
-   MAILIMAP_NO_ERROR codes
+   @return the return code is one of NEWSNNTP_ERROR_XXX or
+   NEWSNNTP_NO_ERROR codes
 */
 
 LIBETPAN_EXPORT
@@ -264,8 +264,8 @@ int newsnntp_mode_reader(newsnntp * session);
    @param session    NNTP session
    @param tm         server's current time.
    
-   @return the return code is one of MAILIMAP_ERROR_XXX or
-   MAILIMAP_NO_ERROR codes
+   @return the return code is one of NEWSNNTP_ERROR_XXX or
+   NEWSNNTP_NO_ERROR codes
 */
 
 LIBETPAN_EXPORT
@@ -277,8 +277,8 @@ int newsnntp_date(newsnntp * session, struct tm * tm);
    @param session    NNTP session
    @param username   username.
    
-   @return the return code is one of MAILIMAP_ERROR_XXX or
-   MAILIMAP_NO_ERROR codes
+   @return the return code is one of NEWSNNTP_ERROR_XXX or
+   NEWSNNTP_NO_ERROR codes
 */
 
 LIBETPAN_EXPORT
@@ -290,8 +290,8 @@ int newsnntp_authinfo_username(newsnntp * session, const char * username);
    @param session    NNTP session
    @param username   password.
    
-   @return the return code is one of MAILIMAP_ERROR_XXX or
-   MAILIMAP_NO_ERROR codes
+   @return the return code is one of NEWSNNTP_ERROR_XXX or
+   NEWSNNTP_NO_ERROR codes
 */
 
 LIBETPAN_EXPORT
@@ -304,8 +304,8 @@ int newsnntp_authinfo_password(newsnntp * session, const char * password);
    @param message    the message data.
    @param size       the size of the message.
    
-   @return the return code is one of MAILIMAP_ERROR_XXX or
-   MAILIMAP_NO_ERROR codes
+   @return the return code is one of NEWSNNTP_ERROR_XXX or
+   NEWSNNTP_NO_ERROR codes
 */
 
 LIBETPAN_EXPORT
@@ -322,8 +322,8 @@ int newsnntp_post(newsnntp * session, const char * message, size_t size);
    @param groupname  name of the newsgroup.
    @param info       information about the group.
    
-   @return the return code is one of MAILIMAP_ERROR_XXX or
-   MAILIMAP_NO_ERROR codes
+   @return the return code is one of NEWSNNTP_ERROR_XXX or
+   NEWSNNTP_NO_ERROR codes
 */
 
 LIBETPAN_EXPORT
@@ -348,8 +348,8 @@ void newsnntp_group_free(struct newsnntp_group_info * info);
    @param session    NNTP session
    @param result     list of struct newsnntp_group_info *.
    
-   @return the return code is one of MAILIMAP_ERROR_XXX or
-   MAILIMAP_NO_ERROR codes
+   @return the return code is one of NEWSNNTP_ERROR_XXX or
+   NEWSNNTP_NO_ERROR codes
 */
 
 LIBETPAN_EXPORT
@@ -374,8 +374,8 @@ void newsnntp_list_free(clist * l);
    @param session    NNTP session
    @param result     string describing the server's format
    
-   @return the return code is one of MAILIMAP_ERROR_XXX or
-   MAILIMAP_NO_ERROR codes
+   @return the return code is one of NEWSNNTP_ERROR_XXX or
+   NEWSNNTP_NO_ERROR codes
 */
 
 LIBETPAN_EXPORT
@@ -400,8 +400,8 @@ void newsnntp_list_overview_fmt_free(clist * l);
    @param wildmat    an optional wildmat pattern string
    @param result     a list of struct newsnntp_group_info *
    
-   @return the return code is one of MAILIMAP_ERROR_XXX or
-   MAILIMAP_NO_ERROR codes
+   @return the return code is one of NEWSNNTP_ERROR_XXX or
+   NEWSNNTP_NO_ERROR codes
 */
 
 LIBETPAN_EXPORT
@@ -426,8 +426,8 @@ void newsnntp_list_active_free(clist * l);
    @param session    NNTP session
    @param result     a list of struct newsnntp_group_time *
    
-   @return the return code is one of MAILIMAP_ERROR_XXX or
-   MAILIMAP_NO_ERROR codes
+   @return the return code is one of NEWSNNTP_ERROR_XXX or
+   NEWSNNTP_NO_ERROR codes
 */
 
 LIBETPAN_EXPORT
@@ -452,8 +452,8 @@ void newsnntp_list_active_times_free(clist * l);
    @param session    NNTP session
    @param result     a list of struct newsnntp_distrib_value_meaning *
    
-   @return the return code is one of MAILIMAP_ERROR_XXX or
-   MAILIMAP_NO_ERROR codes
+   @return the return code is one of NEWSNNTP_ERROR_XXX or
+   NEWSNNTP_NO_ERROR codes
 */
 
 LIBETPAN_EXPORT
@@ -479,8 +479,8 @@ void newsnntp_list_distribution_free(clist * l);
    @param session    NNTP session
    @param result     a list of struct newsnntp_distrib_default_value *
    
-   @return the return code is one of MAILIMAP_ERROR_XXX or
-   MAILIMAP_NO_ERROR codes
+   @return the return code is one of NEWSNNTP_ERROR_XXX or
+   NEWSNNTP_NO_ERROR codes
 */
 
 LIBETPAN_EXPORT
@@ -506,8 +506,8 @@ void newsnntp_list_distrib_pats_free(clist * l);
    @param pattern    an optional wildmat pattern
    @param result     a list of struct newsnntp_group_description *
    
-   @return the return code is one of MAILIMAP_ERROR_XXX or
-   MAILIMAP_NO_ERROR codes
+   @return the return code is one of NEWSNNTP_ERROR_XXX or
+   NEWSNNTP_NO_ERROR codes
 */
 
 LIBETPAN_EXPORT
@@ -533,8 +533,8 @@ void newsnntp_list_newsgroups_free(clist * l);
    @param session    NNTP session
    @param result     a list of newsgroup name strings
    
-   @return the return code is one of MAILIMAP_ERROR_XXX or
-   MAILIMAP_NO_ERROR codes
+   @return the return code is one of NEWSNNTP_ERROR_XXX or
+   NEWSNNTP_NO_ERROR codes
 */
 
 LIBETPAN_EXPORT
@@ -560,8 +560,8 @@ void newsnntp_list_subscriptions_free(clist * l);
    @param group_name  the group name
    @param result      a list of uint32_t article numbers
    
-   @return the return code is one of MAILIMAP_ERROR_XXX or
-   MAILIMAP_NO_ERROR codes
+   @return the return code is one of NEWSNNTP_ERROR_XXX or
+   NEWSNNTP_NO_ERROR codes
 */
 
 LIBETPAN_EXPORT
@@ -588,8 +588,8 @@ void newsnntp_listgroup_free(clist * l);
    @param header     the field name
    @param result     a list of struct newsnntp_xhdr_resp_item *.
    
-   @return the return code is one of MAILIMAP_ERROR_XXX or
-   MAILIMAP_NO_ERROR codes
+   @return the return code is one of NEWSNNTP_ERROR_XXX or
+   NEWSNNTP_NO_ERROR codes
 */
 
 LIBETPAN_EXPORT
@@ -606,8 +606,8 @@ int newsnntp_xhdr_single(newsnntp * session, const char * header, uint32_t artic
    @param rangesup  the upper bound of the range
    @param result    a list of struct newsnntp_xhdr_resp_item *.
    
-   @return the return code is one of MAILIMAP_ERROR_XXX or
-   MAILIMAP_NO_ERROR codes
+   @return the return code is one of NEWSNNTP_ERROR_XXX or
+   NEWSNNTP_NO_ERROR codes
 */
 
 LIBETPAN_EXPORT
@@ -635,8 +635,8 @@ void newsnntp_xhdr_free(clist * l);
    @param header     the field name
    @param result     a list of struct newsnntp_xhdr_resp_item *.
    
-   @return the return code is one of MAILIMAP_ERROR_XXX or
-   MAILIMAP_NO_ERROR codes
+   @return the return code is one of NEWSNNTP_ERROR_XXX or
+   NEWSNNTP_NO_ERROR codes
 */
 
 LIBETPAN_EXPORT
@@ -653,8 +653,8 @@ int newsnntp_xover_single(newsnntp * session, uint32_t article,
    @param rangesup  the upper bound of the range
    @param result    a list of struct newsnntp_xover_resp_item *.
    
-   @return the return code is one of MAILIMAP_ERROR_XXX or
-   MAILIMAP_NO_ERROR codes
+   @return the return code is one of NEWSNNTP_ERROR_XXX or
+   NEWSNNTP_NO_ERROR codes
 */
 
 LIBETPAN_EXPORT
