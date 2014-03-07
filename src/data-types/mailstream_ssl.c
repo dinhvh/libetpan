@@ -87,10 +87,13 @@
 #  include <gnutls/x509.h>
 # endif
 # ifdef LIBETPAN_REENTRANT
-#	if HAVE_PTHREAD_H
+#	 if HAVE_PTHREAD_H
 #	  include <pthread.h>
+#  elif defined(WIN32)
+    void mailprivacy_gnupg_init_lock();
+    void mailprivacy_smime_init_lock();
+#  endif
 #	endif
-# endif
 #endif
 
 #include "mmapstring.h"
@@ -230,7 +233,10 @@ static int openssl_init_done = 0;
 void mailstream_ssl_init_lock(void)
 {
 #if !defined (HAVE_PTHREAD_H) && defined (WIN32) && defined (USE_SSL)
-  InitializeCriticalSection(&ssl_lock);
+  static long volatile mailstream_ssl_init_lock_done = 0;
+  if (InterlockedExchange(&mailstream_ssl_init_lock_done, 1) == 0) {
+    InitializeCriticalSection(&ssl_lock);
+  }
 #endif
 }
 
@@ -261,6 +267,7 @@ void mailstream_ssl_init_not_required(void)
 static inline void mailstream_ssl_init(void)
 {
 #ifdef USE_SSL
+  mailstream_ssl_init_lock();
   MUTEX_LOCK(&ssl_lock);
 #ifndef USE_GNUTLS
   if (!openssl_init_done) {
@@ -270,9 +277,7 @@ static inline void mailstream_ssl_init(void)
     
     SSL_load_error_strings();
     SSL_library_init();
-    OpenSSL_add_all_digests();
     OpenSSL_add_all_algorithms();
-    OpenSSL_add_all_ciphers();
     
     openssl_init_done = 1;
   }
@@ -398,6 +403,9 @@ static struct mailstream_ssl_data * ssl_data_new_full(int fd, time_t timeout,
   SSL_CTX * tmp_ctx;
   struct mailstream_cancel * cancel;
   struct mailstream_ssl_context * ssl_context = NULL;
+#ifdef SSL_MODE_RELEASE_BUFFERS
+  long mode = 0;
+#endif
   
   mailstream_ssl_init();
   
@@ -413,6 +421,12 @@ static struct mailstream_ssl_data * ssl_data_new_full(int fd, time_t timeout,
   SSL_CTX_set_app_data(tmp_ctx, ssl_context);
   SSL_CTX_set_client_cert_cb(tmp_ctx, mailstream_openssl_client_cert_cb);
   ssl_conn = (SSL *) SSL_new(tmp_ctx);
+  
+#ifdef SSL_MODE_RELEASE_BUFFERS
+  mode = SSL_get_mode(ssl_conn);
+  SSL_set_mode(ssl_conn, mode | SSL_MODE_RELEASE_BUFFERS);
+#endif
+  
   if (ssl_conn == NULL)
     goto free_ctx;
   

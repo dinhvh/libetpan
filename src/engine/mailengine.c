@@ -47,7 +47,11 @@
 #include <stdlib.h>
 #include "mailprivacy.h"
 #ifdef LIBETPAN_REENTRANT
+#if defined(HAVE_PTHREAD_H) && !defined(IGNORE_PTHREAD_H)
 #include <pthread.h>
+#elif (defined WIN32)
+#include <windows.h>
+#endif
 #endif
 #include <string.h>
 
@@ -62,9 +66,26 @@ struct message_ref_elt {
   struct mailfolder * folder;
   int lost;
 #ifdef LIBETPAN_REENTRANT
+#if defined(HAVE_PTHREAD_H) && !defined(IGNORE_PTHREAD_H)
   pthread_mutex_t lock;
+#else
+  CRITICAL_SECTION lock;
+#endif
 #endif
 };
+
+#ifdef LIBETPAN_REENTRANT
+#if defined(HAVE_PTHREAD_H) && !defined(IGNORE_PTHREAD_H)
+#define LOCK(lock) pthread_mutex_lock(&lock);
+#define UNLOCK(lock) pthread_mutex_unlock(&lock);
+#elif (defined WIN32)
+#define LOCK(lock) EnterCriticalSection(&lock);
+#define UNLOCK(lock) LeaveCriticalSection(&lock);
+#endif
+#else
+#define LOCK(lock) do {} while (0)
+#define UNLOCK(lock) do {} while (0)
+#endif
 
 static struct message_ref_elt *
 message_ref_elt_new(struct mailfolder * folder, mailmessage * msg)
@@ -77,9 +98,13 @@ message_ref_elt_new(struct mailfolder * folder, mailmessage * msg)
     goto err;
   
 #ifdef LIBETPAN_REENTRANT
+#if defined(HAVE_PTHREAD_H) && !defined(IGNORE_PTHREAD_H)
   r = pthread_mutex_init(&ref->lock, NULL);
   if (r != 0)
     goto free;
+#else
+  InitializeCriticalSection(&ref->lock);
+#endif  
 #endif
   
   ref->msg = msg;
@@ -99,7 +124,11 @@ message_ref_elt_new(struct mailfolder * folder, mailmessage * msg)
 static void message_ref_elt_free(struct message_ref_elt * ref_elt)
 {
 #ifdef LIBETPAN_REENTRANT
+#if defined(HAVE_PTHREAD_H) && !defined(IGNORE_PTHREAD_H)
   pthread_mutex_destroy(&ref_elt->lock);
+#else
+  DeleteCriticalSection(&ref_elt->lock);
+#endif
 #endif
   free(ref_elt);
 }
@@ -108,16 +137,10 @@ static inline int message_ref(struct message_ref_elt * ref_elt)
 {
   int count;
   
-#ifdef LIBETPAN_REENTRANT
-  pthread_mutex_lock(&ref_elt->lock);
-#endif
-  
+  LOCK(ref_elt->lock);
   ref_elt->ref_count ++;
   count = ref_elt->ref_count;
-  
-#ifdef LIBETPAN_REENTRANT
-  pthread_mutex_unlock(&ref_elt->lock);
-#endif
+  UNLOCK(ref_elt->lock);
   
   return count;
 }
@@ -126,16 +149,10 @@ static inline int message_unref(struct message_ref_elt * ref_elt)
 {
   int count;
   
-#ifdef LIBETPAN_REENTRANT
-  pthread_mutex_lock(&ref_elt->lock);
-#endif
-  
+  LOCK(ref_elt->lock);
   ref_elt->ref_count --;
   count = ref_elt->ref_count;
-  
-#ifdef LIBETPAN_REENTRANT
-  pthread_mutex_unlock(&ref_elt->lock);
-#endif
+  UNLOCK(ref_elt->lock);
   
   return count;
 }
@@ -157,14 +174,10 @@ static inline int message_mime_ref(struct mailprivacy * privacy,
   
   message_ref(ref_elt);
   
-#ifdef LIBETPAN_REENTRANT
-  pthread_mutex_lock(&ref_elt->lock);
-#endif
+  LOCK(ref_elt->lock);
   ref_elt->mime_ref_count ++;
   count = ref_elt->mime_ref_count;
-#ifdef LIBETPAN_REENTRANT
-  pthread_mutex_unlock(&ref_elt->lock);
-#endif
+  UNLOCK(ref_elt->lock);
   
   return count;
 }
@@ -176,9 +189,7 @@ static inline int message_mime_unref(struct mailprivacy * privacy,
   
   message_unref(ref_elt);
   
-#ifdef LIBETPAN_REENTRANT
-  pthread_mutex_lock(&ref_elt->lock);
-#endif
+  LOCK(ref_elt->lock);
   ref_elt->mime_ref_count --;
   
   if (ref_elt->mime_ref_count == 0)
@@ -186,9 +197,7 @@ static inline int message_mime_unref(struct mailprivacy * privacy,
   
   count = ref_elt->mime_ref_count;
   
-#ifdef LIBETPAN_REENTRANT
-  pthread_mutex_unlock(&ref_elt->lock);
-#endif
+  UNLOCK(ref_elt->lock);
   
   return count;
 }
@@ -1015,7 +1024,11 @@ struct mailengine {
   struct mailprivacy * privacy;
   
 #ifdef LIBETPAN_REENTRANT
+#if defined(HAVE_PTHREAD_H) && !defined(IGNORE_PTHREAD_H)
   pthread_mutex_t storage_hash_lock;
+#elif (defined WIN32)
+  CRITICAL_SECTION storage_hash_lock;
+#endif
 #endif  
   /* storage => storage_ref_info */
   chash * storage_hash;
@@ -1032,13 +1045,9 @@ get_storage_ref_info(struct mailengine * engine,
   
   key.data = &storage;
   key.len = sizeof(storage);
-#ifdef LIBETPAN_REENTRANT
-  pthread_mutex_lock(&engine->storage_hash_lock);
-#endif  
+  LOCK(engine->storage_hash_lock);
   r = chash_get(engine->storage_hash, &key, &data);
-#ifdef LIBETPAN_REENTRANT
-  pthread_mutex_unlock(&engine->storage_hash_lock);
-#endif  
+  UNLOCK(engine->storage_hash_lock);
   if (r < 0)
     return NULL;
   
@@ -1066,13 +1075,9 @@ add_storage_ref_info(struct mailengine * engine,
   data.data = ref_info;
   data.len = 0;
   
-#ifdef LIBETPAN_REENTRANT
-  pthread_mutex_lock(&engine->storage_hash_lock);
-#endif  
+  LOCK(engine->storage_hash_lock);
   r = chash_set(engine->storage_hash, &key, &data, NULL);
-#ifdef LIBETPAN_REENTRANT
-  pthread_mutex_unlock(&engine->storage_hash_lock);
-#endif  
+  UNLOCK(engine->storage_hash_lock);
   if (r < 0)
     goto free;
   
@@ -1097,9 +1102,7 @@ remove_storage_ref_info(struct mailengine * engine,
   key.data = &storage;
   key.len = sizeof(storage);
   
-#ifdef LIBETPAN_REENTRANT
-  pthread_mutex_lock(&engine->storage_hash_lock);
-#endif
+  LOCK(engine->storage_hash_lock);
   
   chash_get(engine->storage_hash, &key, &data);
   ref_info = data.data;
@@ -1110,9 +1113,7 @@ remove_storage_ref_info(struct mailengine * engine,
     chash_delete(engine->storage_hash, &key, NULL);
   }
   
-#ifdef LIBETPAN_REENTRANT
-  pthread_mutex_unlock(&engine->storage_hash_lock);
-#endif  
+  LOCK(engine->storage_hash_lock);
 }
 
 struct mailengine *
@@ -1128,9 +1129,13 @@ libetpan_engine_new(struct mailprivacy * privacy)
   engine->privacy = privacy;
   
 #ifdef LIBETPAN_REENTRANT
+#if defined(HAVE_PTHREAD_H) && !defined(IGNORE_PTHREAD_H)
   r = pthread_mutex_init(&engine->storage_hash_lock, NULL);
   if (r != 0)
     goto free;
+#elif (defined WIN32)
+  InitializeCriticalSection(&engine->storage_hash_lock);
+#endif
 #endif
   
   engine->storage_hash = chash_new(CHASH_DEFAULTSIZE, CHASH_COPYKEY);
@@ -1141,7 +1146,11 @@ libetpan_engine_new(struct mailprivacy * privacy)
   
  destroy_mutex:
 #ifdef LIBETPAN_REENTRANT
+#if defined(HAVE_PTHREAD_H) && !defined(IGNORE_PTHREAD_H)
   pthread_mutex_destroy(&engine->storage_hash_lock);
+#elif (defined WIN32)
+  DeleteCriticalSection(&engine->storage_hash_lock);
+#endif
 #endif
  free:
   free(engine);
@@ -1153,7 +1162,11 @@ void libetpan_engine_free(struct mailengine * engine)
 {
   chash_free(engine->storage_hash);
 #ifdef LIBETPAN_REENTRANT
+#if defined(HAVE_PTHREAD_H) && !defined(IGNORE_PTHREAD_H)
   pthread_mutex_destroy(&engine->storage_hash_lock);
+#elif (defined WIN32)
+  DeleteCriticalSection(&engine->storage_hash_lock);
+#endif
 #endif  
   free(engine);
 }

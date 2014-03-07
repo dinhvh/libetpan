@@ -440,8 +440,14 @@ AC_SUBST(DBLIB)
 
 dnl Threading support, if enabled
 AC_ARG_ENABLE(threads,  [  --disable-threads        do not include multithreading support using pthread],,[enable_threads=yes])
+AC_ARG_ENABLE(windows-threads,  [  --enable-windows-threads        include multithreading support using windows threads],[enable_windows_threads=yes],)
 
-if test "x$enable_threads" = "xyes"; then
+if test "x$enable_windows_threads" = "xyes"; then
+  AC_CHECK_HEADERS(pthread.h, [], [])
+  AC_DEFINE([LIBETPAN_REENTRANT], 1, [Define to include multithreading support])
+  LIBSUFFIX=
+  REENTRANT=1
+elif test "x$enable_threads" = "xyes"; then
   dnl Try to find a good CFLAGS/LDFLAGS for pthreads
   AC_CHECK_HEADERS(pthread.h, [], [AC_MSG_ERROR([pthread support required])])
   CPPFLAGS="$CPPFLAGS -D_REENTRANT"

@@ -63,7 +63,11 @@
 #include <libetpan/mailmime.h>
 #include <libetpan/libetpan-config.h>
 #ifdef LIBETPAN_REENTRANT
+#if defined(HAVE_PTHREAD_H) && !defined(IGNORE_PTHREAD_H)
 #include <pthread.h>
+#elif (defined WIN32)
+#include <windows.h>
+#endif
 #endif
 #include <ctype.h>
 
@@ -2815,6 +2819,35 @@ static struct mailprivacy_protocol pgp_protocol = {
   /* encryption_tab */ pgp_encryption_tab
 };
 
+#ifdef LIBETPAN_REENTRANT
+#if defined(HAVE_PTHREAD_H) && !defined(IGNORE_PTHREAD_H)
+static pthread_mutex_t encryption_id_hash_lock = PTHREAD_MUTEX_INITIALIZER;
+#define LOCK() pthread_mutex_lock(&encryption_id_hash_lock)
+#define UNLOCK() pthread_mutex_unlock(&encryption_id_hash_lock)
+#elif (defined WIN32)
+static CRITICAL_SECTION encryption_id_hash_lock = {0};
+static int mailprivacy_gnupg_init_lock_done = 0;
+#define LOCK() EnterCriticalSection(&encryption_id_hash_lock)
+#define UNLOCK() LeaveCriticalSection(&encryption_id_hash_lock)
+#endif
+#else
+#define LOCK() do while (0)
+#define UNLOCK() do while (0)
+#endif
+static chash * encryption_id_hash = NULL;
+
+static void mailprivacy_gnupg_init_lock(void)
+{
+#ifdef LIBETPAN_REENTRANT
+#if defined(HAVE_PTHREAD_H) && !defined(IGNORE_PTHREAD_H)
+#elif (defined WIN32)
+  if (InterlockedExchange(&mailprivacy_gnupg_init_lock_done, 1) == 0){
+    InitializeCriticalSection(&encryption_id_hash_lock);
+  }
+#endif
+#endif
+}
+
 int mailprivacy_gnupg_init(struct mailprivacy * privacy)
 {
   return mailprivacy_register(privacy, &pgp_protocol);
@@ -2824,12 +2857,6 @@ void mailprivacy_gnupg_done(struct mailprivacy * privacy)
 {
   mailprivacy_unregister(privacy, &pgp_protocol);
 }
-
-
-#ifdef LIBETPAN_REENTRANT
-static pthread_mutex_t encryption_id_hash_lock = PTHREAD_MUTEX_INITIALIZER;
-#endif
-static chash * encryption_id_hash = NULL;
 
 static clist * get_list(struct mailprivacy * privacy, mailmessage * msg)
 {
@@ -2858,9 +2885,7 @@ void mailprivacy_gnupg_encryption_id_list_clear(struct mailprivacy * privacy,
   clist * encryption_id_list;
   clistiter * iter;
   
-#ifdef LIBETPAN_REENTRANT
-  pthread_mutex_lock(&encryption_id_hash_lock);
-#endif
+  LOCK();
   encryption_id_list = get_list(privacy, msg);
   if (encryption_id_list != NULL) {
     chashdatum key;
@@ -2883,9 +2908,7 @@ void mailprivacy_gnupg_encryption_id_list_clear(struct mailprivacy * privacy,
       encryption_id_hash = NULL;
     }
   }
-#ifdef LIBETPAN_REENTRANT
-  pthread_mutex_unlock(&encryption_id_hash_lock);
-#endif
+  UNLOCK();
 }
 
 clist * mailprivacy_gnupg_encryption_id_list(struct mailprivacy * privacy,
@@ -2893,13 +2916,9 @@ clist * mailprivacy_gnupg_encryption_id_list(struct mailprivacy * privacy,
 {
   clist * encryption_id_list;
   
-#ifdef LIBETPAN_REENTRANT
-  pthread_mutex_lock(&encryption_id_hash_lock);
-#endif
+  LOCK();
   encryption_id_list = get_list(privacy, msg);
-#ifdef LIBETPAN_REENTRANT
-  pthread_mutex_unlock(&encryption_id_hash_lock);
-#endif
+  UNLOCK();
   
   return encryption_id_list;
 }
@@ -2911,9 +2930,7 @@ static int mailprivacy_gnupg_add_encryption_id(struct mailprivacy * privacy,
   int r;
   int res;
   
-#ifdef LIBETPAN_REENTRANT
-  pthread_mutex_lock(&encryption_id_hash_lock);
-#endif
+  LOCK();
   
   res = -1;
   
@@ -2955,9 +2972,7 @@ static int mailprivacy_gnupg_add_encryption_id(struct mailprivacy * privacy,
     }
   }
   
-#ifdef LIBETPAN_REENTRANT
-  pthread_mutex_unlock(&encryption_id_hash_lock);
-#endif
+  UNLOCK();
   
   return res;
 }

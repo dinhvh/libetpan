@@ -2281,6 +2281,18 @@ int mailimap_search_key_send(mailstream * fd,
       return r;
     return MAILIMAP_NO_ERROR;
 
+    case MAILIMAP_SEARCH_KEY_XGMRAW:
+      r = mailimap_token_send(fd, "X-GM-RAW");
+      if (r != MAILIMAP_NO_ERROR)
+        return r;
+      r = mailimap_space_send(fd);
+      if (r != MAILIMAP_NO_ERROR)
+        return r;
+      r = mailimap_quoted_send(fd, key->sk_data.sk_xgmraw);
+      if (r != MAILIMAP_NO_ERROR)
+        return r;
+      return MAILIMAP_NO_ERROR;
+
   case MAILIMAP_SEARCH_KEY_MULTIPLE:
     r = mailimap_oparenth_send(fd);
     if (r != MAILIMAP_NO_ERROR)
