@@ -3018,7 +3018,7 @@ mailimap_search_key_new_xgmthrid(uint64_t sk_xgmthrid);
 
 LIBETPAN_EXPORT
 struct mailimap_search_key *
-mailimap_search_key_new_xgmthrid(uint64_t sk_xgmmsgid);
+mailimap_search_key_new_xgmmsgid(uint64_t sk_xgmmsgid);
 
 LIBETPAN_EXPORT
 struct mailimap_search_key *
