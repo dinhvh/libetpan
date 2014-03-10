@@ -2860,6 +2860,7 @@ enum {
                                      conditions is AND */
   MAILIMAP_SEARCH_KEY_MODSEQ,     /* mod sequence */
   MAILIMAP_SEARCH_KEY_XGMTHRID,   /* Gmail thread id */
+  MAILIMAP_SEARCH_KEY_XGMMSGID,   /* Gmail Message id */
   MAILIMAP_SEARCH_KEY_XGMRAW      /* Gmail RAW expression */
 };
 
@@ -2930,6 +2931,9 @@ enum {
   - xgmthrid is a number of the gmail thread id when type is MAILIMAP_SEARCH_KEY_XGMTHRID
     use mailimap_search_key_new_xgmthrid() for this key
  
+  - xgmmsgid is a gmail message id expression when type is MAILIMAP_SEARCH_KEY_XGMMSGID
+   use mailimap_search_key_new_xgmmsgid() for this key
+
   - xgmraw is a raw gmail search expression when type is MAILIMAP_SEARCH_KEY_XGMRAW
     use mailimap_search_key_new_xgmraw() for this key
  
@@ -2974,6 +2978,7 @@ struct mailimap_search_key {
     struct mailimap_set * sk_uid;
     struct mailimap_set * sk_set;
     uint64_t sk_xgmthrid;
+    uint64_t sk_xgmmsgid;
     char * sk_xgmraw;
     clist * sk_multiple; /* list of (struct mailimap_search_key *) */
     struct {
@@ -3010,6 +3015,10 @@ mailimap_search_key_new(int sk_type,
 LIBETPAN_EXPORT
 struct mailimap_search_key *
 mailimap_search_key_new_xgmthrid(uint64_t sk_xgmthrid);
+
+LIBETPAN_EXPORT
+struct mailimap_search_key *
+mailimap_search_key_new_xgmthrid(uint64_t sk_xgmmsgid);
 
 LIBETPAN_EXPORT
 struct mailimap_search_key *
