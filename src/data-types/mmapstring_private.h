@@ -2,6 +2,15 @@
 
 #define MMAPSTRING_PRIVATE_H
 
-extern void mmapstring_init_lock(void);
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
+	extern void mmapstring_init_lock(void);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

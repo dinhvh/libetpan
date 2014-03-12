@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="libetpan"
 	ProjectGUID="{BA4DED3C-E56F-4484-BFC3-9C13E461A1BE}"
 	RootNamespace="libetpan"
@@ -1637,6 +1637,18 @@
 				<File
 					RelativePath="..\..\src\windows\win_etpan.h"
 					>
+				</File>
+				<File
+					RelativePath="..\..\src\windows\win_init.cpp"
+					>
+					<FileConfiguration
+						Name="Debug_ssl|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
 				</File>
 			</Filter>
 		</Filter>

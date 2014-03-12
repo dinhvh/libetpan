@@ -23,7 +23,12 @@ class win_init {
 #ifdef _MSC_VER
 		/* Initialise Mutexs */
 		mmapstring_init_lock();
-		mailstream_ssl_init_lock();
+#ifdef USE_SSL
+		{
+			mailstream_ssl_init_lock();
+		}
+#endif
+		
 #endif
 	}
 	~win_init() {
