@@ -2780,6 +2780,21 @@ mailimap_search_key_new_xgmthrid(uint64_t sk_xgmthrid)
 }
 
 struct mailimap_search_key *
+mailimap_search_key_new_xgmmsgid(uint64_t sk_xgmmsgid)
+{
+  struct mailimap_search_key * key;
+  
+  key = malloc(sizeof(* key));
+  if (key == NULL)
+    return NULL;
+  
+  key->sk_type = MAILIMAP_SEARCH_KEY_XGMMSGID;
+  key->sk_data.sk_xgmmsgid = sk_xgmmsgid;
+  
+  return key;
+}
+
+struct mailimap_search_key *
 mailimap_search_key_new_xgmraw(char * sk_xgmraw)
 {
   struct mailimap_search_key * key;

@@ -924,7 +924,7 @@ int newsnntp_list_distribution(newsnntp * f, clist ** result)
   int r;
   char * response;
 
-  snprintf(command, NNTP_STRING_SIZE, "LIST DISTRIBUTION\r\n");
+  snprintf(command, NNTP_STRING_SIZE, "LIST DISTRIBUTIONS\r\n");
   r = send_command(f, command);
   if (r == -1)
     return NEWSNNTP_ERROR_STREAM;

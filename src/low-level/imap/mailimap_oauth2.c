@@ -155,7 +155,7 @@ int mailimap_oauth2_authenticate_send(mailimap * session,
     res = r;
     goto free;
   }
-  r = mailimap_astring_send(session->imap_stream, full_auth_string_b64);
+  r = mailimap_token_send(session->imap_stream, full_auth_string_b64);
   if (r != MAILIMAP_NO_ERROR) {
     res = r;
     goto free;
