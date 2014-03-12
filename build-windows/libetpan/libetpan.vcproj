@@ -1642,7 +1642,31 @@
 					RelativePath="..\..\src\windows\win_init.cpp"
 					>
 					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
 						Name="Debug_ssl|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release_ssl|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
