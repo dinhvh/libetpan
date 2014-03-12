@@ -2280,6 +2280,18 @@ int mailimap_search_key_send(mailstream * fd,
     if (r != MAILIMAP_NO_ERROR)
       return r;
     return MAILIMAP_NO_ERROR;
+      
+  case MAILIMAP_SEARCH_KEY_XGMMSGID:
+    r = mailimap_token_send(fd, "X-GM-MSGID");
+    if (r != MAILIMAP_NO_ERROR)
+      return r;
+    r = mailimap_space_send(fd);
+    if (r != MAILIMAP_NO_ERROR)
+      return r;
+    r = mailimap_uint64_send(fd, key->sk_data.sk_xgmmsgid);
+    if (r != MAILIMAP_NO_ERROR)
+      return r;
+    return MAILIMAP_NO_ERROR;
 
     case MAILIMAP_SEARCH_KEY_XGMRAW:
       r = mailimap_token_send(fd, "X-GM-RAW");
