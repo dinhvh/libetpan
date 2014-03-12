@@ -33,6 +33,8 @@
  * $Id: maildirdriver_cached_message.c,v 1.11 2008/02/17 13:13:26 hoa Exp $
  */
 
+#ifndef LIBETPAN_DISABLE_MAILDIR_DRIVER
+
 #ifdef HAVE_CONFIG_H
 #	include <config.h>
 #endif
@@ -343,3 +345,5 @@ static int get_flags(mailmessage * msg_info,
   
   return MAIL_NO_ERROR;
 }
+
+#endif //LIBETPAN_DISABLE_MAILDIR_DRIVER

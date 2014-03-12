@@ -33,6 +33,8 @@
  * $Id: maildirdriver_tools.c,v 1.7 2006/05/22 13:39:40 hoa Exp $
  */
 
+#ifndef LIBETPAN_DISABLE_MAILDIR_DRIVER
+
 #ifdef HAVE_CONFIG_H
 #	include <config.h>
 #endif
@@ -200,3 +202,5 @@ int maildir_get_messages_list(mailsession * session, struct maildir * md,
  err:
   return res;
 }
+
+#endif //LIBETPAN_DISABLE_MAILDIR_DRIVER

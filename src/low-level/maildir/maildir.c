@@ -33,6 +33,8 @@
  * $Id: maildir.c,v 1.19 2008/02/17 13:13:29 hoa Exp $
  */
 
+#ifndef LIBETPAN_DISABLE_MAILDIR
+
 #ifdef HAVE_CONFIG_H
 #	include <config.h>
 #endif
@@ -809,3 +811,5 @@ int maildir_message_change_flags(struct maildir * md,
  err:
   return res;
 }
+
+#endif //LIBETPAN_DISABLE_MAILDIR

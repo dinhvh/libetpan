@@ -37,6 +37,8 @@
 
 #define MAILDIRDRIVER_TOOLS_H
 
+#ifndef LIBETPAN_DISABLE_MAILDIR_DRIVER
+
 #include "maildriver_types.h"
 #include "maildir.h"
 
@@ -49,5 +51,7 @@ uint32_t maildirdriver_flags_to_maildir_flags(uint32_t flags);
 int maildir_get_messages_list(mailsession * session, struct maildir * md,
     mailmessage_driver * message_driver,
     struct mailmessage_list ** result);
+
+#endif //LIBETPAN_DISABLE_MAILDIR_DRIVER
 
 #endif

@@ -33,6 +33,8 @@
  * $Id: imapdriver_cached.c,v 1.61 2008/02/20 22:35:47 hoa Exp $
  */
 
+#ifndef LIBETPAN_DISABLE_IMAP_DRIVER
+
 #ifdef HAVE_CONFIG_H
 #	include <config.h>
 #endif
@@ -1545,3 +1547,5 @@ static int imapdriver_cached_login_sasl(mailsession * session,
       login, auth_name,
       password, realm);
 }
+
+#endif //LIBETPAN_DISABLE_IMAP_DRIVER

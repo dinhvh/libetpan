@@ -33,6 +33,8 @@
  * $Id: mime_message_driver.c,v 1.13 2008/02/17 13:13:27 hoa Exp $
  */
 
+#ifndef LIBETPAN_DISABLE_MIMEMESSAGE_DRIVER
+
 #ifdef HAVE_CONFIG_H
 #	include <config.h>
 #endif
@@ -508,3 +510,5 @@ static mailmessage_driver local_mime_message_driver = {
 };
 
 mailmessage_driver * mime_message_driver = &local_mime_message_driver;
+
+#endif // LIBETPAN_DISABLE_MIMEMESSAGE_DRIVER

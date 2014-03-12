@@ -37,6 +37,8 @@
 
 #define IMAPDRIVER_H
 
+#ifndef LIBETPAN_DISABLE_IMAP_DRIVER
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -48,5 +50,7 @@ extern mailsession_driver * imap_session_driver;
 #ifdef __cplusplus
 }
 #endif
+
+#endif //LIBETPAN_DISABLE_IMAP_DRIVER
 
 #endif

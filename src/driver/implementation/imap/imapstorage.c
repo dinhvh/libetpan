@@ -33,6 +33,8 @@
  * $Id: imapstorage.c,v 1.19 2008/02/17 13:13:26 hoa Exp $
  */
 
+#ifndef LIBETPAN_DISABLE_IMAP_DRIVER
+
 #ifdef HAVE_CONFIG_H
 #	include <config.h>
 #endif
@@ -475,3 +477,5 @@ imap_mailstorage_get_folder_session(struct mailstorage * storage,
  err:
   return res;
 }
+
+#endif  //LIBETPAN_DISABLE_IMAP_DRIVER

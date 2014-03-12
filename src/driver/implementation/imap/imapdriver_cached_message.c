@@ -52,6 +52,8 @@
 #include <string.h>
 #include <stdlib.h>
 
+#ifndef LIBETPAN_DISABLE_IMAP_DRIVER
+
 static int imap_initialize(mailmessage * msg_info);
 
 static void imap_uninitialize(mailmessage * msg_info);
@@ -745,3 +747,5 @@ static int imap_fetch_envelope(mailmessage * msg_info,
  err:
   return res;
 }
+
+#endif //LIBETPAN_DISABLE_IMAP_DRIVER

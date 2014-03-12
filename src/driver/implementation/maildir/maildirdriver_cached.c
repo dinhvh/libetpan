@@ -33,6 +33,8 @@
  * $Id: maildirdriver_cached.c,v 1.22 2009/07/23 19:46:46 hoa Exp $
  */
 
+#ifndef LIBETPAN_DISABLE_MAILDIR_DRIVER
+
 #ifdef HAVE_CONFIG_H
 #	include <config.h>
 #endif
@@ -1164,3 +1166,5 @@ static int get_message_by_uid(mailsession * session,
  err:
   return res;
 }
+
+#endif
