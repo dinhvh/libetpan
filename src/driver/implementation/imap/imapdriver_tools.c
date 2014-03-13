@@ -33,8 +33,6 @@
  * $Id: imapdriver_tools.c,v 1.38 2011/06/04 13:25:56 hoa Exp $
  */
 
-#ifndef LIBETPAN_DISABLE_IMAP_DRIVER
-
 #ifdef HAVE_CONFIG_H
 #	include <config.h>
 #endif
@@ -53,6 +51,7 @@
 #include "generic_cache.h"
 #include "mailmessage.h"
 #include "mail_cache_db.h"
+
 
 
 static inline struct imap_session_state_data *
@@ -3742,6 +3741,3 @@ imapdriver_write_cached_envelope(struct mail_cache_db * cache_db,
 err:
   return res;
 }
-
-
-#endif //LIBETPAN_DISABLE_IMAP_DRIVER

@@ -37,8 +37,6 @@
 
 #define MAILDIRDRIVER_MESSAGE_H
 
-#ifndef LIBETPAN_DISABLE_MAILDIR_DRIVER
-
 #include <libetpan/maildirdriver_types.h>
 
 #ifdef __cplusplus
@@ -50,7 +48,5 @@ extern mailmessage_driver * maildir_message_driver;
 #ifdef __cplusplus
 }
 #endif
-
-#endif//LIBETPAN_DISABLE_MAILDIR_DRIVER
 
 #endif

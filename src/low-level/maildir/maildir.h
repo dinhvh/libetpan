@@ -37,8 +37,6 @@
 
 #define MAILDIR_H
 
-#ifndef  LIBETPAN_DISABLE_MAILDIR
-
 #include <libetpan/maildir_types.h>
 
 struct maildir * maildir_new(const char * path);
@@ -65,7 +63,5 @@ int maildir_message_remove(struct maildir * md, const char * uid);
 
 int maildir_message_change_flags(struct maildir * md,
     const char * uid, int new_flags);
-
-#endif //LIBETPAN_DISABLE_MAILDIR
 
 #endif

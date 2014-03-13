@@ -39,8 +39,6 @@
   than standards
 */
 
-#ifndef LIBETPAN_DISABLE_MAILDIR_DRIVER
-
 #ifdef HAVE_CONFIG_H
 #	include <config.h>
 #endif
@@ -685,5 +683,3 @@ static int get_message_by_uid(mailsession * session,
  err:
   return res;
 }
-
-#endif //ENABLE_MAILDIR_DRIVER

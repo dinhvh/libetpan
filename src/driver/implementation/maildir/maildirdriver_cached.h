@@ -37,8 +37,6 @@
 
 #define MAILDIRDRIVER_CACHED_H
 
-#ifndef LIBETPAN_DISABLE_MAILDIR_DRIVER
-
 #include <libetpan/maildriver.h>
 #include <libetpan/maildirdriver_types.h>
 
@@ -51,7 +49,5 @@ extern mailsession_driver * maildir_cached_session_driver;
 #ifdef __cplusplus
 }
 #endif
-
-#endif LIBETPAN_DISABLE_MAILDIR_DRIVER
 
 #endif

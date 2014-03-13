@@ -37,12 +37,6 @@
 
 #define MAILDIRDRIVER_H
 
-#ifndef LIBETPAN_DISABLE_MAILDIR_DRIVER
-
-#ifdef  LIBETPAN_DISABLE_MAILDIR
- Error! DISABLE_MAILDIR  should not be defined
-#endif
-
 #include <libetpan/maildriver.h>
 #include <libetpan/maildirdriver_types.h>
 
@@ -55,7 +49,5 @@ extern mailsession_driver * maildir_session_driver;
 #ifdef __cplusplus
 }
 #endif
-
-#endif //ENABLE_MAILDIR_DRIVER
 
 #endif

@@ -33,8 +33,6 @@
  * $Id: maildirstorage.c,v 1.11 2008/02/17 13:13:26 hoa Exp $
  */
 
-#ifndef LIBETPAN_DISABLE_MAILDIR_DRIVER
-
 #ifdef HAVE_CONFIG_H
 #	include <config.h>
 #endif
@@ -197,6 +195,4 @@ maildir_mailstorage_get_folder_session(struct mailstorage * storage,
 
   return MAIL_NO_ERROR;
 }
-
-#endif
 

@@ -33,8 +33,6 @@
  * $Id: imapdriver.c,v 1.59 2010/04/05 14:21:35 hoa Exp $
  */
 
-#ifndef LIBETPAN_DISABLE_IMAP_DRIVER
-
 #ifdef HAVE_CONFIG_H
 #	include <config.h>
 #endif
@@ -1287,5 +1285,3 @@ static int imapdriver_parameters(mailsession * session,
   
   return MAIL_ERROR_INVAL;
 }
-
-#endif //LIBETPAN_DISABLE_IMAP_DRIVER

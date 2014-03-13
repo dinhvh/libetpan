@@ -37,8 +37,6 @@
 
 #define MAILDIRSTORAGE_H
 
-#ifndef LIBETPAN_DISABLE_MAILDIR_DRIVER
-
 #include <libetpan/maildirdriver_types.h>
 
 #ifdef __cplusplus
@@ -68,7 +66,5 @@ int maildir_mailstorage_init(struct mailstorage * storage,
 #ifdef __cplusplus
 }
 #endif
-
-#endif //LIBETPAN_DISABLE_MAILDIR_DRIVER
 
 #endif

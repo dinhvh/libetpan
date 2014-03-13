@@ -33,8 +33,6 @@
  * $Id: imapdriver_message.c,v 1.26 2008/02/17 13:13:26 hoa Exp $
  */
 
-#ifndef LIBETPAN_DISABLE_IMAP_DRIVER
-
 #ifdef HAVE_CONFIG_H
 #	include <config.h>
 #endif
@@ -1244,5 +1242,3 @@ static int imap_fetch_envelope(mailmessage * msg_info,
  err:
   return res;
 }
-
-#endif  //LIBETPAN_DISABLE_IMAP_DRIVER

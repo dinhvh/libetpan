@@ -37,8 +37,6 @@
 
 #define MIME_MESSAGE_DRIVER_H
 
-#ifndef LIBETPAN_DISABLE_MIMEMESSAGE_DRIVER
-
 #include <libetpan/mailmessage.h>
 
 #define LIBETPAN_MIME_MESSAGE
@@ -51,7 +49,5 @@ void mime_message_detach_mime(mailmessage * msg);
 
 /* deprecated */
 int mime_message_set_tmpdir(mailmessage * msg, char * tmpdir);
-
-#endif //LIBETPAN_DISABLE_MIMEMESSAGE_DRIVER
 
 #endif
