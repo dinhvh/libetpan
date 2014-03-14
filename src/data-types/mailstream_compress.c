@@ -63,6 +63,9 @@ static struct mailstream_cancel * mailstream_low_compress_get_cancel(mailstream_
 static void mailstream_low_compress_free(mailstream_low * s);
 static void mailstream_low_compress_cancel(mailstream_low * s);
 static carray * mailstream_low_compress_get_certificate_chain(mailstream_low * s);
+static int mailstream_low_compress_setup_idle(mailstream_low * low);
+static int mailstream_low_compress_unsetup_idle(mailstream_low * low);
+static int mailstream_low_compress_interrupt_idle(mailstream_low * low);
 
 #if HAVE_ZLIB
 typedef struct mailstream_compress_data {
@@ -83,6 +86,9 @@ static mailstream_low_driver local_mailstream_compress_driver = {
   /* mailstream_cancel */ mailstream_low_compress_cancel,
   /* mailstream_get_cancel */ mailstream_low_compress_get_cancel,
   /* mailstream_get_certificate_chain */ mailstream_low_compress_get_certificate_chain,
+  /* mailstream_setup_idle */ mailstream_low_compress_setup_idle,
+  /* mailstream_unsetup_idle */ mailstream_low_compress_unsetup_idle,
+  /* mailstream_interrupt_idle */ mailstream_low_compress_interrupt_idle,
 };
 
 mailstream_low_driver * mailstream_compress_driver = &local_mailstream_compress_driver;
@@ -309,5 +315,35 @@ int mailstream_low_compress_wait_idle(mailstream_low * low,
   return mailstream_low_wait_idle(data->ms, idle, max_idle_delay);
 #else
   return MAILSTREAM_IDLE_ERROR;
+#endif
+}
+
+static int mailstream_low_compress_setup_idle(mailstream_low * low)
+{
+#if HAVE_ZLIB
+  compress_data * data = low->data;
+  return mailstream_low_setup_idle(data->ms);
+#else
+  return -1;
+#endif
+}
+
+static int mailstream_low_compress_unsetup_idle(mailstream_low * low)
+{
+#if HAVE_ZLIB
+  compress_data * data = low->data;
+  return mailstream_low_unsetup_idle(data->ms);
+#else
+  return -1;
+#endif
+}
+
+static int mailstream_low_compress_interrupt_idle(mailstream_low * low)
+{
+#if HAVE_ZLIB
+  compress_data * data = low->data;
+  return mailstream_low_interrupt_idle(data->ms);
+#else
+  return -1;
 #endif
 }

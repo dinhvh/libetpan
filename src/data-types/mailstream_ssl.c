@@ -360,6 +360,9 @@ static mailstream_low_driver local_mailstream_ssl_driver = {
   /* mailstream_cancel */ mailstream_low_ssl_cancel,
   /* mailstream_get_cancel */ mailstream_low_ssl_get_cancel,
   /* mailstream_get_certificate_chain */ mailstream_low_ssl_get_certificate_chain,
+  /* mailstream_setup_idle */ NULL,
+  /* mailstream_unsetup_idle */ NULL,
+  /* mailstream_interrupt_idle */ NULL,
 };
 
 mailstream_low_driver * mailstream_ssl_driver = &local_mailstream_ssl_driver;
