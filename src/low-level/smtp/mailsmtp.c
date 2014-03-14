@@ -1342,10 +1342,17 @@ int mailesmtp_auth_sasl(mailsmtp * session, const char * auth_type,
         r = sasl_decode64(session->response, response_len,
             decoded, max_decoded + 1, &decoded_len);
         
-        if (r != SASL_OK) {
-          free(decoded);
-          res = MAILSMTP_ERROR_MEMORY;
-          goto free_sasl_conn;
+        // if (r != SASL_OK) {
+        //  free(decoded);
+        //  res = MAILSMTP_ERROR_MEMORY;
+        //  goto free_sasl_conn;
+        // }
+        if(r != SASL_OK) {
+          r = sasl_client_step(session->smtp_sasl.sasl_conn,
+                               session->response, (unsigned) response_len, NULL, &sasl_out, &sasl_out_len);
+        } else {
+          r = sasl_client_step(session->smtp_sasl.sasl_conn,
+                               decoded, decoded_len, NULL, &sasl_out, &sasl_out_len);
         }
         
         r = sasl_client_step(session->smtp_sasl.sasl_conn,
