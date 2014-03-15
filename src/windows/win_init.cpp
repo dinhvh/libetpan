@@ -24,9 +24,7 @@ class win_init {
 		/* Initialise Mutexs */
 		mmapstring_init_lock();
 #ifdef USE_SSL
-		{
-			mailstream_ssl_init_lock();
-		}
+		mailstream_ssl_init_lock();
 #endif
 		
 #endif
