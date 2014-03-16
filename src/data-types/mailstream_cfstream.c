@@ -132,6 +132,10 @@ static int mailstream_low_cfstream_get_fd(mailstream_low * s);
 static void mailstream_low_cfstream_cancel(mailstream_low * s);
 static carray * mailstream_low_cfstream_get_certificate_chain(mailstream_low * s);
 
+static int mailstream_low_cfstream_setup_idle(mailstream_low * s);
+static int mailstream_low_cfstream_unsetup_idle(mailstream_low * s);
+static int mailstream_low_cfstream_interrupt_idle(mailstream_low * s);
+
 static mailstream_low_driver local_mailstream_cfstream_driver = {
   /* mailstream_read */ mailstream_low_cfstream_read,
   /* mailstream_write */ mailstream_low_cfstream_write,
@@ -141,6 +145,9 @@ static mailstream_low_driver local_mailstream_cfstream_driver = {
   /* mailstream_cancel */ mailstream_low_cfstream_cancel,
   /* mailstream_get_cancel */ NULL,
   /* mailstream_get_certificate_chain */ mailstream_low_cfstream_get_certificate_chain,
+  /* mailstream_setup_idle */ mailstream_low_cfstream_setup_idle,
+  /* mailstream_unsetup_idle */ mailstream_low_cfstream_unsetup_idle,
+  /* mailstream_interrupt_idle */ mailstream_low_cfstream_interrupt_idle,
 };
 
 mailstream_low_driver * mailstream_cfstream_driver =
@@ -1073,48 +1080,53 @@ int mailstream_low_cfstream_wait_idle(mailstream_low * low, int max_idle_delay)
 static void idleInterruptedPerform(void *info)
 {
   struct mailstream_cfstream_data * cfstream_data;
-  mailstream * s;
+  mailstream_low * s;
   
   s = info;
-  //fprintf(stderr, "interrupt idle\n");
   
-  cfstream_data = (struct mailstream_cfstream_data *) s->low->data;
+  cfstream_data = (struct mailstream_cfstream_data *) s->data;
   cfstream_data->idleInterrupted = true;
 }
 #endif
 
-void mailstream_cfstream_setup_idle(mailstream * s)
+static int mailstream_low_cfstream_setup_idle(mailstream_low * s)
 {
 #if HAVE_CFNETWORK
   struct mailstream_cfstream_data * cfstream_data;
   
-  cfstream_data = (struct mailstream_cfstream_data *) s->low->data;
+  cfstream_data = (struct mailstream_cfstream_data *) s->data;
   cfstream_data->idleInterrupted = false;
   cfstream_data->idleInterruptedContext.info = s;
   cfstream_data->idleInterruptedContext.perform = idleInterruptedPerform;
   cfstream_data->idleInterruptedSource = CFRunLoopSourceCreate(NULL, 0, &cfstream_data->idleInterruptedContext);
+  return 0;
+#else
+  return -1;
 #endif
 }
 
-void mailstream_cfstream_unsetup_idle(mailstream * s)
+static int mailstream_low_cfstream_unsetup_idle(mailstream_low * s)
 {
 #if HAVE_CFNETWORK
   struct mailstream_cfstream_data * cfstream_data;
   
-  cfstream_data = (struct mailstream_cfstream_data *) s->low->data;
+  cfstream_data = (struct mailstream_cfstream_data *) s->data;
   if (cfstream_data->idleInterruptedSource != NULL) {
     CFRelease(cfstream_data->idleInterruptedSource);
     cfstream_data->idleInterruptedSource = NULL;
   }
+  return 0;
+#else
+  return -1;
 #endif
 }
 
-void mailstream_cfstream_interrupt_idle(mailstream * s)
+static int mailstream_low_cfstream_interrupt_idle(mailstream_low * s)
 {
 #if HAVE_CFNETWORK
   struct mailstream_cfstream_data * cfstream_data;
   
-  cfstream_data = (struct mailstream_cfstream_data *) s->low->data;
+  cfstream_data = (struct mailstream_cfstream_data *) s->data;
   
   pthread_mutex_lock(&cfstream_data->runloop_lock);
   
@@ -1126,6 +1138,9 @@ void mailstream_cfstream_interrupt_idle(mailstream * s)
   }
   
   pthread_mutex_unlock(&cfstream_data->runloop_lock);
+  return 0;
+#else
+  return -1;
 #endif
 }
 

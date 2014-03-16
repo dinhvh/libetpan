@@ -9,8 +9,29 @@
 
 #define SMTP_STRING_SIZE 513
 
+enum {
+  XOAUTH2_TYPE_GMAIL,
+  XOAUTH2_TYPE_OUTLOOK_COM,
+};
+
+static int oauth2_authenticate(mailsmtp * session, int type, const char * auth_user,
+    const char * access_token);
+
 LIBETPAN_EXPORT
 int mailsmtp_oauth2_authenticate(mailsmtp * session, const char * auth_user,
+    const char * access_token)
+{
+  return oauth2_authenticate(session, XOAUTH2_TYPE_GMAIL, auth_user, access_token);
+}
+
+LIBETPAN_EXPORT
+int mailsmtp_oauth2_outlook_authenticate(mailsmtp * session, const char * auth_user,
+    const char * access_token)
+{
+  return oauth2_authenticate(session, XOAUTH2_TYPE_OUTLOOK_COM, auth_user, access_token);
+}
+
+static int oauth2_authenticate(mailsmtp * session, int type, const char * auth_user,
     const char * access_token)
 {
   int r;
@@ -49,7 +70,15 @@ int mailsmtp_oauth2_authenticate(mailsmtp * session, const char * auth_user,
     goto free;
   }
   
-  snprintf(command, SMTP_STRING_SIZE, "AUTH XOAUTH2 %s\r\n", full_auth_string_b64);
+  switch (type) {
+    case XOAUTH2_TYPE_GMAIL:
+    default:
+      snprintf(command, SMTP_STRING_SIZE, "AUTH XOAUTH2 %s\r\n", full_auth_string_b64);
+      break;
+    case XOAUTH2_TYPE_OUTLOOK_COM:
+      snprintf(command, SMTP_STRING_SIZE, "AUTH XOAUTH2\r\n");
+      break;
+  }
   r = mailsmtp_send_command(session, command);
   if (r == -1) {
     res = MAILSMTP_ERROR_STREAM;
@@ -66,8 +95,16 @@ int mailsmtp_oauth2_authenticate(mailsmtp * session, const char * auth_user,
   case 334:
     /* AUTH in progress */
     
-    /* There's probably an error, send an empty line as acknowledgement. */
-    snprintf(command, SMTP_STRING_SIZE, "\r\n");
+    switch (type) {
+      case XOAUTH2_TYPE_GMAIL:
+      default:
+        /* There's probably an error, send an empty line as acknowledgement. */
+        snprintf(command, SMTP_STRING_SIZE, "\r\n");
+        break;
+      case XOAUTH2_TYPE_OUTLOOK_COM:
+        snprintf(command, SMTP_STRING_SIZE, "%s\r\n", full_auth_string_b64);
+        break;
+    }
     r = mailsmtp_send_command(session, command);
     if (r == -1) {
       res = MAILSMTP_ERROR_STREAM;
@@ -80,6 +117,11 @@ int mailsmtp_oauth2_authenticate(mailsmtp * session, const char * auth_user,
         res = MAILSMTP_ERROR_AUTH_LOGIN;
         goto free;
       
+      case 220:
+      case 235:
+        res = MAILSMTP_NO_ERROR;
+        goto free;
+        
       default:
         res = MAILSMTP_ERROR_UNEXPECTED_CODE;
         goto free;

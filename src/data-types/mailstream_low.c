@@ -488,3 +488,28 @@ int mailstream_low_wait_idle(mailstream_low * low, struct mailstream_cancel * id
     return MAILSTREAM_IDLE_ERROR;
   }
 }
+
+int mailstream_low_setup_idle(mailstream_low * low)
+{
+  if (low->driver->mailstream_setup_idle == NULL)
+    return -1;
+  
+  return low->driver->mailstream_setup_idle(low);
+}
+
+int mailstream_low_unsetup_idle(mailstream_low * low)
+{
+  if (low->driver->mailstream_unsetup_idle == NULL)
+    return -1;
+  
+  return low->driver->mailstream_unsetup_idle(low);
+}
+
+int mailstream_low_interrupt_idle(mailstream_low * low)
+{
+  if (low->driver->mailstream_interrupt_idle == NULL)
+    return -1;
+  
+  return low->driver->mailstream_interrupt_idle(low);
+}
+

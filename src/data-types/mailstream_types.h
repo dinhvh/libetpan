@@ -99,6 +99,10 @@ struct mailstream_low_driver {
   struct mailstream_cancel * (* mailstream_get_cancel)(mailstream_low *);
   /* Returns an array of MMAPString containing DER data or NULL if it's not a SSL connection */
   carray * (* mailstream_get_certificate_chain)(mailstream_low *);
+  /* Will be called from the main thread */
+  int (* mailstream_setup_idle)(mailstream_low *);
+  int (* mailstream_unsetup_idle)(mailstream_low *);
+  int (* mailstream_interrupt_idle)(mailstream_low *);
 };
 
 typedef struct mailstream_low_driver mailstream_low_driver;
