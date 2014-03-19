@@ -1836,6 +1836,185 @@ int mailimap_rename_send(mailstream * fd, const char * mb,
 }
 
 /*
+=>   search-key      = "ALL" / "ANSWERED" / "BCC" SP astring /
+                     "BEFORE" SP date / "BODY" SP astring /
+                     "CC" SP astring / "DELETED" / "FLAGGED" /
+                     "FROM" SP astring / "KEYWORD" SP flag-keyword / "NEW" /
+                     "OLD" / "ON" SP date / "RECENT" / "SEEN" /
+                     "SINCE" SP date / "SUBJECT" SP astring /
+                     "TEXT" SP astring / "TO" SP astring /
+                     "UNANSWERED" / "UNDELETED" / "UNFLAGGED" /
+                     "UNKEYWORD" SP flag-keyword / "UNSEEN" /
+                       ; Above this line were in [IMAP2]
+                     "DRAFT" / "HEADER" SP header-fld-name SP astring /
+                     "LARGER" SP number / "NOT" SP search-key /
+                     "OR" SP search-key SP search-key /
+                     "SENTBEFORE" SP date / "SENTON" SP date /
+                     "SENTSINCE" SP date / "SMALLER" SP number /
+                     "UID" SP set / "UNDRAFT" / set /
+                     "(" search-key *(SP search-key) ")"
+*/
+
+
+static int mailimap_search_key_need_to_send_charset(struct mailimap_search_key * key)
+{
+  clistiter * cur;
+  struct mailimap_search_key * elt;
+  int r;
+  
+  switch (key->sk_type) {
+
+  case MAILIMAP_SEARCH_KEY_ALL:
+    return 0;
+
+  case MAILIMAP_SEARCH_KEY_ANSWERED:
+    return 0;
+
+  case MAILIMAP_SEARCH_KEY_BCC:
+    return 1;
+
+  case MAILIMAP_SEARCH_KEY_BEFORE:
+    return 0;
+
+  case MAILIMAP_SEARCH_KEY_BODY:
+    return 1;
+
+  case MAILIMAP_SEARCH_KEY_CC:
+    return 1;
+
+  case MAILIMAP_SEARCH_KEY_DELETED:
+    return 0;
+
+  case MAILIMAP_SEARCH_KEY_FLAGGED:
+    return 0;
+
+  case MAILIMAP_SEARCH_KEY_FROM:
+    return 1;
+
+  case MAILIMAP_SEARCH_KEY_KEYWORD:
+    return 1;
+
+  case MAILIMAP_SEARCH_KEY_NEW:
+    return 0;
+
+  case MAILIMAP_SEARCH_KEY_OLD:
+    return 0;
+
+  case MAILIMAP_SEARCH_KEY_ON:
+    return 0;
+
+  case MAILIMAP_SEARCH_KEY_RECENT:
+    return 0;
+
+  case MAILIMAP_SEARCH_KEY_SEEN:
+    return 0;
+
+  case MAILIMAP_SEARCH_KEY_SINCE:
+    return 0;
+
+  case MAILIMAP_SEARCH_KEY_SUBJECT:
+    return 1;
+
+  case MAILIMAP_SEARCH_KEY_TEXT:
+    return 1;
+
+  case MAILIMAP_SEARCH_KEY_TO:
+    return 1;
+
+  case MAILIMAP_SEARCH_KEY_UNANSWERED:
+    return 0;
+
+  case MAILIMAP_SEARCH_KEY_UNDELETED:
+    return 0;
+
+  case MAILIMAP_SEARCH_KEY_UNFLAGGED:
+    return 0;
+
+  case MAILIMAP_SEARCH_KEY_UNKEYWORD:
+    return 1;
+
+  case MAILIMAP_SEARCH_KEY_UNSEEN:
+    return 0;
+
+  case MAILIMAP_SEARCH_KEY_DRAFT:
+    return 0;
+
+  case MAILIMAP_SEARCH_KEY_HEADER:
+    return 1;
+
+  case MAILIMAP_SEARCH_KEY_LARGER:
+    return 0;
+
+  case MAILIMAP_SEARCH_KEY_NOT:
+    return mailimap_search_key_need_to_send_charset(key->sk_data.sk_not);    
+
+  case MAILIMAP_SEARCH_KEY_OR:
+    return mailimap_search_key_need_to_send_charset(key->sk_data.sk_or.sk_or1) ||
+        mailimap_search_key_need_to_send_charset(key->sk_data.sk_or.sk_or2);
+    
+  case MAILIMAP_SEARCH_KEY_SENTBEFORE:
+    return 0;
+
+  case MAILIMAP_SEARCH_KEY_SENTON:
+    return 0;
+
+  case MAILIMAP_SEARCH_KEY_SENTSINCE:
+    return 0;
+
+  case MAILIMAP_SEARCH_KEY_SMALLER:
+    return 0;
+    
+  case MAILIMAP_SEARCH_KEY_UID:
+    return 0;
+
+  case MAILIMAP_SEARCH_KEY_UNDRAFT:
+    return 0;
+
+  case MAILIMAP_SEARCH_KEY_SET:
+    return 0;
+
+  case MAILIMAP_SEARCH_KEY_XGMTHRID:
+    return 1;
+
+  case MAILIMAP_SEARCH_KEY_MULTIPLE:
+    {
+      cur = clist_begin(key->sk_data.sk_multiple);
+
+      if (cur == NULL)
+          return 0;
+
+      elt = (struct mailimap_search_key *) clist_content(cur);
+      r = mailimap_search_key_need_to_send_charset(elt);
+      if (r != 0)
+          return r;
+      cur = clist_next(cur);
+
+      while (cur != NULL) {
+                     
+          elt = (struct mailimap_search_key *) clist_content(cur);
+          r = mailimap_search_key_need_to_send_charset(elt);
+          if (r != 0)
+              return r;
+          cur = clist_next(cur);
+      }
+
+      return 0;
+    }   
+      
+  case MAILIMAP_SEARCH_KEY_MODSEQ:
+    return 0;    
+
+  case MAILIMAP_SEARCH_KEY_XGMMSGID:
+    return 0;
+    
+  default:
+    /* don't know, better send */
+    return 1;
+  }
+}
+
+
+/*
    response        = *(continue-req / response-data) response-done
 
    response-data   = "*" SP (resp-cond-state / resp-cond-bye /
@@ -1880,12 +2059,15 @@ mailimap_search_send(mailstream * fd, const char * charset,
 		     struct mailimap_search_key * key)
 {
   int r;
+  int needToSendCharset = 1;
   
   r = mailimap_token_send(fd, "SEARCH");
   if (r != MAILIMAP_NO_ERROR)
     return r;
 
-  if (charset != NULL) {
+  needToSendCharset = mailimap_search_key_need_to_send_charset(key);
+
+  if (charset != NULL && needToSendCharset) {
     r = mailimap_space_send(fd);
     if (r != MAILIMAP_NO_ERROR)
       return r;
@@ -1928,7 +2110,6 @@ mailimap_uid_search_send(mailstream * fd, const char * charset,
 
   return mailimap_search_send(fd, charset, key);
 }
-
 
 /*
 =>   search-key      = "ALL" / "ANSWERED" / "BCC" SP astring /
@@ -2280,30 +2461,30 @@ int mailimap_search_key_send(mailstream * fd,
     if (r != MAILIMAP_NO_ERROR)
       return r;
     return MAILIMAP_NO_ERROR;
-      
+
   case MAILIMAP_SEARCH_KEY_XGMMSGID:
     r = mailimap_token_send(fd, "X-GM-MSGID");
+    if (r != MAILIMAP_NO_ERROR)
+        return r;
+    r = mailimap_space_send(fd);
+    if (r != MAILIMAP_NO_ERROR)
+        return r;
+    r = mailimap_uint64_send(fd, key->sk_data.sk_xgmmsgid);
+    if (r != MAILIMAP_NO_ERROR)
+        return r;
+    return MAILIMAP_NO_ERROR;
+  
+  case MAILIMAP_SEARCH_KEY_XGMRAW:
+    r = mailimap_token_send(fd, "X-GM-RAW");
     if (r != MAILIMAP_NO_ERROR)
       return r;
     r = mailimap_space_send(fd);
     if (r != MAILIMAP_NO_ERROR)
       return r;
-    r = mailimap_uint64_send(fd, key->sk_data.sk_xgmmsgid);
+    r = mailimap_quoted_send(fd, key->sk_data.sk_xgmraw);
     if (r != MAILIMAP_NO_ERROR)
       return r;
     return MAILIMAP_NO_ERROR;
-
-    case MAILIMAP_SEARCH_KEY_XGMRAW:
-      r = mailimap_token_send(fd, "X-GM-RAW");
-      if (r != MAILIMAP_NO_ERROR)
-        return r;
-      r = mailimap_space_send(fd);
-      if (r != MAILIMAP_NO_ERROR)
-        return r;
-      r = mailimap_quoted_send(fd, key->sk_data.sk_xgmraw);
-      if (r != MAILIMAP_NO_ERROR)
-        return r;
-      return MAILIMAP_NO_ERROR;
 
   case MAILIMAP_SEARCH_KEY_MULTIPLE:
     r = mailimap_oparenth_send(fd);
@@ -2376,7 +2557,7 @@ int mailimap_search_key_send(mailstream * fd,
       return r;
     
     return MAILIMAP_NO_ERROR;
-    
+   
   default:
     /* should not happend */
     return MAILIMAP_ERROR_INVAL;
