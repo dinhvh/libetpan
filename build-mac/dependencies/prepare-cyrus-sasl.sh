@@ -1,5 +1,7 @@
 #! /bin/bash -
 
+export PATH=/usr/bin:/bin:/usr/sbin:/sbin
+
 version=2.1.25
 ARCHIVE=cyrus-sasl-$version
 ARCHIVE_NAME=$ARCHIVE.tar.gz
@@ -116,7 +118,6 @@ INSTALL_PATH="${BUILD_DIR}/${LIB_NAME}/universal"
 for TARGET in $TARGETS; do
 
     DEVELOPER="$(xcode-select --print-path)"
-    TOOLCHAIN="$DEVELOPER/Toolchains/XcodeDefault.xctoolchain/usr/bin"
     SYSROOT="`xcodebuild -version -sdk 2>/dev/null | egrep $TARGET -B 3 | egrep '^Path: '| egrep $SDK_IOS_VERSION | sort -u | tail -n 1| cut -d ' ' -f 2`"
 
     case $TARGET in
@@ -141,29 +142,6 @@ for TARGET in $TARGETS; do
 
         export CPPFLAGS="-arch ${MARCH} -isysroot ${SYSROOT}"
         export CFLAGS="${CPPFLAGS} -Os ${EXTRA_FLAGS}"
-
-        if test -x "${TOOLCHAIN}/clang"; then
-          export LD="${TOOLCHAIN}/clang"
-        else
-          export LD="${TOOLCHAIN}/ld"
-        fi
-        export AR="${TOOLCHAIN}/ar"
-        export AS="${TOOLCHAIN}/as"
-        if test -x "${TOOLCHAIN}/clang++"; then
-          export CXX="${TOOLCHAIN}/clang++"
-        else
-          export CXX="${TOOLCHAIN}/g++"
-        fi
-        if test -x "${TOOLCHAIN}/clang"; then
-          export CC="${TOOLCHAIN}/clang"
-        else
-          export CC="${TOOLCHAIN}/gcc"
-        fi
-        export NM="${TOOLCHAIN}/nm"
-        export LIBTOOL="${TOOLCHAIN}/libtool"
-        export RANLIB="${TOOLCHAIN}/ranlib"
-        export OTOOL="${TOOLCHAIN}/otool"
-        export STRIP="${TOOLCHAIN}/strip"
 
         OPENSSL="--with-openssl=$BUILD_DIR/openssl-1.0.0d/universal"
         PLUGINS="--enable-otp=no --enable-digest=no --with-des=no --enable-login"
