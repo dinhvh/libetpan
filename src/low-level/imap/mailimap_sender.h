@@ -118,6 +118,7 @@ int
 mailimap_uid_search_send(mailstream * fd, const char * charset,
 			 struct mailimap_search_key * key);
 
+
 int mailimap_search_key_send(mailstream * fd,
                              struct mailimap_search_key * key);
   
