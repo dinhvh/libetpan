@@ -237,7 +237,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/DLL"
-				AdditionalDependencies="oldnames.lib Ws2_32.lib mswsock.lib libcrypto.lib libssl.lib"
+				AdditionalDependencies="oldnames.lib Ws2_32.lib mswsock.lib ssleay32MDd.lib libeay32MDd.lib"
 				OutputFile="../Debug/libetpan.dll"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
@@ -322,7 +322,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/DLL"
-				AdditionalDependencies="oldnames.lib Ws2_32.lib mswsock.lib libcrypto.lib libssl.lib"
+				AdditionalDependencies="oldnames.lib Ws2_32.lib mswsock.lib ssleay32MD.lib libeay32MD.lib"
 				OutputFile="../Release/libetpan.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="../../../3lib/openssl"
