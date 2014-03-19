@@ -1888,7 +1888,7 @@ mailimap_search_send(mailstream * fd, const char * charset,
 
   needToSendCharset = mailimap_search_key_need_to_send_charset(key);
 
-  if (charset != NULL && r) {
+  if (charset != NULL && needToSendCharset) {
     r = mailimap_space_send(fd);
     if (r != MAILIMAP_NO_ERROR)
       return r;
@@ -2046,8 +2046,7 @@ static int mailimap_search_key_need_to_send_charset(struct mailimap_search_key *
     return mailimap_search_key_need_to_send_charset(key->sk_data.sk_not);    
 
   case MAILIMAP_SEARCH_KEY_OR:
-    return mailimap_search_key_need_to_send_charset(key->sk_data.sk_or.sk_or1) 
-        ||
+    return mailimap_search_key_need_to_send_charset(key->sk_data.sk_or.sk_or1) ||
         mailimap_search_key_need_to_send_charset(key->sk_data.sk_or.sk_or2);
     
   case MAILIMAP_SEARCH_KEY_SENTBEFORE:
@@ -2463,28 +2462,28 @@ int mailimap_search_key_send(mailstream * fd,
     return MAILIMAP_NO_ERROR;
 
   case MAILIMAP_SEARCH_KEY_XGMMSGID:
-      r = mailimap_token_send(fd, "X-GM-MSGID");
-      if (r != MAILIMAP_NO_ERROR)
-          return r;
-      r = mailimap_space_send(fd);
-      if (r != MAILIMAP_NO_ERROR)
-          return r;
-      r = mailimap_uint64_send(fd, key->sk_data.sk_xgmmsgid);
-      if (r != MAILIMAP_NO_ERROR)
-          return r;
-      return MAILIMAP_NO_ERROR;
+    r = mailimap_token_send(fd, "X-GM-MSGID");
+    if (r != MAILIMAP_NO_ERROR)
+        return r;
+    r = mailimap_space_send(fd);
+    if (r != MAILIMAP_NO_ERROR)
+        return r;
+    r = mailimap_uint64_send(fd, key->sk_data.sk_xgmmsgid);
+    if (r != MAILIMAP_NO_ERROR)
+        return r;
+    return MAILIMAP_NO_ERROR;
   
   case MAILIMAP_SEARCH_KEY_XGMRAW:
-      r = mailimap_token_send(fd, "X-GM-RAW");
-      if (r != MAILIMAP_NO_ERROR)
-        return r;
-      r = mailimap_space_send(fd);
-      if (r != MAILIMAP_NO_ERROR)
-        return r;
-      r = mailimap_quoted_send(fd, key->sk_data.sk_xgmraw);
-      if (r != MAILIMAP_NO_ERROR)
-        return r;
-      return MAILIMAP_NO_ERROR;
+    r = mailimap_token_send(fd, "X-GM-RAW");
+    if (r != MAILIMAP_NO_ERROR)
+      return r;
+    r = mailimap_space_send(fd);
+    if (r != MAILIMAP_NO_ERROR)
+      return r;
+    r = mailimap_quoted_send(fd, key->sk_data.sk_xgmraw);
+    if (r != MAILIMAP_NO_ERROR)
+      return r;
+    return MAILIMAP_NO_ERROR;
 
   case MAILIMAP_SEARCH_KEY_MULTIPLE:
     r = mailimap_oparenth_send(fd);
