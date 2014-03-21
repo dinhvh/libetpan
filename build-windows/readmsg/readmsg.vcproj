@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="readmsg"
 	ProjectGUID="{5FEA913A-5CE4-4DEB-B6BE-B8EA1BF6F653}"
 	RootNamespace="readmsg"
@@ -195,26 +195,6 @@
 			<File
 				RelativePath="..\..\src\bsd\getopt_long.c"
 				>
-			</File>
-			<File
-				RelativePath="..\..\tests\Makefile"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\tests\option-parser.c"
