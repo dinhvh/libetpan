@@ -265,7 +265,7 @@ int mailmime_content_parse(const char * message, size_t length,
     r = mailimf_cfws_parse(message, length, &cur_token);
     if ((r != MAILIMF_NO_ERROR) && (r != MAILIMF_ERROR_PARSE)) {
       res = r;
-      goto free_type;
+      goto free_subtype;
     }
 
     r = mailmime_parameter_parse(message, length, &cur_token, &parameter);
@@ -277,6 +277,7 @@ int mailmime_content_parse(const char * message, size_t length,
       break;
     }
     else {
+      mailmime_subtype_free(subtype);
       res = r;
       goto err;
     }

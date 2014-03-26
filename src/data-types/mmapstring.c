@@ -352,8 +352,11 @@ mmap_string_sized_new (size_t dfl_size)
   string->mmapped_size = 0;
 
   if (mmap_string_maybe_expand (string, MMAPSTRING_MAX (dfl_size, 2)) == NULL)
+  {
+    free(string);
     return NULL;
-
+  }
+  
   string->str[0] = 0;
 
   return string;

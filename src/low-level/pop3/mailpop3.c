@@ -1095,7 +1095,7 @@ static int read_list(mailpop3 * f, carray ** result)
   unsigned int indx;
   uint32_t size;
   carray * msg_tab;
-  struct mailpop3_msg_info * msg;
+  struct mailpop3_msg_info * msg = NULL;
   char * line;
 
   msg_tab = carray_new(128);
@@ -1126,7 +1126,7 @@ static int read_list(mailpop3 * f, carray ** result)
 
       r = carray_set_size(msg_tab, indx);
       if (r == -1)
-	goto free_list;
+        goto free_list;
     }
 
     carray_set(msg_tab, indx - 1, msg);
@@ -1137,6 +1137,7 @@ static int read_list(mailpop3 * f, carray ** result)
   return MAILPOP3_NO_ERROR;
 
  free_list:
+  free(msg);
   mailpop3_msg_info_tab_free(msg_tab);
  err:
   return MAILPOP3_ERROR_STREAM;
