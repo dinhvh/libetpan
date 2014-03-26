@@ -277,9 +277,8 @@ int mailmime_content_parse(const char * message, size_t length,
       break;
     }
     else {
-      mailmime_subtype_free(subtype);
       res = r;
-      goto err;
+      goto free_subtype;
     }
 
     r = clist_append(parameters_list, parameter);
