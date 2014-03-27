@@ -2130,7 +2130,8 @@ static int mailimap_search_string_key_send(mailstream * fd,
     if (r != MAILIMAP_NO_ERROR)
         return r;
 
-    r = mailimap_atom_send(fd, itoa(strlen(value),sizebuf,10));
+	snprintf(sizebuf, 6, "%d", strlen(value));
+	r = mailimap_atom_send(fd, sizebuf);
     if (r != MAILIMAP_NO_ERROR)
         return r;
 
