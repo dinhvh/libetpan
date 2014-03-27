@@ -1836,104 +1836,6 @@ int mailimap_rename_send(mailstream * fd, const char * mb,
 }
 
 /*
-   response        = *(continue-req / response-data) response-done
-
-   response-data   = "*" SP (resp-cond-state / resp-cond-bye /
-                     mailbox-data / message-data / capability-data) CRLF
-
-   response-done   = response-tagged / response-fatal
-
-   response-fatal  = "*" SP resp-cond-bye CRLF
-                       ; Server closes connection immediately
-
-   response-tagged = tag SP resp-cond-state CRLF
-
-   resp-cond-auth  = ("OK" / "PREAUTH") SP resp-text
-                       ; Authentication condition
-
-   resp-cond-bye   = "BYE" SP resp-text
-
-   resp-cond-state = ("OK" / "NO" / "BAD") SP resp-text
-                       ; Status condition
-
-   resp-specials   = "]"
-
-   resp-text       = ["[" resp-text-code "]" SP] text
-
-   resp-text-code  = "ALERT" /
-                     "BADCHARSET" [SP "(" astring *(SP astring) ")" ] /
-                     capability-data / "PARSE" /
-                     "PERMANENTFLAGS" SP "(" [flag-perm *(SP flag-perm)] ")" /
-                     "READ-ONLY" / "READ-WRITE" / "TRYCREATE" /
-                     "UIDNEXT" SP nz-number / "UIDVALIDITY" SP nz-number /
-                     "UNSEEN" SP nz-number /
-                     atom [SP 1*<any TEXT-CHAR except "]">]
-*/
-
-/*
-=>   search          = "SEARCH" [SP "CHARSET" SP astring] 1*(SP search-key)
-                       ; CHARSET argument to MUST be registered with IANA
-*/
-
-int
-mailimap_search_send(mailstream * fd, const char * charset,
-		     struct mailimap_search_key * key)
-{
-  int r;
-  
-  r = mailimap_token_send(fd, "SEARCH");
-  if (r != MAILIMAP_NO_ERROR)
-    return r;
-
-  r = mailimap_search_key_need_to_send_charset(key);
-  if(r > 1)
-      return r;
-
-  if (charset != NULL && r) {
-    r = mailimap_space_send(fd);
-    if (r != MAILIMAP_NO_ERROR)
-      return r;
-    
-    r = mailimap_token_send(fd, "CHARSET");
-	if (r != MAILIMAP_NO_ERROR)
-      return r;
-    r = mailimap_space_send(fd);
-	if (r != MAILIMAP_NO_ERROR)
-      return r;
-    r = mailimap_astring_send(fd, charset);
-	if (r != MAILIMAP_NO_ERROR)
-      return r;
-  }
-
-  r = mailimap_space_send(fd);
-  if (r != MAILIMAP_NO_ERROR)
-    return r;
-  
-  r = mailimap_search_key_send(fd, key);
-  if (r != MAILIMAP_NO_ERROR)
-    return r;
-
-  return MAILIMAP_NO_ERROR;
-}
-
-int
-mailimap_uid_search_send(mailstream * fd, const char * charset,
-   				struct mailimap_search_key * key)
-{
-  int r;
-  
-  r = mailimap_token_send(fd, "UID");
-  if (r != MAILIMAP_NO_ERROR)
-    return r;
-
-  r = mailimap_space_send(fd);
-  if (r != MAILIMAP_NO_ERROR)
-    return r;
-
-  return mailimap_search_send(fd, charset, key);
-}
-
-/*
 =>   search-key      = "ALL" / "ANSWERED" / "BCC" SP astring /
                      "BEFORE" SP date / "BODY" SP astring /
                      "CC" SP astring / "DELETED" / "FLAGGED" /
@@ -2110,6 +2012,106 @@ static int mailimap_search_key_need_to_send_charset(struct mailimap_search_key *
     return 1;
   }
 }
+
+
+/*
+   response        = *(continue-req / response-data) response-done
+
+   response-data   = "*" SP (resp-cond-state / resp-cond-bye /
+                     mailbox-data / message-data / capability-data) CRLF
+
+   response-done   = response-tagged / response-fatal
+
+   response-fatal  = "*" SP resp-cond-bye CRLF
+                       ; Server closes connection immediately
+
+   response-tagged = tag SP resp-cond-state CRLF
+
+   resp-cond-auth  = ("OK" / "PREAUTH") SP resp-text
+                       ; Authentication condition
+
+   resp-cond-bye   = "BYE" SP resp-text
+
+   resp-cond-state = ("OK" / "NO" / "BAD") SP resp-text
+                       ; Status condition
+
+   resp-specials   = "]"
+
+   resp-text       = ["[" resp-text-code "]" SP] text
+
+   resp-text-code  = "ALERT" /
+                     "BADCHARSET" [SP "(" astring *(SP astring) ")" ] /
+                     capability-data / "PARSE" /
+                     "PERMANENTFLAGS" SP "(" [flag-perm *(SP flag-perm)] ")" /
+                     "READ-ONLY" / "READ-WRITE" / "TRYCREATE" /
+                     "UIDNEXT" SP nz-number / "UIDVALIDITY" SP nz-number /
+                     "UNSEEN" SP nz-number /
+                     atom [SP 1*<any TEXT-CHAR except "]">]
+*/
+
+/*
+=>   search          = "SEARCH" [SP "CHARSET" SP astring] 1*(SP search-key)
+                       ; CHARSET argument to MUST be registered with IANA
+*/
+
+int
+mailimap_search_send(mailstream * fd, const char * charset,
+		     struct mailimap_search_key * key)
+{
+  int r;
+  
+  r = mailimap_token_send(fd, "SEARCH");
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+
+  r = mailimap_search_key_need_to_send_charset(key);
+  if(r > 1)
+      return r;
+
+  if (charset != NULL && r) {
+    r = mailimap_space_send(fd);
+    if (r != MAILIMAP_NO_ERROR)
+      return r;
+    
+    r = mailimap_token_send(fd, "CHARSET");
+	if (r != MAILIMAP_NO_ERROR)
+      return r;
+    r = mailimap_space_send(fd);
+	if (r != MAILIMAP_NO_ERROR)
+      return r;
+    r = mailimap_astring_send(fd, charset);
+	if (r != MAILIMAP_NO_ERROR)
+      return r;
+  }
+
+  r = mailimap_space_send(fd);
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+  
+  r = mailimap_search_key_send(fd, key);
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+
+  return MAILIMAP_NO_ERROR;
+}
+
+int
+mailimap_uid_search_send(mailstream * fd, const char * charset,
+   				struct mailimap_search_key * key)
+{
+  int r;
+  
+  r = mailimap_token_send(fd, "UID");
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+
+  r = mailimap_space_send(fd);
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+
+  return mailimap_search_send(fd, charset, key);
+}
+
 
 static int mailimap_search_string_key_send(mailstream * fd,
    char* criteria, char* value)
