@@ -2059,16 +2059,15 @@ mailimap_search_send(mailstream * fd, const char * charset,
 		     struct mailimap_search_key * key)
 {
   int r;
+  int needToSendCharset = 1;
   
   r = mailimap_token_send(fd, "SEARCH");
   if (r != MAILIMAP_NO_ERROR)
     return r;
 
-  r = mailimap_search_key_need_to_send_charset(key);
-  if(r > 1)
-      return r;
+  needToSendCharset = mailimap_search_key_need_to_send_charset(key);
 
-  if (charset != NULL && r) {
+  if (charset != NULL && needToSendCharset) {
     r = mailimap_space_send(fd);
     if (r != MAILIMAP_NO_ERROR)
       return r;
