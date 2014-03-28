@@ -2116,7 +2116,6 @@ static int mailimap_search_string_key_send(mailstream * fd,
    char* criteria, char* value)
 {
     int r;
-    char sizebuf[6];
 
     r = mailimap_token_send(fd, criteria);
     if (r != MAILIMAP_NO_ERROR)
@@ -2126,30 +2125,17 @@ static int mailimap_search_string_key_send(mailstream * fd,
     if (r != MAILIMAP_NO_ERROR)
         return r;
 
-    r = mailimap_char_send(fd, '{');
-    if (r != MAILIMAP_NO_ERROR)
-        return r;
-
-	snprintf(sizebuf, 6, "%d", strlen(value));
-	r = mailimap_atom_send(fd, sizebuf);
-    if (r != MAILIMAP_NO_ERROR)
-        return r;
-
-    r = mailimap_char_send(fd, '}');
-    if (r != MAILIMAP_NO_ERROR)
-        return r;
-
-    r = mailimap_crlf_send(fd);
+    r = mailimap_literal_count_send(fd, strlen(value));
     if (r != MAILIMAP_NO_ERROR)
         return r;
 
     if (mailstream_flush(fd) == -1)
         return MAILIMAP_ERROR_STREAM;
 
-    r = mailimap_atom_send(fd, value);
-
+    r = mailimap_literal_data_send(fd,value, strlen(value),0, NULL);    
     if (r != MAILIMAP_NO_ERROR)
         return r;
+
     return MAILIMAP_NO_ERROR;
 }
 
@@ -2204,7 +2190,7 @@ int mailimap_search_key_send(mailstream * fd,
     return MAILIMAP_NO_ERROR;
 
   case MAILIMAP_SEARCH_KEY_BODY:
-      return  mailimap_search_string_key_send(fd, "BODY", key->sk_data.sk_body);
+    return  mailimap_search_string_key_send(fd, "BODY", key->sk_data.sk_body);
 
   case MAILIMAP_SEARCH_KEY_CC:
     return  mailimap_search_string_key_send(fd, "CC", key->sk_data.sk_cc);
