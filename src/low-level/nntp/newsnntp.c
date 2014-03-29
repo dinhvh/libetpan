@@ -109,6 +109,9 @@ newsnntp * newsnntp_new(size_t progr_rate, progress_function * progr_fun)
 
 	f->nntp_timeout = 0;
 
+  f->nntp_logger = NULL;
+  f->nntp_logger_context = NULL;
+
   return f;
 
  free_stream_buffer:
