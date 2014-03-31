@@ -118,6 +118,12 @@ struct mailpop3_capa {
   clist * cap_param; /* (char *) */
 };
 
+
+struct mailpop3_stat_response  {
+  uint32_t msgs_count;
+  uint32_t msgs_size;
+};
+
 #ifdef __cplusplus
 }
 #endif
