@@ -83,7 +83,7 @@ mailpop3_msg_info_new(unsigned int indx, uint32_t size, char * uidl)
 {
   struct mailpop3_msg_info * msg;
 
-  msg = (struct mailpop3_msg_info *)malloc(sizeof(* msg));
+  msg = malloc(sizeof(* msg));
   if (msg == NULL)
     return NULL;
   msg->msg_index = indx;
@@ -108,7 +108,7 @@ static void mailpop3_msg_info_tab_free(carray * msg_tab)
   for(i = 0 ; i < carray_count(msg_tab) ; i++) {
     struct mailpop3_msg_info * msg;
     
-    msg = (struct mailpop3_msg_info *)carray_get(msg_tab, i);
+    msg = carray_get(msg_tab, i);
     mailpop3_msg_info_free(msg);
   }
   carray_free(msg_tab);
@@ -120,7 +120,7 @@ static void mailpop3_msg_info_tab_reset(carray * msg_tab)
 
   for(i = 0 ; i < carray_count(msg_tab) ; i++) {
     struct mailpop3_msg_info * msg;
-    msg = (struct mailpop3_msg_info *)carray_get(msg_tab, i);
+    msg = carray_get(msg_tab, i);
     msg->msg_deleted = FALSE;
   }
 }
@@ -136,7 +136,7 @@ mailpop3_msg_info_tab_find_msg(carray * msg_tab, unsigned int indx)
   if (indx > carray_count(msg_tab))
     return NULL;
 
-  msg = (struct mailpop3_msg_info *)carray_get(msg_tab, indx - 1);
+  msg = carray_get(msg_tab, indx - 1);
 
   return msg;
 }
@@ -175,7 +175,7 @@ struct mailpop3_capa * mailpop3_capa_new(char * name, clist * param)
 {
   struct mailpop3_capa * capa;
 
-  capa = (struct mailpop3_capa *)malloc(sizeof(* capa));
+  capa = malloc(sizeof(* capa));
   if (capa == NULL)
     return NULL;
   capa->cap_name = name;
@@ -203,7 +203,7 @@ struct mailpop3_stat_response * mailpop3_stat_response_new(uint32_t count, uint3
 {
     struct mailpop3_stat_response * stat_response;
 
-    stat_response = (struct mailpop3_stat_response *)malloc(sizeof(* stat_response));
+    stat_response = malloc(sizeof(* stat_response));
     if(stat_response == NULL)
         return NULL;
     stat_response->msgs_count = count;
@@ -226,7 +226,7 @@ mailpop3 * mailpop3_new(size_t progr_rate, progress_function * progr_fun)
 {
   mailpop3 * f;
 
-  f = (mailpop3 *)malloc(sizeof(* f));
+  f = malloc(sizeof(* f));
   if (f == NULL)
     goto err;
 
@@ -347,7 +347,7 @@ static char * mailpop3_get_timestamp(char * response)
 
   len_timestamp = end_timestamp - begin_timestamp + 1;
 
-  timestamp = (char *)malloc(len_timestamp + 1);
+  timestamp = malloc(len_timestamp + 1);
   if (timestamp == NULL)
     return NULL;
   strncpy(timestamp, begin_timestamp, len_timestamp);
@@ -1235,7 +1235,7 @@ static int read_uidl(mailpop3 * f, carray * msg_tab)
       continue;
     }
 
-    msg = (struct mailpop3_msg_info *)carray_get(msg_tab, indx - 1);
+    msg = carray_get(msg_tab, indx - 1);
     if (msg == NULL) {
       free(uidl);
       continue;
