@@ -120,8 +120,8 @@ struct mailpop3_capa {
 
 
 struct mailpop3_stat_response  {
-  uint32_t msgs_count;
-  uint32_t msgs_size;
+  unsigned int msgs_count;
+  size_t msgs_size;
 };
 
 #ifdef __cplusplus

@@ -1186,9 +1186,8 @@ static int read_list(mailpop3 * f, carray ** result)
       r = carray_set_size(msg_tab, indx);
       if (r == -1) {
         mailpop3_msg_info_free(msg);
-		goto free_list;
-	  }
-
+        goto free_list
+      }
     }
 
     carray_set(msg_tab, indx - 1, msg);
@@ -1361,6 +1360,8 @@ static int parse_stat_response(mailpop3 * f, struct mailpop3_stat_response ** re
     size = strtol(line, &line, 10);  
 
     resp = mailpop3_stat_response_new(count, size);
+	if(resp == NULL)
+		return MAILPOP3_ERROR_MEMORY;	
 
     * result = resp;
 
