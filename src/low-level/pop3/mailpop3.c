@@ -1691,7 +1691,7 @@ static inline void pop3_logger(mailstream * s, int log_type,
 {
   mailpop3 * session;
 
-  session = (mailpop3 *)context;
+  session = context;
   if (session->pop3_logger == NULL)
     return;
 
