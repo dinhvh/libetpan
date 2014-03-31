@@ -201,21 +201,20 @@ void mailpop3_capa_free(struct mailpop3_capa * capa)
 
 struct mailpop3_stat_response * mailpop3_stat_response_new(uint32_t count, uint32_t size)
 {
-    struct mailpop3_stat_response * stat_response;
+  struct mailpop3_stat_response * stat_response;
 
-    stat_response = malloc(sizeof(* stat_response));
-    if(stat_response == NULL)
-        return NULL;
-    stat_response->msgs_count = count;
-    stat_response->msgs_size = size;
+  stat_response = malloc(sizeof(* stat_response));
+  if(stat_response == NULL)
+    return NULL;
+  stat_response->msgs_count = count;
+  stat_response->msgs_size = size;
 
-    return stat_response;
-
+  return stat_response;
 }
 
 void mailpop3_stat_resp_free(struct mailpop3_stat_response * stat_response)
 {   
-    free(stat_response);
+  free(stat_response);
 }
 
 /*
@@ -968,55 +967,33 @@ static int parse_stat_response(mailpop3 * f, struct mailpop3_stat_response ** re
 
 int mailpop3_stat(mailpop3 * f, struct mailpop3_stat_response ** result)
 {
-    struct mailpop3_stat_response * stat_response;
-    char command[POP3_STRING_SIZE];
-    int r;
-    char * response;
+  struct mailpop3_stat_response * stat_response;
+  char command[POP3_STRING_SIZE];
+  int r;
+  char * response;
 
-    snprintf(command, POP3_STRING_SIZE, "STAT\r\n");
-    r = send_command(f, command);
-    if (r == -1)
-        return MAILPOP3_ERROR_STREAM;
+  snprintf(command, POP3_STRING_SIZE, "STAT\r\n");
+  r = send_command(f, command);
+  if (r == -1)
+    return MAILPOP3_ERROR_STREAM;
 
-    response = read_line(f);
-    if (response == NULL)
-        return MAILPOP3_ERROR_STREAM;
-    r = parse_response(f, response);
+  response = read_line(f);
+  if (response == NULL)
+    return MAILPOP3_ERROR_STREAM;
+  r = parse_response(f, response);
 
-    if (r != RESPONSE_OK)
-        return MAILPOP3_ERROR_CAPA_NOT_SUPPORTED;
+  if (r != RESPONSE_OK)
+    return MAILPOP3_ERROR_CAPA_NOT_SUPPORTED;
 
-    stat_response = NULL;
-    r = parse_stat_response(f, &stat_response);
-    if (r != MAILPOP3_NO_ERROR)
-        return r;
+  stat_response = NULL;
+  r = parse_stat_response(f, &stat_response);
+  if (r != MAILPOP3_NO_ERROR)
+    return r;
 
-    * result = stat_response;
+  * result = stat_response;
 
-    return MAILPOP3_NO_ERROR;
+  return MAILPOP3_NO_ERROR;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -1342,33 +1319,32 @@ static int read_capa_resp(mailpop3 * f, clist ** result)
 
 static int parse_stat_response(mailpop3 * f, struct mailpop3_stat_response ** result)
 {
-    uint32_t count;
-    uint32_t size;
-    struct mailpop3_stat_response * resp;
-    
-    char * line;
+  unsigned int count;
+  size_t size;
+  struct mailpop3_stat_response * resp;
+  char * line;
 
-    line = f->pop3_response;
-    if (line == NULL)
-        goto err;
+  line = f->pop3_response;
+  if (line == NULL)
+    goto err;
 
-    count = strtol(line, &line, 10);
+  count = (unsigned int) strtol(line, &line, 10);
 
-    if (!parse_space(&line))
-        goto err;
+  if (!parse_space(&line))
+    goto err;
 
-    size = strtol(line, &line, 10);  
+  size = (size_t) strtol(line, &line, 10);  
 
-    resp = mailpop3_stat_response_new(count, size);
-	if(resp == NULL)
-		return MAILPOP3_ERROR_MEMORY;	
+  resp = mailpop3_stat_response_new(count, size);
+  if(resp == NULL)
+    return MAILPOP3_ERROR_MEMORY;	
 
-    * result = resp;
+  * result = resp;
 
-    return MAILPOP3_NO_ERROR;
+  return MAILPOP3_NO_ERROR;
 
-err:
-    return MAILPOP3_ERROR_STREAM;
+  err:
+  return MAILPOP3_ERROR_STREAM;
 }
 
 
