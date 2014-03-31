@@ -1186,7 +1186,7 @@ static int read_list(mailpop3 * f, carray ** result)
       r = carray_set_size(msg_tab, indx);
       if (r == -1) {
         mailpop3_msg_info_free(msg);
-        goto free_list
+        goto free_list;
       }
     }
 
