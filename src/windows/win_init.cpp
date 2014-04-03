@@ -13,6 +13,7 @@ Special class, initializers for windows
 #include "mailstream_ssl_private.h"
 #include "mmapstring_private.h"
 #endif
+#include "..\data-types\mailsasl.h"
 
 class win_init {
   public:
@@ -25,6 +26,10 @@ class win_init {
 		mmapstring_init_lock();
 #ifdef USE_SSL
 		mailstream_ssl_init_lock();
+#endif
+
+#ifdef USE_SASL
+        mailsasl_init_lock();
 #endif
 		
 #endif
