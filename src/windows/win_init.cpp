@@ -12,7 +12,7 @@ Special class, initializers for windows
 #ifdef _MSC_VER
 #include "mailstream_ssl_private.h"
 #include "mmapstring_private.h"
-#include "mailsasl.h"
+#include "mailsasl_private.h"
 #endif
 
 
