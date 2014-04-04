@@ -30,6 +30,8 @@ xcuserdata/
 /Makefile.in
 /autom4te.cache/
 /build-windows/include/libetpan
+/build-windows/Release
+/build-windows/Release_ssl
 /build-windows/Debug
 /build-windows/Debug_ssl
 /build-windows/libetpan/Debug
