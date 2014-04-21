@@ -199,6 +199,9 @@ static void display_field(struct mailimf_field * field)
     display_subject(field->fld_data.fld_subject);
 		printf("\n");
     break;
+  case MAILIMF_FIELD_MESSAGE_ID:
+    printf("Message-ID: %s\n", field->fld_data.fld_message_id->mid_value);
+    break;
   }
 }
 
