@@ -1416,19 +1416,19 @@ carray * mailstream_low_ssl_get_certificate_chain(mailstream_low * s)
       gnutls_x509_crt cert = NULL;
       if (gnutls_x509_crt_init(&cert) >= 0
        && gnutls_x509_crt_import(cert, &raw_cert_list[skpos], GNUTLS_X509_FMT_DER) >= 0) {
-         char output[10*1024];
-         size_t cert_size;
+         size_t cert_size = 0;
+         MMAPString * str = NULL;
+         unsigned char * p;
 
-	 cert_size = sizeof(output);
-         if (gnutls_x509_crt_export(cert, GNUTLS_X509_FMT_DER, output, &cert_size) >= 0) {
-           MMAPString * str;
-           unsigned char * p;
+         if (gnutls_x509_crt_export(cert, GNUTLS_X509_FMT_DER, NULL, &cert_size)
+	     == GNUTLS_E_SHORT_MEMORY_BUFFER) {
            str = mmap_string_sized_new(cert_size + 1);
            p = (unsigned char *) str->str;
            str->len = cert_size;
-           memcpy (p, output, cert_size);
-
-	   carray_add(result, str, NULL);
+	 }
+	 if (str != NULL &&
+             gnutls_x509_crt_export(cert, GNUTLS_X509_FMT_DER, p, &cert_size) >= 0) {
+           carray_add(result, str, NULL);
 	 } else {
 	   return NULL;
 	 }
