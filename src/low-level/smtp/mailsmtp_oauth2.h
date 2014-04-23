@@ -8,4 +8,8 @@ LIBETPAN_EXPORT
 int mailsmtp_oauth2_authenticate(mailsmtp * session, const char * auth_user,
     const char * access_token);
 
+LIBETPAN_EXPORT
+int mailsmtp_oauth2_outlook_authenticate(mailsmtp * session, const char * auth_user,
+    const char * access_token);
+
 #endif

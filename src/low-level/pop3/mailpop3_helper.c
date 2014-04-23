@@ -52,6 +52,7 @@ int mailpop3_login_apop(mailpop3 * f,
 /*
   mailpop3_login
   
+  log on to pop3 server using USER and PASS commands
   must be used immediately after connect 
 */
 

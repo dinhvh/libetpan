@@ -44,6 +44,7 @@
 #include "mailstream.h"
 #include "maillock.h"
 #include "mailstream_cfstream.h"
+#include "mailstream_compress.h"
 #include "mailstream_cancel.h"
 #include <string.h>
 #include <stdlib.h>
@@ -354,14 +355,14 @@ int mailstream_wait_idle(mailstream * s, int max_idle_delay)
 
 int mailstream_setup_idle(mailstream * s)
 {
+  int r;
+  
   if (s->idling) {
     return -1;
   }
   
-  if (s->low->driver == mailstream_cfstream_driver) {
-    mailstream_cfstream_setup_idle(s);
-  }
-  else {
+  r = mailstream_low_setup_idle(s->low);
+  if (r < 0) {
     s->idle = mailstream_cancel_new();
     if (s->idle == NULL)
       return -1;
@@ -374,28 +375,28 @@ int mailstream_setup_idle(mailstream * s)
 
 void mailstream_interrupt_idle(mailstream * s)
 {
+  int r;
+  
   if (!s->idling) {
     return;
   }
   
-  if (s->low->driver == mailstream_cfstream_driver) {
-    mailstream_cfstream_interrupt_idle(s);
-  }
-  else {
+  r = mailstream_low_interrupt_idle(s->low);
+  if (r < 0) {
     mailstream_cancel_notify(s->idle);
   }
 }
 
 void mailstream_unsetup_idle(mailstream * s)
 {
+  int r;
+  
   if (!s->idling) {
     return;
   }
   
-  if (s->low->driver == mailstream_cfstream_driver) {
-    mailstream_cfstream_unsetup_idle(s);
-  }
-  else {
+  r = mailstream_low_unsetup_idle(s->low);
+  if (r < 0) {
     mailstream_cancel_free(s->idle);
 	  s->idle = NULL;
   }

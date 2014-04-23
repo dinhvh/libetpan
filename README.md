@@ -49,6 +49,10 @@ They can be installed using [brew](http://brew.sh/).
 - Link with libetpan-ios.a
 - Set "Other Linker Flags": `-lsasl2`
 
+### Build on Windows
+
+- See README and Visual Studio Solution in build-windows folder
+
 ## More information
 
 See http://etpan.org/libetpan.html for more information and examples.

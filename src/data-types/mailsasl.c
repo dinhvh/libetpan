@@ -42,15 +42,18 @@ static int sasl_lock_init_done =  0;
 static int sasl_use_count = 0;
 
 #ifdef LIBETPAN_REENTRANT
-#if defined(HAVE_PTHREAD_H) && !defined(IGNORE_PTHREAD_H)
-#elif (defined WIN32)
+
 void mailsasl_init_lock(){
-  static int mainsasl_init_lock_done = 0;
+#if defined(HAVE_PTHREAD_H) && !defined(IGNORE_PTHREAD_H)
+	// nothing to do
+#elif (defined WIN32)
+  static int volatile mainsasl_init_lock_done = 0;
   if (InterlockedExchange(&mainsasl_init_lock_done, 1) == 0){
     InitializeCriticalSection(&sasl_lock);
   }
-}
 #endif
+}
+
 #endif
 
 void mailsasl_external_ref(void)

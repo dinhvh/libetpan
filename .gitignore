@@ -5,6 +5,12 @@
 .deps
 .libs
 .DS_Store
+*.obj
+*.pdb
+*.idb
+*.suo
+*.ncb
+*.user
 
 project.xcworkspace/
 xcuserdata/
@@ -23,6 +29,24 @@ xcuserdata/
 /Makefile
 /Makefile.in
 /autom4te.cache/
+/build-windows/include/libetpan
+/build-windows/Release
+/build-windows/Release_ssl
+/build-windows/Debug
+/build-windows/Debug_ssl
+/build-windows/libetpan/Debug
+/build-windows/libetpan/Debug_ssl
+/build-windows/libetpan/Release
+/build-windows/libetpan/Release_ssl
+/build-windows/readmsg/Debug
+/build-windows/readmsg/Debug_ssl
+/build-windows/readmsg/Release
+/build-windows/readmsg/Release_ssl
+/build-windows/smtpsend/Debug
+/build-windows/smtpsend/Debug_ssl
+/build-windows/smtpsend/Release
+/build-windows/smtpsend/Release_ssl
+/build-windows/_headers_depends
 /build-windows/Makefile
 /build-windows/Makefile.in
 /config.h

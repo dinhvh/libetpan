@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="smtpsend"
 	ProjectGUID="{FF9F45C9-74A0-4B4E-99E9-6ADE0EB6D8AC}"
 	RootNamespace="smtpsend"
@@ -195,26 +195,6 @@
 			<File
 				RelativePath="..\..\src\bsd\getopt_long.c"
 				>
-			</File>
-			<File
-				RelativePath="..\..\tests\Makefile"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\tests\smtpsend.c"

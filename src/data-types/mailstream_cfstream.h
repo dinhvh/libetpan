@@ -96,10 +96,11 @@ extern "C" {
   int mailstream_low_cfstream_wait_idle(mailstream_low * low, int max_idle_delay);
   
   /* in main thread */
-  void mailstream_cfstream_setup_idle(mailstream * s);
-  void mailstream_cfstream_interrupt_idle(mailstream * s);
-  void mailstream_cfstream_unsetup_idle(mailstream * s);
-  
+  /*
+  void mailstream_low_cfstream_setup_idle(mailstream_low * s);
+  void mailstream_low_cfstream_interrupt_idle(mailstream_low * s);
+  void mailstream_low_cfstream_unsetup_idle(mailstream_low * s);
+   */
   /* SSL certificate */
   
 #ifdef __cplusplus

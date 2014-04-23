@@ -119,6 +119,12 @@ LIBETPAN_EXPORT
 void mailpop3_capa_resp_free(clist * capa_list);
 
 LIBETPAN_EXPORT
+int mailpop3_stat(mailpop3 * f, struct mailpop3_stat_response ** result);
+
+LIBETPAN_EXPORT
+void mailpop3_stat_resp_free(struct mailpop3_stat_response * stat_result);
+
+LIBETPAN_EXPORT
 int mailpop3_stls(mailpop3 * f);
 
 LIBETPAN_EXPORT

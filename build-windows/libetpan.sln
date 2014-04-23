@@ -12,6 +12,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "smtpsend", "smtpsend\smtpse
 		{BA4DED3C-E56F-4484-BFC3-9C13E461A1BE} = {BA4DED3C-E56F-4484-BFC3-9C13E461A1BE}
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B2C11050-3E46-4E10-B734-F9203A75AA46}"
+	ProjectSection(SolutionItems) = preProject
+		README.txt = README.txt
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug_ssl|Win32 = Debug_ssl|Win32

@@ -1380,6 +1380,7 @@ static int mailmime_parse_with_default(const char * message, size_t length,
       message + cur_token, length - cur_token,
       NULL);
   if (body == NULL) {
+    free(boundary);
     res = MAILIMF_ERROR_MEMORY;
     goto free_content;
   }
