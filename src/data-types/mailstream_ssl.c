@@ -776,7 +776,7 @@ static int wait_read(mailstream_low * s)
 #ifdef WIN32
   HANDLE event;
 #endif
-  
+
   ssl_data = (struct mailstream_ssl_data *) s->data;
   if (s->timeout == 0) {
     timeout = mailstream_network_delay;
@@ -1100,7 +1100,6 @@ ssize_t mailstream_ssl_get_certificate(mailstream *stream, unsigned char **cert_
   const gnutls_datum *raw_cert_list;
   unsigned int raw_cert_list_length;
   gnutls_x509_crt cert = NULL;
-  char output[10*1024];
   size_t cert_size;
 #endif
 
@@ -1134,15 +1133,18 @@ ssize_t mailstream_ssl_get_certificate(mailstream *stream, unsigned char **cert_
   && gnutls_certificate_type_get(session) == GNUTLS_CRT_X509
   &&  gnutls_x509_crt_init(&cert) >= 0
   &&  gnutls_x509_crt_import(cert, &raw_cert_list[0], GNUTLS_X509_FMT_DER) >= 0) {
-    cert_size = sizeof(output);
-    if (gnutls_x509_crt_export(cert, GNUTLS_X509_FMT_DER, output, &cert_size) < 0)
+    cert_size = 0;
+    if (gnutls_x509_crt_export(cert, GNUTLS_X509_FMT_DER, NULL, &cert_size) 
+        != GNUTLS_E_SHORT_MEMORY_BUFFER)
       return -1;
-    
-    *cert_DER = malloc (cert_size + 1);
+
+    *cert_DER = malloc (cert_size);
     if (*cert_DER == NULL)
       return -1;
-    
-    memcpy (*cert_DER, output, cert_size);
+
+    if (gnutls_x509_crt_export(cert, GNUTLS_X509_FMT_DER, *cert_DER, &cert_size) < 0)
+      return -1;
+
     len = (ssize_t)cert_size;
     gnutls_x509_crt_deinit(cert);
     
@@ -1233,7 +1235,7 @@ int mailstream_ssl_set_client_certificate_data(struct mailstream_ssl_context * s
   tmp.data = x509_der;
   tmp.size = len;
   if ((r = gnutls_x509_crt_import(ssl_context->client_x509, &tmp, GNUTLS_X509_FMT_DER)) < 0) {
-    gnutls_x509_crt_deinit(ssl_context->client_x509); /* ici */
+    gnutls_x509_crt_deinit(ssl_context->client_x509);
     ssl_context->client_x509 = NULL;
     return -1;
   }
@@ -1375,11 +1377,11 @@ static struct mailstream_cancel * mailstream_low_ssl_get_cancel(mailstream_low *
 carray * mailstream_low_ssl_get_certificate_chain(mailstream_low * s)
 {
 #ifdef USE_SSL
-#ifndef USE_GNUTLS
-  STACK_OF(X509) * skx;
   struct mailstream_ssl_data * ssl_data;
   carray * result;
   int skpos;
+#ifndef USE_GNUTLS
+  STACK_OF(X509) * skx;
   
   ssl_data = (struct mailstream_ssl_data *) s->data;
   if (!(skx = SSL_get_peer_cert_chain(ssl_data->ssl_conn))) {
@@ -1401,7 +1403,44 @@ carray * mailstream_low_ssl_get_certificate_chain(mailstream_low * s)
   
   return result;
 #else
-  /* TODO: GnuTLS implementation */
+  gnutls_session session = NULL;
+  const gnutls_datum *raw_cert_list;
+  unsigned int raw_cert_list_length;
+
+  ssl_data = (struct mailstream_ssl_data *) s->data;
+
+  session = ssl_data->session;
+  raw_cert_list = gnutls_certificate_get_peers(session, &raw_cert_list_length);
+
+  if (raw_cert_list && gnutls_certificate_type_get(session) == GNUTLS_CRT_X509) {
+    result = carray_new(4);
+    for(skpos = 0 ; skpos < raw_cert_list_length ; skpos ++) {
+      gnutls_x509_crt cert = NULL;
+      if (gnutls_x509_crt_init(&cert) >= 0
+       && gnutls_x509_crt_import(cert, &raw_cert_list[skpos], GNUTLS_X509_FMT_DER) >= 0) {
+         size_t cert_size = 0;
+         MMAPString * str = NULL;
+         unsigned char * p;
+
+         if (gnutls_x509_crt_export(cert, GNUTLS_X509_FMT_DER, NULL, &cert_size)
+	     == GNUTLS_E_SHORT_MEMORY_BUFFER) {
+           str = mmap_string_sized_new(cert_size);
+           p = (unsigned char *) str->str;
+           str->len = cert_size;
+	 }
+	 if (str != NULL &&
+             gnutls_x509_crt_export(cert, GNUTLS_X509_FMT_DER, p, &cert_size) >= 0) {
+           carray_add(result, str, NULL);
+	 } else {
+	   return NULL;
+	 }
+         gnutls_x509_crt_deinit(cert);
+       }
+    }
+  }
+
+  return result;
+
   return NULL;
 #endif
 #else
