@@ -42,4 +42,4 @@ noinst_LTLIBRARIES = libsmtp.la
 
 libsmtp_la_SOURCES = \
 	mailsmtp.c mailsmtp_helper.c mailsmtp_socket.c mailsmtp_ssl.c \
-	mailsmtp_oauth2.c
+	mailsmtp_oauth2.c mailsmtp_private.h
