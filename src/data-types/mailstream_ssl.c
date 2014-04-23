@@ -1138,7 +1138,7 @@ ssize_t mailstream_ssl_get_certificate(mailstream *stream, unsigned char **cert_
         != GNUTLS_E_SHORT_MEMORY_BUFFER)
       return -1;
 
-    *cert_DER = malloc (cert_size + 1);
+    *cert_DER = malloc (cert_size);
     if (*cert_DER == NULL)
       return -1;
 
@@ -1424,7 +1424,7 @@ carray * mailstream_low_ssl_get_certificate_chain(mailstream_low * s)
 
          if (gnutls_x509_crt_export(cert, GNUTLS_X509_FMT_DER, NULL, &cert_size)
 	     == GNUTLS_E_SHORT_MEMORY_BUFFER) {
-           str = mmap_string_sized_new(cert_size + 1);
+           str = mmap_string_sized_new(cert_size);
            p = (unsigned char *) str->str;
            str->len = cert_size;
 	 }
