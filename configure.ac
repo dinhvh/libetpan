@@ -3,7 +3,7 @@
 
 m4_define([maj_version], [1])
 m4_define([min_version], [2])
-m4_define([api_current], [17])
+m4_define([api_current], [18])
 m4_define([api_revision], [0])
 m4_define([api_compatibility], [17])
 dnl API version
