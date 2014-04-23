@@ -1119,7 +1119,7 @@ ssize_t mailstream_ssl_get_certificate(mailstream *stream, unsigned char **cert_
   if (cert == NULL)
     return -1;
   
-  len = i2d_X509(x, NULL);
+  len = i2d_X509(cert, NULL);
   * cert_DER = malloc(length);
   if (* cert_DER == NULL)
     return -1;
