@@ -144,7 +144,7 @@ for TARGET in $TARGETS; do
         export CFLAGS="${CPPFLAGS} -Os ${EXTRA_FLAGS}"
 
         OPENSSL="--with-openssl=$BUILD_DIR/openssl-1.0.0d/universal"
-        PLUGINS="--enable-otp=no --enable-digest=no --with-des=no --enable-login"
+        PLUGINS="--enable-otp=no --enable-digest=no --with-des=no --enable-login --enable-ntlm=yes"
         ./configure --host=${ARCH} --prefix=$PREFIX --enable-shared=no --enable-static=yes --with-pam=$BUILD_DIR/openpam-20071221/universal $PLUGINS >> "$logfile" 2>&1
         make -j 8 >> "$logfile" 2>&1
         if [[ "$?" != "0" ]]; then
