@@ -4,6 +4,8 @@ The purpose of this mail library is to provide a portable, efficient framework f
 
 It provides an API for C language.
 
+[![Build Status](https://travis-ci.org/dinhviethoa/libetpan.png?branch=master)](https://travis-ci.org/dinhviethoa/libetpan)
+
 ## Features
 
 - IMAP
