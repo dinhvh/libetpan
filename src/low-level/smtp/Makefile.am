@@ -41,5 +41,9 @@ AM_CPPFLAGS = -I$(top_builddir)/include \
 noinst_LTLIBRARIES = libsmtp.la
 
 libsmtp_la_SOURCES = \
-	mailsmtp.c mailsmtp_helper.c mailsmtp_socket.c mailsmtp_ssl.c \
-	mailsmtp_oauth2.c mailsmtp_private.h
+	mailsmtp.h mailsmtp.c \
+	mailsmtp_helper.h mailsmtp_helper.c \
+	mailsmtp_socket.h mailsmtp_socket.c \
+	mailsmtp_ssl.h mailsmtp_ssl.c \
+	mailsmtp_oauth2.h mailsmtp_oauth2.c \
+	mailsmtp_private.h
