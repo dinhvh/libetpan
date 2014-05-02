@@ -1,11 +1,13 @@
-diff -ur cyrus-sasl-2.1.25/lib/client.c cyrus-sasl-2.1.25.new/lib/client.c
+diff -Naur cyrus-sasl-2.1.25/lib/client.c cyrus-sasl-2.1.25.new/lib/client.c
 --- cyrus-sasl-2.1.25/lib/client.c	2011-09-02 05:58:01.000000000 -0700
-+++ cyrus-sasl-2.1.25.new/lib/client.c	2013-06-01 23:23:00.000000000 -0700
-@@ -504,7 +504,7 @@
++++ cyrus-sasl-2.1.25.new/lib/client.c	2014-04-29 10:52:17.000000000 -0700
+@@ -503,8 +503,8 @@
+   
    /* get the clientFQDN (serverFQDN was set in _sasl_conn_init) */
    memset(name, 0, sizeof(name));
-   if (get_fqhostname (name, MAXHOSTNAMELEN, 0) != 0) {
+-  if (get_fqhostname (name, MAXHOSTNAMELEN, 0) != 0) {
 -      return (SASL_FAIL);
++  if (get_fqhostname (name, MAXHOSTNAMELEN, 1) != 0) {
 +      gethostname(name, MAXHOSTNAMELEN);
    }
  

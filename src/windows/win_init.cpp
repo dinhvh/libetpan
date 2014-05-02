@@ -22,6 +22,7 @@ class win_init {
 
 		wsocket_init();
 
+#ifdef _MSC_VER
 		/* Initialize Mutexes */
 		mmapstring_init_lock();
 
@@ -32,7 +33,7 @@ class win_init {
 #ifdef USE_SASL
         mailsasl_init_lock();
 #endif
-		
+#endif
 
 	}
 	~win_init() {
