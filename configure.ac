@@ -228,7 +228,7 @@ if test "x$with_gnutls" != "xno"; then
   fi
   GNUTLSLIB=""
   AC_CHECK_HEADER(gnutls/gnutls.h, [
-   AC_CHECK_LIB(gnutls, gnutls_global_deinit, with_gnutls=yes, [GNUTLSLIB="-lgnutls -lgcrypt -lgpg-error -lz"])
+   AC_CHECK_LIB(gnutls, gnutls_global_deinit, with_gnutls=yes, [GNUTLSLIB="-lgnutls"])
   ])
   if test "x$with_gnutls" != "xyes"; then
    CPPFLAGS="$OCPPFLAGS"
