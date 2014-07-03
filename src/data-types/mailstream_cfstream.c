@@ -980,7 +980,13 @@ int mailstream_cfstream_set_ssl_enabled(mailstream * s, int ssl_enabled)
       return -1;
     
     SecTrustRef secTrust = (SecTrustRef)CFReadStreamCopyProperty(cfstream_data->readStream, kCFStreamPropertySSLPeerTrust);
+    if (secTrust == NULL) {
+      // No trust, wait more.
+      continue;
+    }
+    
     CFIndex count = SecTrustGetCertificateCount(secTrust);
+    CFRelease(secTrust);
     
     if (count == 0) {
       // No certificates, wait more.
@@ -1155,13 +1161,10 @@ static carray * mailstream_low_cfstream_get_certificate_chain(mailstream_low * s
   
   cfstream_data = (struct mailstream_cfstream_data *) s->data;
   SecTrustRef secTrust = (SecTrustRef)CFReadStreamCopyProperty(cfstream_data->readStream, kCFStreamPropertySSLPeerTrust);
-  CFIndex count = SecTrustGetCertificateCount(secTrust);
-  
-  if (count == 0) {
-    if (secTrust)
-      CFRelease(secTrust);
+  if (secTrust == NULL)
     return NULL;
-  }
+  
+  CFIndex count = SecTrustGetCertificateCount(secTrust);
   
   result = carray_new(4);
   for(i = 0 ; i < count ; i ++) {
@@ -1175,8 +1178,7 @@ static carray * mailstream_low_cfstream_get_certificate_chain(mailstream_low * s
     CFRelease(data);
   }
   
-  if (secTrust)
-    CFRelease(secTrust);
+  CFRelease(secTrust);
   
   return result;
 #else
