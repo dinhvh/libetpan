@@ -978,12 +978,14 @@ int mailstream_cfstream_set_ssl_enabled(mailstream * s, int ssl_enabled)
       return -1;
     if (cfstream_data->readSSLResult < 0)
       return -1;
-    CFArrayRef certs = CFReadStreamCopyProperty(cfstream_data->readStream, kCFStreamPropertySSLPeerCertificates);
-    if (certs == NULL) {
+    
+    SecTrustRef secTrust = (SecTrustRef)CFReadStreamCopyProperty(cfstream_data->readStream, kCFStreamPropertySSLPeerTrust);
+    CFIndex count = SecTrustGetCertificateCount(secTrust);
+    
+    if (count == 0) {
       // No certificates, wait more.
       continue;
     }
-    CFRelease(certs);
     break;
   }
   
@@ -1148,18 +1150,22 @@ static carray * mailstream_low_cfstream_get_certificate_chain(mailstream_low * s
 {
 #if HAVE_CFNETWORK
   struct mailstream_cfstream_data * cfstream_data;
-  CFArrayRef certs;
   unsigned int i;
   carray * result;
   
   cfstream_data = (struct mailstream_cfstream_data *) s->data;
-  certs = CFReadStreamCopyProperty(cfstream_data->readStream, kCFStreamPropertySSLPeerCertificates);
-  if (certs == NULL)
+  SecTrustRef secTrust = (SecTrustRef)CFReadStreamCopyProperty(cfstream_data->readStream, kCFStreamPropertySSLPeerTrust);
+  CFIndex count = SecTrustGetCertificateCount(secTrust);
+  
+  if (count == 0) {
+    if (secTrust)
+      CFRelease(secTrust);
     return NULL;
+  }
   
   result = carray_new(4);
-  for(i = 0 ; i < CFArrayGetCount(certs) ; i ++) {
-    SecCertificateRef cert = (SecCertificateRef) CFArrayGetValueAtIndex(certs, i);
+  for(i = 0 ; i < count ; i ++) {
+    SecCertificateRef cert = (SecCertificateRef) SecTrustGetCertificateAtIndex(secTrust, i);
     CFDataRef data = SecCertificateCopyData(cert);
     CFIndex length = CFDataGetLength(data);
     const UInt8 * bytes = CFDataGetBytePtr(data);
@@ -1169,7 +1175,8 @@ static carray * mailstream_low_cfstream_get_certificate_chain(mailstream_low * s
     CFRelease(data);
   }
   
-  CFRelease(certs);
+  if (secTrust)
+    CFRelease(secTrust);
   
   return result;
 #else
