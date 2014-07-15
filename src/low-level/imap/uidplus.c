@@ -138,6 +138,44 @@ static void extract_copy_uid(mailimap * session,
   }
 }
 
+static void extract_move_uid(mailimap * session,
+                             uint32_t * uidvalidity_result,
+                             struct mailimap_set ** source_result,
+                             struct mailimap_set ** dest_result)
+{
+  clistiter * cur;
+  
+  * uidvalidity_result = 0;
+  * source_result = NULL;
+  * dest_result = NULL;
+  
+  if (session->imap_response_info == NULL) {
+    return;
+  }
+  
+  for(cur = clist_begin(session->imap_response_info->rsp_extension_list) ;
+      cur != NULL ; cur = clist_next(cur)) {
+    struct mailimap_extension_data * ext_data;
+    struct mailimap_uidplus_resp_code_copy * resp_code_copy;
+    
+    ext_data = clist_content(cur);
+    if (ext_data->ext_extension != &mailimap_extension_uidplus)
+      continue;
+    
+    if (ext_data->ext_type != MAILIMAP_UIDPLUS_RESP_CODE_COPY)
+      continue;
+    
+    resp_code_copy = ext_data->ext_data;
+    
+    * uidvalidity_result = resp_code_copy->uid_uidvalidity;
+    * source_result = resp_code_copy->uid_source_set;
+    * dest_result = resp_code_copy->uid_dest_set;
+    resp_code_copy->uid_source_set = NULL;
+    resp_code_copy->uid_dest_set = NULL;
+    break;
+  }
+}
+
 LIBETPAN_EXPORT
 int mailimap_uidplus_copy(mailimap * session, struct mailimap_set * set,
     const char * mb,
@@ -170,6 +208,24 @@ int mailimap_uidplus_uid_copy(mailimap * session, struct mailimap_set * set,
     return r;
 
   extract_copy_uid(session, uidvalidity_result, source_result, dest_result);
+  
+  return MAILIMAP_NO_ERROR;
+}
+
+LIBETPAN_EXPORT
+int mailimap_uidplus_uid_move(mailimap * session, struct mailimap_set * set,
+                              const char * mb,
+                              uint32_t * uidvalidity_result,
+                              struct mailimap_set ** source_result,
+                              struct mailimap_set ** dest_result)
+{
+  int r;
+  
+  r = mailimap_uid_move(session, set, mb);
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+  
+  extract_move_uid(session, uidvalidity_result, source_result, dest_result);
   
   return MAILIMAP_NO_ERROR;
 }

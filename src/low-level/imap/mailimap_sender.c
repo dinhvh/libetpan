@@ -719,6 +719,60 @@ int mailimap_uid_copy_send(mailstream * fd,
 }
 
 /*
+ continue-req    = "+" SP (resp-text / base64) CRLF
+ */
+
+/*
+ =>   move            = "MOVE" SP set SP mailbox
+ */
+
+int mailimap_move_send(mailstream * fd,
+                       struct mailimap_set * set,
+                       const char * mb)
+{
+  int r;
+  
+  r = mailimap_token_send(fd, "MOVE");
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+  
+  r = mailimap_space_send(fd);
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+  
+  r = mailimap_set_send(fd, set);
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+  
+  r = mailimap_space_send(fd);
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+  
+  r = mailimap_mailbox_send(fd, mb);
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+  
+  return MAILIMAP_NO_ERROR;
+}
+
+int mailimap_uid_move_send(mailstream * fd,
+                           struct mailimap_set * set,
+                           const char * mb)
+{
+  int r;
+  
+  r = mailimap_token_send(fd, "UID");
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+  
+  r = mailimap_space_send(fd);
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+  
+  return mailimap_move_send(fd, set, mb);
+}
+
+/*
 =>   create          = "CREATE" SP mailbox
                        ; Use of INBOX gives a NO error
 */
