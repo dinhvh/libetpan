@@ -109,6 +109,8 @@ static int imapdriver_append_message_flags(mailsession * session,
     const char * message, size_t size, struct mail_flags * flags);
 static int imapdriver_copy_message(mailsession * session,
 				   uint32_t num, const char * mb);
+static int imapdriver_move_message(mailsession * session,
+           uint32_t num, const char * mb);
 
 static int imapdriver_get_messages_list(mailsession * session,
 					struct mailmessage_list ** result);
@@ -838,6 +840,29 @@ static int imapdriver_copy_message(mailsession * session,
   return imap_error_to_mail_error(r);
 
  err:
+  return res;
+}
+
+static int imapdriver_move_message(mailsession * session,
+                                   uint32_t num, const char * mb)
+{
+  int r;
+  struct mailimap_set * set;
+  int res;
+  
+  set = mailimap_set_new_single(num);
+  if (set == NULL) {
+    res = MAIL_ERROR_MEMORY;
+    goto err;
+  }
+  
+  r = mailimap_uid_move(get_imap_session(session), set, mb);
+  
+  mailimap_set_free(set);
+  
+  return imap_error_to_mail_error(r);
+  
+err:
   return res;
 }
 
