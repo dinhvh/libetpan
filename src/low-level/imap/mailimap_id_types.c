@@ -32,6 +32,8 @@
 
 #include <stdlib.h>
 
+#include "mailimap_types.h"
+
 struct mailimap_id_params_list * mailimap_id_params_list_new(clist * items)
 {
   struct mailimap_id_params_list * list;
@@ -68,8 +70,8 @@ struct mailimap_id_param * mailimap_id_param_new(char * name, char * value)
 
 void mailimap_id_param_free(struct mailimap_id_param * param)
 {
-  free(param->idpa_name);
-  free(param->idpa_value);
+  mailimap_string_free(param->idpa_name);
+  mailimap_nstring_free(param->idpa_value);
   free(param);
 }
 
