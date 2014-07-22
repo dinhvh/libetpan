@@ -179,11 +179,13 @@ static void cfstream_data_free(struct mailstream_cfstream_data * cfstream_data)
 static void cfstream_data_close(struct mailstream_cfstream_data * cfstream_data)
 {
   if (cfstream_data->writeStream != NULL) {
+    CFWriteStreamSetClient(cfstream_data->writeStream, kCFStreamEventNone, NULL, NULL);
     CFWriteStreamClose(cfstream_data->writeStream);
     CFRelease(cfstream_data->writeStream);
     cfstream_data->writeStream = NULL;
   }
   if (cfstream_data->readStream != NULL) {
+    CFReadStreamSetClient(cfstream_data->readStream, kCFStreamEventNone, NULL, NULL);
     CFReadStreamClose(cfstream_data->readStream);
     CFRelease(cfstream_data->readStream);
     cfstream_data->readStream = NULL;
