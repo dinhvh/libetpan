@@ -101,6 +101,7 @@ int mailimap_compress(mailimap * session)
     res = MAILIMAP_ERROR_STREAM;
     goto err;
   }
+  mailstream_low_set_timeout(compressed_stream, session->imap_timeout);
   mailstream_set_low(session->imap_stream, compressed_stream);
   
   return MAILIMAP_NO_ERROR;
