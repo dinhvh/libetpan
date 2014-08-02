@@ -1323,7 +1323,6 @@ int mailmime_quoted_printable_write_driver(int (* do_write)(void *, const char *
             
           case '\r':
             state = STATE_CR;
-            len ++;
             i ++;
             break;
             
