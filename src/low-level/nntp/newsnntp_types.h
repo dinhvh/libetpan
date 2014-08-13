@@ -92,6 +92,8 @@ struct newsnntp
   char * nntp_response;
 
   time_t nntp_timeout;
+  mailprogress_function * nntp_progress_fun;
+  void * nntp_progress_context;
   
   void (* nntp_logger)(newsnntp * session, int log_type, const char * str, size_t size, void * context);
   void * nntp_logger_context;
