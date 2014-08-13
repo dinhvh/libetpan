@@ -152,7 +152,6 @@ struct mailstream_ssl_data {
 #	define MUTEX_LOCK(x)
 #	define MUTEX_UNLOCK(x)
 #endif
-static int gnutls_init_not_required = 0;
 static int openssl_init_done = 0;
 #endif
 
@@ -242,11 +241,6 @@ void mailstream_ssl_init_lock(void)
 
 void mailstream_gnutls_init_not_required(void)
 {
-#ifdef USE_SSL
-  MUTEX_LOCK(&ssl_lock);
-  gnutls_init_not_required = 1;
-  MUTEX_UNLOCK(&ssl_lock);
-#endif
 }
 
 void mailstream_openssl_init_not_required(void)
@@ -282,8 +276,7 @@ static inline void mailstream_ssl_init(void)
     openssl_init_done = 1;
   }
 #else
-  if (!gnutls_init_not_required)
-    gnutls_global_init();
+  gnutls_global_init();
 #endif
   MUTEX_UNLOCK(&ssl_lock);
 #endif
@@ -666,8 +659,7 @@ static void  ssl_data_close(struct mailstream_ssl_data * ssl_data)
   gnutls_deinit(ssl_data->session);
 
   MUTEX_LOCK(&ssl_lock);
-  if(!gnutls_init_not_required)
-    gnutls_global_deinit();
+  gnutls_global_deinit();
   MUTEX_UNLOCK(&ssl_lock);
 
   ssl_data->session = NULL;

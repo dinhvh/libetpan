@@ -244,7 +244,7 @@ static int mailstream_low_compress_close(mailstream_low * s)
 {
 #if HAVE_ZLIB
   compress_data * data = s->data;
-  return data->ms->driver->mailstream_close(data->ms);
+  mailstream_low_close(data->ms);
 #else
   return 0;
 #endif
@@ -274,7 +274,7 @@ static void mailstream_low_compress_free(mailstream_low * s)
 {
 #if HAVE_ZLIB
   compress_data * data = s->data;
-  data->ms->driver->mailstream_free(data->ms);
+  mailstream_low_free(data->ms);
   if (data->compress_stream) {
     deflateEnd(data->compress_stream);
     free(data->compress_stream);
