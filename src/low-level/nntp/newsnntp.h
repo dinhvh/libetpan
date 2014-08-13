@@ -84,7 +84,7 @@ LIBETPAN_EXPORT
 void newsnntp_free(newsnntp * session);
 
 /*
-   newsnntp_set_logger() get the network timeout of the NNTP session.
+   newsnntp_set_logger() set a logger for the connection.
    
    @param session         NNTP session
    @param logger          logger function. See mailstream_types.h to know possible log_type values.
@@ -97,6 +97,15 @@ LIBETPAN_EXPORT
 void newsnntp_set_logger(newsnntp * session, void (* logger)(newsnntp * session, int log_type,
                                                              const char * str, size_t size, void * context), void * logger_context);
 
+/*
+   newsnntp_set_progress_callback() set NNTP progression callbacks.
+   
+   @param session           NNTP session
+   @param progr_fun         callback function.
+*/
+
+LIBETPAN_EXPORT
+void newsnntp_set_progress_callback(newsnntp * f, mailprogress_function * progr_fun, void * context);
 
 /*
    newsnntp_set_timeout() set the network timeout of the NNTP session.

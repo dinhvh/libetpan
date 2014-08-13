@@ -95,6 +95,9 @@ struct newsnntp
   
   void (* nntp_logger)(newsnntp * session, int log_type, const char * str, size_t size, void * context);
   void * nntp_logger_context;
+  
+  mailprogress_function * nntp_progress_fun;
+  void * nntp_progress_context;
 };
 
 struct newsnntp_group_info
