@@ -244,7 +244,7 @@ static int mailstream_low_compress_close(mailstream_low * s)
 {
 #if HAVE_ZLIB
   compress_data * data = s->data;
-  mailstream_low_close(data->ms);
+  return mailstream_low_close(data->ms);
 #else
   return 0;
 #endif
