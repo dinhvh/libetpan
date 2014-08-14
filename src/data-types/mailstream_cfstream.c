@@ -713,6 +713,17 @@ static int wait_runloop(mailstream_low * s, int wait_state)
     int r;
     int done;
     
+    if (cfstream_data->cancelled) {
+      error = WAIT_RUNLOOP_EXIT_CANCELLED;
+      break;
+    }
+    if (cfstream_data->state == STATE_WAIT_IDLE) {
+      if (cfstream_data->idleInterrupted) {
+        error = WAIT_RUNLOOP_EXIT_INTERRUPTED;
+        break;
+      }
+    }
+
     done = 0;
     switch (cfstream_data->state) {
       case STATE_OPEN_READ_DONE:
@@ -775,16 +786,6 @@ static int wait_runloop(mailstream_low * s, int wait_state)
     if (r == kCFRunLoopRunTimedOut) {
       error = WAIT_RUNLOOP_EXIT_TIMEOUT;
       break;
-    }
-    if (cfstream_data->cancelled) {
-      error = WAIT_RUNLOOP_EXIT_CANCELLED;
-      break;
-    }
-    if (cfstream_data->state == STATE_WAIT_IDLE) {
-      if (cfstream_data->idleInterrupted) {
-        error = WAIT_RUNLOOP_EXIT_INTERRUPTED;
-        break;
-      }
     }
   }
   
