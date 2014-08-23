@@ -266,7 +266,7 @@ free_quoted_mb(struct imap_cached_session_state_data * imap_cached_data)
 
 struct uid_cache_item {
   uint32_t uid;
-  uint32_t size;
+  size_t size;
 };
 
 static int update_uid_cache(mailsession * session,
