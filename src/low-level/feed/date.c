@@ -38,6 +38,8 @@
 #include "mailimf.h"
 #include "timeutils.h"
 
+static time_t time_parts_to_time_t(int year, int month, int day, int hour, int minute, int second, int offset, int local_time, int apply_offset);
+
 /*
 YYYYMMDDThhmmss
 YYYYMMDDThhmmssZ
@@ -74,7 +76,6 @@ static time_t basic_format_parse(const char * str)
   int second;
   int offset;
   int apply_offset;
-  struct tm ts;
   int local_time;
   
   len = strlen(str);
@@ -169,26 +170,8 @@ static time_t basic_format_parse(const char * str)
   if (r != MAILIMF_NO_ERROR) {
     local_time = 1;
   }
-  
-  memset(&ts, 0, sizeof(ts));
-  
-  ts.tm_sec = second;
-  ts.tm_min = minute;
-  ts.tm_hour = hour;
-  ts.tm_mday = day;
-  ts.tm_mon = month - 1;
-  ts.tm_year = year - 1900;
-  
-  if (local_time) {
-    value = mktime(&ts);
-  }
-  else {
-    value = mail_mkgmtime(&ts);
-    if (apply_offset)
-      value -= offset;
-  }
-  
-  return value;
+
+  return time_parts_to_time_t(year, month, day, hour, minute, second, offset, local_time, apply_offset);
 }
 
 /*
@@ -214,7 +197,6 @@ static time_t extended_format_parse(const char * str)
   int second;
   int offset;
   int apply_offset;
-  struct tm ts;
   int local_time;
   
   len = strlen(str);
@@ -349,25 +331,36 @@ static time_t extended_format_parse(const char * str)
     local_time = 1;
   }
   
+  return time_parts_to_time_t(year, month, day, hour, minute, second, offset, local_time, apply_offset);
+}
+
+static time_t struct_tm_to_time_t(struct tm * ts, int offset, int local_time, int apply_offset) {
+  time_t result;
+  if (local_time) {
+    result = mktime(ts);
+  }
+  else {
+    result = mail_mkgmtime(ts);
+    if (apply_offset)
+      result -= offset;
+  }
+
+  return result;
+}
+
+static time_t time_parts_to_time_t(int year, int month, int day, int hour, int minute, int second, int offset, int local_time, int apply_offset) {
+  struct tm ts;
+
   memset(&ts, 0, sizeof(ts));
-  
+
   ts.tm_sec = second;
   ts.tm_min = minute;
   ts.tm_hour = hour;
   ts.tm_mday = day;
   ts.tm_mon = month - 1;
   ts.tm_year = year - 1900;
-  
-  if (local_time) {
-    value = mktime(&ts);
-  }
-  else {
-    value = mail_mkgmtime(&ts);
-    if (apply_offset)
-      value -= offset;
-  }
-  
-  return value;
+
+  return struct_tm_to_time_t(&ts, offset, local_time, apply_offset);
 }
 
 time_t newsfeed_iso8601_date_parse(const char * str)

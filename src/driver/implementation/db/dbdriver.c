@@ -1065,7 +1065,7 @@ static int get_message_by_uid(mailsession * session,
 {
   uint32_t msg_num;
   
-  msg_num = strtoul(uid, NULL, 10);
+  msg_num = (uint32_t)strtoul(uid, NULL, 10);
   
   return get_message(session, msg_num, result);
 }

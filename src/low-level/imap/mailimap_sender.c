@@ -376,7 +376,7 @@ int mailimap_append_send(mailstream * fd,
   r = mailimap_space_send(fd);
   if (r != MAILIMAP_NO_ERROR)
     return r;
-  r = mailimap_literal_count_send(fd, literal_size);
+  r = mailimap_literal_count_send(fd, (uint32_t)literal_size);
   if (r != MAILIMAP_NO_ERROR)
     return r;
 
@@ -1508,13 +1508,13 @@ mailimap_literal_send(mailstream * fd, const char * literal,
 		      progress_function * progr_fun)
 {
   size_t len;
-  uint32_t literal_len;
+  size_t literal_len;
   int r;
   
   len = strlen(literal);
   literal_len = mailstream_get_data_crlf_size(literal, len);
   
-  r = mailimap_literal_count_send(fd, literal_len);
+  r = mailimap_literal_count_send(fd, (uint32_t)literal_len);
   if (r != MAILIMAP_NO_ERROR)
     return r;
   r = mailimap_literal_data_send(fd, literal, len, progr_rate, progr_fun);
@@ -1557,7 +1557,7 @@ mailimap_literal_count_send(mailstream * fd, uint32_t count)
 */
 
 int
-mailimap_literal_data_send(mailstream * fd, const char * literal, uint32_t len,
+mailimap_literal_data_send(mailstream * fd, const char * literal, size_t len,
 			   size_t progr_rate,
 			   progress_function * progr_fun)
 {
@@ -1565,7 +1565,7 @@ mailimap_literal_data_send(mailstream * fd, const char * literal, uint32_t len,
 }
 
 int
-mailimap_literal_data_send_with_context(mailstream * fd, const char * literal, uint32_t len,
+mailimap_literal_data_send_with_context(mailstream * fd, const char * literal, size_t len,
                                         mailprogress_function * progr_fun,
                                         void * context)
 {

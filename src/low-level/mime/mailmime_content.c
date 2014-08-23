@@ -1171,7 +1171,7 @@ char * mailmime_extract_boundary(struct mailmime_content * content_type)
   /* XXX - this should be unquoted properly, should use
      mailimf_quoted_string_parse() */
   if (boundary != NULL) {
-    int len;
+    size_t len;
     char * new_boundary;
 
     len = strlen(boundary);

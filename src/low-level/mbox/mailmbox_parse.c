@@ -111,7 +111,7 @@ mailmbox_fields_parse(char * str, size_t length,
   hlen = cur_token - * indx;
 
   * phlen = hlen;
-  * puid = uid;
+  * puid = (uint32_t)uid;
   * indx = cur_token;
 
   return MAILMBOX_NO_ERROR;

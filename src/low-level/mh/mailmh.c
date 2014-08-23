@@ -327,7 +327,7 @@ int mailmh_folder_update(struct mailmh_folder * folder)
 	continue;
 
       if (S_ISREG(buf.st_mode)) {
-	indx = strtoul(ent->d_name, NULL, 10);
+	indx = (uint32_t)strtoul(ent->d_name, NULL, 10);
 	if (indx != 0) {
 	  struct mailmh_msg_info * msg_info;
 	  unsigned int array_index;
@@ -637,7 +637,7 @@ int mailmh_folder_get_message_filename(struct mailmh_folder * folder,
 				       uint32_t indx, char ** result)
 {
   char * filename;
-  int len;
+  size_t len;
 
   len = strlen(folder->fl_filename) + 20;
   filename = malloc(len);

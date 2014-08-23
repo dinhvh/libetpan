@@ -522,7 +522,7 @@ void newsnntp_list_free(clist * l)
 
 /* ******************** POST ******************************** */
 
-static void send_data(newsnntp * f, const char * message, uint32_t size)
+static void send_data(newsnntp * f, const char * message, size_t size)
 {
   mailstream_send_data(f->nntp_stream, message, size,
 		       f->nntp_progr_rate, f->nntp_progr_fun);
@@ -798,7 +798,7 @@ group_time_new(char * group_name, time_t date, char * email)
     return NULL;
   }
 
-  n->grp_date = date;
+  n->grp_date = (uint32_t)date;
 
   return n;
 }

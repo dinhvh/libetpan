@@ -1165,7 +1165,7 @@ static int mailmbox_expunge_to_file_no_lock(char * dest_filename, int dest_fd,
 {
   int r;
   int res;
-  unsigned long i;
+  unsigned i;
   size_t cur_offset;
   char * dest;
   size_t size;

@@ -160,12 +160,12 @@ int
 mailimap_literal_count_send(mailstream * fd, uint32_t count);
 
 int
-mailimap_literal_data_send(mailstream * fd, const char * literal, uint32_t len,
+mailimap_literal_data_send(mailstream * fd, const char * literal, size_t len,
 			   size_t progr_rate,
 			   progress_function * progr_fun);
 
 int
-mailimap_literal_data_send_with_context(mailstream * fd, const char * literal, uint32_t len,
+mailimap_literal_data_send_with_context(mailstream * fd, const char * literal, size_t len,
                                         mailprogress_function * progr_fun,
                                         void * context);
 

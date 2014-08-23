@@ -951,14 +951,14 @@ static int boostrap_cache(mailsession * session)
     chash_key(iter, &key);
     uid = key.data;
     
-    uidvalidity = strtoul(uid, &p1, 10);
+    uidvalidity = (uint32_t)strtoul(uid, &p1, 10);
     if (p1 == uid || * p1 != '-')
       continue;
     
     data->imap_uidvalidity = uidvalidity;
     
     p1++;
-    indx = strtoul(p1, &p2, 10);
+    indx = (uint32_t)strtoul(p1, &p2, 10);
     if (p2 == p1 || * p2 != '\0')
       continue;
     
@@ -1514,12 +1514,12 @@ static int imapdriver_cached_get_message_by_uid(mailsession * session,
   if (uid == NULL)
     return MAIL_ERROR_INVAL;
 
-  uidvalidity = strtoul(uid, &p1, 10);
+  uidvalidity = (uint32_t)strtoul(uid, &p1, 10);
   if (p1 == uid || * p1 != '-')
     return MAIL_ERROR_INVAL;
 
   p1++;
-  num = strtoul(p1, &p2, 10);
+  num = (uint32_t)strtoul(p1, &p2, 10);
   if (p2 == p1 || * p2 != '\0')
     return MAIL_ERROR_INVAL;
  

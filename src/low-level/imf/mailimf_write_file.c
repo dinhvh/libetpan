@@ -42,7 +42,7 @@ static int do_write(void * data, const char * str, size_t length)
   
   f = data;
   
-  return fwrite(str, 1, length, f);
+  return (int)fwrite(str, 1, length, f);
 }
 
 LIBETPAN_EXPORT

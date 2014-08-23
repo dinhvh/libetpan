@@ -134,9 +134,9 @@ int mailimap_oauth2_authenticate_send(mailimap * session,
   char * ptr;
   char * full_auth_string;
   char * full_auth_string_b64;
-  int auth_user_len;
-  int access_token_len;
-  int full_auth_string_len;
+  size_t auth_user_len;
+  size_t access_token_len;
+  size_t full_auth_string_len;
   int res;
   
   full_auth_string = NULL;

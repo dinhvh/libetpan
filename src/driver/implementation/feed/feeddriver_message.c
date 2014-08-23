@@ -196,5 +196,5 @@ static int feed_fetch_size(mailmessage * msg_info,
   }
   
   msg = msg_info->msg_data;
-  return msg->msg_length;
+  return (int)msg->msg_length;
 }
