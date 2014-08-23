@@ -55,11 +55,11 @@ static char basis_64[] =
    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
 LIBETPAN_EXPORT
-char * encode_base64(const char * in, int len)
+char * encode_base64(const char * in, size_t len)
 {
   char * output, * tmp;
   unsigned char oval;
-  int out_len;
+  size_t out_len;
   const unsigned char * uin = (const unsigned char *) in;
 
   out_len = ((len + 2) / 3 * 4) + 1;
