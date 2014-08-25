@@ -623,7 +623,7 @@ static int get_messages_list(mailsession * session,
   struct mail_cache_db * uid_db;
   void * value;
   size_t value_len;
-  unsigned i;
+  unsigned int i;
   struct maildir_cached_session_state_data * data;
   char key[PATH_MAX];
   
