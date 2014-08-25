@@ -1551,9 +1551,9 @@ int mailpop3_auth(mailpop3 * f, const char * auth_type,
     
     case RESPONSE_AUTH_CONT:
       {
-        // Note that the sasl API uses unsigned rather than size_t in its API,
-        // so we use unsigned here too, and we cast the result from strlen.
-        unsigned response_len;
+        // Note that the sasl API uses unsigned int rather than size_t in its API,
+        // so we use unsigned int here too, and we cast the result from strlen.
+        unsigned int response_len;
         char * decoded;
         unsigned int decoded_len;
         unsigned int max_decoded;

@@ -1316,9 +1316,9 @@ int mailesmtp_auth_sasl(mailsmtp * session, const char * auth_type,
     
     case 334:
       {
-        // Note that the sasl API uses unsigned rather than size_t in its API,
-        // so we use unsigned here too, and we cast the result from strlen.
-        unsigned response_len;
+        // Note that the sasl API uses unsigned int rather than size_t in its API,
+        // so we use unsigned int here too, and we cast the result from strlen.
+        unsigned int response_len;
         char * decoded;
         unsigned int decoded_len;
         unsigned int max_decoded;
