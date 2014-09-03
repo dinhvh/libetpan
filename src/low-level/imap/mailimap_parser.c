@@ -5661,16 +5661,17 @@ mailimap_flag_perm_parse(mailstream * fd, MMAPString * buffer,
   cur_token = * indx;
   type = MAILIMAP_FLAG_PERM_ERROR; /* XXX - removes a gcc warning */
   
-  r = mailimap_flag_parse(fd, buffer, &cur_token, &flag,
-			  progr_rate, progr_fun);
+  r = mailimap_token_case_insensitive_parse(fd, buffer,
+                                            &cur_token, "\\*");
   if (r == MAILIMAP_NO_ERROR)
-    type = MAILIMAP_FLAG_PERM_FLAG;
+    type = MAILIMAP_FLAG_PERM_ALL;
 
   if (r == MAILIMAP_ERROR_PARSE) {
-    r = mailimap_token_case_insensitive_parse(fd, buffer,
-					      &cur_token, "\\*");
+    r = mailimap_flag_parse(fd, buffer, &cur_token, &flag,
+                            progr_rate, progr_fun);
     if (r == MAILIMAP_NO_ERROR)
-      type = MAILIMAP_FLAG_PERM_ALL;
+      type = MAILIMAP_FLAG_PERM_FLAG;
+
   }
 
   if (r != MAILIMAP_NO_ERROR) {
