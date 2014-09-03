@@ -410,7 +410,7 @@ static int append_message_flags(mailsession * session,
     goto exit;
   
   key.data = uid;
-  key.len = strlen(uid);
+  key.len = (unsigned int)strlen(uid);
   r = chash_get(md->mdir_msg_hash, &key, &value);
   if (r < 0)
     goto exit;
@@ -503,7 +503,7 @@ static int get_envelopes_list(mailsession * session,
     msg = carray_get(env_list->msg_tab, i);
     
     key.data = msg->msg_uid;
-    key.len = strlen(msg->msg_uid);
+    key.len = (unsigned int)strlen(msg->msg_uid);
     r = chash_get(md->mdir_msg_hash, &key, &value);
     if (r < 0)
       continue;

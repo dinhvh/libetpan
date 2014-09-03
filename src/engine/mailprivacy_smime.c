@@ -1320,9 +1320,9 @@ static void set_file(chash * hash, char * email, char * filename)
   strip_string(buf);
   
   key.data = buf;
-  key.len = strlen(buf);
+  key.len = (unsigned int)strlen(buf);
   data.data = filename;
-  data.len = strlen(filename) + 1;
+  data.len = (unsigned int)strlen(filename) + 1;
   
   chash_set(hash, &key, &data, NULL);
 }
@@ -1342,7 +1342,7 @@ static char * get_file(chash * hash, char * email)
   
   strip_string(buf);
   key.data = buf;
-  key.len = strlen(buf);
+  key.len = (unsigned int)strlen(buf);
   r = chash_get(hash, &key, &data);
   if (r < 0)
     return NULL;
@@ -1873,9 +1873,9 @@ int mailprivacy_smime_set_encryption_id(struct mailprivacy * privacy,
   }
   
   key.data = buf;
-  key.len = strlen(buf) + 1;
+  key.len = (unsigned int)strlen(buf) + 1;
   value.data = passphrase;
-  value.len = strlen(passphrase) + 1;
+  value.len = (unsigned int)strlen(passphrase) + 1;
   
   r = chash_set(passphrase_hash, &key, &value, NULL);
   if (r < 0) {
@@ -1904,7 +1904,7 @@ static char * get_passphrase(struct mailprivacy * privacy,
     return NULL;
   
   key.data = buf;
-  key.len = strlen(buf) + 1;
+  key.len = (unsigned int)strlen(buf) + 1;
   
   r = chash_get(passphrase_hash, &key, &value);
   if (r < 0)

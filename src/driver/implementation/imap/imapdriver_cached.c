@@ -934,7 +934,7 @@ static int boostrap_cache(mailsession * session)
     
     get_uid_from_filename(msg_uid);
     key.data = msg_uid;
-    key.len = strlen(msg_uid) + 1;
+    key.len = (unsigned int)strlen(msg_uid) + 1;
     value.data = NULL;
     value.len = 0;
     chash_set(keys_uid, &key, &value, NULL);

@@ -523,7 +523,7 @@ static int append_message_flags(mailsession * session,
     goto exit;
   
   key.data = uid;
-  key.len = strlen(uid);
+  key.len = (unsigned int)strlen(uid);
   r = chash_get(md->mdir_msg_hash, &key, &value);
   if (r < 0)
     goto exit;
@@ -581,7 +581,7 @@ static int uid_clean_up(struct mail_cache_db * uid_db,
     value.len = 0;
     
     key.data = msg->msg_uid;
-    key.len = strlen(msg->msg_uid);
+    key.len = (unsigned int)strlen(msg->msg_uid);
     r = chash_set(hash_exist, &key, &value, NULL);
     if (r < 0) {
       res = MAIL_ERROR_MEMORY;
@@ -591,7 +591,7 @@ static int uid_clean_up(struct mail_cache_db * uid_db,
     snprintf(key_str, sizeof(key_str), "uid-%lu",
         (unsigned long) msg->msg_index);
     key.data = key_str;
-    key.len = strlen(key_str);
+    key.len = (unsigned int)strlen(key_str);
     r = chash_set(hash_exist, &key, &value, NULL);
     if (r < 0) {
       res = MAIL_ERROR_MEMORY;

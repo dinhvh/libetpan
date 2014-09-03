@@ -348,7 +348,7 @@ int mail_cache_db_clean_up(struct mail_cache_db * cache_db,
     chashdatum hash_data;
     
     hash_key.data = db_key.data;
-    hash_key.len = db_key.size;
+    hash_key.len = (unsigned int)db_key.size;
 
     r = chash_get(exist, &hash_key, &hash_data);
     if (r < 0) {
@@ -475,7 +475,7 @@ int mail_cache_db_get_keys(struct mail_cache_db * cache_db,
     chashdatum hash_data;
     
     hash_key.data = db_key.data;
-    hash_key.len = db_key.size;
+    hash_key.len = (unsigned int)db_key.size;
     hash_data.data = NULL;
     hash_data.len = 0;
     

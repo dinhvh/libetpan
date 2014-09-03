@@ -504,19 +504,19 @@ static int expunge_folder(mailsession * session)
     if (!deleted) {
       snprintf(key_value, sizeof(key_value), "%lu", (unsigned long) num);
       key.data = key_value;
-      key.len = strlen(key_value);
+      key.len = (unsigned int)strlen(key_value);
       chash_set(msg_table, &key, &value, NULL);
       
       snprintf(key_value, sizeof(key_value), "%lu-envelope",
           (unsigned long) num);
       key.data = key_value;
-      key.len = strlen(key_value);
+      key.len = (unsigned int)strlen(key_value);
       chash_set(msg_table, &key, &value, NULL);
       
       snprintf(key_value, sizeof(key_value), "%lu-flags",
           (unsigned long) num);
       key.data = key_value;
-      key.len = strlen(key_value);
+      key.len = (unsigned int)strlen(key_value);
       chash_set(msg_table, &key, &value, NULL);
       
       i ++;

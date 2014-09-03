@@ -49,7 +49,7 @@ extern "C" {
 
 typedef struct {
   void * data;
-  size_t len;
+  unsigned int len;
 } chashdatum;
 
 struct chash {

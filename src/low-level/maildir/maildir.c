@@ -280,7 +280,7 @@ static void maildir_flush(struct maildir * md, int new_msg)
       chashdatum key;
       
       key.data = msg->msg_uid;
-      key.len = strlen(msg->msg_uid);
+      key.len = (unsigned int)strlen(msg->msg_uid);
       chash_delete(md->mdir_msg_hash, &key, NULL);
       
       carray_delete(md->mdir_msg_list, i);
@@ -315,7 +315,7 @@ static int add_message(struct maildir * md,
   }
   
   key.data = msg->msg_uid;
-  key.len = strlen(msg->msg_uid);
+  key.len = (unsigned int)strlen(msg->msg_uid);
   value.data = msg;
   value.len = 0;
   
@@ -654,7 +654,7 @@ char * maildir_message_get(struct maildir * md, const char * uid)
   int r;
   
   key.data = (void *) uid;
-  key.len = strlen(uid);
+  key.len = (unsigned int)strlen(uid);
   r = chash_get(md->mdir_msg_hash, &key, &value);
   if (r < 0)
     return NULL;
@@ -686,7 +686,7 @@ int maildir_message_remove(struct maildir * md, const char * uid)
   int res;
 
   key.data = (void *) uid;
-  key.len = strlen(uid);
+  key.len = (unsigned int)strlen(uid);
   r = chash_get(md->mdir_msg_hash, &key, &value);
   if (r < 0) {
     res = MAILDIR_ERROR_NOT_FOUND;
@@ -730,7 +730,7 @@ int maildir_message_change_flags(struct maildir * md,
   char * dup_filename;
 
   key.data = (void *) uid;
-  key.len = strlen(uid);
+  key.len = (unsigned int)strlen(uid);
   r = chash_get(md->mdir_msg_hash, &key, &value);
   if (r < 0) {
     res = MAILDIR_ERROR_NOT_FOUND;
