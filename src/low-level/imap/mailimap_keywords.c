@@ -140,7 +140,7 @@ static const char * mailimap_get_token_str_size(int indx,
 					  struct mailimap_token_value * tab,
 					  size_t size)
 {
-  size_t i;
+  int i;
 
   for(i = 0 ; i < size ; i++)
     if (indx == tab[i].value)
