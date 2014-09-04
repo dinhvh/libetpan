@@ -50,7 +50,7 @@
    average go over that value. */
 #define CHASH_MAXDEPTH    3
 
-static inline unsigned int chash_func(const char * key, size_t len) {
+static inline unsigned int chash_func(const char * key, unsigned int len) {
 #if 0
   register unsigned int c = 0, t;
   register const char * k = key;
@@ -74,7 +74,7 @@ static inline unsigned int chash_func(const char * key, size_t len) {
   return c;
 }
 
-static inline char * chash_dup(const void * data, size_t len)
+static inline char * chash_dup(const void * data, unsigned int len)
 {
   void * r;
 
