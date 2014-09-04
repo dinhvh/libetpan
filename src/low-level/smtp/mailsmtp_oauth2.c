@@ -94,7 +94,7 @@ static int oauth2_authenticate(mailsmtp * session, int type, const char * auth_u
   ptr = memcpy(ptr + access_token_len, "\1\1\0", 3);
   
   /* Convert to base64 */
-  full_auth_string_b64 = encode_base64(full_auth_string, full_auth_string_len);
+  full_auth_string_b64 = encode_base64(full_auth_string, (int)full_auth_string_len);
   if (full_auth_string_b64 == NULL) {
     res = MAILSMTP_ERROR_MEMORY;
     goto free;

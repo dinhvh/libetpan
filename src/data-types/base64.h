@@ -49,7 +49,7 @@ extern "C" {
  * don't forget to free it when time comes ;)
  */
 LIBETPAN_EXPORT
-char * encode_base64(const char * in, size_t len);
+char * encode_base64(const char * in, int len);
 
 /**
  * creates (malloc) a new standard 8bit string from an base64 encoded string
