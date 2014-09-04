@@ -632,7 +632,7 @@ int mailimap_append(mailimap * session, const char * mailbox,
   }
 
   if (session->imap_body_progress_fun != NULL) {
-    r = mailimap_literal_data_send_with_context(session->imap_stream, literal, literal_size,
+    r = mailimap_literal_data_send_with_context(session->imap_stream, literal, (uint32_t)literal_size,
                                                 session->imap_body_progress_fun,
                                                 session->imap_progress_context);
   }
