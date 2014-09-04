@@ -1281,7 +1281,7 @@ static int mhdriver_cached_get_message_by_uid(mailsession * session,
   if (uid == NULL)
     return MAIL_ERROR_INVAL;
 
-  indx = strtoul(uid, &p, 10);
+  indx = (uint32_t)strtoul(uid, &p, 10);
   if (p == uid || * p != '-')
     return MAIL_ERROR_INVAL;
   
