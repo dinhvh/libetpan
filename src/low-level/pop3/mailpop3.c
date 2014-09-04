@@ -199,7 +199,7 @@ void mailpop3_capa_free(struct mailpop3_capa * capa)
   mailpop3_stat_response
 */
 
-struct mailpop3_stat_response * mailpop3_stat_response_new(uint32_t count, size_t size)
+static struct mailpop3_stat_response * mailpop3_stat_response_new(uint32_t count, size_t size)
 {
   struct mailpop3_stat_response * stat_response;
 
