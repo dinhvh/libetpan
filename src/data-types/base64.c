@@ -59,7 +59,7 @@ char * encode_base64(const char * in, int len)
 {
   char * output, * tmp;
   unsigned char oval;
-  size_t out_len;
+  int out_len;
   const unsigned char * uin = (const unsigned char *) in;
 
   out_len = ((len + 2) / 3 * 4) + 1;
