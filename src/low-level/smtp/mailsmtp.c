@@ -1140,14 +1140,14 @@ static int sasl_getsimple(void * context, int id,
     if (result != NULL)
       * result = session->smtp_sasl.sasl_login;
     if (len != NULL)
-      * len = (unsigned)strlen(session->smtp_sasl.sasl_login);
+      * len = (unsigned int)strlen(session->smtp_sasl.sasl_login);
     return SASL_OK;
     
   case SASL_CB_AUTHNAME:
     if (result != NULL)
       * result = session->smtp_sasl.sasl_auth_name;
     if (len != NULL)
-      * len = (unsigned)strlen(session->smtp_sasl.sasl_auth_name);
+      * len = (unsigned int)strlen(session->smtp_sasl.sasl_auth_name);
     return SASL_OK;
   }
   
@@ -1333,7 +1333,7 @@ int mailesmtp_auth_sasl(mailsmtp * session, const char * auth_type,
           * p = '\0';
         }
         
-        response_len = (unsigned)strlen(session->response);
+        response_len = (unsigned int)strlen(session->response);
         max_decoded = response_len * 3 / 4;
         decoded = malloc(max_decoded + 1);
         if (decoded == NULL) {
