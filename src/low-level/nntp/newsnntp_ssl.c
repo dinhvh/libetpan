@@ -123,6 +123,6 @@ static int newsnntp_cfssl_connect_ssl_level(newsnntp * f, const char * server, u
 
 static int newsnntp_cfssl_connect(newsnntp * f, const char * server, uint16_t port)
 {
-    return newsnntp_cfssl_connect_ssl_level(f, server, port, MAILSTREAM_CFSTREAM_SSL_LEVEL_SSLv3);
+    return newsnntp_cfssl_connect_ssl_level(f, server, port, MAILSTREAM_CFSTREAM_SSL_LEVEL_NEGOCIATED_SSL);
 }
 

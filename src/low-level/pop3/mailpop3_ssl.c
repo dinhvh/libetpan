@@ -124,5 +124,5 @@ static int mailpop3_cfssl_connect_ssl_level(mailpop3 * f, const char * server, u
 
 static int mailpop3_cfssl_connect(mailpop3 * f, const char * server, uint16_t port)
 {
-    return mailpop3_cfssl_connect_ssl_level(f, server, port, MAILSTREAM_CFSTREAM_SSL_LEVEL_SSLv3);
+    return mailpop3_cfssl_connect_ssl_level(f, server, port, MAILSTREAM_CFSTREAM_SSL_LEVEL_NEGOCIATED_SSL);
 }

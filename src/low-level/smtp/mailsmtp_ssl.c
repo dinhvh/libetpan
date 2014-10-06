@@ -126,5 +126,5 @@ static int mailsmtp_cfssl_connect_ssl_level(mailsmtp * session,
 static int mailsmtp_cfssl_connect(mailsmtp * session,
                                   const char * server, uint16_t port)
 {
-    return mailsmtp_cfssl_connect_ssl_level(session, server, port, MAILSTREAM_CFSTREAM_SSL_LEVEL_SSLv3);
+    return mailsmtp_cfssl_connect_ssl_level(session, server, port, MAILSTREAM_CFSTREAM_SSL_LEVEL_NEGOCIATED_SSL);
 }

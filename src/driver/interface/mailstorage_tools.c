@@ -279,7 +279,7 @@ int mailstorage_generic_connect_with_local_address(mailsession_driver * driver,
   case CONNECTION_TYPE_COMMAND_TLS:
 #if HAVE_CFNETWORK
     if (mailstream_cfstream_enabled) {
-      int ssl_level = MAILSTREAM_CFSTREAM_SSL_LEVEL_SSLv3;
+      int ssl_level = MAILSTREAM_CFSTREAM_SSL_LEVEL_NEGOCIATED_SSL;
       mailstream_cfstream_set_ssl_level(stream, ssl_level);
       mailstream_cfstream_set_ssl_verification_mask(stream, MAILSTREAM_CFSTREAM_SSL_NO_VERIFICATION);
       r = mailstream_cfstream_set_ssl_enabled(stream, 1);
