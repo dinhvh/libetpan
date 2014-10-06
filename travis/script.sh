@@ -18,7 +18,7 @@ else
   xctool -project build-mac/libetpan.xcodeproj -sdk iphonesimulator8.0 -scheme "libetpan ios" build ARCHS="i386 x86_64"
 
   echo Building library for Mac
-  xctool -project build-mac/libetpan.xcodeproj -sdk macosx10.8 -scheme "static libetpan" build
+  xctool -project build-mac/libetpan.xcodeproj -sdk macosx10.9 -scheme "static libetpan" build
   echo Building framework for Mac
-  xctool -project build-mac/libetpan.xcodeproj -sdk macosx10.8 -scheme "libetpan" build
+  xctool -project build-mac/libetpan.xcodeproj -sdk macosx10.9 -scheme "libetpan" build
 fi
