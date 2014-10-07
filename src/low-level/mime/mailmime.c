@@ -1301,7 +1301,7 @@ int mailmime_value_parse(const char * message, size_t length,
 {
   int r;
 
-  r = mailmime_token_parse(message, length, indx, result);
+  r = mailimf_atom_parse(message, length, indx, result);
 
   if (r == MAILIMF_ERROR_PARSE)
     r = mailimf_quoted_string_parse(message, length, indx, result);
