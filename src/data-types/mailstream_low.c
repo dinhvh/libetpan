@@ -263,7 +263,47 @@ ssize_t mailstream_low_write(mailstream_low * s,
   STREAM_LOG(s, 1, ">>>>>>> end send >>>>>>\n");
 #endif
 
+#ifdef WIN32
+  {
+	  struct timeval  timeout;
+	  time_t start_time;
+
+	  if (s->timeout == 0) {
+		  timeout = mailstream_network_delay;
+	  }
+	  else {
+		  timeout.tv_sec = s->timeout;
+		  timeout.tv_usec = 0;
+	  }
+
+
+	  start_time = time(NULL);
+
+	  // Retry if WSAEWOULDBLOCK result
+	  while (1)
+	  {
+		  r = s->driver->mailstream_write(s, buf, count);
+
+		  if (r < 0) {
+			  // other error, will not retry, exiting
+			  if (WSAGetLastError() != WSAEWOULDBLOCK) {
+				  break;
+			  }
+		  }
+		  else {
+			  // write OK, exiting
+			  break; 
+		  }
+
+		  // Exit by timeout
+		  if (time(NULL) >= start_time + timeout.tv_sec * 1000 + timeout.tv_usec / 1000) {
+			  break;
+		  }
+	  }
+  }
+#else
   r = s->driver->mailstream_write(s, buf, count);
+#endif
   
   if (r < 0) {
     STREAM_LOG_ERROR(s, 4 | 1, buf, 0);
