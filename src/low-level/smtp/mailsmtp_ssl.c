@@ -95,7 +95,11 @@ int mailsmtp_ssl_connect_with_callback(mailsmtp * session,
 
   stream = mailstream_ssl_open_with_callback_timeout(s, session->smtp_timeout, callback, data);
   if (stream == NULL) {
-    close(s);
+#ifdef WIN32
+	closesocket(s);
+#else
+	close(s);
+#endif
     return MAILSMTP_ERROR_SSL;
   }
 
