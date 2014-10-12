@@ -107,10 +107,6 @@ struct mailmime_content *
 mailmime_content_dup(struct mailmime_content * content);
 
 LIBETPAN_EXPORT
-struct mailmime_parameter *
-mailmime_param_new_with_data(char * name, char * value);
-
-LIBETPAN_EXPORT
 int mailprivacy_fetch_decoded_to_file(struct mailprivacy * privacy,
     char * filename, size_t size,
     mailmessage * msg, struct mailmime * mime);
