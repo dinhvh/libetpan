@@ -191,6 +191,10 @@ struct mailmime_fields * mailmime_fields_new_filename(int dsp_type,
     char * filename, int encoding_type);
 
 LIBETPAN_EXPORT
+struct mailmime_parameter *
+mailmime_param_new_with_data(char * name, char * value);
+
+LIBETPAN_EXPORT
 char * mailmime_generate_boundary(void);
 
 #ifdef __cplusplus

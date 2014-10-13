@@ -1221,36 +1221,6 @@ mailmime_content_dup(struct mailmime_content * content)
 }
 
 
-struct mailmime_parameter *
-mailmime_param_new_with_data(char * name, char * value)
-{
-  char * param_name;
-  char * param_value;
-  struct mailmime_parameter * param;
-
-  param_name = strdup(name);
-  if (param_name == NULL)
-    goto err;
-  
-  param_value = strdup(value);
-  if (param_value == NULL)
-    goto free_name;
-  
-  param = mailmime_parameter_new(param_name, param_value);
-  if (param == NULL)
-    goto free_value;
-  
-  return param;
-  
- free_value:
-  free(param_value);
- free_name:
-  free(param_name);
- err:
-  return NULL;
-}
-
-
 int mailprivacy_fetch_decoded_to_file(struct mailprivacy * privacy,
     char * filename, size_t size,
     mailmessage * msg, struct mailmime * mime)
