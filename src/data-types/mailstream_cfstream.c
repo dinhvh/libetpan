@@ -988,6 +988,7 @@ int mailstream_cfstream_set_ssl_enabled(mailstream * s, int ssl_enabled)
       continue;
     }
     
+    SecTrustEvaluate(secTrust, NULL);
     CFIndex count = SecTrustGetCertificateCount(secTrust);
     CFRelease(secTrust);
     
@@ -1167,6 +1168,7 @@ static carray * mailstream_low_cfstream_get_certificate_chain(mailstream_low * s
   if (secTrust == NULL)
     return NULL;
   
+  SecTrustEvaluate(secTrust, NULL);
   CFIndex count = SecTrustGetCertificateCount(secTrust);
   
   result = carray_new(4);
