@@ -2111,6 +2111,35 @@ mailimap_uid_search_send(mailstream * fd, const char * charset,
   return mailimap_search_send(fd, charset, key);
 }
 
+
+static int mailimap_search_string_key_send(mailstream * fd,
+   char* criteria, char* value)
+{
+    int r;
+
+    r = mailimap_token_send(fd, criteria);
+    if (r != MAILIMAP_NO_ERROR)
+        return r;
+
+    r = mailimap_space_send(fd);
+    if (r != MAILIMAP_NO_ERROR)
+        return r;
+
+    r = mailimap_literal_count_send(fd, strlen(value));
+    if (r != MAILIMAP_NO_ERROR)
+        return r;
+
+    if (mailstream_flush(fd) == -1)
+        return MAILIMAP_ERROR_STREAM;
+
+    r = mailimap_literal_data_send(fd,value, strlen(value),0, NULL);    
+    if (r != MAILIMAP_NO_ERROR)
+        return r;
+
+    return MAILIMAP_NO_ERROR;
+}
+
+
 /*
 =>   search-key      = "ALL" / "ANSWERED" / "BCC" SP astring /
                      "BEFORE" SP date / "BODY" SP astring /
@@ -2146,16 +2175,7 @@ int mailimap_search_key_send(mailstream * fd,
     return mailimap_token_send(fd, "ANSWERED");
 
   case MAILIMAP_SEARCH_KEY_BCC:
-    r = mailimap_token_send(fd, "BCC");
-    if (r != MAILIMAP_NO_ERROR)
-      return r;
-    r = mailimap_space_send(fd);
-    if (r != MAILIMAP_NO_ERROR)
-      return r;
-    r = mailimap_astring_send(fd, key->sk_data.sk_bcc);
-    if (r != MAILIMAP_NO_ERROR)
-      return r;
-    return MAILIMAP_NO_ERROR;
+    return  mailimap_search_string_key_send(fd, "BCC", key->sk_data.sk_bcc);
 
   case MAILIMAP_SEARCH_KEY_BEFORE:
     r = mailimap_token_send(fd, "BEFORE");
@@ -2170,28 +2190,10 @@ int mailimap_search_key_send(mailstream * fd,
     return MAILIMAP_NO_ERROR;
 
   case MAILIMAP_SEARCH_KEY_BODY:
-    r = mailimap_token_send(fd, "BODY");
-    if (r != MAILIMAP_NO_ERROR)
-      return r;
-    r = mailimap_space_send(fd);
-    if (r != MAILIMAP_NO_ERROR)
-      return r;
-    r = mailimap_astring_send(fd, key->sk_data.sk_body);
-    if (r != MAILIMAP_NO_ERROR)
-      return r;
-    return MAILIMAP_NO_ERROR;
+    return  mailimap_search_string_key_send(fd, "BODY", key->sk_data.sk_body);
 
   case MAILIMAP_SEARCH_KEY_CC:
-    r = mailimap_token_send(fd, "CC");
-    if (r != MAILIMAP_NO_ERROR)
-      return r;
-    r = mailimap_space_send(fd);
-    if (r != MAILIMAP_NO_ERROR)
-      return r;
-    r = mailimap_astring_send(fd, key->sk_data.sk_cc);
-    if (r != MAILIMAP_NO_ERROR)
-      return r;
-    return MAILIMAP_NO_ERROR;
+    return  mailimap_search_string_key_send(fd, "CC", key->sk_data.sk_cc);
 
   case MAILIMAP_SEARCH_KEY_DELETED:
     return mailimap_token_send(fd, "DELETED");
@@ -2200,28 +2202,10 @@ int mailimap_search_key_send(mailstream * fd,
     return mailimap_token_send(fd, "FLAGGED");
 
   case MAILIMAP_SEARCH_KEY_FROM:
-    r = mailimap_token_send(fd, "FROM");
-    if (r != MAILIMAP_NO_ERROR)
-      return r;
-    r = mailimap_space_send(fd);
-    if (r != MAILIMAP_NO_ERROR)
-      return r;
-    r = mailimap_astring_send(fd, key->sk_data.sk_from);
-    if (r != MAILIMAP_NO_ERROR)
-      return r;
-    return MAILIMAP_NO_ERROR;
+    return  mailimap_search_string_key_send(fd, "FROM", key->sk_data.sk_from);
 
   case MAILIMAP_SEARCH_KEY_KEYWORD:
-    r = mailimap_token_send(fd, "KEYWORD");
-    if (r != MAILIMAP_NO_ERROR)
-      return r;
-    r = mailimap_space_send(fd);
-    if (r != MAILIMAP_NO_ERROR)
-      return r;
-    r = mailimap_flag_keyword_send(fd, key->sk_data.sk_keyword);
-    if (r != MAILIMAP_NO_ERROR)
-      return r;
-    return MAILIMAP_NO_ERROR;
+    return  mailimap_search_string_key_send(fd, "KEYWORD", key->sk_data.sk_keyword);
 
   case MAILIMAP_SEARCH_KEY_NEW:
     return mailimap_token_send(fd, "NEW");
@@ -2260,40 +2244,13 @@ int mailimap_search_key_send(mailstream * fd,
     return MAILIMAP_NO_ERROR;
 
   case MAILIMAP_SEARCH_KEY_SUBJECT:
-    r = mailimap_token_send(fd, "SUBJECT");
-    if (r != MAILIMAP_NO_ERROR)
-      return r;
-    r = mailimap_space_send(fd);
-    if (r != MAILIMAP_NO_ERROR)
-      return r;
-    r = mailimap_astring_send(fd, key->sk_data.sk_subject);
-    if (r != MAILIMAP_NO_ERROR)
-      return r;
-    return MAILIMAP_NO_ERROR;
+    return  mailimap_search_string_key_send(fd, "SUBJECT", key->sk_data.sk_subject);
 
   case MAILIMAP_SEARCH_KEY_TEXT:
-    r = mailimap_token_send(fd, "TEXT");
-    if (r != MAILIMAP_NO_ERROR)
-      return r;
-    r = mailimap_space_send(fd);
-    if (r != MAILIMAP_NO_ERROR)
-      return r;
-    r = mailimap_astring_send(fd, key->sk_data.sk_text);
-    if (r != MAILIMAP_NO_ERROR)
-      return r;
-    return MAILIMAP_NO_ERROR;
+    return  mailimap_search_string_key_send(fd, "TEXT", key->sk_data.sk_text);
 
   case MAILIMAP_SEARCH_KEY_TO:
-    r = mailimap_token_send(fd, "TO");
-    if (r != MAILIMAP_NO_ERROR)
-      return r;
-    r = mailimap_space_send(fd);
-    if (r != MAILIMAP_NO_ERROR)
-      return r;
-    r = mailimap_astring_send(fd, key->sk_data.sk_text);
-    if (r != MAILIMAP_NO_ERROR)
-      return r;
-    return MAILIMAP_NO_ERROR;
+    return  mailimap_search_string_key_send(fd, "TO", key->sk_data.sk_to);
 
   case MAILIMAP_SEARCH_KEY_UNANSWERED:
     return mailimap_token_send(fd, "UNANSWERED");
@@ -2305,16 +2262,7 @@ int mailimap_search_key_send(mailstream * fd,
     return mailimap_token_send(fd, "UNFLAGGED");
 
   case MAILIMAP_SEARCH_KEY_UNKEYWORD:
-    r = mailimap_token_send(fd, "UNKEYWORD");
-    if (r != MAILIMAP_NO_ERROR)
-      return r;
-    r = mailimap_space_send(fd);
-    if (r != MAILIMAP_NO_ERROR)
-      return r;
-    r = mailimap_flag_keyword_send(fd, key->sk_data.sk_keyword);
-    if (r != MAILIMAP_NO_ERROR)
-      return r;
-    return MAILIMAP_NO_ERROR;
+    return  mailimap_search_string_key_send(fd, "UNKEYWORD", key->sk_data.sk_keyword);
 
   case MAILIMAP_SEARCH_KEY_UNSEEN:
     return mailimap_token_send(fd, "UNSEEN");
