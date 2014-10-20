@@ -988,6 +988,7 @@ int mailstream_cfstream_set_ssl_enabled(mailstream * s, int ssl_enabled)
       continue;
     }
     
+    // SecTrustEvaluate() needs to be called before SecTrustGetCertificateCount() in Mac OS X <= 10.8
     SecTrustEvaluate(secTrust, NULL);
     CFIndex count = SecTrustGetCertificateCount(secTrust);
     CFRelease(secTrust);
@@ -1168,6 +1169,7 @@ static carray * mailstream_low_cfstream_get_certificate_chain(mailstream_low * s
   if (secTrust == NULL)
     return NULL;
   
+  // SecTrustEvaluate() needs to be called before SecTrustGetCertificateCount() in Mac OS X <= 10.8
   SecTrustEvaluate(secTrust, NULL);
   CFIndex count = SecTrustGetCertificateCount(secTrust);
   
