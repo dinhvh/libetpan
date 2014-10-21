@@ -1210,12 +1210,12 @@ static int imapdriver_get_message_by_uid(mailsession * session,
   if (uid == NULL)
     return MAIL_ERROR_INVAL;
 
-  uidvalidity = strtoul(uid, &p1, 10);
+  uidvalidity = (uint32_t)strtoul(uid, &p1, 10);
   if (p1 == uid || * p1 != '-')
     return MAIL_ERROR_INVAL;
 
   p1++;
-  num = strtoul(p1, &p2, 10);
+  num = (uint32_t)strtoul(p1, &p2, 10);
   if (p2 == p1 || * p2 != '\0')
     return MAIL_ERROR_INVAL;
   

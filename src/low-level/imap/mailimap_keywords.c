@@ -56,7 +56,7 @@ int mailimap_token_case_insensitive_parse(mailstream * fd,
 					  size_t * indx,
 					  const char * token)
 {
-  int len;
+  size_t len;
   size_t cur_token;
   int r;
 
@@ -87,7 +87,7 @@ static int is_space_or_tab(char ch)
 int mailimap_char_parse(mailstream * fd, MMAPString * buffer,
 			size_t * indx, char token)
 {
-  int cur_token;
+  size_t cur_token;
 
   cur_token = * indx;
 
@@ -128,7 +128,7 @@ int mailimap_space_parse(mailstream * fd, MMAPString * buffer,
 
 
 #define mailimap_get_token_str(indx, tab) \
-           mailimap_get_token_str_size(indx, tab, \
+           mailimap_get_token_str_size((int)indx, tab, \
            sizeof(tab) / sizeof(struct mailimap_token_value))
 
 #define mailimap_get_token_value(fd, buffer, indx, tab) \
@@ -140,7 +140,7 @@ static const char * mailimap_get_token_str_size(int indx,
 					  struct mailimap_token_value * tab,
 					  size_t size)
 {
-  size_t i;
+  int i;
 
   for(i = 0 ; i < size ; i++)
     if (indx == tab[i].value)

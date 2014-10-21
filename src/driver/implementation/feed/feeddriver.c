@@ -381,7 +381,7 @@ static inline int quote_word(const char * display_charset,
   const char * cur;
   size_t i;
   char hex[4];
-  int col;
+  size_t col;
   
   if (mmap_string_append(mmapstr, "=?") == NULL)
     return -1;
@@ -400,7 +400,7 @@ static inline int quote_word(const char * display_charset,
         + 3 /* max size of newly added character */
         + 1 /* minimum column of string in a
                folded header */ >= MAX_IMF_LINE) {
-      int old_pos;
+      size_t old_pos;
       /* adds a concatened encoded word */
       
       if (mmap_string_append(mmapstr, "?=") == NULL)

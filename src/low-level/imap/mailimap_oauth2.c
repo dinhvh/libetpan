@@ -134,9 +134,9 @@ int mailimap_oauth2_authenticate_send(mailimap * session,
   char * ptr;
   char * full_auth_string;
   char * full_auth_string_b64;
-  int auth_user_len;
-  int access_token_len;
-  int full_auth_string_len;
+  size_t auth_user_len;
+  size_t access_token_len;
+  size_t full_auth_string_len;
   int res;
   
   full_auth_string = NULL;
@@ -159,7 +159,7 @@ int mailimap_oauth2_authenticate_send(mailimap * session,
   ptr = memcpy(ptr + access_token_len, "\1\1\0", 3);
   
   /* Convert to base64 */
-  full_auth_string_b64 = encode_base64(full_auth_string, full_auth_string_len);
+  full_auth_string_b64 = encode_base64(full_auth_string, (int)full_auth_string_len);
   if (full_auth_string_b64 == NULL) {
     res = MAILIMAP_ERROR_MEMORY;
     goto free;

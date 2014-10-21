@@ -519,8 +519,8 @@ static int write_max_uid_value(mailsession * session)
     goto free_mmapstr;
   }
 
-  r = fwrite(mmapstr->str, 1, mmapstr->len, f);
-  if ((size_t) r != mmapstr->len) {
+  size_t written = fwrite(mmapstr->str, 1, mmapstr->len, f);
+  if (written != mmapstr->len) {
     res = MAIL_ERROR_FILE;
     goto free_mmapstr;
   }
@@ -1320,7 +1320,7 @@ static int mboxdriver_cached_get_message_by_uid(mailsession * session,
   if (uid == NULL)
     return MAIL_ERROR_INVAL;
 
-  num = strtoul(uid, &p, 10);
+  num = (uint32_t)strtoul(uid, &p, 10);
   if (p == uid || * p != '-')
     return MAIL_ERROR_INVAL;
 

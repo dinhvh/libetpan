@@ -54,7 +54,7 @@ int mailimap_fetch_envelope(mailimap * session,
 			    clist ** result);
 
 int mailimap_append_simple(mailimap * session, const char * mailbox,
-			   const char * content, uint32_t size);
+			   const char * content, size_t size);
 
 int mailimap_login_simple(mailimap * session,
 			  const char * userid, const char * password);

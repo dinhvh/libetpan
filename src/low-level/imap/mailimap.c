@@ -632,12 +632,12 @@ int mailimap_append(mailimap * session, const char * mailbox,
   }
 
   if (session->imap_body_progress_fun != NULL) {
-    r = mailimap_literal_data_send_with_context(session->imap_stream, literal, literal_size,
+    r = mailimap_literal_data_send_with_context(session->imap_stream, literal, (uint32_t)literal_size,
                                                 session->imap_body_progress_fun,
                                                 session->imap_progress_context);
   }
   else {
-    r = mailimap_literal_data_send(session->imap_stream, literal, literal_size,
+    r = mailimap_literal_data_send(session->imap_stream, literal, (uint32_t)literal_size,
                                    session->imap_progr_rate, session->imap_progr_fun);
   }
   if (r != MAILIMAP_NO_ERROR)
@@ -1551,14 +1551,14 @@ static int sasl_getsimple(void * context, int id,
     if (result != NULL)
       * result = session->imap_sasl.sasl_login;
     if (len != NULL)
-      * len = strlen(session->imap_sasl.sasl_login);
+      * len = (unsigned int)strlen(session->imap_sasl.sasl_login);
     return SASL_OK;
     
   case SASL_CB_AUTHNAME:
     if (result != NULL)
       * result = session->imap_sasl.sasl_auth_name;
     if (len != NULL)
-      * len = strlen(session->imap_sasl.sasl_auth_name);
+      * len = (unsigned int)strlen(session->imap_sasl.sasl_auth_name);
     return SASL_OK;
   }
   
@@ -1741,12 +1741,14 @@ int mailimap_authenticate(mailimap * session, const char * auth_type,
     }
     
     if (got_response) {
-      size_t response_len;
+      // Note that the sasl API uses unsigned int rather than size_t in its API,
+      // so we use unsigned int here too, and we cast the result from strlen.
+      unsigned int response_len;
       char * decoded;
       unsigned int decoded_len;
       unsigned int max_decoded;
       
-      response_len = strlen(response_base64);
+      response_len = (unsigned int)strlen(response_base64);
       max_decoded = response_len * 3 / 4;
       decoded = malloc(max_decoded + 1);
       if (decoded == NULL) {

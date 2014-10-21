@@ -125,7 +125,7 @@ static void do_exec_command(int fd, const char *command,
   
   /* Should we close stderr and reopen /dev/null? */
   
-  maxopen = sysconf(_SC_OPEN_MAX);
+  maxopen = (int)sysconf(_SC_OPEN_MAX);
   for (i=3; i < maxopen; i++)
     close(i);
   

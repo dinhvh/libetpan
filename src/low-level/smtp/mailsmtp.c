@@ -990,7 +990,7 @@ static int parse_response(mailsmtp * session,
   int code;
   int cont = 0;
 
-  code = strtol(response, &message, 10);
+  code = (int)strtol(response, &message, 10);
   if (* message == ' ')
     mmap_string_append(session->response_buffer, message + 1);
   else if (* message == '-') {
@@ -1140,14 +1140,14 @@ static int sasl_getsimple(void * context, int id,
     if (result != NULL)
       * result = session->smtp_sasl.sasl_login;
     if (len != NULL)
-      * len = strlen(session->smtp_sasl.sasl_login);
+      * len = (unsigned int)strlen(session->smtp_sasl.sasl_login);
     return SASL_OK;
     
   case SASL_CB_AUTHNAME:
     if (result != NULL)
       * result = session->smtp_sasl.sasl_auth_name;
     if (len != NULL)
-      * len = strlen(session->smtp_sasl.sasl_auth_name);
+      * len = (unsigned int)strlen(session->smtp_sasl.sasl_auth_name);
     return SASL_OK;
   }
   
@@ -1316,7 +1316,9 @@ int mailesmtp_auth_sasl(mailsmtp * session, const char * auth_type,
     
     case 334:
       {
-        size_t response_len;
+        // Note that the sasl API uses unsigned int rather than size_t in its API,
+        // so we use unsigned int here too, and we cast the result from strlen.
+        unsigned int response_len;
         char * decoded;
         unsigned int decoded_len;
         unsigned int max_decoded;
@@ -1331,7 +1333,7 @@ int mailesmtp_auth_sasl(mailsmtp * session, const char * auth_type,
           * p = '\0';
         }
         
-        response_len = strlen(session->response);
+        response_len = (unsigned int)strlen(session->response);
         max_decoded = response_len * 3 / 4;
         decoded = malloc(max_decoded + 1);
         if (decoded == NULL) {

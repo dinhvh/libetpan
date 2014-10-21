@@ -199,7 +199,7 @@ void mailpop3_capa_free(struct mailpop3_capa * capa)
   mailpop3_stat_response
 */
 
-struct mailpop3_stat_response * mailpop3_stat_response_new(uint32_t count, uint32_t size)
+static struct mailpop3_stat_response * mailpop3_stat_response_new(uint32_t count, size_t size)
 {
   struct mailpop3_stat_response * stat_response;
 
@@ -327,7 +327,7 @@ static char * mailpop3_get_timestamp(char * response)
   char * begin_timestamp;
   char * end_timestamp;
   char * timestamp;
-  int len_timestamp;
+  size_t len_timestamp;
 
   if (response == NULL)
     return NULL;
@@ -498,8 +498,8 @@ int mailpop3_apop(mailpop3 * f,
   /* calculate md5 sum */
 
   MD5Init(&md5context);
-  MD5Update(&md5context, (const unsigned char *) f->pop3_timestamp, strlen (f->pop3_timestamp));
-  MD5Update(&md5context, (const unsigned char *) password, strlen (password));
+  MD5Update(&md5context, (const unsigned char *) f->pop3_timestamp, (unsigned)strlen(f->pop3_timestamp));
+  MD5Update(&md5context, (const unsigned char *) password, (unsigned)strlen(password));
   MD5Final(md5digest, &md5context);
   
   cmd_ptr = md5string;
@@ -1146,12 +1146,12 @@ static int read_list(mailpop3 * f, carray ** result)
     if (mailstream_is_end_multiline(line))
       break;
 
-    indx = strtol(line, &line, 10);
+    indx = (uint32_t)strtol(line, &line, 10);
 
     if (!parse_space(&line))
       continue;
 
-    size = strtol(line, &line, 10);
+    size = (uint32_t)strtol(line, &line, 10);
     
     msg = mailpop3_msg_info_new(indx, size, NULL);
     if (msg == NULL)
@@ -1198,7 +1198,7 @@ static int read_uidl(mailpop3 * f, carray * msg_tab)
     if (mailstream_is_end_multiline(line))
       break;
     
-    indx = strtol(line, &line, 10);
+    indx = (unsigned)strtol(line, &line, 10);
 
     if (!parse_space(&line))
       continue;
@@ -1398,14 +1398,14 @@ static int sasl_getsimple(void * context, int id,
     if (result != NULL)
       * result = session->pop3_sasl.sasl_login;
     if (len != NULL)
-      * len = strlen(session->pop3_sasl.sasl_login);
+      * len = (unsigned)strlen(session->pop3_sasl.sasl_login);
     return SASL_OK;
     
   case SASL_CB_AUTHNAME:
     if (result != NULL)
       * result = session->pop3_sasl.sasl_auth_name;
     if (len != NULL)
-      * len = strlen(session->pop3_sasl.sasl_auth_name);
+      * len = (unsigned)strlen(session->pop3_sasl.sasl_auth_name);
     return SASL_OK;
   }
   
@@ -1551,7 +1551,9 @@ int mailpop3_auth(mailpop3 * f, const char * auth_type,
     
     case RESPONSE_AUTH_CONT:
       {
-        size_t response_len;
+        // Note that the sasl API uses unsigned int rather than size_t in its API,
+        // so we use unsigned int here too, and we cast the result from strlen.
+        unsigned int response_len;
         char * decoded;
         unsigned int decoded_len;
         unsigned int max_decoded;
@@ -1576,7 +1578,7 @@ int mailpop3_auth(mailpop3 * f, const char * auth_type,
           if (p != NULL) {
             * p = '\0';
           }
-          response_len = strlen(f->pop3_response);
+          response_len = (unsigned)strlen(f->pop3_response);
           max_decoded = response_len * 3 / 4;
           decoded = malloc(max_decoded + 1);
           if (decoded == NULL) {

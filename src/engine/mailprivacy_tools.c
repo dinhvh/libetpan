@@ -1530,16 +1530,16 @@ int mailprivacy_spawn_and_wait(char * command, char * passphrase,
       close(passphrase_input[0]);
       
       if ((passphrase != NULL) && (strlen(passphrase) > 0)) {
-        r = write(passphrase_input[1], passphrase, strlen(passphrase));
-        if (r != (int) strlen(passphrase)) {
+        ssize_t written = write(passphrase_input[1], passphrase, strlen(passphrase));
+        if (written != strlen(passphrase)) {
           close(passphrase_input[1]);
           return ERROR_PASSPHRASE_FILE;
         }
       }
       else {
         /* dummy password */
-        r = write(passphrase_input[1], "*dummy*", 7);
-        if (r != 7) {
+        ssize_t written = write(passphrase_input[1], "*dummy*", 7);
+        if (written != 7) {
           close(passphrase_input[1]);
           return ERROR_PASSPHRASE_FILE;
         }

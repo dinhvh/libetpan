@@ -166,17 +166,17 @@ static ssize_t mailstream_low_compress_read(mailstream_low * s, void * buf, size
   do {
     /* if there is no compressed data, read more */
     if (strm->avail_in == 0) {
-      int read = data->ms->driver->mailstream_read(data->ms, data->input_buf, CHUNK_SIZE);
+      ssize_t read = data->ms->driver->mailstream_read(data->ms, data->input_buf, CHUNK_SIZE);
       if (read <= 0) {
         return read;
       }
-      strm->avail_in = read;
+      strm->avail_in = (uInt)read;
       strm->next_in = data->input_buf;
     }
 
     /* set the output buffer */
     strm->next_out = buf;
-    strm->avail_out = count;
+    strm->avail_out = (uInt)count;
 
     /* uncompress any waiting data */
     zr = inflate(strm, Z_NO_FLUSH);
@@ -209,8 +209,8 @@ static ssize_t mailstream_low_compress_write(mailstream_low * s, const void * bu
 
   strm->next_in = (Bytef *)buf;
   /* we won't try to compress more than CHUNK_SIZE at a time so we always have enough buffer space */
-  int compress_len = MIN(count, CHUNK_SIZE);
-  strm->avail_in = compress_len;
+  size_t compress_len = MIN(count, CHUNK_SIZE);
+  strm->avail_in = (uInt)compress_len;
   strm->avail_out = CHUNK_SIZE;
   strm->next_out = data->output_buf;
 

@@ -255,7 +255,7 @@ static int lock_common(const char * filename, int fd, short locktype)
     fd2 = open(lockfilename, O_WRONLY|O_EXCL|O_CREAT, 0);
     if (fd2 >= 0) {
       /* defeat lock checking programs which test pid */
-      r = write(fd2, "0", 2);
+      write(fd2, "0", 2);
       close(fd2);
       break;
     }

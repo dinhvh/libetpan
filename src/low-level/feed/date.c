@@ -66,6 +66,7 @@ static time_t basic_format_parse(const char * str)
   size_t len;
   size_t current_index;
   uint32_t value;
+  time_t result;
   int year;
   int month;
   int day;
@@ -180,15 +181,15 @@ static time_t basic_format_parse(const char * str)
   ts.tm_year = year - 1900;
   
   if (local_time) {
-    value = mktime(&ts);
+    result = mktime(&ts);
   }
   else {
-    value = mail_mkgmtime(&ts);
+    result = mail_mkgmtime(&ts);
     if (apply_offset)
-      value -= offset;
+      result -= offset;
   }
   
-  return value;
+  return result;
 }
 
 /*
@@ -206,6 +207,7 @@ static time_t extended_format_parse(const char * str)
   size_t len;
   size_t current_index;
   uint32_t value;
+  time_t result;
   int year;
   int month;
   int day;
@@ -359,15 +361,15 @@ static time_t extended_format_parse(const char * str)
   ts.tm_year = year - 1900;
   
   if (local_time) {
-    value = mktime(&ts);
+    result = mktime(&ts);
   }
   else {
-    value = mail_mkgmtime(&ts);
+    result = mail_mkgmtime(&ts);
     if (apply_offset)
-      value -= offset;
+      result -= offset;
   }
   
-  return value;
+  return result;
 }
 
 time_t newsfeed_iso8601_date_parse(const char * str)
