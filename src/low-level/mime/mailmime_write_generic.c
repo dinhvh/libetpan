@@ -859,6 +859,12 @@ static int mailmime_part_write_driver(int (* do_write)(void *, const char *, siz
         goto free_boundary;
       }
 
+      if (boundary == NULL) {
+        // Make clang static analyzer happy.
+        res = MAILIMF_ERROR_MEMORY;
+        goto free_boundary;
+      }
+      
       r = mailimf_string_write_driver(do_write, data, col, boundary, strlen(boundary));
       if (r != MAILIMF_NO_ERROR) {
         res = r;
@@ -887,6 +893,12 @@ static int mailmime_part_write_driver(int (* do_write)(void *, const char *, siz
     r = mailimf_string_write_driver(do_write, data, col, "--", 2);
     if (r != MAILIMF_NO_ERROR) {
       res = r;
+      goto free_boundary;
+    }
+    
+    if (boundary == NULL) {
+      // Make clang static analyzer happy.
+      res = MAILIMF_ERROR_MEMORY;
       goto free_boundary;
     }
     

@@ -1717,7 +1717,7 @@ static int collect_recipient(char * recipient, size_t size,
   int res;
 
   * recipient = '\0';
-  remaining = size;
+  remaining = size - 1;
   
 	mailimf_single_fields_init(&single_fields, fields);
   

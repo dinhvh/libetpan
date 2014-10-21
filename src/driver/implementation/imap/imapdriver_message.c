@@ -1086,7 +1086,9 @@ static int imap_fetch_section_body(mailmessage * msg_info,
     mailimap_fetch_att_free(fetch_att);
     return MAIL_ERROR_MEMORY;
   }
-
+  
+  text = NULL;
+  text_length = 0;
   r = fetch_imap(msg_info, fetch_type, &text, &text_length);
 
   mailimap_fetch_type_free(fetch_type);

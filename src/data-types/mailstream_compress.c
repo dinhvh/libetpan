@@ -99,7 +99,7 @@ mailstream_low * mailstream_low_compress_open(mailstream_low * ms)
   mailstream_low * s;
     
   /* stores the original mailstream */
-  struct mailstream_compress_data * compress_data = malloc(sizeof(* compress_data));
+  struct mailstream_compress_data * compress_data = calloc(1, sizeof(* compress_data));
   if (compress_data == NULL)
     goto err;
 

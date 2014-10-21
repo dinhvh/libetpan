@@ -306,6 +306,7 @@ static int pop3driver_status_folder(mailsession * session, const char * mb,
   uint32_t count;
   int r;
   
+  count = 0;
   r = pop3driver_messages_number(session, mb, &count);
   if (r != MAIL_NO_ERROR)
     return r;

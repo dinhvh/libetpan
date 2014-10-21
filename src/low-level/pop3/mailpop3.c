@@ -1558,7 +1558,11 @@ int mailpop3_auth(mailpop3 * f, const char * auth_type,
         int got_response;
         
         got_response = 1;
-        if (* f->pop3_response == '\0')
+        if (f->pop3_response == NULL) {
+          // Make clang static analyzer happy.
+          got_response = 0;
+        }
+        else if (* f->pop3_response == '\0')
           got_response = 0;
         
         if (got_response) {

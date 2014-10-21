@@ -6379,6 +6379,7 @@ mailimf_resent_bcc_parse(const char * message, size_t length,
     goto err;
   }
 
+  addr_list = NULL;
   r = mailimf_address_list_parse(message, length, &cur_token, &addr_list);
   if ((r != MAILIMF_NO_ERROR) && (r != MAILIMF_ERROR_PARSE)) {
     res = r;

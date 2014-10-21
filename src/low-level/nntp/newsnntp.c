@@ -1362,6 +1362,9 @@ int newsnntp_date(newsnntp * f, struct tm * tm)
     return NEWSNNTP_ERROR_STREAM;
 
   r = parse_response(f, response);
+  if (f->nntp_response == NULL) {
+    return NEWSNNTP_ERROR_UNEXPECTED_RESPONSE;
+  }
 
   switch (r) {
   case 111:

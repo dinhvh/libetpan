@@ -353,6 +353,9 @@ static int recent_number(mailsession * session, const char * mb,
   uint32_t unseen;
   int r;
   
+  messages = 0;
+  recent = 0;
+  unseen = 0;
   r = status_folder(session, mb, &messages, &recent, &unseen);
   if (r != MAIL_NO_ERROR)
     return r;

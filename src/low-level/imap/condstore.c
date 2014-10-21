@@ -926,6 +926,7 @@ static int
       struct mailimap_condstore_search * search_data;
       struct mailimap_extension_data * ext_data;
       
+      search_data = NULL;
       r = search_data_parse(fd, buffer, &cur_token, &search_data);
       if (r != MAILIMAP_NO_ERROR)
         return r;

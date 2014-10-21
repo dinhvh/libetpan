@@ -833,6 +833,7 @@ int mailmh_folder_remove_message(struct mailmh_folder * folder,
   chashdatum key;
   chashdatum data;
 
+  filename = NULL;
   r = mailmh_folder_get_message_filename(folder, indx, &filename);
   if (filename == NULL) {
     res = r;

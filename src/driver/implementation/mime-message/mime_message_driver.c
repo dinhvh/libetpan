@@ -471,6 +471,7 @@ static int fetch_size(mailmessage * msg_info,
   char * msg;
   int r;
 
+  msg = NULL;
   r = fetch(msg_info, &msg, result);
   if (r != MAIL_NO_ERROR) {
     return r;

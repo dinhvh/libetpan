@@ -2991,6 +2991,10 @@ int imap_msg_list_to_imap_set(clist * msg_list,
     }
 
     pindex = clist_content(cur);
+    if (pindex == NULL) {
+      // Make clang static analyzer happy.
+      break;
+    }
 
     if (!previous_valid) {
       first_seq = * pindex;

@@ -304,8 +304,10 @@ int mailimap_select_qresync(mailimap * session, const char * mb,
     if (* fetch_result != NULL) {
       mailimap_fetch_list_free(* fetch_result);
     }
-    if (* p_vanished != NULL) {
-      mailimap_qresync_vanished_free(* p_vanished);
+    if (p_vanished != NULL) {
+      if (* p_vanished != NULL) {
+        mailimap_qresync_vanished_free(* p_vanished);
+      }
     }
     return MAILIMAP_ERROR_SELECT;
   }
