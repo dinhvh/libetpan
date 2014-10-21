@@ -8971,6 +8971,7 @@ mailimap_response_parse_progress(mailstream * fd, MMAPString * buffer,
   struct mailimap_response_done * resp_done;
   int r;
   int res;
+  clistiter * iter;
   
   cur_token = * indx;
   cont_req_or_resp_data_list = NULL;
@@ -8992,7 +8993,7 @@ mailimap_response_parse_progress(mailstream * fd, MMAPString * buffer,
   if ((r != MAILIMAP_NO_ERROR) && (r != MAILIMAP_ERROR_PARSE))
     return r;
   
-  for(clistiter * iter = clist_begin(cont_req_or_resp_data_list) ; iter != NULL ; iter = clist_next(iter)) {
+  for(iter = clist_begin(cont_req_or_resp_data_list) ; iter != NULL ; iter = clist_next(iter)) {
     struct mailimap_cont_req_or_resp_data * cont_req_or_resp_data = clist_content(iter);
     if (cont_req_or_resp_data->rsp_type != MAILIMAP_RESP_RESP_DATA) {
       continue;
