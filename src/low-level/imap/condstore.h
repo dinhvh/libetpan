@@ -78,6 +78,14 @@ int mailimap_uid_search_modseq(mailimap * session, const char * charset,
 	struct mailimap_search_key * key, clist ** result, uint64_t * p_mod_sequence_value);
 
 LIBETPAN_EXPORT
+int mailimap_search_literalplus_modseq(mailimap * session, const char * charset,
+                                       struct mailimap_search_key * key, clist ** result, uint64_t * p_mod_sequence_value);
+  
+LIBETPAN_EXPORT
+int mailimap_uid_search_literalplus_modseq(mailimap * session, const char * charset,
+                                           struct mailimap_search_key * key, clist ** result, uint64_t * p_mod_sequence_value);
+
+LIBETPAN_EXPORT
 int mailimap_select_condstore(mailimap * session, const char * mb, uint64_t * p_mod_sequence_value);
 
 LIBETPAN_EXPORT
