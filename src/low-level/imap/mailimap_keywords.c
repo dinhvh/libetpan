@@ -56,7 +56,7 @@ int mailimap_token_case_insensitive_parse(mailstream * fd,
 					  size_t * indx,
 					  const char * token)
 {
-  int len;
+  size_t len;
   size_t cur_token;
   int r;
 
@@ -87,7 +87,7 @@ static int is_space_or_tab(char ch)
 int mailimap_char_parse(mailstream * fd, MMAPString * buffer,
 			size_t * indx, char token)
 {
-  int cur_token;
+  size_t cur_token;
 
   cur_token = * indx;
 
@@ -201,7 +201,7 @@ int mailimap_status_att_get_token_value(mailstream * fd, MMAPString * buffer,
 }
 
 
-const char * mailimap_status_att_get_token_str(size_t indx)
+const char * mailimap_status_att_get_token_str(int indx)
 {
   return mailimap_get_token_str(indx, status_att_tab);
 }
@@ -228,7 +228,7 @@ int mailimap_month_get_token_value(mailstream * fd, MMAPString * buffer,
 }
 
 
-const char * mailimap_month_get_token_str(size_t indx)
+const char * mailimap_month_get_token_str(int indx)
 {
   return mailimap_get_token_str(indx, month_tab);
 }
@@ -253,7 +253,7 @@ int mailimap_flag_get_token_value(mailstream * fd, MMAPString * buffer,
 }
 
 
-const char * mailimap_flag_get_token_str(size_t indx)
+const char * mailimap_flag_get_token_str(int indx)
 {
   return mailimap_get_token_str(indx, mailimap_flag_tab);
 }

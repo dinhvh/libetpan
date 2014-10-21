@@ -95,7 +95,7 @@ static inline void mailstream_logger_internal(mailstream_low * s, int is_stream_
       if (f != NULL) { \
         int nmemb; \
         maillock_write_lock(LOG_FILE, fileno(f)); \
-        nmemb = fwrite((buf), 1, (size), f); \
+        nmemb = fwrite((buf), 1, (size_t) (size), f); \
         maillock_write_unlock(LOG_FILE, fileno(f)); \
         fclose(f); \
       } \
@@ -122,7 +122,7 @@ static inline void mailstream_logger_internal(mailstream_low * s, int is_stream_
       if (f != NULL) { \
         int nmemb; \
         maillock_write_lock(LOG_FILE, fileno(f)); \
-        nmemb = fwrite((buf), 1, (size), f); \
+        nmemb = fwrite((buf), 1, (size_t) (size), f); \
         maillock_write_unlock(LOG_FILE, fileno(f)); \
         fclose(f); \
       } \

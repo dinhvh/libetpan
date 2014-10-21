@@ -226,7 +226,7 @@ int mailimf_cache_string_write(MMAPString * mmapstr, size_t * indx,
     if (r != MAIL_NO_ERROR)
       return r;
     
-    r = mailimf_cache_int_write(mmapstr, indx, length);
+    r = mailimf_cache_int_write(mmapstr, indx, (uint32_t) length);
     if (r != MAIL_NO_ERROR)
       return r;
     

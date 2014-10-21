@@ -664,7 +664,7 @@ int maildriver_cache_clean_up(struct mail_cache_db * cache_db_env,
       snprintf(keyname, PATH_MAX, "%s-envelope", msg->msg_uid);
       
       key.data = keyname;
-      key.len = strlen(keyname);
+      key.len = (unsigned int) strlen(keyname);
       r = chash_set(hash_exist, &key, &value, NULL);
       if (r < 0) {
         res = MAIL_ERROR_MEMORY;
@@ -676,7 +676,7 @@ int maildriver_cache_clean_up(struct mail_cache_db * cache_db_env,
       snprintf(keyname, PATH_MAX, "%s-flags", msg->msg_uid);
       
       key.data = keyname;
-      key.len = strlen(keyname);
+      key.len = (unsigned int) strlen(keyname);
       r = chash_set(hash_exist, &key, &value, NULL);
       if (r < 0) {
         res = MAIL_ERROR_MEMORY;
@@ -741,7 +741,7 @@ int maildriver_message_cache_clean_up(char * cache_dir,
     msg = carray_get(env_list->msg_tab, i);
       
     key.data = msg->msg_uid;
-    key.len = strlen(msg->msg_uid);
+    key.len = (unsigned int) strlen(msg->msg_uid);
     value.data = NULL;
     value.len = 0;
     r = chash_set(hash_exist, &key, &value, NULL);
@@ -774,7 +774,7 @@ int maildriver_message_cache_clean_up(char * cache_dir,
       continue;
     
     key.data = keyname;
-    key.len = strlen(keyname);
+    key.len = (unsigned int) strlen(keyname);
     
     r = chash_get(hash_exist, &key, &value);
     if (r < 0) {

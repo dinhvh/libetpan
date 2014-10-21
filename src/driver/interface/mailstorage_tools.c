@@ -75,7 +75,7 @@
 static void do_exec_command(int fd, const char *command,
     char *servername, uint16_t port)
 {
-  int i, maxopen;
+  long i, maxopen;
 #ifndef HAVE_SETENV
   char env_buffer[ENV_BUFFER_SIZE];
 #endif
@@ -127,7 +127,7 @@ static void do_exec_command(int fd, const char *command,
   
   maxopen = sysconf(_SC_OPEN_MAX);
   for (i=3; i < maxopen; i++)
-    close(i);
+    close((int) i);
   
 #ifdef TIOCNOTTY
   /* Detach from the controlling tty if we have one. Otherwise,

@@ -327,7 +327,7 @@ static int get_flags(mailmessage * msg_info,
     return MAIL_ERROR_BAD_STATE;
   
   key.data = msg_info->msg_uid;
-  key.len = strlen(msg_info->msg_uid);
+  key.len = (unsigned int) strlen(msg_info->msg_uid);
   r = chash_get(md->mdir_msg_hash, &key, &value);
   if (r < 0)
     return MAIL_ERROR_MSG_NOT_FOUND;

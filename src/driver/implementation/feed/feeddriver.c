@@ -390,7 +390,7 @@ static inline int quote_word(const char * display_charset,
   if (mmap_string_append(mmapstr, "?Q?") == NULL)
     return -1;
   
-  col = mmapstr->len;
+  col = (int) mmapstr->len;
   
   cur = word;
   for(i = 0 ; i < size ; i ++) {
@@ -409,7 +409,7 @@ static inline int quote_word(const char * display_charset,
       if (mmap_string_append(mmapstr, " ") == NULL)
         return -1;
       
-      old_pos = mmapstr->len;
+      old_pos = (int) mmapstr->len;
       
       if (mmap_string_append(mmapstr, "=?") == NULL)
         return -1;
@@ -418,7 +418,7 @@ static inline int quote_word(const char * display_charset,
       if (mmap_string_append(mmapstr, "?Q?") == NULL)
         return -1;
       
-      col = mmapstr->len - old_pos;
+      col = (int) mmapstr->len - old_pos;
     }
     
     do_quote_char = 0;

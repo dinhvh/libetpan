@@ -253,7 +253,7 @@ struct mailmh_folder * mailmh_folder_find(struct mailmh_folder * root,
   }
   else {
     key.data = pathname;
-    key.len = strlen(pathname);
+    key.len = (unsigned int) strlen(pathname);
     r = chash_get(root->fl_subfolders_hash, &key, &data);
     if (r < 0)
       return NULL;
@@ -327,7 +327,7 @@ int mailmh_folder_update(struct mailmh_folder * folder)
 	continue;
 
       if (S_ISREG(buf.st_mode)) {
-	indx = strtoul(ent->d_name, NULL, 10);
+	indx = (uint32_t) strtoul(ent->d_name, NULL, 10);
 	if (indx != 0) {
 	  struct mailmh_msg_info * msg_info;
 	  unsigned int array_index;
@@ -379,7 +379,7 @@ int mailmh_folder_update(struct mailmh_folder * folder)
 	}
 
 	key.data = ent->d_name;
-	key.len = strlen(ent->d_name);
+	key.len = (unsigned int) strlen(ent->d_name);
 	r = chash_get(folder->fl_subfolders_hash, &key, &data);
 	if (r < 0) {
 	  subfolder = mailmh_folder_new(folder, ent->d_name);
@@ -397,7 +397,7 @@ int mailmh_folder_update(struct mailmh_folder * folder)
 	  subfolder->fl_array_index = array_index;
 	  
 	  key.data = subfolder->fl_filename;
-	  key.len = strlen(subfolder->fl_filename);
+	  key.len = (unsigned int) strlen(subfolder->fl_filename);
 	  data.data = subfolder;
 	  data.len = 0;
 	  r = chash_set(folder->fl_subfolders_hash, &key, &data, NULL);
@@ -482,7 +482,7 @@ int mailmh_folder_add_subfolder(struct mailmh_folder * parent,
   folder->fl_array_index = array_index;
 
   key.data = folder->fl_filename;
-  key.len = strlen(folder->fl_filename);
+  key.len = (unsigned int) strlen(folder->fl_filename);
   data.data = folder;
   data.len = 0;
 
@@ -506,7 +506,7 @@ int mailmh_folder_remove_subfolder(struct mailmh_folder * folder)
   parent = folder->fl_parent;
 
   key.data = folder->fl_filename;
-  key.len = strlen(folder->fl_filename);
+  key.len = (unsigned int) strlen(folder->fl_filename);
   
   r = chash_get(parent->fl_subfolders_hash, &key, &data);
   if (r < 0)
@@ -637,7 +637,7 @@ int mailmh_folder_get_message_filename(struct mailmh_folder * folder,
 				       uint32_t indx, char ** result)
 {
   char * filename;
-  int len;
+  size_t len;
 
   len = strlen(folder->fl_filename) + 20;
   filename = malloc(len);

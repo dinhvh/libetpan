@@ -61,18 +61,18 @@ int mailimap_token_case_insensitive_parse(mailstream * fd,
 
 int mailimap_status_att_get_token_value(mailstream * fd, MMAPString * buffer,
 					size_t * indx);
-const char * mailimap_status_att_get_token_str(size_t indx);
+const char * mailimap_status_att_get_token_str(int indx);
 
 
 int mailimap_month_get_token_value(mailstream * fd, MMAPString * buffer,
 				   size_t * indx);
-const char * mailimap_month_get_token_str(size_t indx);
+const char * mailimap_month_get_token_str(int indx);
 
 
 int mailimap_flag_get_token_value(mailstream * fd, MMAPString * buffer,
 				  size_t * indx);
 
-const char * mailimap_flag_get_token_str(size_t indx);
+const char * mailimap_flag_get_token_str(int indx);
 
 int mailimap_encoding_get_token_value(mailstream * fd, MMAPString * buffer,
 				      size_t * indx);

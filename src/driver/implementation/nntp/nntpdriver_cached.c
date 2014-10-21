@@ -1061,7 +1061,7 @@ static int nntpdriver_cached_get_message_by_uid(mailsession * session,
   if (uid == NULL)
     return MAIL_ERROR_INVAL;
   
-  num = strtoul(uid, &p, 10);
+  num = (uint32_t) strtoul(uid, &p, 10);
   if ((p == uid) || (* p != '\0'))
     return MAIL_ERROR_INVAL;
   

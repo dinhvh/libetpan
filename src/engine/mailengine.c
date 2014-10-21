@@ -286,7 +286,7 @@ folder_info_get_msg_by_uid(struct folder_ref_info * ref_info,
   int r;
   
   key.data = uid;
-  key.len = strlen(uid);
+  key.len = (unsigned int) strlen(uid);
   r = chash_get(ref_info->uid_hash, &key, &data);
   if (r < 0)
     return NULL;
@@ -381,7 +381,7 @@ static int folder_message_add(struct folder_ref_info * ref_info,
   
   if (msg->msg_uid != NULL) {
     key.data = msg->msg_uid;
-    key.len = strlen(msg->msg_uid);
+    key.len = (unsigned int) strlen(msg->msg_uid);
     data.data = msg;
     data.len = 0;
     
@@ -411,7 +411,7 @@ static void folder_message_remove(struct folder_ref_info * ref_info,
 
   if (msg->msg_uid != NULL) {
     key.data = msg->msg_uid;
-    key.len = strlen(msg->msg_uid);
+    key.len = (unsigned int) strlen(msg->msg_uid);
     
     chash_delete(ref_info->uid_hash, &key, NULL);
   }

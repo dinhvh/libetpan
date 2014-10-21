@@ -45,7 +45,7 @@ static int do_write(void * data, const char * str, size_t length)
   if (mmap_string_append_len(f, str, length) == NULL)
     return 0;
   else
-    return length;
+    return (int) length;
 }
 
 int mailimf_string_write_mem(MMAPString * f, int * col,

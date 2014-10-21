@@ -504,19 +504,19 @@ static int expunge_folder(mailsession * session)
     if (!deleted) {
       snprintf(key_value, sizeof(key_value), "%lu", (unsigned long) num);
       key.data = key_value;
-      key.len = strlen(key_value);
+      key.len = (unsigned int) strlen(key_value);
       chash_set(msg_table, &key, &value, NULL);
       
       snprintf(key_value, sizeof(key_value), "%lu-envelope",
           (unsigned long) num);
       key.data = key_value;
-      key.len = strlen(key_value);
+      key.len = (unsigned int) strlen(key_value);
       chash_set(msg_table, &key, &value, NULL);
       
       snprintf(key_value, sizeof(key_value), "%lu-flags",
           (unsigned long) num);
       key.data = key_value;
-      key.len = strlen(key_value);
+      key.len = (unsigned int) strlen(key_value);
       chash_set(msg_table, &key, &value, NULL);
       
       i ++;
@@ -1039,7 +1039,7 @@ static int get_message(mailsession * session,
   
   size = 0;
   snprintf(key, sizeof(key), "%lu", (unsigned long) num);
-  r = mail_cache_db_get_size(maildb, key, strlen(key), &size);
+  r = mail_cache_db_get_size(maildb, key, (size_t) strlen(key), &size);
   /* ignore error */
   
   r = mailmessage_init(msg, session, db_message_driver,
@@ -1065,7 +1065,7 @@ static int get_message_by_uid(mailsession * session,
 {
   uint32_t msg_num;
   
-  msg_num = strtoul(uid, NULL, 10);
+  msg_num = (uint32_t) strtoul(uid, NULL, 10);
   
   return get_message(session, msg_num, result);
 }

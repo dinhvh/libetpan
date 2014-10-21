@@ -1530,7 +1530,7 @@ int mailprivacy_spawn_and_wait(char * command, char * passphrase,
       close(passphrase_input[0]);
       
       if ((passphrase != NULL) && (strlen(passphrase) > 0)) {
-        r = write(passphrase_input[1], passphrase, strlen(passphrase));
+        r = (int) write(passphrase_input[1], passphrase, strlen(passphrase));
         if (r != (int) strlen(passphrase)) {
           close(passphrase_input[1]);
           return ERROR_PASSPHRASE_FILE;
@@ -1538,7 +1538,7 @@ int mailprivacy_spawn_and_wait(char * command, char * passphrase,
       }
       else {
         /* dummy password */
-        r = write(passphrase_input[1], "*dummy*", 7);
+        r = (int) write(passphrase_input[1], "*dummy*", 7);
         if (r != 7) {
           close(passphrase_input[1]);
           return ERROR_PASSPHRASE_FILE;

@@ -252,7 +252,7 @@ int mailimap_uidplus_append(mailimap * session, const char * mailbox,
 
 LIBETPAN_EXPORT
 int mailimap_uidplus_append_simple(mailimap * session, const char * mailbox,
-    const char * content, uint32_t size,
+    const char * content, size_t size,
     uint32_t * uidvalidity_result,
     uint32_t * uid_result)
 {

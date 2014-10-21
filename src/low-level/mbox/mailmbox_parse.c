@@ -73,7 +73,7 @@ mailmbox_fields_parse(char * str, size_t length,
   size_t cur_token;
   int r;
   size_t hlen;
-  size_t uid;
+  uint32_t uid;
   int end;
 
   cur_token = * indx;
@@ -96,7 +96,7 @@ mailmbox_fields_parse(char * str, size_t length,
 	  while (str[begin] == ' ')
 	    begin ++;
 	  
-	  uid = strtoul(str + begin, NULL, 10);
+	  uid = (uint32_t) strtoul(str + begin, NULL, 10);
 	}
       }
       

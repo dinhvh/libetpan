@@ -522,7 +522,7 @@ void newsnntp_list_free(clist * l)
 
 /* ******************** POST ******************************** */
 
-static void send_data(newsnntp * f, const char * message, uint32_t size)
+static void send_data(newsnntp * f, const char * message, size_t size)
 {
   mailstream_send_data(f->nntp_stream, message, size,
 		       f->nntp_progr_rate, f->nntp_progr_fun);
@@ -1817,7 +1817,7 @@ static int parse_response(newsnntp * f, char * response)
 {
   int code;
 
-  code = strtol(response, &response, 10);
+  code = (int) strtol(response, &response, 10);
 
   if (response == NULL) {
     f->nntp_response = NULL;
@@ -1866,15 +1866,15 @@ static int parse_group_info(char * response,
 
   line = response;
 
-  count = strtoul(line, &line, 10);
+  count = (uint32_t) strtoul(line, &line, 10);
   if (!parse_space(&line))
     return FALSE;
 
-  first = strtoul(line, &line, 10);
+  first = (uint32_t) strtoul(line, &line, 10);
   if (!parse_space(&line))
     return FALSE;
 
-  last = strtoul(line, &line, 10);
+  last = (uint32_t) strtoul(line, &line, 10);
   if (!parse_space(&line))
     return FALSE;
 
@@ -1923,11 +1923,11 @@ static clist * read_groups_list(newsnntp * f)
     group_name = line;
     line = p;
 
-    last = strtol(line, &line, 10);
+    last = (uint32_t)strtol(line, &line, 10);
     if (!parse_space(&line))
       continue;
 
-    first = strtol(line, &line, 10);
+    first = (uint32_t)strtol(line, &line, 10);
     if (!parse_space(&line))
       continue;
 
@@ -2138,7 +2138,7 @@ static clist * read_distrib_default_value_list(newsnntp * f)
 
     p = line;
 
-    weight = strtoul(p, &remaining, 10);
+    weight = (uint32_t)strtoul(p, &remaining, 10);
     p = remaining;
     parse_space(&p);
       
@@ -2324,7 +2324,7 @@ static clist * read_xhdr_resp_list(newsnntp * f)
     if (mailstream_is_end_multiline(line))
       break;
     
-    article = strtoul(line, &line, 10);
+    article = (uint32_t) strtoul(line, &line, 10);
     if (!parse_space(&line))
       continue;
     

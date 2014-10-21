@@ -772,7 +772,7 @@ mail_build_thread_references(char * default_from,
       }
       else {
 	hashkey.data = msgid;
-	hashkey.len = strlen(msgid);
+	hashkey.len = (unsigned int) strlen(msgid);
 	
 	if (chash_get(msg_id_hash, &hashkey, &hashdata) == 0)
 	  msgid = mailimf_get_message_id();
@@ -801,7 +801,7 @@ mail_build_thread_references(char * default_from,
       }
       
       hashkey.data = msgid;
-      hashkey.len = strlen(msgid);
+      hashkey.len = (unsigned int) strlen(msgid);
       
       hashdata.data = env_tree;
       hashdata.len = 0;
@@ -858,7 +858,7 @@ mail_build_thread_references(char * default_from,
 	msgid = clist_content(cur_ref);
 
 	hashkey.data = msgid;
-	hashkey.len = strlen(msgid);
+	hashkey.len = (unsigned int) strlen(msgid);
 	
 	r = chash_get(msg_id_hash, &hashkey, &hashdata);
 	if (r < 0) {
@@ -884,7 +884,7 @@ mail_build_thread_references(char * default_from,
 	  }
 
 	  hashkey.data = msgid;
-	  hashkey.len = strlen(msgid);
+	  hashkey.len = (unsigned int) strlen(msgid);
 	    
 	  hashdata.data = env_cur_tree;
 	  hashdata.len = 0;
@@ -1062,7 +1062,7 @@ mail_build_thread_references(char * default_from,
       */
 
       key.data = base_subject;
-      key.len = strlen(base_subject);
+      key.len = (unsigned int) strlen(base_subject);
 
       r = chash_get(subject_hash, &key, &data);
 
@@ -1166,7 +1166,7 @@ mail_build_thread_references(char * default_from,
       */
 
       key.data = env_tree->node_base_subject;
-      key.len = strlen(env_tree->node_base_subject);
+      key.len = (unsigned int) strlen(env_tree->node_base_subject);
 
       r = chash_get(subject_hash, &key, &data);
       if (r < 0)

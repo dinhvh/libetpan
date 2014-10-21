@@ -837,7 +837,7 @@ static ssize_t mailstream_low_ssl_read(mailstream_low * s,
   while (1) {
     int ssl_r;
     
-    r = SSL_read(ssl_data->ssl_conn, buf, count);
+    r = SSL_read(ssl_data->ssl_conn, buf, (int) count);
     if (r > 0)
       return r;
     
@@ -985,7 +985,7 @@ static ssize_t mailstream_low_ssl_write(mailstream_low * s,
   if (r <= 0)
     return r;
   
-  r = SSL_write(ssl_data->ssl_conn, buf, count);
+  r = SSL_write(ssl_data->ssl_conn, buf, (int) count);
   if (r > 0)
     return r;
   
