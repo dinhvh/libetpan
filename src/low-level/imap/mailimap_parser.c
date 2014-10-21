@@ -8993,14 +8993,16 @@ mailimap_response_parse_progress(mailstream * fd, MMAPString * buffer,
   if ((r != MAILIMAP_NO_ERROR) && (r != MAILIMAP_ERROR_PARSE))
     return r;
   
-  for(iter = clist_begin(cont_req_or_resp_data_list) ; iter != NULL ; iter = clist_next(iter)) {
-    struct mailimap_cont_req_or_resp_data * cont_req_or_resp_data = clist_content(iter);
-    if (cont_req_or_resp_data->rsp_type != MAILIMAP_RESP_RESP_DATA) {
-      continue;
-    }
-    if (cont_req_or_resp_data->rsp_data.rsp_resp_data->rsp_type == MAILIMAP_RESP_DATA_TYPE_COND_BYE) {
-      res = MAILIMAP_ERROR_STREAM;
-      goto free_list;
+  if (r == MAILIMAP_NO_ERROR) {
+    for(iter = clist_begin(cont_req_or_resp_data_list) ; iter != NULL ; iter = clist_next(iter)) {
+      struct mailimap_cont_req_or_resp_data * cont_req_or_resp_data = clist_content(iter);
+      if (cont_req_or_resp_data->rsp_type != MAILIMAP_RESP_RESP_DATA) {
+        continue;
+      }
+      if (cont_req_or_resp_data->rsp_data.rsp_resp_data->rsp_type == MAILIMAP_RESP_DATA_TYPE_COND_BYE) {
+        res = MAILIMAP_ERROR_STREAM;
+        goto free_list;
+      }
     }
   }
   
