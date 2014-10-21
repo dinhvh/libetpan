@@ -2038,7 +2038,7 @@ static int mailimap_search_key_need_to_send_charset(struct mailimap_search_key *
       return 0;
       
     case MAILIMAP_SEARCH_KEY_XGMTHRID:
-      return !is_ascii(key->sk_data.sk_xgmthrid);
+      return 0;
       
     case MAILIMAP_SEARCH_KEY_MULTIPLE:
     {
@@ -2069,7 +2069,7 @@ static int mailimap_search_key_need_to_send_charset(struct mailimap_search_key *
       return 0;    
       
     case MAILIMAP_SEARCH_KEY_XGMMSGID:
-      return !is_ascii(key->sk_data.sk_xgmmsgid);
+      return 0;
       
     default:
       /* don't know, better send */

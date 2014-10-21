@@ -1551,14 +1551,14 @@ static int sasl_getsimple(void * context, int id,
     if (result != NULL)
       * result = session->imap_sasl.sasl_login;
     if (len != NULL)
-      * len = strlen(session->imap_sasl.sasl_login);
+      * len = (unsigned) strlen(session->imap_sasl.sasl_login);
     return SASL_OK;
     
   case SASL_CB_AUTHNAME:
     if (result != NULL)
       * result = session->imap_sasl.sasl_auth_name;
     if (len != NULL)
-      * len = strlen(session->imap_sasl.sasl_auth_name);
+      * len = (unsigned) strlen(session->imap_sasl.sasl_auth_name);
     return SASL_OK;
   }
   
@@ -1741,12 +1741,12 @@ int mailimap_authenticate(mailimap * session, const char * auth_type,
     }
     
     if (got_response) {
-      size_t response_len;
+      unsigned int response_len;
       char * decoded;
       unsigned int decoded_len;
       unsigned int max_decoded;
       
-      response_len = strlen(response_base64);
+      response_len = (unsigned int) strlen(response_base64);
       max_decoded = response_len * 3 / 4;
       decoded = malloc(max_decoded + 1);
       if (decoded == NULL) {

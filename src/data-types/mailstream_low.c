@@ -93,9 +93,9 @@ static inline void mailstream_logger_internal(mailstream_low * s, int is_stream_
       f = fopen(LOG_FILE, "a"); \
       umask(old_mask); \
       if (f != NULL) { \
-        int nmemb; \
+        size_t nmemb; \
         maillock_write_lock(LOG_FILE, fileno(f)); \
-        nmemb = fwrite((buf), 1, (size_t) (size), f); \
+        nmemb = fwrite((buf), 1, (size), f); \
         maillock_write_unlock(LOG_FILE, fileno(f)); \
         fclose(f); \
       } \
@@ -120,9 +120,9 @@ static inline void mailstream_logger_internal(mailstream_low * s, int is_stream_
       f = fopen(LOG_FILE, "a"); \
       umask(old_mask); \
       if (f != NULL) { \
-        int nmemb; \
+        size_t nmemb; \
         maillock_write_lock(LOG_FILE, fileno(f)); \
-        nmemb = fwrite((buf), 1, (size_t) (size), f); \
+        nmemb = fwrite((buf), 1, (size), f); \
         maillock_write_unlock(LOG_FILE, fileno(f)); \
         fclose(f); \
       } \
@@ -147,7 +147,7 @@ static inline void mailstream_logger_internal(mailstream_low * s, int is_stream_
       f = fopen(LOG_FILE, "a"); \
       umask(old_mask); \
       if (f != NULL) { \
-        int nmemb; \
+        size_t nmemb; \
         maillock_write_lock(LOG_FILE, fileno(f)); \
         nmemb = fputs((str), f); \
         maillock_write_unlock(LOG_FILE, fileno(f)); \

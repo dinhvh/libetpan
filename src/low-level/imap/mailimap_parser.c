@@ -4400,7 +4400,7 @@ static int get_current_timezone_offset(void)
   if (localtime_r(&t, &lt) == NULL)
     return 0;
   
-  off = (mail_mkgmtime(&lt) - mail_mkgmtime(&gmt)) * 100 / (60 * 60);
+  off = (int) ((mail_mkgmtime(&lt) - mail_mkgmtime(&gmt)) * 100 / (60 * 60));
   
   return off;
 }
@@ -5961,7 +5961,7 @@ static int mailimap_literal_parse_progress(mailstream * fd, MMAPString * buffer,
     goto err;
   }
   
-  left = buffer->len - cur_token;
+  left = (uint32_t) (buffer->len - cur_token);
   
   if (left >= number) {
     if (number > 0)
