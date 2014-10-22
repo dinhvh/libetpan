@@ -55,6 +55,7 @@
 #include "mmapstring.h"
 #include <stdlib.h>
 #include <string.h>
+#include "mailmime_decode.h"
 
 #ifndef TRUE
 #define TRUE 1
@@ -1216,6 +1217,56 @@ int mailimf_atom_parse(const char * message, size_t length,
   return res;
 }
 
+int mailimf_fws_atom_for_word_parse(const char * message, size_t length,
+                                    size_t * indx, char ** result)
+{
+  size_t end;
+  size_t cur_token;
+  int r;
+  int res;
+  struct mailmime_encoded_word * word;
+  int has_fwd;
+  char * atom;
+  
+  cur_token = * indx;
+  
+  r = mailimf_fws_parse(message, length, &cur_token);
+  if ((r != MAILIMF_NO_ERROR) && (r != MAILIMF_ERROR_PARSE)) {
+    res = r;
+    goto err;
+  }
+  
+  end = cur_token;
+  
+  r = mailmime_encoded_word_parse(message, length, &cur_token, &word, &has_fwd);
+  if ((r != MAILIMF_NO_ERROR) && (r != MAILIMF_ERROR_PARSE)) {
+    res = r;
+    goto err;
+  }
+  
+  if (r == MAILIMF_ERROR_PARSE) {
+    return mailimf_fws_atom_parse(message, length, indx, result);
+  }
+  
+  mailmime_encoded_word_free(word);
+  
+  atom = malloc(cur_token - end + 1);
+  if (atom == NULL) {
+    res = MAILIMF_ERROR_MEMORY;
+    goto err;
+  }
+  strncpy(atom, message + end, cur_token - end);
+  atom[cur_token - end] = '\0';
+  
+  * result = atom;
+  * indx = cur_token;
+  
+  return MAILIMF_NO_ERROR;
+  
+err:
+  return res;
+}
+
 int mailimf_fws_atom_parse(const char * message, size_t length,
 			   size_t * indx, char ** result)
 {
@@ -1590,7 +1641,7 @@ int mailimf_fws_word_parse(const char * message, size_t length,
 
   cur_token = * indx;
 
-  r = mailimf_fws_atom_parse(message, length, &cur_token, &word);
+  r = mailimf_fws_atom_for_word_parse(message, length, &cur_token, &word);
 
   if (r == MAILIMF_ERROR_PARSE)
     r = mailimf_fws_quoted_string_parse(message, length, &cur_token, &word);

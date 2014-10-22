@@ -87,12 +87,7 @@ mailmime_non_encoded_word_parse(const char * message, size_t length,
                                 size_t * indx,
                                 char ** result, int * p_has_fwd);
 
-static int
-mailmime_encoded_word_parse(const char * message, size_t length,
-                            size_t * indx,
-                            struct mailmime_encoded_word ** result,
-                            int * p_has_fwd);
-     
+    
 
 enum {
   TYPE_ERROR,
@@ -368,10 +363,10 @@ mailmime_non_encoded_word_parse(const char * message, size_t length,
   return res;
 }
 
-static int mailmime_encoded_word_parse(const char * message, size_t length,
-                                       size_t * indx,
-                                       struct mailmime_encoded_word ** result,
-                                       int * p_has_fwd)
+int mailmime_encoded_word_parse(const char * message, size_t length,
+                                size_t * indx,
+                                struct mailmime_encoded_word ** result,
+                                int * p_has_fwd)
 {
   size_t cur_token;
   char * charset;
