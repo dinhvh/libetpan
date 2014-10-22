@@ -37,7 +37,8 @@ etpaninclude_HEADERS = \
 	mailimf_write_generic.h mailimf_write_mem.h
 
 AM_CPPFLAGS = -I$(top_builddir)/include \
-	-I$(top_srcdir)/src/data-types
+	-I$(top_srcdir)/src/data-types \
+  -I$(top_srcdir)/src/low-level/mime
 
 noinst_LTLIBRARIES = libimf.la
 
