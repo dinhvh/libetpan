@@ -1236,7 +1236,7 @@ static int imapdriver_login_sasl(mailsession * session,
 {
   int r;
 
-  if (strcasecmp(auth_type, "oauth2") == 0)
+  if (strcasecmp(auth_type, "xoauth2") == 0)
     r = mailimap_oauth2_authenticate(get_imap_session(session), auth_name, password);
   else
     r = mailimap_authenticate(get_imap_session(session),
