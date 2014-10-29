@@ -585,7 +585,7 @@ int mailsession_get_message_by_uid(mailsession * session,
   @param remote_ip_port remote IP:port (server)
   @param login          login
   @param auth_name      authentication name
-  @param password       password
+  @param password       password (or token for OAuth2 login)
   @param realm          realm
 
   @return MAIL_NO_ERROR is returned on success, MAIL_ERROR_XXX is returned
