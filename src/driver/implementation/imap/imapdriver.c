@@ -1236,9 +1236,13 @@ static int imapdriver_login_sasl(mailsession * session,
 {
   int r;
 
-  r = mailimap_authenticate(get_imap_session(session),
-      auth_type, server_fqdn, local_ip_port, remote_ip_port,
-      login, auth_name, password, realm);
+  if (strcasecmp(auth_type, "OAUTH2") == 0) {
+    r = mailimap_oauth2_authenticate(get_imap_session(session), auth_name, password);
+  } else {
+    r = mailimap_authenticate(get_imap_session(session),
+        auth_type, server_fqdn, local_ip_port, remote_ip_port,
+        login, auth_name, password, realm);
+  }
   
   return imap_error_to_mail_error(r);
 }
