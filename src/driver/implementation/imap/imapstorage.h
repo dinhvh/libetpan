@@ -69,6 +69,8 @@ extern "C" {
   @param login is the login of the IMAP4rev1 account.
 
   @param password is the password of the IMAP4rev1 account.
+    If performing OAuth2 login, use the OAuth2 token here
+    instead of password.
 
   @param cached if this value is != 0, a persistant cache will be
     stored on local system.
