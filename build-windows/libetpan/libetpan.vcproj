@@ -984,6 +984,10 @@
 							RelativePath="..\..\src\driver\implementation\imap\imapstorage.c"
 							>
 						</File>
+						<File
+							RelativePath="..\..\src\low-level\imap\mailimap_oauth2.c"
+							>
+						</File>
 					</Filter>
 					<Filter
 						Name="maildir"
