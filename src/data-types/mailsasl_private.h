@@ -8,6 +8,8 @@ extern"C"{
 
 extern void mailsasl_init_lock(void);
 
+extern void mailsasl_uninit_lock(void);
+
 #ifdef __cplusplus
 }
 #endif

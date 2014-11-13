@@ -242,6 +242,7 @@ int main(int argc, char **argv) {
   struct mem_message message;
   int r;
 
+
 #if HAVE_GETOPT_LONG
   int indx;
   static struct option long_options[] = {
@@ -316,5 +317,8 @@ int main(int argc, char **argv) {
   send_message(message.data, message.len, argv);
 
   release(&message);
+
+  fprintf(stdout, "Sent ok.\n");
+
   return EXIT_SUCCESS;
 }

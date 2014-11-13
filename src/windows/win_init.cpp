@@ -67,6 +67,18 @@ class win_init {
 	}
 	~win_init() {
 		WSACleanup();
+
+#ifdef _MSC_VER
+		/* Uninitialize Mutexes */
+		mmapstring_uninit_lock();
+#ifdef USE_SSL
+		mailstream_ssl_uninit_lock();
+#endif
+
+#ifdef USE_SASL
+		mailsasl_uninit_lock();
+#endif
+		#endif
 	}
 
   private:
