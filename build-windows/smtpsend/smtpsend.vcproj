@@ -43,7 +43,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="../include/libetpan/;../include;../../src/gnu"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_MBCS"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_MBCS;USE_SSL"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"

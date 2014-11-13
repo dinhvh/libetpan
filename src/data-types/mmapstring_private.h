@@ -39,6 +39,8 @@ extern "C"
 
 	extern void mmapstring_init_lock(void);
 
+	extern void mmapstring_uninit_lock(void);
+
 #ifdef __cplusplus
 }
 #endif

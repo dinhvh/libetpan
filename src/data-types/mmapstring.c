@@ -98,6 +98,13 @@ void mmapstring_init_lock(void)
 #endif
 }
 
+void mmapstring_uninit_lock(void)
+{
+#if !defined (HAVE_PTHREAD_H) && defined (WIN32)
+	DeleteCriticalSection(&mmapstring_lock);
+#endif
+}
+
 static void mmapstring_hashtable_init(void)
 {
   mmapstring_hashtable = chash_new(CHASH_DEFAULTSIZE, CHASH_COPYKEY);

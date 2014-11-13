@@ -84,6 +84,18 @@ void mailsasl_init_lock(){
 #endif
 }
 
+void mailsasl_uninit_lock(){
+#if defined(HAVE_PTHREAD_H) && !defined(IGNORE_PTHREAD_H)
+	// nothing to do
+#elif (defined WIN32)
+	static int volatile mainsasl_init_lock_done = 0;
+	if (InterlockedExchange(&mainsasl_init_lock_done, 1) == 0){
+		DeleteCriticalSection(&sasl_lock);
+	}
+#endif
+}
+
+
 #endif
 
 void mailsasl_external_ref(void)

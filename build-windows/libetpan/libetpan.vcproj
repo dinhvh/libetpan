@@ -447,6 +447,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\src\data-types\mailsasl_private.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\data-types\mailstream.c"
 					>
 				</File>
@@ -479,11 +483,19 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\src\data-types\mailstream_ssl_private.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\data-types\md5.c"
 					>
 				</File>
 				<File
 					RelativePath="..\..\src\data-types\mmapstring.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\data-types\mmapstring_private.h"
 					>
 				</File>
 				<File

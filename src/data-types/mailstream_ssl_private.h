@@ -39,6 +39,8 @@ extern "C"
 
 extern void mailstream_ssl_init_lock(void);
 
+extern void mailstream_ssl_uninit_lock(void);
+
 #ifdef __cplusplus
 }
 #endif
