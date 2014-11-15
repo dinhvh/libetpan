@@ -60,7 +60,7 @@
 		typedef INT64 int64_t;
 #	endif
 #	if !defined(pid_t)
-		typedef DWORD pid_t;
+		typedef int pid_t;
 #	endif
 
 #	if !defined(caddr_t)
