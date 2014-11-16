@@ -108,6 +108,7 @@ libetpan_version.h
 ..\src\low-level\imap\mailimap.h
 ..\src\low-level\imap\mailimap_helper.h
 ..\src\low-level\imap\mailimap_keywords.h
+..\src\low-level\imap\mailimap_oauth2.h
 ..\src\low-level\imap\mailimap_parser.h
 ..\src\low-level\imap\mailimap_print.h
 ..\src\low-level\imap\mailimap_sender.h
@@ -171,6 +172,7 @@ libetpan_version.h
 ..\src\low-level\pop3\mailpop3_types.h
 ..\src\low-level\smtp\mailsmtp.h
 ..\src\low-level\smtp\mailsmtp_helper.h
+..\src\low-level\smtp\mailsmtp_oauth2.h
 ..\src\low-level\smtp\mailsmtp_socket.h
 ..\src\low-level\smtp\mailsmtp_ssl.h
 ..\src\low-level\smtp\mailsmtp_types.h
