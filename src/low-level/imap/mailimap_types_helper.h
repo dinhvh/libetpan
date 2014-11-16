@@ -59,12 +59,14 @@ extern "C" {
   given by indx
 */
 
+LIBETPAN_EXPORT
 struct mailimap_set_item * mailimap_set_item_new_single(uint32_t indx);
 
 /*
   this function creates a new set with one set item
  */
 
+LIBETPAN_EXPORT
 struct mailimap_set *
 mailimap_set_new_single_item(struct mailimap_set_item * item);
 
@@ -72,18 +74,21 @@ mailimap_set_new_single_item(struct mailimap_set_item * item);
   this function creates a set with a single interval
 */
 
+LIBETPAN_EXPORT
 struct mailimap_set * mailimap_set_new_interval(uint32_t first, uint32_t last);
 
 /*
   this function creates a set with a single message
 */
 
+LIBETPAN_EXPORT
 struct mailimap_set * mailimap_set_new_single(uint32_t indx);
 
 /*
   this function creates an empty set of messages
 */
 
+LIBETPAN_EXPORT
 struct mailimap_set * mailimap_set_new_empty(void);
 
 /*
@@ -93,6 +98,7 @@ struct mailimap_set * mailimap_set_new_empty(void);
   other code will be returned otherwise
 */
 
+LIBETPAN_EXPORT
 int mailimap_set_add(struct mailimap_set * set,
 		struct mailimap_set_item * set_item);
 
@@ -103,6 +109,7 @@ int mailimap_set_add(struct mailimap_set * set,
   other code will be returned otherwise
 */
 
+LIBETPAN_EXPORT
 int mailimap_set_add_interval(struct mailimap_set * set,
 		uint32_t first, uint32_t last);
 
@@ -113,6 +120,7 @@ int mailimap_set_add_interval(struct mailimap_set * set,
   other code will be returned otherwise
 */
 
+LIBETPAN_EXPORT
 int mailimap_set_add_single(struct mailimap_set * set,
 			 uint32_t indx);
 
@@ -121,6 +129,7 @@ int mailimap_set_add_single(struct mailimap_set * set,
   the header of a message
 */
 
+LIBETPAN_EXPORT
 struct mailimap_section * mailimap_section_new_header(void);
 
 /*
@@ -128,6 +137,7 @@ struct mailimap_section * mailimap_section_new_header(void);
   a list of headers
 */
 
+LIBETPAN_EXPORT
 struct mailimap_section *
 mailimap_section_new_header_fields(struct mailimap_header_list * header_list);
 
@@ -136,6 +146,7 @@ mailimap_section_new_header_fields(struct mailimap_header_list * header_list);
   other than those given
 */
 
+LIBETPAN_EXPORT
 struct mailimap_section *
 mailimap_section_new_header_fields_not(struct mailimap_header_list * header_list);
 
@@ -144,6 +155,7 @@ mailimap_section_new_header_fields_not(struct mailimap_header_list * header_list
   text of a message
  */
 
+LIBETPAN_EXPORT
 struct mailimap_section * mailimap_section_new_text(void);
 
 /*
@@ -151,6 +163,7 @@ struct mailimap_section * mailimap_section_new_text(void);
   content of a MIME part
 */
 
+LIBETPAN_EXPORT
 struct mailimap_section *
 mailimap_section_new_part(struct mailimap_section_part * part);
 
@@ -159,6 +172,7 @@ mailimap_section_new_part(struct mailimap_section_part * part);
   MIME fields of a MIME part
 */
 
+LIBETPAN_EXPORT
 struct mailimap_section *
 mailimap_section_new_part_mime(struct mailimap_section_part * part);
 
@@ -167,6 +181,7 @@ mailimap_section_new_part_mime(struct mailimap_section_part * part);
   headers of a MIME part if the MIME type is a message/rfc822
 */
 
+LIBETPAN_EXPORT
 struct mailimap_section *
 mailimap_section_new_part_header(struct mailimap_section_part * part);
 
@@ -175,6 +190,7 @@ mailimap_section_new_part_header(struct mailimap_section_part * part);
   a list of headers of a MIME part if the MIME type is a message/rfc822
 */
 
+LIBETPAN_EXPORT
 struct mailimap_section *
 mailimap_section_new_part_header_fields(struct mailimap_section_part *
 					part,
@@ -187,6 +203,7 @@ mailimap_section_new_part_header_fields(struct mailimap_section_part *
   is a message/rfc822
 */
 
+LIBETPAN_EXPORT
 struct mailimap_section *
 mailimap_section_new_part_header_fields_not(struct mailimap_section_part
 					    * part,
@@ -198,6 +215,7 @@ mailimap_section_new_part_header_fields_not(struct mailimap_section_part
   text part of message if the MIME type is a message/rfc822
 */
 
+LIBETPAN_EXPORT
 struct mailimap_section *
 mailimap_section_new_part_text(struct mailimap_section_part * part);
 
@@ -207,6 +225,7 @@ mailimap_section_new_part_text(struct mailimap_section_part * part);
   envelope of a message
 */
 
+LIBETPAN_EXPORT
 struct mailimap_fetch_att *
 mailimap_fetch_att_new_envelope(void);
 
@@ -216,6 +235,7 @@ mailimap_fetch_att_new_envelope(void);
   flags of a message
 */
 
+LIBETPAN_EXPORT
 struct mailimap_fetch_att *
 mailimap_fetch_att_new_flags(void);
 
@@ -224,6 +244,7 @@ mailimap_fetch_att_new_flags(void);
   internal date of a message
 */
 
+LIBETPAN_EXPORT
 struct mailimap_fetch_att *
 mailimap_fetch_att_new_internaldate(void);
 
@@ -233,6 +254,7 @@ mailimap_fetch_att_new_internaldate(void);
   text part of a message
 */
 
+LIBETPAN_EXPORT
 struct mailimap_fetch_att *
 mailimap_fetch_att_new_rfc822(void);
 
@@ -242,6 +264,7 @@ mailimap_fetch_att_new_rfc822(void);
   header of a message
 */
 
+LIBETPAN_EXPORT
 struct mailimap_fetch_att *
 mailimap_fetch_att_new_rfc822_header(void);
 
@@ -250,6 +273,7 @@ mailimap_fetch_att_new_rfc822_header(void);
   size of a message
 */
 
+LIBETPAN_EXPORT
 struct mailimap_fetch_att *
 mailimap_fetch_att_new_rfc822_size(void);
 
@@ -258,6 +282,7 @@ mailimap_fetch_att_new_rfc822_size(void);
   envelope of a message
 */
 
+LIBETPAN_EXPORT
 struct mailimap_fetch_att *
 mailimap_fetch_att_new_rfc822_text(void);
 
@@ -266,6 +291,7 @@ mailimap_fetch_att_new_rfc822_text(void);
   the MIME structure of a message
 */
 
+LIBETPAN_EXPORT
 struct mailimap_fetch_att *
 mailimap_fetch_att_new_body(void);
 
@@ -274,6 +300,7 @@ mailimap_fetch_att_new_body(void);
   the MIME structure of a message and additional MIME information
 */
 
+LIBETPAN_EXPORT
 struct mailimap_fetch_att *
 mailimap_fetch_att_new_bodystructure(void);
 
@@ -282,6 +309,7 @@ mailimap_fetch_att_new_bodystructure(void);
   unique identifier of a message
 */
 
+LIBETPAN_EXPORT
 struct mailimap_fetch_att *
 mailimap_fetch_att_new_uid(void);
 
@@ -290,6 +318,7 @@ mailimap_fetch_att_new_uid(void);
   a given section of a message
 */
 
+LIBETPAN_EXPORT
 struct mailimap_fetch_att *
 mailimap_fetch_att_new_body_section(struct mailimap_section * section);
 
@@ -298,6 +327,7 @@ mailimap_fetch_att_new_body_section(struct mailimap_section * section);
   a given section of a message without marking it as read
 */
 
+LIBETPAN_EXPORT
 struct mailimap_fetch_att *
 mailimap_fetch_att_new_body_peek_section(struct mailimap_section * section);
 
@@ -306,6 +336,7 @@ mailimap_fetch_att_new_body_peek_section(struct mailimap_section * section);
   a part of a section of a message
 */
 
+LIBETPAN_EXPORT
 struct mailimap_fetch_att *
 mailimap_fetch_att_new_body_section_partial(struct mailimap_section * section,
 					    uint32_t offset, uint32_t size);
@@ -315,6 +346,7 @@ mailimap_fetch_att_new_body_section_partial(struct mailimap_section * section,
   a part of a section of a message without marking it as read
 */
 
+LIBETPAN_EXPORT
 struct mailimap_fetch_att *
 mailimap_fetch_att_new_body_peek_section_partial(struct mailimap_section * section,
 						 uint32_t offset, uint32_t size);
@@ -323,6 +355,7 @@ mailimap_fetch_att_new_body_peek_section_partial(struct mailimap_section * secti
  creates a mailimap_fetch_att extension
 */
     
+LIBETPAN_EXPORT
 struct mailimap_fetch_att *
     mailimap_fetch_att_new_extension(char * ext_keyword);
 
@@ -331,6 +364,7 @@ struct mailimap_fetch_att *
   (FLAGS INTERNALDATE RFC822.SIZE ENVELOPE) of a message
 */
 
+LIBETPAN_EXPORT
 struct mailimap_fetch_type *
 mailimap_fetch_type_new_all(void);
 
@@ -339,6 +373,7 @@ mailimap_fetch_type_new_all(void);
   (FLAGS INTERNALDATE RFC822.SIZE ENVELOPE BODY)
 */
 
+LIBETPAN_EXPORT
 struct mailimap_fetch_type *
 mailimap_fetch_type_new_full(void);
 
@@ -347,6 +382,7 @@ mailimap_fetch_type_new_full(void);
   (FLAGS INTERNALDATE RFC822.SIZE)
 */
 
+LIBETPAN_EXPORT
 struct mailimap_fetch_type *
 mailimap_fetch_type_new_fast(void);
 
@@ -355,6 +391,7 @@ mailimap_fetch_type_new_fast(void);
   the given fetch attribute
 */
 
+LIBETPAN_EXPORT
 struct mailimap_fetch_type *
 mailimap_fetch_type_new_fetch_att(struct mailimap_fetch_att * fetch_att);
 
@@ -363,6 +400,7 @@ mailimap_fetch_type_new_fetch_att(struct mailimap_fetch_att * fetch_att);
   the list of fetch attributes
 */
 
+LIBETPAN_EXPORT
 struct mailimap_fetch_type *
 mailimap_fetch_type_new_fetch_att_list(clist * fetch_att_list);
 
@@ -370,6 +408,7 @@ mailimap_fetch_type_new_fetch_att_list(clist * fetch_att_list);
   this function creates a mailimap_fetch_type structure
 */
 
+LIBETPAN_EXPORT
 struct mailimap_fetch_type *
 mailimap_fetch_type_new_fetch_att_list_empty(void);
 
@@ -381,6 +420,7 @@ mailimap_fetch_type_new_fetch_att_list_empty(void);
   other code will be returned otherwise
 */
 
+LIBETPAN_EXPORT
 int
 mailimap_fetch_type_new_fetch_att_list_add(struct mailimap_fetch_type *
 					   fetch_type,
@@ -391,6 +431,7 @@ mailimap_fetch_type_new_fetch_att_list_add(struct mailimap_fetch_type *
   this function creates a store attribute to set the given flags
 */
 
+LIBETPAN_EXPORT
 struct mailimap_store_att_flags *
 mailimap_store_att_flags_new_set_flags(struct mailimap_flag_list * flags);
 
@@ -398,6 +439,7 @@ mailimap_store_att_flags_new_set_flags(struct mailimap_flag_list * flags);
   this function creates a store attribute to silently set the given flags
 */
 
+LIBETPAN_EXPORT
 struct mailimap_store_att_flags *
 mailimap_store_att_flags_new_set_flags_silent(struct mailimap_flag_list *
 					      flags);
@@ -406,6 +448,7 @@ mailimap_store_att_flags_new_set_flags_silent(struct mailimap_flag_list *
   this function creates a store attribute to add the given flags
 */
 
+LIBETPAN_EXPORT
 struct mailimap_store_att_flags *
 mailimap_store_att_flags_new_add_flags(struct mailimap_flag_list * flags);
 
@@ -413,6 +456,7 @@ mailimap_store_att_flags_new_add_flags(struct mailimap_flag_list * flags);
   this function creates a store attribute to add silently the given flags
 */
 
+LIBETPAN_EXPORT
 struct mailimap_store_att_flags *
 mailimap_store_att_flags_new_add_flags_silent(struct mailimap_flag_list *
 					      flags);
@@ -421,6 +465,7 @@ mailimap_store_att_flags_new_add_flags_silent(struct mailimap_flag_list *
   this function creates a store attribute to remove the given flags
 */
 
+LIBETPAN_EXPORT
 struct mailimap_store_att_flags *
 mailimap_store_att_flags_new_remove_flags(struct mailimap_flag_list * flags);
 
@@ -428,6 +473,7 @@ mailimap_store_att_flags_new_remove_flags(struct mailimap_flag_list * flags);
   this function creates a store attribute to remove silently the given flags
 */
 
+LIBETPAN_EXPORT
 struct mailimap_store_att_flags *
 mailimap_store_att_flags_new_remove_flags_silent(struct mailimap_flag_list *
 						 flags);
@@ -437,6 +483,7 @@ mailimap_store_att_flags_new_remove_flags_silent(struct mailimap_flag_list *
   this function creates a condition structure to match all messages
 */
 
+LIBETPAN_EXPORT
 struct mailimap_search_key *
 mailimap_search_key_new_all(void);
 
@@ -447,6 +494,7 @@ mailimap_search_key_new_all(void);
     with malloc()
 */
 
+LIBETPAN_EXPORT
 struct mailimap_search_key *
 mailimap_search_key_new_bcc(char * sk_bcc);
 
@@ -455,6 +503,7 @@ mailimap_search_key_new_bcc(char * sk_bcc);
   internal date
 */
 
+LIBETPAN_EXPORT
 struct mailimap_search_key *
 mailimap_search_key_new_before(struct mailimap_date * sk_before);
 
@@ -466,6 +515,7 @@ mailimap_search_key_new_before(struct mailimap_date * sk_before);
     be allocated with malloc()
 */
 
+LIBETPAN_EXPORT
 struct mailimap_search_key *
 mailimap_search_key_new_body(char * sk_body);
 
@@ -478,6 +528,7 @@ mailimap_search_key_new_body(char * sk_body);
     with malloc()
 */
 
+LIBETPAN_EXPORT
 struct mailimap_search_key *
 mailimap_search_key_new_cc(char * sk_cc);
 
@@ -489,6 +540,7 @@ mailimap_search_key_new_cc(char * sk_cc);
     with malloc()
 */
 
+LIBETPAN_EXPORT
 struct mailimap_search_key *
 mailimap_search_key_new_from(char * sk_from);
 
@@ -497,6 +549,7 @@ mailimap_search_key_new_from(char * sk_from);
   a flag given by keyword
 */
 
+LIBETPAN_EXPORT
 struct mailimap_search_key *
 mailimap_search_key_new_keyword(char * sk_keyword);
 
@@ -505,6 +558,7 @@ mailimap_search_key_new_keyword(char * sk_keyword);
   internal date
 */
 
+LIBETPAN_EXPORT
 struct mailimap_search_key *
 mailimap_search_key_new_on(struct mailimap_date * sk_on);
 
@@ -513,6 +567,7 @@ mailimap_search_key_new_on(struct mailimap_date * sk_on);
   internal date
 */
 
+LIBETPAN_EXPORT
 struct mailimap_search_key *
 mailimap_search_key_new_since(struct mailimap_date * sk_since);
 
@@ -524,6 +579,7 @@ mailimap_search_key_new_since(struct mailimap_date * sk_since);
     be allocated with malloc()
 */
 
+LIBETPAN_EXPORT
 struct mailimap_search_key *
 mailimap_search_key_new_subject(char * sk_subject);
 
@@ -535,6 +591,7 @@ mailimap_search_key_new_subject(char * sk_subject);
     be allocated with malloc()
 */
 
+LIBETPAN_EXPORT
 struct mailimap_search_key *
 mailimap_search_key_new_text(char * sk_text);
 
@@ -546,6 +603,7 @@ mailimap_search_key_new_text(char * sk_text);
     with malloc()
 */
 
+LIBETPAN_EXPORT
 struct mailimap_search_key *
 mailimap_search_key_new_to(char * sk_to);
 
@@ -554,6 +612,7 @@ mailimap_search_key_new_to(char * sk_to);
   no a flag given by unkeyword
 */
 
+LIBETPAN_EXPORT
 struct mailimap_search_key *
 mailimap_search_key_new_unkeyword(char * sk_unkeyword);
 
@@ -568,6 +627,7 @@ mailimap_search_key_new_unkeyword(char * sk_unkeyword);
     with malloc()
 */
 
+LIBETPAN_EXPORT
 struct mailimap_search_key *
 mailimap_search_key_new_header(char * sk_header_name, char * sk_header_value);
   
@@ -575,6 +635,7 @@ mailimap_search_key_new_header(char * sk_header_name, char * sk_header_value);
   this function creates a condition structure to match messages with size
 */
 
+LIBETPAN_EXPORT
 struct mailimap_search_key *
 mailimap_search_key_new_larger(uint32_t sk_larger);
 
@@ -583,6 +644,7 @@ mailimap_search_key_new_larger(uint32_t sk_larger);
   do not match the given condition
 */
 
+LIBETPAN_EXPORT
 struct mailimap_search_key *
 mailimap_search_key_new_not(struct mailimap_search_key * sk_not);
 
@@ -591,6 +653,7 @@ mailimap_search_key_new_not(struct mailimap_search_key * sk_not);
   match one of the given conditions
 */
 
+LIBETPAN_EXPORT
 struct mailimap_search_key *
 mailimap_search_key_new_or(struct mailimap_search_key * sk_or1,
 			   struct mailimap_search_key * sk_or2);
@@ -600,6 +663,7 @@ mailimap_search_key_new_or(struct mailimap_search_key * sk_or1,
   with Date field
 */
 
+LIBETPAN_EXPORT
 struct mailimap_search_key *
 mailimap_search_key_new_sentbefore(struct mailimap_date * sk_sentbefore);
 
@@ -608,6 +672,7 @@ mailimap_search_key_new_sentbefore(struct mailimap_date * sk_sentbefore);
   with Date field
 */
 
+LIBETPAN_EXPORT
 struct mailimap_search_key *
 mailimap_search_key_new_senton(struct mailimap_date * sk_senton);
 
@@ -616,6 +681,7 @@ mailimap_search_key_new_senton(struct mailimap_date * sk_senton);
   with Date field
 */
 
+LIBETPAN_EXPORT
 struct mailimap_search_key *
 mailimap_search_key_new_sentsince(struct mailimap_date * sk_sentsince);
 
@@ -623,6 +689,7 @@ mailimap_search_key_new_sentsince(struct mailimap_date * sk_sentsince);
   this function creates a condition structure to match messages with size
 */
 
+LIBETPAN_EXPORT
 struct mailimap_search_key *
 mailimap_search_key_new_smaller(uint32_t sk_smaller);
 
@@ -631,6 +698,7 @@ mailimap_search_key_new_smaller(uint32_t sk_smaller);
   identifier
 */
 
+LIBETPAN_EXPORT
 struct mailimap_search_key *
 mailimap_search_key_new_uid(struct mailimap_set * sk_uid);
 
@@ -639,6 +707,7 @@ mailimap_search_key_new_uid(struct mailimap_set * sk_uid);
   or unique identifier (depending whether SEARCH or UID SEARCH is used)
 */
 
+LIBETPAN_EXPORT
 struct mailimap_search_key *
 mailimap_search_key_new_set(struct mailimap_set * sk_set);
 
@@ -647,6 +716,7 @@ mailimap_search_key_new_set(struct mailimap_set * sk_set);
   all the conditions given in the list
 */
 
+LIBETPAN_EXPORT
 struct mailimap_search_key *
 mailimap_search_key_new_multiple(clist * sk_multiple);
 
@@ -655,6 +725,7 @@ mailimap_search_key_new_multiple(clist * sk_multiple);
   same as previous but the list is empty
 */
 
+LIBETPAN_EXPORT
 struct mailimap_search_key *
 mailimap_search_key_new_multiple_empty(void);
 
@@ -665,39 +736,50 @@ mailimap_search_key_new_multiple_empty(void);
   other code will be returned otherwise
 */
 
+LIBETPAN_EXPORT
 int
 mailimap_search_key_multiple_add(struct mailimap_search_key * keys,
 				 struct mailimap_search_key * key_item);
 
 
 
+LIBETPAN_EXPORT
 struct mailimap_sort_key *
 mailimap_sort_key_new_arrival(int is_reverse);
 
+LIBETPAN_EXPORT
 struct mailimap_sort_key *
 mailimap_sort_key_new_cc(int is_reverse);
 
+LIBETPAN_EXPORT
 struct mailimap_sort_key *
 mailimap_sort_key_new_date(int is_reverse);
 
+LIBETPAN_EXPORT
 struct mailimap_sort_key *
 mailimap_sort_key_new_from(int is_reverse);
 
+LIBETPAN_EXPORT
 struct mailimap_sort_key *
 mailimap_sort_key_new_size(int is_reverse);
 
+LIBETPAN_EXPORT
 struct mailimap_sort_key *
 mailimap_sort_key_new_subject(int is_reverse);
 
+LIBETPAN_EXPORT
 struct mailimap_sort_key *
 mailimap_sort_key_new_to(int is_reverse);
 
+LIBETPAN_EXPORT
 struct mailimap_sort_key *
 mailimap_sort_key_new_multiple(clist * keys);
 
+LIBETPAN_EXPORT
 struct mailimap_sort_key *
 mailimap_sort_key_new_multiple_empty(void);
 
+LIBETPAN_EXPORT
 int
 mailimap_sort_key_multiple_add(struct mailimap_sort_key * keys,
                                struct mailimap_sort_key * key_item);
@@ -707,6 +789,7 @@ mailimap_sort_key_multiple_add(struct mailimap_sort_key * keys,
   this function creates an empty list of flags
 */
 
+LIBETPAN_EXPORT
 struct mailimap_flag_list *
 mailimap_flag_list_new_empty(void);
 
@@ -717,6 +800,7 @@ mailimap_flag_list_new_empty(void);
   other code will be returned otherwise
 */
 
+LIBETPAN_EXPORT
 int mailimap_flag_list_add(struct mailimap_flag_list * flag_list,
 				struct mailimap_flag * f);
 
@@ -724,30 +808,35 @@ int mailimap_flag_list_add(struct mailimap_flag_list * flag_list,
   this function creates a \Answered flag
 */
 
+LIBETPAN_EXPORT
 struct mailimap_flag * mailimap_flag_new_answered(void);
 
 /*
   this function creates a \Flagged flag
 */
 
+LIBETPAN_EXPORT
 struct mailimap_flag * mailimap_flag_new_flagged(void);
 
 /*
   this function creates a \Deleted flag
 */
 
+LIBETPAN_EXPORT
 struct mailimap_flag * mailimap_flag_new_deleted(void);
 
 /*
   this function creates a \Seen flag
 */
 
+LIBETPAN_EXPORT
 struct mailimap_flag * mailimap_flag_new_seen(void);
 
 /*
   this function creates a \Draft flag
 */
 
+LIBETPAN_EXPORT
 struct mailimap_flag * mailimap_flag_new_draft(void);
 
 /*
@@ -756,6 +845,7 @@ struct mailimap_flag * mailimap_flag_new_draft(void);
   @param flag_keyword this should be allocated with malloc()
 */
 
+LIBETPAN_EXPORT
 struct mailimap_flag * mailimap_flag_new_flag_keyword(char * flag_keyword);
 
 
@@ -765,12 +855,14 @@ struct mailimap_flag * mailimap_flag_new_flag_keyword(char * flag_keyword);
   @param flag_extension this should be allocated with malloc()
 */
 
+LIBETPAN_EXPORT
 struct mailimap_flag * mailimap_flag_new_flag_extension(char * flag_extension);
 
 /*
   this function creates an empty list of status attributes
 */
 
+LIBETPAN_EXPORT
 struct mailimap_status_att_list * mailimap_status_att_list_new_empty(void);
 
 /*
@@ -780,12 +872,14 @@ struct mailimap_status_att_list * mailimap_status_att_list_new_empty(void);
   other code will be returned otherwise
 */
 
+LIBETPAN_EXPORT
 int
 mailimap_status_att_list_add(struct mailimap_status_att_list * sa_list,
 			     int status_att);
 
 /* return mailimap_section_part from a given mailimap_body */
 
+LIBETPAN_EXPORT
 int mailimap_get_section_part_from_body(struct mailimap_body * root_part,
     struct mailimap_body * part,
     struct mailimap_section_part ** result);

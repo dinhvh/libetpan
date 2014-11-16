@@ -44,7 +44,7 @@ extern "C" {
 #include <stdio.h>
 #include <libetpan/mailimf_types.h>
 #include <libetpan/mmapstring.h>
-
+  
 /*
   mailimf_string_write_mem appends a string to a given string
   
@@ -54,6 +54,7 @@ extern "C" {
   @param str is the string to write
 */
 
+LIBETPAN_EXPORT
 int mailimf_string_write_mem(MMAPString * f, int * col,
     const char * str, size_t length);
 
@@ -67,6 +68,7 @@ int mailimf_string_write_mem(MMAPString * f, int * col,
   @param fields is the fields to write
 */
 
+LIBETPAN_EXPORT
 int mailimf_fields_write_mem(MMAPString * f, int * col,
     struct mailimf_fields * fields);
 
@@ -80,6 +82,7 @@ int mailimf_fields_write_mem(MMAPString * f, int * col,
   @param fields is the fields to write
 */
 
+LIBETPAN_EXPORT
 int mailimf_envelope_fields_write_mem(MMAPString * f, int * col,
     struct mailimf_fields * fields);
 
@@ -93,6 +96,7 @@ int mailimf_envelope_fields_write_mem(MMAPString * f, int * col,
   @param field is the field to write
 */
 
+LIBETPAN_EXPORT
 int mailimf_field_write_mem(MMAPString * f, int * col,
     struct mailimf_field * field);
 
@@ -106,12 +110,15 @@ int mailimf_field_write_mem(MMAPString * f, int * col,
   @param string is the string to quote and write
 */
 
+LIBETPAN_EXPORT
 int mailimf_quoted_string_write_mem(MMAPString * f, int * col,
     const char * string, size_t len);
 
+LIBETPAN_EXPORT
 int mailimf_address_list_write_mem(MMAPString * f, int * col,
     struct mailimf_address_list * addr_list);
 
+LIBETPAN_EXPORT
 int mailimf_mailbox_list_write_mem(MMAPString * f, int * col,
     struct mailimf_mailbox_list * mb_list);
 
@@ -125,6 +132,7 @@ int mailimf_mailbox_list_write_mem(MMAPString * f, int * col,
   @param str is the string to write
 */
 
+LIBETPAN_EXPORT
 int mailimf_header_string_write_mem(MMAPString * f, int * col,
     const char * str, size_t length);
 

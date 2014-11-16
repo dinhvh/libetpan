@@ -52,13 +52,25 @@
 extern "C" {
 #endif
 
+LIBETPAN_EXPORT
 mailstream * mailstream_new(mailstream_low * low, size_t buffer_size);
+
+LIBETPAN_EXPORT
 ssize_t mailstream_write(mailstream * s, const void * buf, size_t count);
+
+LIBETPAN_EXPORT
 ssize_t mailstream_read(mailstream * s, void * buf, size_t count);
+
+LIBETPAN_EXPORT
 int mailstream_close(mailstream * s);
+
+LIBETPAN_EXPORT
 int mailstream_flush(mailstream * s);
+
+LIBETPAN_EXPORT
 ssize_t mailstream_feed_read_buffer(mailstream * s);
 
+LIBETPAN_EXPORT
 void mailstream_log_error(mailstream * s, char * buf, size_t count);
 
 LIBETPAN_EXPORT
@@ -86,19 +98,29 @@ extern void (* mailstream_logger_id)(mailstream_low * s, int is_stream_data, int
 	const char * str, size_t size);
 #endif
 
+LIBETPAN_EXPORT
 void mailstream_set_logger(mailstream * s, void (* logger)(mailstream * s, int log_type,
   const char * str, size_t size, void * context), void * logger_context);
 
 /* can be run in thread */
+LIBETPAN_EXPORT
 int mailstream_wait_idle(mailstream * s, int max_idle_delay);
 
 /* in main thread */
+LIBETPAN_EXPORT
 int mailstream_setup_idle(mailstream * s);
+
+LIBETPAN_EXPORT
 void mailstream_unsetup_idle(mailstream * s);
+
+LIBETPAN_EXPORT
 void mailstream_interrupt_idle(mailstream * s);
 
 /* Get certificate chain. Returns an array of MMAPString containing DER data or NULL if it's not a SSL connection */
+LIBETPAN_EXPORT
 carray * mailstream_get_certificate_chain(mailstream * s);
+
+LIBETPAN_EXPORT
 void mailstream_certificate_chain_free(carray * certificate_chain);
 
 #define LIBETPAN_MAILSTREAM_NETWORK_DELAY

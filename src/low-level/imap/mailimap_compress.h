@@ -48,6 +48,7 @@
      MAILIMAP_NO_ERROR codes
  */
 
+LIBETPAN_EXPORT
 int mailimap_compress(mailimap * session);
 
 /*
@@ -61,6 +62,7 @@ int mailimap_compress(mailimap * session);
    @return returns 1 if compression deflate is available on the server.
  */
 
+LIBETPAN_EXPORT
 int mailimap_has_compress_deflate(mailimap * session);
 
 #endif

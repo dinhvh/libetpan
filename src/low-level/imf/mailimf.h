@@ -282,24 +282,31 @@ mailimf_optional_fields_parse(const char * message, size_t length,
 
 /* internal use, exported for MIME */
 
+LIBETPAN_EXPORT
 int mailimf_fws_parse(const char * message, size_t length, size_t * indx);
 
+LIBETPAN_EXPORT
 int mailimf_cfws_parse(const char * message, size_t length,
 		       size_t * indx);
 
+LIBETPAN_EXPORT
 int mailimf_char_parse(const char * message, size_t length,
 		       size_t * indx, char token);
 
+LIBETPAN_EXPORT
 int mailimf_unstrict_char_parse(const char * message, size_t length,
 				size_t * indx, char token);
 
+LIBETPAN_EXPORT
 int mailimf_crlf_parse(const char * message, size_t length, size_t * indx);
 
+LIBETPAN_EXPORT
 int
 mailimf_custom_string_parse(const char * message, size_t length,
 			    size_t * indx, char ** result,
 			    int (* is_custom_char)(char));
 
+LIBETPAN_EXPORT
 int
 mailimf_token_case_insensitive_len_parse(const char * message, size_t length,
 					 size_t * indx, char * token,
@@ -309,37 +316,47 @@ mailimf_token_case_insensitive_len_parse(const char * message, size_t length,
     mailimf_token_case_insensitive_len_parse(message, length, indx, token, \
 					     strlen(token))
 
+LIBETPAN_EXPORT
 int mailimf_quoted_string_parse(const char * message, size_t length,
 				size_t * indx, char ** result);
 
+LIBETPAN_EXPORT
 int
 mailimf_number_parse(const char * message, size_t length,
 		     size_t * indx, uint32_t * result);
 
+LIBETPAN_EXPORT
 int mailimf_msg_id_parse(const char * message, size_t length,
 			 size_t * indx,
 			 char ** result);
 
+LIBETPAN_EXPORT
 int mailimf_msg_id_list_parse(const char * message, size_t length,
 			      size_t * indx, clist ** result);
 
+LIBETPAN_EXPORT
 int mailimf_word_parse(const char * message, size_t length,
 		       size_t * indx, char ** result);
 
+LIBETPAN_EXPORT
 int mailimf_atom_parse(const char * message, size_t length,
 		       size_t * indx, char ** result);
 
+LIBETPAN_EXPORT
 int mailimf_fws_atom_parse(const char * message, size_t length,
 			   size_t * indx, char ** result);
 
+LIBETPAN_EXPORT
 int mailimf_fws_word_parse(const char * message, size_t length,
 			   size_t * indx, char ** result);
 
+LIBETPAN_EXPORT
 int mailimf_fws_quoted_string_parse(const char * message, size_t length,
 				    size_t * indx, char ** result);
 
 /* exported for IMAP */
 
+LIBETPAN_EXPORT
 int mailimf_references_parse(const char * message, size_t length,
 			     size_t * indx,
 			     struct mailimf_references ** result);

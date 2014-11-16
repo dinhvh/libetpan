@@ -813,6 +813,7 @@ void mailimf_domain_free(char * domain);
 
 void mailimf_domain_literal_free(char * domain);
 
+LIBETPAN_EXPORT
 void mailimf_msg_id_free(char * msg_id);
 
 void mailimf_id_left_free(char * id_left);
