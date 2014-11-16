@@ -743,48 +743,6 @@ mailimap_search_key_multiple_add(struct mailimap_search_key * keys,
 
 
 
-LIBETPAN_EXPORT
-struct mailimap_sort_key *
-mailimap_sort_key_new_arrival(int is_reverse);
-
-LIBETPAN_EXPORT
-struct mailimap_sort_key *
-mailimap_sort_key_new_cc(int is_reverse);
-
-LIBETPAN_EXPORT
-struct mailimap_sort_key *
-mailimap_sort_key_new_date(int is_reverse);
-
-LIBETPAN_EXPORT
-struct mailimap_sort_key *
-mailimap_sort_key_new_from(int is_reverse);
-
-LIBETPAN_EXPORT
-struct mailimap_sort_key *
-mailimap_sort_key_new_size(int is_reverse);
-
-LIBETPAN_EXPORT
-struct mailimap_sort_key *
-mailimap_sort_key_new_subject(int is_reverse);
-
-LIBETPAN_EXPORT
-struct mailimap_sort_key *
-mailimap_sort_key_new_to(int is_reverse);
-
-LIBETPAN_EXPORT
-struct mailimap_sort_key *
-mailimap_sort_key_new_multiple(clist * keys);
-
-LIBETPAN_EXPORT
-struct mailimap_sort_key *
-mailimap_sort_key_new_multiple_empty(void);
-
-LIBETPAN_EXPORT
-int
-mailimap_sort_key_multiple_add(struct mailimap_sort_key * keys,
-                               struct mailimap_sort_key * key_item);
-
-
 /*
   this function creates an empty list of flags
 */
