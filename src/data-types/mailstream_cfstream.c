@@ -51,7 +51,11 @@
 #else
 #define CFSTREAM_ENABLED_DEFAULT 0
 #endif
+
+LIBETPAN_EXPORT
 int mailstream_cfstream_enabled = CFSTREAM_ENABLED_DEFAULT;
+
+LIBETPAN_EXPORT
 int mailstream_cfstream_voip_enabled = 0;
 
 enum {

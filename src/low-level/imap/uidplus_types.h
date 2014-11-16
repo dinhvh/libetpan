@@ -59,14 +59,21 @@ struct mailimap_uidplus_resp_code_copy {
   struct mailimap_set * uid_dest_set;
 };
 
+LIBETPAN_EXPORT
 struct mailimap_uidplus_resp_code_apnd *
 mailimap_uidplus_resp_code_apnd_new(uint32_t uid_uidvalidity, struct mailimap_set * uid_set);
+
+LIBETPAN_EXPORT
 void mailimap_uidplus_resp_code_apnd_free(struct mailimap_uidplus_resp_code_apnd * resp_code_apnd);
 
+LIBETPAN_EXPORT
 struct mailimap_uidplus_resp_code_copy *
 mailimap_uidplus_resp_code_copy_new(uint32_t uid_uidvalidity, struct mailimap_set * uid_source_set, struct mailimap_set * uid_dest_set);
+
+LIBETPAN_EXPORT
 void mailimap_uidplus_resp_code_copy_free(struct mailimap_uidplus_resp_code_copy * resp_code_copy);
 
+LIBETPAN_EXPORT
 void mailimap_uidplus_free(struct mailimap_extension_data * ext_data);
 
 #ifdef __cplusplus

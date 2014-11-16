@@ -33,13 +33,17 @@
 
 #define MAILSTREAM_CFSTREAM_H
 
+#include <libetpan/libetpan-config.h>
 #include <libetpan/mailstream.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
   
+  LIBETPAN_EXPORT
   extern int mailstream_cfstream_enabled;
+  
+  LIBETPAN_EXPORT
   extern int mailstream_cfstream_voip_enabled;
   
   enum {

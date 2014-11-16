@@ -34,6 +34,7 @@
 
 #include "mailimap_types.h"
 
+LIBETPAN_EXPORT
 struct mailimap_id_params_list * mailimap_id_params_list_new(clist * items)
 {
   struct mailimap_id_params_list * list;
@@ -47,6 +48,7 @@ struct mailimap_id_params_list * mailimap_id_params_list_new(clist * items)
   return list;
 }
 
+LIBETPAN_EXPORT
 void mailimap_id_params_list_free(struct mailimap_id_params_list * list)
 {
   clist_foreach(list->idpa_list, (clist_func) mailimap_id_param_free, NULL);
@@ -54,6 +56,7 @@ void mailimap_id_params_list_free(struct mailimap_id_params_list * list)
   free(list);
 }
 
+LIBETPAN_EXPORT
 struct mailimap_id_param * mailimap_id_param_new(char * name, char * value)
 {
   struct mailimap_id_param * param;
@@ -68,6 +71,7 @@ struct mailimap_id_param * mailimap_id_param_new(char * name, char * value)
   return param;
 }
 
+LIBETPAN_EXPORT
 void mailimap_id_param_free(struct mailimap_id_param * param)
 {
   mailimap_string_free(param->idpa_name);
@@ -75,6 +79,7 @@ void mailimap_id_param_free(struct mailimap_id_param * param)
   free(param);
 }
 
+LIBETPAN_EXPORT
 struct mailimap_id_params_list * mailimap_id_params_list_new_empty(void)
 {
   clist * items;
@@ -93,6 +98,7 @@ struct mailimap_id_params_list * mailimap_id_params_list_new_empty(void)
   return list;
 }
 
+LIBETPAN_EXPORT
 int mailimap_id_params_list_add_name_value(struct mailimap_id_params_list * list, char * name, char * value)
 {
   struct mailimap_id_param * param;

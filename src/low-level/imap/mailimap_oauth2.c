@@ -38,9 +38,9 @@
 #include "mailimap_parser.h"
 #include "mailimap.h"
 
-int mailimap_oauth2_authenticate_send(mailimap * session,
-                                      const char * auth_user,
-                                      const char * access_token);
+static int mailimap_oauth2_authenticate_send(mailimap * session,
+                                             const char * auth_user,
+                                             const char * access_token);
 
 LIBETPAN_EXPORT
 int mailimap_oauth2_authenticate(mailimap * session, const char *auth_user, const char * access_token)
@@ -126,9 +126,9 @@ int mailimap_oauth2_authenticate(mailimap * session, const char *auth_user, cons
   }
 }
 
-int mailimap_oauth2_authenticate_send(mailimap * session,
-                                      const char * auth_user,
-                                      const char * access_token)
+static int mailimap_oauth2_authenticate_send(mailimap * session,
+                                             const char * auth_user,
+                                             const char * access_token)
 {
   int r;
   char * ptr;
@@ -199,6 +199,7 @@ int mailimap_oauth2_authenticate_send(mailimap * session,
   return res;
 }
 
+LIBETPAN_EXPORT
 int mailimap_has_xoauth2(mailimap * session)
 {
   return mailimap_has_authentication(session, "XOAUTH2");

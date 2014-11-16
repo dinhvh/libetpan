@@ -33,6 +33,7 @@
 
 #include <stdlib.h>
 
+LIBETPAN_EXPORT
 struct mailimap_condstore_fetch_mod_resp * mailimap_condstore_fetch_mod_resp_new(uint64_t cs_modseq_value)
 {
   struct mailimap_condstore_fetch_mod_resp * fetch_data;
@@ -46,11 +47,13 @@ struct mailimap_condstore_fetch_mod_resp * mailimap_condstore_fetch_mod_resp_new
   return fetch_data;
 }
 
+LIBETPAN_EXPORT
 void mailimap_condstore_fetch_mod_resp_free(struct mailimap_condstore_fetch_mod_resp * fetch_data)
 {
   free(fetch_data);
 }
 
+LIBETPAN_EXPORT
 struct mailimap_condstore_resptextcode * mailimap_condstore_resptextcode_new(int cs_type,
   uint64_t cs_modseq_value, struct mailimap_set * cs_modified_set)
 {
@@ -75,6 +78,7 @@ struct mailimap_condstore_resptextcode * mailimap_condstore_resptextcode_new(int
   return resptextcode;
 }
 
+LIBETPAN_EXPORT
 void mailimap_condstore_resptextcode_free(struct mailimap_condstore_resptextcode * resptextcode)
 {
   switch (resptextcode->cs_type) {
@@ -89,6 +93,7 @@ void mailimap_condstore_resptextcode_free(struct mailimap_condstore_resptextcode
   free(resptextcode);
 }
 
+LIBETPAN_EXPORT
 struct mailimap_condstore_search * mailimap_condstore_search_new(clist * cs_search_result, uint64_t cs_modseq_value)
 {
   struct mailimap_condstore_search * search_data;
@@ -103,6 +108,7 @@ struct mailimap_condstore_search * mailimap_condstore_search_new(clist * cs_sear
   return search_data;
 }
 
+LIBETPAN_EXPORT
 void mailimap_condstore_search_free(struct mailimap_condstore_search * search_data)
 {
   if (search_data->cs_search_result != NULL) {
@@ -112,6 +118,7 @@ void mailimap_condstore_search_free(struct mailimap_condstore_search * search_da
   free(search_data);
 }
 
+LIBETPAN_EXPORT
 struct mailimap_condstore_status_info * mailimap_condstore_status_info_new(uint64_t cs_highestmodseq_value)
 {
   struct mailimap_condstore_status_info * status_info;
@@ -125,6 +132,7 @@ struct mailimap_condstore_status_info * mailimap_condstore_status_info_new(uint6
   return status_info;
 }
 
+LIBETPAN_EXPORT
 void mailimap_condstore_status_info_free(struct mailimap_condstore_status_info * status_info)
 {
   free(status_info);

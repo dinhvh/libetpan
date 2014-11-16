@@ -34,6 +34,7 @@
 #include "mailimap_types.h"
 #include <stdlib.h>
 
+LIBETPAN_EXPORT
 struct mailimap_namespace_response_extension *
 mailimap_namespace_response_extension_new(char * name,
                                           clist * values)
@@ -50,6 +51,7 @@ mailimap_namespace_response_extension_new(char * name,
   return ext;
 }
 
+LIBETPAN_EXPORT
 void mailimap_namespace_response_extension_free(struct mailimap_namespace_response_extension * ext)
 {
   clistiter * cur;
@@ -65,6 +67,7 @@ void mailimap_namespace_response_extension_free(struct mailimap_namespace_respon
   free(ext);
 }
 
+LIBETPAN_EXPORT
 struct mailimap_namespace_info * mailimap_namespace_info_new(char * prefix, char delimiter,
                                                              clist * extensions)
 {
@@ -81,6 +84,7 @@ struct mailimap_namespace_info * mailimap_namespace_info_new(char * prefix, char
   return info;
 }
 
+LIBETPAN_EXPORT
 void mailimap_namespace_info_free(struct mailimap_namespace_info * info)
 {
   clistiter * cur;
@@ -98,6 +102,7 @@ void mailimap_namespace_info_free(struct mailimap_namespace_info * info)
   free(info);
 }
 
+LIBETPAN_EXPORT
 struct mailimap_namespace_item * mailimap_namespace_item_new(clist * data_list)
 {
   struct mailimap_namespace_item * item;
@@ -111,6 +116,7 @@ struct mailimap_namespace_item * mailimap_namespace_item_new(clist * data_list)
   return item;
 }
 
+LIBETPAN_EXPORT
 void mailimap_namespace_item_free(struct mailimap_namespace_item * item)
 {
   clistiter * cur;
@@ -125,6 +131,7 @@ void mailimap_namespace_item_free(struct mailimap_namespace_item * item)
   free(item);
 }
 
+LIBETPAN_EXPORT
 struct mailimap_namespace_data * mailimap_namespace_data_new(struct mailimap_namespace_item * personal,
                                                              struct mailimap_namespace_item * other,
                                                              struct mailimap_namespace_item * shared)
@@ -142,6 +149,7 @@ struct mailimap_namespace_data * mailimap_namespace_data_new(struct mailimap_nam
   return ns;
 }
 
+LIBETPAN_EXPORT
 void mailimap_namespace_data_free(struct mailimap_namespace_data * ns)
 {
   if (ns->ns_personal != NULL) {

@@ -34,6 +34,7 @@
 #include <stdlib.h>
 #include "mailimap_extension_types.h"
 
+LIBETPAN_EXPORT
 struct mailimap_uidplus_resp_code_apnd * mailimap_uidplus_resp_code_apnd_new(uint32_t uid_uidvalidity, struct mailimap_set * uid_set)
 {
   struct mailimap_uidplus_resp_code_apnd * resp_code_apnd;
@@ -48,6 +49,7 @@ struct mailimap_uidplus_resp_code_apnd * mailimap_uidplus_resp_code_apnd_new(uin
   return resp_code_apnd;
 }
 
+LIBETPAN_EXPORT
 void mailimap_uidplus_resp_code_apnd_free(struct mailimap_uidplus_resp_code_apnd * resp_code_apnd)
 {
   if (resp_code_apnd->uid_set != NULL)
@@ -55,6 +57,7 @@ void mailimap_uidplus_resp_code_apnd_free(struct mailimap_uidplus_resp_code_apnd
   free(resp_code_apnd);
 }
 
+LIBETPAN_EXPORT
 struct mailimap_uidplus_resp_code_copy *
 mailimap_uidplus_resp_code_copy_new(uint32_t uid_uidvalidity, struct mailimap_set * uid_source_set, struct mailimap_set * uid_dest_set)
 {
@@ -71,6 +74,7 @@ mailimap_uidplus_resp_code_copy_new(uint32_t uid_uidvalidity, struct mailimap_se
   return resp_code_copy;
 }
 
+LIBETPAN_EXPORT
 void mailimap_uidplus_resp_code_copy_free(struct mailimap_uidplus_resp_code_copy * resp_code_copy)
 {
   if (resp_code_copy->uid_dest_set != NULL)
@@ -80,6 +84,7 @@ void mailimap_uidplus_resp_code_copy_free(struct mailimap_uidplus_resp_code_copy
   free(resp_code_copy);
 }
 
+LIBETPAN_EXPORT
 void mailimap_uidplus_free(struct mailimap_extension_data * ext_data)
 {
   switch (ext_data->ext_type) {

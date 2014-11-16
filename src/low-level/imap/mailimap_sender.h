@@ -55,11 +55,6 @@ int mailimap_authenticate_send(mailstream * fd,
 int mailimap_authenticate_resp_send(mailstream * fd,
 				const char * base64);
 
-int mailimap_oauth2_authenticate_send(mailimap * session,
-				const char * auth_user,
-				const char * access_token);
-
-
 int mailimap_noop_send(mailstream * fd);
 
 int mailimap_logout_send(mailstream * fd);

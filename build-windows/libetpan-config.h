@@ -1,6 +1,12 @@
 #ifndef LIBETPAN_CONFIG_H
 #define LIBETPAN_CONFIG_H
 
+#ifdef _MSC_VER
+#ifndef WIN32
+#define WIN32 1
+#endif
+#endif
+
 #ifdef WIN32
 #	define PATH_MAX 512
 
