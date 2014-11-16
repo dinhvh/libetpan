@@ -3176,88 +3176,125 @@ void mailimap_status_att_list_free(struct mailimap_status_att_list *
 /* internal use functions */
 
 
+LIBETPAN_EXPORT
 uint32_t * mailimap_number_alloc_new(uint32_t number);
 
+LIBETPAN_EXPORT
 void mailimap_number_alloc_free(uint32_t * pnumber);
 
 
+LIBETPAN_EXPORT
 void mailimap_addr_host_free(char * addr_host);
 
+LIBETPAN_EXPORT
 void mailimap_addr_mailbox_free(char * addr_mailbox);
 
+LIBETPAN_EXPORT
 void mailimap_addr_adl_free(char * addr_adl);
 
+LIBETPAN_EXPORT
 void mailimap_addr_name_free(char * addr_name);
 
+LIBETPAN_EXPORT
 void mailimap_astring_free(char * astring);
 
+LIBETPAN_EXPORT
 void mailimap_atom_free(char * atom);
 
+LIBETPAN_EXPORT
 void mailimap_auth_type_free(char * auth_type);
 
+LIBETPAN_EXPORT
 void mailimap_base64_free(char * base64);
 
+LIBETPAN_EXPORT
 void mailimap_body_fld_desc_free(char * body_fld_desc);
 
+LIBETPAN_EXPORT
 void mailimap_body_fld_id_free(char * body_fld_id);
 
+LIBETPAN_EXPORT
 void mailimap_body_fld_md5_free(char * body_fld_md5);
 
+LIBETPAN_EXPORT
 void mailimap_body_fld_loc_free(char * body_fld_loc);
 
+LIBETPAN_EXPORT
 void mailimap_env_date_free(char * date);
 
+LIBETPAN_EXPORT
 void mailimap_env_in_reply_to_free(char * in_reply_to);
 
+LIBETPAN_EXPORT
 void mailimap_env_message_id_free(char * message_id);
 
+LIBETPAN_EXPORT
 void mailimap_env_subject_free(char * subject);
 
+LIBETPAN_EXPORT
 void mailimap_flag_extension_free(char * flag_extension);
 
+LIBETPAN_EXPORT
 void mailimap_flag_keyword_free(char * flag_keyword);
 
+LIBETPAN_EXPORT
 void
 mailimap_header_fld_name_free(char * header_fld_name);
 
+LIBETPAN_EXPORT
 void mailimap_literal_free(char * literal);
 
+LIBETPAN_EXPORT
 void mailimap_mailbox_free(char * mailbox);
 
+LIBETPAN_EXPORT
 void
 mailimap_mailbox_data_search_free(clist * data_search);
 
+LIBETPAN_EXPORT
 void mailimap_media_subtype_free(char * media_subtype);
 
+LIBETPAN_EXPORT
 void mailimap_media_text_free(char * media_text);
 
+LIBETPAN_EXPORT
 void mailimap_msg_att_envelope_free(struct mailimap_envelope * env);
 
+LIBETPAN_EXPORT
 void
 mailimap_msg_att_internaldate_free(struct mailimap_date_time * date_time);
 
+LIBETPAN_EXPORT
 void
 mailimap_msg_att_rfc822_free(char * str);
 
+LIBETPAN_EXPORT
 void
 mailimap_msg_att_rfc822_header_free(char * str);
 
+LIBETPAN_EXPORT
 void
 mailimap_msg_att_rfc822_text_free(char * str);
 
+LIBETPAN_EXPORT
 void
 mailimap_msg_att_body_free(struct mailimap_body * body);
 
+LIBETPAN_EXPORT
 void
 mailimap_msg_att_bodystructure_free(struct mailimap_body * body);
 
+LIBETPAN_EXPORT
 void mailimap_nstring_free(char * str);
 
+LIBETPAN_EXPORT
 void
 mailimap_string_free(char * str);
 
+LIBETPAN_EXPORT
 void mailimap_tag_free(char * tag);
 
+LIBETPAN_EXPORT
 void mailimap_text_free(char * text);
 
 

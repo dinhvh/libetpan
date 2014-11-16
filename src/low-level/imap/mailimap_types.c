@@ -61,6 +61,7 @@
 /* from parser */
 
 
+LIBETPAN_EXPORT
 uint32_t * mailimap_number_alloc_new(uint32_t number)
 {
   uint32_t * pnumber;
@@ -74,6 +75,7 @@ uint32_t * mailimap_number_alloc_new(uint32_t number)
   return pnumber;
 }
 
+LIBETPAN_EXPORT
 void mailimap_number_alloc_free(uint32_t * pnumber)
 {
   free(pnumber);
@@ -83,6 +85,7 @@ void mailimap_number_alloc_free(uint32_t * pnumber)
 /* ************************************************************************* */
 
 
+LIBETPAN_EXPORT
 struct mailimap_address *
 mailimap_address_new(char * ad_personal_name, char * ad_source_route,
 		     char * ad_mailbox_name, char * ad_host_name)
@@ -101,6 +104,7 @@ mailimap_address_new(char * ad_personal_name, char * ad_source_route,
   return addr;
 }
 
+LIBETPAN_EXPORT
 void mailimap_address_free(struct mailimap_address * addr)
 {
   mailimap_addr_host_free(addr->ad_host_name);
@@ -110,21 +114,25 @@ void mailimap_address_free(struct mailimap_address * addr)
   free(addr);
 }
 
+LIBETPAN_EXPORT
 void mailimap_addr_host_free(char * addr_host)
 {
   mailimap_nstring_free(addr_host);
 }
 
+LIBETPAN_EXPORT
 void mailimap_addr_mailbox_free(char * addr_mailbox)
 {
   mailimap_nstring_free(addr_mailbox);
 }
 
+LIBETPAN_EXPORT
 void mailimap_addr_adl_free(char * addr_adl)
 {
   mailimap_nstring_free(addr_adl);
 }
 
+LIBETPAN_EXPORT
 void mailimap_addr_name_free(char * addr_name)
 {
   mailimap_nstring_free(addr_name);
@@ -134,35 +142,7 @@ void mailimap_addr_name_free(char * addr_name)
 
 
 
-/*
-struct mailimap_astring *
-mailimap_astring_new(gint type,
-		     gchar * atom_astring,
-		     gchar * string)
-{
-  struct mailimap_astring * astring;
-
-  astring = g_new(struct mailimap_astring, 1);
-  if (astring == NULL)
-    return FALSE;
-
-  astring->type = type;
-  astring->atom_astring = atom_astring;
-  astring->string = string;
-  
-  return astring;
-}
-
-void mailimap_astring_free(struct mailimap_astring * astring)
-{
-  if (astring->atom_astring)
-    mailimap_atom_astring_free(astring->atom_astring);
-  if (astring->string)
-    mailimap_string_free(astring->string);
-  free(astring);
-}
-*/
-
+LIBETPAN_EXPORT
 void mailimap_astring_free(char * astring)
 {
   if (mmap_string_unref(astring) != 0)
@@ -175,6 +155,7 @@ static void mailimap_custom_string_free(char * str)
 }
 
 
+LIBETPAN_EXPORT
 void mailimap_atom_free(char * atom)
 {
   free(atom);
@@ -183,6 +164,7 @@ void mailimap_atom_free(char * atom)
 
 
 
+LIBETPAN_EXPORT
 void mailimap_auth_type_free(char * auth_type)
 {
   mailimap_atom_free(auth_type);
@@ -192,6 +174,7 @@ void mailimap_auth_type_free(char * auth_type)
 
 
 
+LIBETPAN_EXPORT
 void mailimap_base64_free(char * base64)
 {
   free(base64);
@@ -200,6 +183,7 @@ void mailimap_base64_free(char * base64)
 
 
 
+LIBETPAN_EXPORT
 struct mailimap_body *
 mailimap_body_new(int bd_type,
 		  struct mailimap_body_type_1part * bd_body_1part,
@@ -224,6 +208,7 @@ mailimap_body_new(int bd_type,
   return body;
 }
 
+LIBETPAN_EXPORT
 void mailimap_body_free(struct mailimap_body * body)
 {
   switch (body->bd_type) {
@@ -238,6 +223,7 @@ void mailimap_body_free(struct mailimap_body * body)
 }
 
 
+LIBETPAN_EXPORT
 struct mailimap_body_extension *
 mailimap_body_extension_new(int ext_type, char * ext_nstring,
 			    uint32_t ext_number,
@@ -268,6 +254,7 @@ mailimap_body_extension_new(int ext_type, char * ext_nstring,
 static void
 mailimap_body_ext_list_free(clist * body_ext_list);
 
+LIBETPAN_EXPORT
 void mailimap_body_extension_free(struct mailimap_body_extension * be)
 {
   switch (be->ext_type) {
@@ -292,6 +279,7 @@ mailimap_body_ext_list_free(clist * body_ext_list)
 }
 
 
+LIBETPAN_EXPORT
 struct mailimap_body_ext_1part *
 mailimap_body_ext_1part_new(char * bd_md5,
 			    struct mailimap_body_fld_dsp * bd_disposition,
@@ -314,6 +302,7 @@ mailimap_body_ext_1part_new(char * bd_md5,
   return body_ext_1part;
 }
 
+LIBETPAN_EXPORT
 void
 mailimap_body_ext_1part_free(struct mailimap_body_ext_1part * body_ext_1part)
 {
@@ -329,6 +318,7 @@ mailimap_body_ext_1part_free(struct mailimap_body_ext_1part * body_ext_1part)
   free(body_ext_1part);
 }
 
+LIBETPAN_EXPORT
 struct mailimap_body_ext_mpart *
 mailimap_body_ext_mpart_new(struct mailimap_body_fld_param * bd_parameter,
                             struct mailimap_body_fld_dsp * bd_disposition,
@@ -351,6 +341,7 @@ mailimap_body_ext_mpart_new(struct mailimap_body_fld_param * bd_parameter,
   return body_ext_mpart;
 }
 
+LIBETPAN_EXPORT
 void
 mailimap_body_ext_mpart_free(struct mailimap_body_ext_mpart * body_ext_mpart)
 {
@@ -367,6 +358,7 @@ mailimap_body_ext_mpart_free(struct mailimap_body_ext_mpart * body_ext_mpart)
 }
 
 
+LIBETPAN_EXPORT
 struct mailimap_body_fields *
 mailimap_body_fields_new(struct mailimap_body_fld_param * bd_parameter,
 			 char * bd_id,
@@ -388,6 +380,7 @@ mailimap_body_fields_new(struct mailimap_body_fld_param * bd_parameter,
   return body_fields;
 }
 
+LIBETPAN_EXPORT
 void
 mailimap_body_fields_free(struct mailimap_body_fields * body_fields)
 {
@@ -404,6 +397,7 @@ mailimap_body_fields_free(struct mailimap_body_fields * body_fields)
 
 
 
+LIBETPAN_EXPORT
 void mailimap_body_fld_desc_free(char * body_fld_desc)
 {
   mailimap_nstring_free(body_fld_desc);
@@ -412,6 +406,7 @@ void mailimap_body_fld_desc_free(char * body_fld_desc)
 
 
 
+LIBETPAN_EXPORT
 struct mailimap_body_fld_dsp *
 mailimap_body_fld_dsp_new(char * dsp_type,
     struct mailimap_body_fld_param * dsp_attributes)
@@ -428,6 +423,7 @@ mailimap_body_fld_dsp_new(char * dsp_type,
   return body_fld_dsp;
 }
 
+LIBETPAN_EXPORT
 void mailimap_body_fld_dsp_free(struct mailimap_body_fld_dsp * bfd)
 {
   if (bfd->dsp_type != NULL)
@@ -439,6 +435,7 @@ void mailimap_body_fld_dsp_free(struct mailimap_body_fld_dsp * bfd)
 
 
 
+LIBETPAN_EXPORT
 struct mailimap_body_fld_enc *
 mailimap_body_fld_enc_new(int enc_type, char * enc_value)
 {
@@ -454,6 +451,7 @@ mailimap_body_fld_enc_new(int enc_type, char * enc_value)
   return body_fld_enc;
 }
 
+LIBETPAN_EXPORT
 void mailimap_body_fld_enc_free(struct mailimap_body_fld_enc * bfe)
 {
   if (bfe->enc_value)
@@ -463,6 +461,7 @@ void mailimap_body_fld_enc_free(struct mailimap_body_fld_enc * bfe)
 
 
 
+LIBETPAN_EXPORT
 void mailimap_body_fld_id_free(char * body_fld_id)
 {
   mailimap_nstring_free(body_fld_id);
@@ -470,6 +469,7 @@ void mailimap_body_fld_id_free(char * body_fld_id)
 
 
 
+LIBETPAN_EXPORT
 struct mailimap_body_fld_lang *
 mailimap_body_fld_lang_new(int lg_type, char * lg_single, clist * lg_list)
 {
@@ -492,6 +492,7 @@ mailimap_body_fld_lang_new(int lg_type, char * lg_single, clist * lg_list)
   return fld_lang;
 }
 
+LIBETPAN_EXPORT
 void
 mailimap_body_fld_lang_free(struct mailimap_body_fld_lang * fld_lang)
 {
@@ -510,17 +511,20 @@ mailimap_body_fld_lang_free(struct mailimap_body_fld_lang * fld_lang)
 
 
 
+LIBETPAN_EXPORT
 void mailimap_body_fld_md5_free(char * body_fld_md5)
 {
   mailimap_nstring_free(body_fld_md5);
 }
 
+LIBETPAN_EXPORT
 void mailimap_body_fld_loc_free(char * body_fld_loc)
 {
   mailimap_nstring_free(body_fld_loc);
 }
 
 
+LIBETPAN_EXPORT
 struct mailimap_single_body_fld_param *
 mailimap_single_body_fld_param_new(char * pa_name, char * pa_value)
 {
@@ -535,6 +539,7 @@ mailimap_single_body_fld_param_new(char * pa_name, char * pa_value)
   return param;
 }
 
+LIBETPAN_EXPORT
 void
 mailimap_single_body_fld_param_free(struct mailimap_single_body_fld_param * p)
 {
@@ -544,6 +549,7 @@ mailimap_single_body_fld_param_free(struct mailimap_single_body_fld_param * p)
 }
 
 
+LIBETPAN_EXPORT
 struct mailimap_body_fld_param *
 mailimap_body_fld_param_new(clist * pa_list)
 {
@@ -557,6 +563,7 @@ mailimap_body_fld_param_new(clist * pa_list)
   return fld_param;
 }
 
+LIBETPAN_EXPORT
 void
 mailimap_body_fld_param_free(struct mailimap_body_fld_param * fld_param)
 {
@@ -567,6 +574,7 @@ mailimap_body_fld_param_free(struct mailimap_body_fld_param * fld_param)
 }
 
 
+LIBETPAN_EXPORT
 struct mailimap_body_type_1part *
 mailimap_body_type_1part_new(int bd_type,
 			     struct mailimap_body_type_basic * bd_type_basic,
@@ -597,6 +605,7 @@ mailimap_body_type_1part_new(int bd_type,
   return body_type_1part;
 }
 
+LIBETPAN_EXPORT
 void
 mailimap_body_type_1part_free(struct mailimap_body_type_1part * bt1p)
 {
@@ -619,6 +628,7 @@ mailimap_body_type_1part_free(struct mailimap_body_type_1part * bt1p)
 
 
 
+LIBETPAN_EXPORT
 struct mailimap_body_type_basic *
 mailimap_body_type_basic_new(struct mailimap_media_basic * bd_media_basic,
 			     struct mailimap_body_fields * bd_fields)
@@ -635,6 +645,7 @@ mailimap_body_type_basic_new(struct mailimap_media_basic * bd_media_basic,
   return body_type_basic;
 }
 
+LIBETPAN_EXPORT
 void mailimap_body_type_basic_free(struct mailimap_body_type_basic *
     body_type_basic)
 {
@@ -644,6 +655,7 @@ void mailimap_body_type_basic_free(struct mailimap_body_type_basic *
 }
 
 
+LIBETPAN_EXPORT
 struct mailimap_body_type_mpart *
 mailimap_body_type_mpart_new(clist * bd_list, char * bd_media_subtype,
 			     struct mailimap_body_ext_mpart * bd_ext_mpart)
@@ -661,6 +673,7 @@ mailimap_body_type_mpart_new(clist * bd_list, char * bd_media_subtype,
   return body_type_mpart;
 }
 
+LIBETPAN_EXPORT
 void mailimap_body_type_mpart_free(struct mailimap_body_type_mpart *
 				   body_type_mpart)
 {
@@ -675,6 +688,7 @@ void mailimap_body_type_mpart_free(struct mailimap_body_type_mpart *
 }
 
 
+LIBETPAN_EXPORT
 struct mailimap_body_type_msg *
 mailimap_body_type_msg_new(struct mailimap_body_fields * bd_fields,
 			   struct mailimap_envelope * bd_envelope,
@@ -695,6 +709,7 @@ mailimap_body_type_msg_new(struct mailimap_body_fields * bd_fields,
   return body_type_msg;
 }
 
+LIBETPAN_EXPORT
 void
 mailimap_body_type_msg_free(struct mailimap_body_type_msg * body_type_msg)
 {
@@ -706,6 +721,7 @@ mailimap_body_type_msg_free(struct mailimap_body_type_msg * body_type_msg)
 
 
 
+LIBETPAN_EXPORT
 struct mailimap_body_type_text *
 mailimap_body_type_text_new(char * bd_media_text,
 			    struct mailimap_body_fields * bd_fields,
@@ -724,6 +740,7 @@ mailimap_body_type_text_new(char * bd_media_text,
   return body_type_text;
 }
 
+LIBETPAN_EXPORT
 void
 mailimap_body_type_text_free(struct mailimap_body_type_text * body_type_text)
 {
@@ -734,6 +751,7 @@ mailimap_body_type_text_free(struct mailimap_body_type_text * body_type_text)
 
 
 
+LIBETPAN_EXPORT
 struct mailimap_capability *
 mailimap_capability_new(int cap_type, char * cap_auth_type, char * cap_name)
 {
@@ -755,6 +773,7 @@ mailimap_capability_new(int cap_type, char * cap_auth_type, char * cap_name)
   return cap;
 }
 
+LIBETPAN_EXPORT
 void mailimap_capability_free(struct mailimap_capability * c)
 {
   switch (c->cap_type) {
@@ -769,6 +788,7 @@ void mailimap_capability_free(struct mailimap_capability * c)
 }
 
 
+LIBETPAN_EXPORT
 struct mailimap_capability_data *
 mailimap_capability_data_new(clist * cap_list)
 {
@@ -783,6 +803,7 @@ mailimap_capability_data_new(clist * cap_list)
   return cap_data;
 }
 
+LIBETPAN_EXPORT
 void
 mailimap_capability_data_free(struct mailimap_capability_data * cap_data)
 {
@@ -797,6 +818,7 @@ mailimap_capability_data_free(struct mailimap_capability_data * cap_data)
 
 
 
+LIBETPAN_EXPORT
 struct mailimap_continue_req *
 mailimap_continue_req_new(int cr_type, struct mailimap_resp_text * cr_text,
     char * cr_base64)
@@ -819,6 +841,7 @@ mailimap_continue_req_new(int cr_type, struct mailimap_resp_text * cr_text,
   return cont_req;
 }
 
+LIBETPAN_EXPORT
 void mailimap_continue_req_free(struct mailimap_continue_req * cont_req)
 {
   switch (cont_req->cr_type) {
@@ -832,6 +855,7 @@ void mailimap_continue_req_free(struct mailimap_continue_req * cont_req)
   free(cont_req);
 }
 
+LIBETPAN_EXPORT
 struct mailimap_date_time *
 mailimap_date_time_new(int dt_day, int dt_month, int dt_year, int dt_hour,
     int dt_min, int dt_sec, int dt_zone)
@@ -853,6 +877,7 @@ mailimap_date_time_new(int dt_day, int dt_month, int dt_year, int dt_hour,
   return date_time;
 }
 
+LIBETPAN_EXPORT
 void mailimap_date_time_free(struct mailimap_date_time * date_time)
 {
   free(date_time);
@@ -860,6 +885,7 @@ void mailimap_date_time_free(struct mailimap_date_time * date_time)
 
 
 
+LIBETPAN_EXPORT
 struct mailimap_envelope *
 mailimap_envelope_new(char * env_date, char * env_subject,
 		      struct mailimap_env_from * env_from,
@@ -891,6 +917,7 @@ mailimap_envelope_new(char * env_date, char * env_subject,
 }
 
 
+LIBETPAN_EXPORT
 void mailimap_envelope_free(struct mailimap_envelope * env)
 {
   if (env->env_date)
@@ -927,6 +954,7 @@ static void mailimap_address_list_free(clist * addr_list)
 }
 
 
+LIBETPAN_EXPORT
 struct mailimap_env_bcc * mailimap_env_bcc_new(clist * bcc_list)
 {
   struct mailimap_env_bcc * env_bcc;
@@ -939,6 +967,7 @@ struct mailimap_env_bcc * mailimap_env_bcc_new(clist * bcc_list)
   return env_bcc;
 }
 
+LIBETPAN_EXPORT
 void mailimap_env_bcc_free(struct mailimap_env_bcc * env_bcc)
 {
   mailimap_address_list_free(env_bcc->bcc_list);
@@ -946,6 +975,7 @@ void mailimap_env_bcc_free(struct mailimap_env_bcc * env_bcc)
 }
 
 
+LIBETPAN_EXPORT
 struct mailimap_env_cc * mailimap_env_cc_new(clist * cc_list)
 {
   struct mailimap_env_cc * env_cc;
@@ -958,6 +988,7 @@ struct mailimap_env_cc * mailimap_env_cc_new(clist * cc_list)
   return env_cc;
 }
 
+LIBETPAN_EXPORT
 void mailimap_env_cc_free(struct mailimap_env_cc * env_cc)
 {
   mailimap_address_list_free(env_cc->cc_list);
@@ -965,12 +996,14 @@ void mailimap_env_cc_free(struct mailimap_env_cc * env_cc)
 }
 
 
+LIBETPAN_EXPORT
 void mailimap_env_date_free(char * date)
 {
   mailimap_nstring_free(date);
 }
 
 
+LIBETPAN_EXPORT
 struct mailimap_env_from * mailimap_env_from_new(clist * frm_list)
 {
   struct mailimap_env_from * env_from;
@@ -983,6 +1016,7 @@ struct mailimap_env_from * mailimap_env_from_new(clist * frm_list)
   return env_from;
 }
 
+LIBETPAN_EXPORT
 void mailimap_env_from_free(struct mailimap_env_from * env_from)
 {
   mailimap_address_list_free(env_from->frm_list);
@@ -1000,6 +1034,7 @@ void mailimap_env_message_id_free(char * message_id)
   mailimap_nstring_free(message_id);
 }
 
+LIBETPAN_EXPORT
 struct mailimap_env_reply_to * mailimap_env_reply_to_new(clist * rt_list)
 {
   struct mailimap_env_reply_to * env_reply_to;
@@ -1012,6 +1047,7 @@ struct mailimap_env_reply_to * mailimap_env_reply_to_new(clist * rt_list)
   return env_reply_to;
 }
 
+LIBETPAN_EXPORT
 void
 mailimap_env_reply_to_free(struct mailimap_env_reply_to * env_reply_to)
 {
@@ -1019,6 +1055,7 @@ mailimap_env_reply_to_free(struct mailimap_env_reply_to * env_reply_to)
   free(env_reply_to);
 }
 
+LIBETPAN_EXPORT
 struct mailimap_env_sender * mailimap_env_sender_new(clist * snd_list)
 {
   struct mailimap_env_sender * env_sender;
@@ -1031,6 +1068,7 @@ struct mailimap_env_sender * mailimap_env_sender_new(clist * snd_list)
   return env_sender;
 }
 
+LIBETPAN_EXPORT
 void mailimap_env_sender_free(struct mailimap_env_sender * env_sender)
 {
   mailimap_address_list_free(env_sender->snd_list);
@@ -1042,6 +1080,7 @@ void mailimap_env_subject_free(char * subject)
   mailimap_nstring_free(subject);
 }
 
+LIBETPAN_EXPORT
 struct mailimap_env_to * mailimap_env_to_new(clist * to_list)
 {
   struct mailimap_env_to * env_to;
@@ -1054,6 +1093,7 @@ struct mailimap_env_to * mailimap_env_to_new(clist * to_list)
   return env_to;
 }
 
+LIBETPAN_EXPORT
 void mailimap_env_to_free(struct mailimap_env_to * env_to)
 {
   mailimap_address_list_free(env_to->to_list);
@@ -1062,6 +1102,7 @@ void mailimap_env_to_free(struct mailimap_env_to * env_to)
 
 
 
+LIBETPAN_EXPORT
 struct mailimap_flag * mailimap_flag_new(int fl_type,
     char * fl_keyword, char * fl_extension)
 {
@@ -1083,6 +1124,7 @@ struct mailimap_flag * mailimap_flag_new(int fl_type,
   return f;
 }
 
+LIBETPAN_EXPORT
 void mailimap_flag_free(struct mailimap_flag * f)
 {
   switch (f->fl_type) {
@@ -1098,6 +1140,7 @@ void mailimap_flag_free(struct mailimap_flag * f)
 
 
 
+LIBETPAN_EXPORT
 void mailimap_flag_extension_free(char * flag_extension)
 {
   mailimap_atom_free(flag_extension);
@@ -1105,6 +1148,7 @@ void mailimap_flag_extension_free(char * flag_extension)
 
 
 
+LIBETPAN_EXPORT
 struct mailimap_flag_fetch *
 mailimap_flag_fetch_new(int fl_type, struct mailimap_flag * fl_flag)
 {
@@ -1120,6 +1164,7 @@ mailimap_flag_fetch_new(int fl_type, struct mailimap_flag * fl_flag)
   return flag_fetch;
 }
 
+LIBETPAN_EXPORT
 void mailimap_flag_fetch_free(struct mailimap_flag_fetch * flag_fetch)
 {
   if (flag_fetch->fl_flag)
@@ -1129,6 +1174,7 @@ void mailimap_flag_fetch_free(struct mailimap_flag_fetch * flag_fetch)
 
 
 
+LIBETPAN_EXPORT
 void mailimap_flag_keyword_free(char * flag_keyword)
 {
   mailimap_atom_free(flag_keyword);
@@ -1137,6 +1183,7 @@ void mailimap_flag_keyword_free(char * flag_keyword)
 
 
 
+LIBETPAN_EXPORT
 struct mailimap_flag_list *
 mailimap_flag_list_new(clist * fl_list)
 {
@@ -1150,6 +1197,7 @@ mailimap_flag_list_new(clist * fl_list)
   return flag_list;
 }
 
+LIBETPAN_EXPORT
 void mailimap_flag_list_free(struct mailimap_flag_list * flag_list)
 {
   clist_foreach(flag_list->fl_list, (clist_func) mailimap_flag_free, NULL);
@@ -1161,6 +1209,7 @@ void mailimap_flag_list_free(struct mailimap_flag_list * flag_list)
 
 
 
+LIBETPAN_EXPORT
 struct mailimap_flag_perm *
 mailimap_flag_perm_new(int fl_type, struct mailimap_flag * fl_flag)
 {
@@ -1176,6 +1225,7 @@ mailimap_flag_perm_new(int fl_type, struct mailimap_flag * fl_flag)
   return flag_perm;
 }
 
+LIBETPAN_EXPORT
 void mailimap_flag_perm_free(struct mailimap_flag_perm * flag_perm)
 {
   if (flag_perm->fl_flag != NULL)
@@ -1186,6 +1236,7 @@ void mailimap_flag_perm_free(struct mailimap_flag_perm * flag_perm)
 
 
 
+LIBETPAN_EXPORT
 struct mailimap_greeting *
 mailimap_greeting_new(int gr_type,
     struct mailimap_resp_cond_auth * gr_auth,
@@ -1209,6 +1260,7 @@ mailimap_greeting_new(int gr_type,
   return greeting;
 }
 
+LIBETPAN_EXPORT
 void mailimap_greeting_free(struct mailimap_greeting * greeting)
 {
   switch (greeting->gr_type) {
@@ -1224,6 +1276,7 @@ void mailimap_greeting_free(struct mailimap_greeting * greeting)
 
 
 
+LIBETPAN_EXPORT
 void
 mailimap_header_fld_name_free(char * header_fld_name)
 {
@@ -1232,6 +1285,7 @@ mailimap_header_fld_name_free(char * header_fld_name)
 
 
 
+LIBETPAN_EXPORT
 struct mailimap_header_list *
 mailimap_header_list_new(clist * hdr_list)
 {
@@ -1246,6 +1300,7 @@ mailimap_header_list_new(clist * hdr_list)
   return header_list;
 }
 
+LIBETPAN_EXPORT
 void
 mailimap_header_list_free(struct mailimap_header_list * header_list)
 {
@@ -1258,12 +1313,14 @@ mailimap_header_list_free(struct mailimap_header_list * header_list)
 
 
 
+LIBETPAN_EXPORT
 void mailimap_literal_free(char * literal)
 {
   /*  free(literal); */
   mmap_string_unref(literal);
 }
 
+LIBETPAN_EXPORT
 void mailimap_mailbox_free(char * mb)
 {
   mailimap_astring_free(mb);
@@ -1272,6 +1329,7 @@ void mailimap_mailbox_free(char * mb)
 
 
 
+LIBETPAN_EXPORT
 struct mailimap_status_info *
 mailimap_status_info_new(int st_att, uint32_t st_value,
   struct mailimap_extension_data * st_ext_data)
@@ -1288,6 +1346,7 @@ mailimap_status_info_new(int st_att, uint32_t st_value,
   return info;
 }
 
+LIBETPAN_EXPORT
 void mailimap_status_info_free(struct mailimap_status_info * info)
 {
   if (info->st_ext_data != NULL) {
@@ -1298,6 +1357,7 @@ void mailimap_status_info_free(struct mailimap_status_info * info)
 
 
 
+LIBETPAN_EXPORT
 struct mailimap_mailbox_data_status *
 mailimap_mailbox_data_status_new(char * st_mailbox,
     clist * st_info_list)
@@ -1313,6 +1373,7 @@ mailimap_mailbox_data_status_new(char * st_mailbox,
   return mb_data_status;
 }
 
+LIBETPAN_EXPORT
 void
 mailimap_mailbox_data_search_free(clist * data_search)
 {
@@ -1320,6 +1381,7 @@ mailimap_mailbox_data_search_free(clist * data_search)
   clist_free(data_search);
 }
 
+LIBETPAN_EXPORT
 void
 mailimap_mailbox_data_status_free(struct mailimap_mailbox_data_status * info)
 {
@@ -1354,6 +1416,7 @@ mailimap_mailbox_data_lsub_free(struct mailimap_mailbox_list * mb_lsub)
 
 
 
+LIBETPAN_EXPORT
 struct mailimap_mailbox_data *
 mailimap_mailbox_data_new(int mbd_type, struct mailimap_flag_list * mbd_flags,
     struct mailimap_mailbox_list * mbd_list,
@@ -1401,6 +1464,7 @@ mailimap_mailbox_data_new(int mbd_type, struct mailimap_flag_list * mbd_flags,
   return data;
 }
 
+LIBETPAN_EXPORT
 void
 mailimap_mailbox_data_free(struct mailimap_mailbox_data * mb_data)
 {
@@ -1437,6 +1501,7 @@ mailimap_mailbox_data_free(struct mailimap_mailbox_data * mb_data)
 
 
 
+LIBETPAN_EXPORT
 struct mailimap_mbx_list_flags *
 mailimap_mbx_list_flags_new(int mbf_type, clist * mbf_oflags,
 			    int mbf_sflag)
@@ -1454,6 +1519,7 @@ mailimap_mbx_list_flags_new(int mbf_type, clist * mbf_oflags,
   return mbx_list_flags;
 }
 
+LIBETPAN_EXPORT
 void
 mailimap_mbx_list_flags_free(struct mailimap_mbx_list_flags * mbx_list_flags)
 {
@@ -1466,6 +1532,7 @@ mailimap_mbx_list_flags_free(struct mailimap_mbx_list_flags * mbx_list_flags)
 }
 
 
+LIBETPAN_EXPORT
 struct mailimap_mbx_list_oflag *
 mailimap_mbx_list_oflag_new(int of_type, char * of_flag_ext)
 {
@@ -1481,6 +1548,7 @@ mailimap_mbx_list_oflag_new(int of_type, char * of_flag_ext)
   return oflag;
 }
 
+LIBETPAN_EXPORT
 void
 mailimap_mbx_list_oflag_free(struct mailimap_mbx_list_oflag * oflag)
 {
@@ -1491,6 +1559,7 @@ mailimap_mbx_list_oflag_free(struct mailimap_mbx_list_oflag * oflag)
 
 
 
+LIBETPAN_EXPORT
 struct mailimap_mailbox_list *
 mailimap_mailbox_list_new(struct mailimap_mbx_list_flags * mbx_flags,
 			  char mb_delimiter, char * mb_name)
@@ -1508,6 +1577,7 @@ mailimap_mailbox_list_new(struct mailimap_mbx_list_flags * mbx_flags,
   return mb_list;
 }
 
+LIBETPAN_EXPORT
 void
 mailimap_mailbox_list_free(struct mailimap_mailbox_list * mb_list)
 {
@@ -1520,6 +1590,7 @@ mailimap_mailbox_list_free(struct mailimap_mailbox_list * mb_list)
 
 
 
+LIBETPAN_EXPORT
 struct mailimap_media_basic *
 mailimap_media_basic_new(int med_type,
     char * med_basic_type, char * med_subtype)
@@ -1536,6 +1607,7 @@ mailimap_media_basic_new(int med_type,
   return media_basic;
 }
 
+LIBETPAN_EXPORT
 void
 mailimap_media_basic_free(struct mailimap_media_basic * media_basic)
 {
@@ -1546,12 +1618,14 @@ mailimap_media_basic_free(struct mailimap_media_basic * media_basic)
 
 
 
+LIBETPAN_EXPORT
 void mailimap_media_subtype_free(char * media_subtype)
 {
   mmap_string_unref(media_subtype);
 }
 
 
+LIBETPAN_EXPORT
 void mailimap_media_text_free(char * media_text)
 {
   mailimap_media_subtype_free(media_text);
@@ -1559,6 +1633,7 @@ void mailimap_media_text_free(char * media_text)
 
 
 
+LIBETPAN_EXPORT
 struct mailimap_message_data *
 mailimap_message_data_new(uint32_t mdt_number, int mdt_type,
 			  struct mailimap_msg_att * mdt_msg_att)
@@ -1578,6 +1653,7 @@ mailimap_message_data_new(uint32_t mdt_number, int mdt_type,
   return msg_data;
 }
 
+LIBETPAN_EXPORT
 void
 mailimap_message_data_free(struct mailimap_message_data * msg_data)
 {
@@ -1589,6 +1665,7 @@ mailimap_message_data_free(struct mailimap_message_data * msg_data)
 
 
 
+LIBETPAN_EXPORT
 struct mailimap_msg_att_item *
 mailimap_msg_att_item_new(int att_type,
 			  struct mailimap_msg_att_dynamic * att_dyn,
@@ -1617,6 +1694,7 @@ mailimap_msg_att_item_new(int att_type,
   return item;
 }
 
+LIBETPAN_EXPORT
 void
 mailimap_msg_att_item_free(struct mailimap_msg_att_item * item)
 {
@@ -1635,6 +1713,7 @@ mailimap_msg_att_item_free(struct mailimap_msg_att_item * item)
 }
 
 
+LIBETPAN_EXPORT
 struct mailimap_msg_att *
 mailimap_msg_att_new(clist * att_list)
 {
@@ -1650,6 +1729,7 @@ mailimap_msg_att_new(clist * att_list)
   return msg_att;
 }
 
+LIBETPAN_EXPORT
 void mailimap_msg_att_free(struct mailimap_msg_att * msg_att)
 {
   clist_foreach(msg_att->att_list,
@@ -1660,6 +1740,7 @@ void mailimap_msg_att_free(struct mailimap_msg_att * msg_att)
 
 
 
+LIBETPAN_EXPORT
 struct mailimap_msg_att_dynamic *
 mailimap_msg_att_dynamic_new(clist * att_list)
 {
@@ -1674,6 +1755,7 @@ mailimap_msg_att_dynamic_new(clist * att_list)
   return msg_att_dyn;
 }
 
+LIBETPAN_EXPORT
 void
 mailimap_msg_att_dynamic_free(struct mailimap_msg_att_dynamic * msg_att_dyn)
 {
@@ -1687,6 +1769,7 @@ mailimap_msg_att_dynamic_free(struct mailimap_msg_att_dynamic * msg_att_dyn)
 }
 
 
+LIBETPAN_EXPORT
 struct mailimap_msg_att_body_section *
 mailimap_msg_att_body_section_new(struct mailimap_section * sec_section,
 				  uint32_t sec_origin_octet,
@@ -1707,6 +1790,7 @@ mailimap_msg_att_body_section_new(struct mailimap_section * sec_section,
   return msg_att_body_section;
 }
 
+LIBETPAN_EXPORT
 void
 mailimap_msg_att_body_section_free(struct mailimap_msg_att_body_section * 
     msg_att_body_section)
@@ -1723,17 +1807,20 @@ mailimap_msg_att_body_section_free(struct mailimap_msg_att_body_section *
 
 
 
+LIBETPAN_EXPORT
 void mailimap_msg_att_envelope_free(struct mailimap_envelope * env)
 {
   mailimap_envelope_free(env);
 }
 
+LIBETPAN_EXPORT
 void
 mailimap_msg_att_internaldate_free(struct mailimap_date_time * date_time)
 {
   mailimap_date_time_free(date_time);
 }
 
+LIBETPAN_EXPORT
 void
 mailimap_msg_att_rfc822_free(char * str)
 {
@@ -1741,24 +1828,28 @@ mailimap_msg_att_rfc822_free(char * str)
 }
 
 
+LIBETPAN_EXPORT
 void
 mailimap_msg_att_rfc822_header_free(char * str)
 {
   mailimap_nstring_free(str);
 }
 
+LIBETPAN_EXPORT
 void
 mailimap_msg_att_rfc822_text_free(char * str)
 {
   mailimap_nstring_free(str);
 }
 
+LIBETPAN_EXPORT
 void
 mailimap_msg_att_body_free(struct mailimap_body * body)
 {
   mailimap_body_free(body);
 }
 
+LIBETPAN_EXPORT
 void
 mailimap_msg_att_bodystructure_free(struct mailimap_body * body)
 {
@@ -1767,6 +1858,7 @@ mailimap_msg_att_bodystructure_free(struct mailimap_body * body)
 
 
 
+LIBETPAN_EXPORT
 struct mailimap_msg_att_static *
 mailimap_msg_att_static_new(int att_type, struct mailimap_envelope * att_env,
     struct mailimap_date_time * att_internal_date,
@@ -1826,6 +1918,7 @@ mailimap_msg_att_static_new(int att_type, struct mailimap_envelope * att_env,
   return item;
 }
 
+LIBETPAN_EXPORT
 void
 mailimap_msg_att_static_free(struct mailimap_msg_att_static * item)
 {
@@ -1869,6 +1962,7 @@ mailimap_msg_att_static_free(struct mailimap_msg_att_static * item)
 
 
 
+LIBETPAN_EXPORT
 void mailimap_nstring_free(char * str)
 {
   if (str != NULL)
@@ -1881,6 +1975,7 @@ void mailimap_nstring_free(char * str)
 
 
 
+LIBETPAN_EXPORT
 struct mailimap_cont_req_or_resp_data *
 mailimap_cont_req_or_resp_data_new(int rsp_type,
     struct mailimap_continue_req * rsp_cont_req,
@@ -1905,6 +2000,7 @@ mailimap_cont_req_or_resp_data_new(int rsp_type,
   return cont_req_or_resp_data;
 }
 
+LIBETPAN_EXPORT
 void
 mailimap_cont_req_or_resp_data_free(struct mailimap_cont_req_or_resp_data *
 				    cont_req_or_resp_data)
@@ -1925,6 +2021,7 @@ mailimap_cont_req_or_resp_data_free(struct mailimap_cont_req_or_resp_data *
 
 
 
+LIBETPAN_EXPORT
 struct mailimap_response *
 mailimap_response_new(clist * rsp_cont_req_or_resp_data_list,
     struct mailimap_response_done * rsp_resp_done)
@@ -1941,6 +2038,7 @@ mailimap_response_new(clist * rsp_cont_req_or_resp_data_list,
   return resp;
 }
 
+LIBETPAN_EXPORT
 void
 mailimap_response_free(struct mailimap_response * resp)
 {
@@ -1955,6 +2053,7 @@ mailimap_response_free(struct mailimap_response * resp)
 
 
 
+LIBETPAN_EXPORT
 struct mailimap_response_data *
 mailimap_response_data_new(int rsp_type,
     struct mailimap_resp_cond_state * rsp_cond_state,
@@ -1995,6 +2094,7 @@ mailimap_response_data_new(int rsp_type,
   return resp_data;
 }
 
+LIBETPAN_EXPORT
 void
 mailimap_response_data_free(struct mailimap_response_data * resp_data)
 {
@@ -2029,6 +2129,7 @@ mailimap_response_data_free(struct mailimap_response_data * resp_data)
 
 
 
+LIBETPAN_EXPORT
 struct mailimap_response_done *
 mailimap_response_done_new(int rsp_type,
     struct mailimap_response_tagged * rsp_tagged,
@@ -2053,6 +2154,7 @@ mailimap_response_done_new(int rsp_type,
   return resp_done;
 }
 
+LIBETPAN_EXPORT
 void mailimap_response_done_free(struct mailimap_response_done *
 				 resp_done)
 {
@@ -2067,6 +2169,7 @@ void mailimap_response_done_free(struct mailimap_response_done *
   free(resp_done);
 }
 
+LIBETPAN_EXPORT
 struct mailimap_response_fatal *
 mailimap_response_fatal_new(struct mailimap_resp_cond_bye * rsp_bye)
 {
@@ -2081,12 +2184,14 @@ mailimap_response_fatal_new(struct mailimap_resp_cond_bye * rsp_bye)
   return resp_fatal;
 }
 
+LIBETPAN_EXPORT
 void mailimap_response_fatal_free(struct mailimap_response_fatal * resp_fatal)
 {
   mailimap_resp_cond_bye_free(resp_fatal->rsp_bye);
   free(resp_fatal);
 }
 
+LIBETPAN_EXPORT
 struct mailimap_response_tagged *
 mailimap_response_tagged_new(char * rsp_tag,
     struct mailimap_resp_cond_state * rsp_cond_state)
@@ -2103,6 +2208,7 @@ mailimap_response_tagged_new(char * rsp_tag,
   return resp_tagged;
 }
 
+LIBETPAN_EXPORT
 void
 mailimap_response_tagged_free(struct mailimap_response_tagged * tagged)
 {
@@ -2113,6 +2219,7 @@ mailimap_response_tagged_free(struct mailimap_response_tagged * tagged)
 
 
 
+LIBETPAN_EXPORT
 struct mailimap_resp_cond_auth *
 mailimap_resp_cond_auth_new(int rsp_type,
     struct mailimap_resp_text * rsp_text)
@@ -2129,6 +2236,7 @@ mailimap_resp_cond_auth_new(int rsp_type,
   return cond_auth;
 }
 
+LIBETPAN_EXPORT
 void
 mailimap_resp_cond_auth_free(struct mailimap_resp_cond_auth * cond_auth)
 {
@@ -2138,6 +2246,7 @@ mailimap_resp_cond_auth_free(struct mailimap_resp_cond_auth * cond_auth)
 
 
 
+LIBETPAN_EXPORT
 struct mailimap_resp_cond_bye *
 mailimap_resp_cond_bye_new(struct mailimap_resp_text * rsp_text)
 {
@@ -2153,6 +2262,7 @@ mailimap_resp_cond_bye_new(struct mailimap_resp_text * rsp_text)
 }
 
 
+LIBETPAN_EXPORT
 void
 mailimap_resp_cond_bye_free(struct mailimap_resp_cond_bye * cond_bye)
 {
@@ -2161,6 +2271,7 @@ mailimap_resp_cond_bye_free(struct mailimap_resp_cond_bye * cond_bye)
 }
 
 
+LIBETPAN_EXPORT
 struct mailimap_resp_cond_state *
 mailimap_resp_cond_state_new(int rsp_type,
     struct mailimap_resp_text * rsp_text)
@@ -2177,6 +2288,7 @@ mailimap_resp_cond_state_new(int rsp_type,
   return cond_state;
 }
 
+LIBETPAN_EXPORT
 void
 mailimap_resp_cond_state_free(struct mailimap_resp_cond_state * cond_state)
 {
@@ -2185,6 +2297,7 @@ mailimap_resp_cond_state_free(struct mailimap_resp_cond_state * cond_state)
 }
 
 
+LIBETPAN_EXPORT
 struct mailimap_resp_text *
 mailimap_resp_text_new(struct mailimap_resp_text_code * rsp_code,
     char * rsp_text)
@@ -2201,6 +2314,7 @@ mailimap_resp_text_new(struct mailimap_resp_text_code * rsp_code,
   return resp_text;
 }
 
+LIBETPAN_EXPORT
 void mailimap_resp_text_free(struct mailimap_resp_text * resp_text)
 {
   if (resp_text->rsp_code)
@@ -2213,6 +2327,7 @@ void mailimap_resp_text_free(struct mailimap_resp_text * resp_text)
 
 
 
+LIBETPAN_EXPORT
 struct mailimap_resp_text_code *
 mailimap_resp_text_code_new(int rc_type, clist * rc_badcharset,
     struct mailimap_capability_data * rc_cap_data,
@@ -2259,6 +2374,7 @@ mailimap_resp_text_code_new(int rc_type, clist * rc_badcharset,
   return resp_text_code;
 }
 
+LIBETPAN_EXPORT
 void
 mailimap_resp_text_code_free(struct mailimap_resp_text_code * resp_text_code)
 {
@@ -2297,6 +2413,7 @@ mailimap_resp_text_code_free(struct mailimap_resp_text_code * resp_text_code)
 }
 
 
+LIBETPAN_EXPORT
 struct mailimap_section *
 mailimap_section_new(struct mailimap_section_spec * sec_spec)
 {
@@ -2311,6 +2428,7 @@ mailimap_section_new(struct mailimap_section_spec * sec_spec)
   return section;
 }
 
+LIBETPAN_EXPORT
 void mailimap_section_free(struct mailimap_section * section)
 {
   if (section->sec_spec != NULL)
@@ -2320,6 +2438,7 @@ void mailimap_section_free(struct mailimap_section * section)
 
 
 
+LIBETPAN_EXPORT
 struct mailimap_section_msgtext *
 mailimap_section_msgtext_new(int sec_type,
     struct mailimap_header_list * sec_header_list)
@@ -2336,6 +2455,7 @@ mailimap_section_msgtext_new(int sec_type,
   return msgtext;
 }
 
+LIBETPAN_EXPORT
 void
 mailimap_section_msgtext_free(struct mailimap_section_msgtext * msgtext)
 {
@@ -2345,6 +2465,7 @@ mailimap_section_msgtext_free(struct mailimap_section_msgtext * msgtext)
 }
 
 
+LIBETPAN_EXPORT
 struct mailimap_section_part *
 mailimap_section_part_new(clist * sec_id)
 {
@@ -2359,6 +2480,7 @@ mailimap_section_part_new(clist * sec_id)
   return section_part;
 }
 
+LIBETPAN_EXPORT
 void
 mailimap_section_part_free(struct mailimap_section_part * section_part)
 {
@@ -2369,6 +2491,7 @@ mailimap_section_part_free(struct mailimap_section_part * section_part)
 }
 
 
+LIBETPAN_EXPORT
 struct mailimap_section_spec *
 mailimap_section_spec_new(int sec_type,
     struct mailimap_section_msgtext * sec_msgtext,
@@ -2395,6 +2518,7 @@ mailimap_section_spec_new(int sec_type,
   return section_spec;
 }
 
+LIBETPAN_EXPORT
 void
 mailimap_section_spec_free(struct mailimap_section_spec * section_spec)
 {
@@ -2416,6 +2540,7 @@ mailimap_section_spec_free(struct mailimap_section_spec * section_spec)
 }
 
 
+LIBETPAN_EXPORT
 struct mailimap_section_text *
 mailimap_section_text_new(int sec_type,
     struct mailimap_section_msgtext * sec_msgtext)
@@ -2432,6 +2557,7 @@ mailimap_section_text_new(int sec_type,
   return section_text;
 }
 
+LIBETPAN_EXPORT
 void
 mailimap_section_text_free(struct mailimap_section_text * section_text)
 {
@@ -2443,6 +2569,7 @@ mailimap_section_text_free(struct mailimap_section_text * section_text)
 
 
 
+LIBETPAN_EXPORT
 void
 mailimap_string_free(char * str)
 {
@@ -2453,12 +2580,14 @@ mailimap_string_free(char * str)
 
 
 
+LIBETPAN_EXPORT
 void mailimap_tag_free(char * tag)
 {
   mailimap_custom_string_free(tag);
 }
 
 
+LIBETPAN_EXPORT
 void mailimap_text_free(char * text)
 {
   mailimap_custom_string_free(text);
@@ -2503,6 +2632,7 @@ void mailimap_text_free(char * text)
 /* COPY FETCH SEARCH STORE */
 /* set */
 
+LIBETPAN_EXPORT
 struct mailimap_set_item *
 mailimap_set_item_new(uint32_t set_first, uint32_t set_last)
 {
@@ -2518,11 +2648,13 @@ mailimap_set_item_new(uint32_t set_first, uint32_t set_last)
   return item;
 }
 
+LIBETPAN_EXPORT
 void mailimap_set_item_free(struct mailimap_set_item * set_item)
 {
   free(set_item);
 }
 
+LIBETPAN_EXPORT
 struct mailimap_set * mailimap_set_new(clist * set_list)
 {
   struct mailimap_set * set;
@@ -2536,6 +2668,7 @@ struct mailimap_set * mailimap_set_new(clist * set_list)
   return set;
 }
 
+LIBETPAN_EXPORT
 void mailimap_set_free(struct mailimap_set * set)
 {
   clist_foreach(set->set_list, (clist_func) mailimap_set_item_free, NULL);
@@ -2546,6 +2679,7 @@ void mailimap_set_free(struct mailimap_set * set)
 /* SEARCH with date key */
 /* date */
 
+LIBETPAN_EXPORT
 struct mailimap_date *
 mailimap_date_new(int dt_day, int dt_month, int dt_year)
 {
@@ -2562,6 +2696,7 @@ mailimap_date_new(int dt_day, int dt_month, int dt_year)
   return date;
 }
 
+LIBETPAN_EXPORT
 void mailimap_date_free(struct mailimap_date * date)
 {
   free(date);
@@ -2569,6 +2704,7 @@ void mailimap_date_free(struct mailimap_date * date)
 
 
 
+LIBETPAN_EXPORT
 struct mailimap_fetch_att *
 mailimap_fetch_att_new(int att_type, struct mailimap_section * att_section,
                        uint32_t att_offset, uint32_t att_size, char * att_extension)
@@ -2587,6 +2723,7 @@ mailimap_fetch_att_new(int att_type, struct mailimap_section * att_section,
   return fetch_att;
 }
 
+LIBETPAN_EXPORT
 void mailimap_fetch_att_free(struct mailimap_fetch_att * fetch_att)
 {
   if (fetch_att->att_extension != NULL)
@@ -2598,6 +2735,7 @@ void mailimap_fetch_att_free(struct mailimap_fetch_att * fetch_att)
 
 
 
+LIBETPAN_EXPORT
 struct mailimap_fetch_type *
 mailimap_fetch_type_new(int ft_type,
     struct mailimap_fetch_att * ft_fetch_att,
@@ -2621,6 +2759,7 @@ mailimap_fetch_type_new(int ft_type,
   return fetch_type;
 }
 
+LIBETPAN_EXPORT
 void mailimap_fetch_type_free(struct mailimap_fetch_type * fetch_type)
 {
   switch (fetch_type->ft_type) {
@@ -2639,6 +2778,7 @@ void mailimap_fetch_type_free(struct mailimap_fetch_type * fetch_type)
 
 
 
+LIBETPAN_EXPORT
 struct mailimap_store_att_flags *
 mailimap_store_att_flags_new(int fl_sign, int fl_silent,
     struct mailimap_flag_list * fl_flag_list)
@@ -2656,6 +2796,7 @@ mailimap_store_att_flags_new(int fl_sign, int fl_silent,
   return store_att_flags;
 }
 
+LIBETPAN_EXPORT
 void mailimap_store_att_flags_free(struct mailimap_store_att_flags *
 				   store_att_flags)
 {
@@ -2664,6 +2805,7 @@ void mailimap_store_att_flags_free(struct mailimap_store_att_flags *
 }
 
 
+LIBETPAN_EXPORT
 struct mailimap_search_key *
 mailimap_search_key_new(int sk_type,
     char * sk_bcc, struct mailimap_date * sk_before, char * sk_body,
@@ -2764,6 +2906,7 @@ mailimap_search_key_new(int sk_type,
   return key;
 }
 
+LIBETPAN_EXPORT
 struct mailimap_search_key *
 mailimap_search_key_new_xgmthrid(uint64_t sk_xgmthrid)
 {
@@ -2779,6 +2922,7 @@ mailimap_search_key_new_xgmthrid(uint64_t sk_xgmthrid)
   return key;
 }
 
+LIBETPAN_EXPORT
 struct mailimap_search_key *
 mailimap_search_key_new_xgmmsgid(uint64_t sk_xgmmsgid)
 {
@@ -2794,6 +2938,7 @@ mailimap_search_key_new_xgmmsgid(uint64_t sk_xgmmsgid)
   return key;
 }
 
+LIBETPAN_EXPORT
 struct mailimap_search_key *
 mailimap_search_key_new_xgmraw(char * sk_xgmraw)
 {
@@ -2809,6 +2954,7 @@ mailimap_search_key_new_xgmraw(char * sk_xgmraw)
   return key;
 }
 
+LIBETPAN_EXPORT
 void mailimap_search_key_free(struct mailimap_search_key * key)
 {
   switch (key->sk_type) {
@@ -2896,6 +3042,7 @@ void mailimap_search_key_free(struct mailimap_search_key * key)
 
 
 
+LIBETPAN_EXPORT
 struct mailimap_status_att_list *
 mailimap_status_att_list_new(clist * att_list)
 {
@@ -2909,6 +3056,7 @@ mailimap_status_att_list_new(clist * att_list)
   return status_att_list;
 }
 
+LIBETPAN_EXPORT
 void mailimap_status_att_list_free(struct mailimap_status_att_list *
 				   status_att_list)
 {
@@ -2923,6 +3071,7 @@ void mailimap_status_att_list_free(struct mailimap_status_att_list *
 /* main */
 
 
+LIBETPAN_EXPORT
 struct mailimap_selection_info *
 mailimap_selection_info_new(void)
 {
@@ -2947,6 +3096,7 @@ mailimap_selection_info_new(void)
   return sel_info;
 }
 
+LIBETPAN_EXPORT
 void
 mailimap_selection_info_free(struct mailimap_selection_info * sel_info)
 {
@@ -2961,6 +3111,7 @@ mailimap_selection_info_free(struct mailimap_selection_info * sel_info)
   free(sel_info);
 }
 
+LIBETPAN_EXPORT
 struct mailimap_connection_info *
 mailimap_connection_info_new(void)
 {
@@ -2975,6 +3126,7 @@ mailimap_connection_info_new(void)
   return conn_info;
 }
 
+LIBETPAN_EXPORT
 void
 mailimap_connection_info_free(struct mailimap_connection_info * conn_info)
 {
@@ -2983,6 +3135,7 @@ mailimap_connection_info_free(struct mailimap_connection_info * conn_info)
   free(conn_info);
 }
 
+LIBETPAN_EXPORT
 struct mailimap_response_info *
 mailimap_response_info_new(void)
 {
@@ -3036,6 +3189,7 @@ mailimap_response_info_new(void)
   return NULL;
 }
 
+LIBETPAN_EXPORT
 void
 mailimap_response_info_free(struct mailimap_response_info * resp_info)
 {

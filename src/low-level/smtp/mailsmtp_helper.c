@@ -42,11 +42,13 @@
 #include <stdlib.h>
 #include "mail.h"
 
+LIBETPAN_EXPORT
 int mailsmtp_init(mailsmtp * session)
 {
   return mailsmtp_init_with_ip(session, 0);
 }
 
+LIBETPAN_EXPORT
 int mailsmtp_init_with_ip(mailsmtp * session, int useip)
 {
   int r;
@@ -63,6 +65,7 @@ int mailsmtp_init_with_ip(mailsmtp * session, int useip)
   return r;
 }
 
+LIBETPAN_EXPORT
 int mailesmtp_send(mailsmtp * session,
 		    const char * from,
 		    int return_full,
@@ -109,6 +112,7 @@ int mailesmtp_send(mailsmtp * session,
   return MAILSMTP_NO_ERROR;
 }
 
+LIBETPAN_EXPORT
 int mailesmtp_send_quit(mailsmtp * session,
                         const char * from,
                         int return_full,
@@ -155,6 +159,7 @@ int mailesmtp_send_quit(mailsmtp * session,
   return MAILSMTP_NO_ERROR;
 }
 
+LIBETPAN_EXPORT
 int mailsmtp_send(mailsmtp * session,
 		   const char * from,
 		   clist * addresses,
@@ -243,17 +248,20 @@ static void esmtp_address_free(struct esmtp_address * addr)
   free(addr);
 }
 
+LIBETPAN_EXPORT
 clist * esmtp_address_list_new(void)
 {
   return clist_new();
 }
 
+LIBETPAN_EXPORT
 void esmtp_address_list_free(clist * l)
 {
   clist_foreach(l, (clist_func) esmtp_address_free, NULL);
   clist_free(l);
 }
 
+LIBETPAN_EXPORT
 int esmtp_address_list_add(clist * list, char * address,
 			       int notify, char * orcpt)
 {
@@ -273,16 +281,19 @@ int esmtp_address_list_add(clist * list, char * address,
   return 0;
 }
 
+LIBETPAN_EXPORT
 clist * smtp_address_list_new(void)
 {
   return esmtp_address_list_new();
 }
 
+LIBETPAN_EXPORT
 int smtp_address_list_add(clist * list, char * address)
 {
   return esmtp_address_list_add(list, address, 0, NULL);
 }
 
+LIBETPAN_EXPORT
 void smtp_address_list_free(clist * l)
 {
   esmtp_address_list_free(l);

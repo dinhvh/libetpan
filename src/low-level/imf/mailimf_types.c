@@ -37,36 +37,43 @@
 #include "mmapstring.h"
 #include <stdlib.h>
 
+LIBETPAN_EXPORT
 void mailimf_atom_free(char * atom)
 {
   free(atom);
 }
 
+LIBETPAN_EXPORT
 void mailimf_dot_atom_free(char * dot_atom)
 {
   free(dot_atom);
 }
 
+LIBETPAN_EXPORT
 void mailimf_dot_atom_text_free(char * dot_atom)
 {
   free(dot_atom);
 }
 
+LIBETPAN_EXPORT
 void mailimf_quoted_string_free(char * quoted_string)
 {
   free(quoted_string);
 }
 
+LIBETPAN_EXPORT
 void mailimf_word_free(char * word)
 {
   free(word);
 }
 
+LIBETPAN_EXPORT
 void mailimf_phrase_free(char * phrase)
 {
   free(phrase);
 }
 
+LIBETPAN_EXPORT
 void mailimf_unstructured_free(char * unstructured)
 {
   free(unstructured);
@@ -249,21 +256,25 @@ void mailimf_address_list_free(struct mailimf_address_list * addr_list)
 }
 
 
+LIBETPAN_EXPORT
 void mailimf_addr_spec_free(char * addr_spec)
 {
   free(addr_spec);
 }
 
+LIBETPAN_EXPORT
 void mailimf_local_part_free(char * local_part)
 {
   free(local_part);
 }
 
+LIBETPAN_EXPORT
 void mailimf_domain_free(char * domain)
 {
   free(domain);
 }
 
+LIBETPAN_EXPORT
 void mailimf_domain_literal_free(char * domain_literal)
 {
   free(domain_literal);
@@ -745,26 +756,31 @@ void mailimf_references_free(struct mailimf_references * references)
   free(references);
 }
 
+LIBETPAN_EXPORT
 void mailimf_msg_id_free(char * msg_id)
 {
   free(msg_id);
 }
 
+LIBETPAN_EXPORT
 void mailimf_id_left_free(char * id_left)
 {
   free(id_left);
 }
 
+LIBETPAN_EXPORT
 void mailimf_id_right_free(char * id_right)
 {
   free(id_right);
 }
 
+LIBETPAN_EXPORT
 void mailimf_no_fold_quote_free(char * nfq)
 {
   free(nfq);
 }
 
+LIBETPAN_EXPORT
 void mailimf_no_fold_literal_free(char * nfl)
 {
   free(nfl);
@@ -902,6 +918,7 @@ void mailimf_optional_field_free(struct mailimf_optional_field * opt_field)
   free(opt_field);
 }
 
+LIBETPAN_EXPORT
 void mailimf_field_name_free(char * field_name)
 {
   free(field_name);

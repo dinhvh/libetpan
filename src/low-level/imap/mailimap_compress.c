@@ -43,6 +43,7 @@
 
 #include <stdio.h>
 
+LIBETPAN_EXPORT
 int mailimap_compress(mailimap * session)
 {
   struct mailimap_response * response;
@@ -110,6 +111,7 @@ err:
   return res;
 }
 
+LIBETPAN_EXPORT
 int mailimap_has_compress_deflate(mailimap * session)
 {
   return mailimap_has_extension(session, "COMPRESS=DEFLATE");

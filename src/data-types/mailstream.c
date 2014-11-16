@@ -56,6 +56,7 @@
 struct timeval mailstream_network_delay =
 {  DEFAULT_NETWORK_TIMEOUT, 0 };
 
+LIBETPAN_EXPORT
 mailstream * mailstream_new(mailstream_low * low, size_t buffer_size)
 {
   mailstream * s;
@@ -129,6 +130,7 @@ static ssize_t write_direct(mailstream * s, const void * buf, size_t count)
   return count;
 }
 
+LIBETPAN_EXPORT
 ssize_t mailstream_write(mailstream * s, const void * buf, size_t count)
 {
   int r;
@@ -148,6 +150,7 @@ ssize_t mailstream_write(mailstream * s, const void * buf, size_t count)
   return write_to_internal_buffer(s, buf, count);
 }
 
+LIBETPAN_EXPORT
 int mailstream_flush(mailstream * s)
 {
   char * cur_buf;
@@ -222,6 +225,7 @@ static ssize_t read_through_buffer(mailstream * s, void * buf, size_t count)
   return count;
 }
 
+LIBETPAN_EXPORT
 ssize_t mailstream_read(mailstream * s, void * buf, size_t count)
 {
   ssize_t read_bytes;
@@ -275,6 +279,7 @@ ssize_t mailstream_read(mailstream * s, void * buf, size_t count)
   return count - left;
 }
 
+LIBETPAN_EXPORT
 mailstream_low * mailstream_get_low(mailstream * s)
 {
   return s->low;
@@ -289,12 +294,14 @@ static void low_logger(mailstream_low * s, int log_type,
   }
 }
 
+LIBETPAN_EXPORT
 void mailstream_set_low(mailstream * s, mailstream_low * low)
 {
   s->low = low;
   mailstream_low_set_logger(low, low_logger, s);
 }
 
+LIBETPAN_EXPORT
 int mailstream_close(mailstream * s)
 {
   if (s->idle != NULL) {
@@ -312,6 +319,7 @@ int mailstream_close(mailstream * s)
   return 0;
 }
 
+LIBETPAN_EXPORT
 ssize_t mailstream_feed_read_buffer(mailstream * s)
 {
   ssize_t read_bytes;
@@ -330,6 +338,7 @@ ssize_t mailstream_feed_read_buffer(mailstream * s)
   return s->read_buffer_len;
 }
 
+LIBETPAN_EXPORT
 void mailstream_cancel(mailstream * s)
 {
   if (s == NULL)
@@ -338,21 +347,25 @@ void mailstream_cancel(mailstream * s)
   mailstream_low_cancel(s->low);
 }
 
+LIBETPAN_EXPORT
 void mailstream_log_error(mailstream * s, char * buf, size_t count)
 {
 	mailstream_low_log_error(s->low, buf, count);
 }
 
+LIBETPAN_EXPORT
 void mailstream_set_privacy(mailstream * s, int can_be_public)
 {
   mailstream_low_set_privacy(s->low, can_be_public);
 }
 
+LIBETPAN_EXPORT
 int mailstream_wait_idle(mailstream * s, int max_idle_delay)
 {
   return mailstream_low_wait_idle(s->low, s->idle, max_idle_delay);
 }
 
+LIBETPAN_EXPORT
 int mailstream_setup_idle(mailstream * s)
 {
   int r;
@@ -373,6 +386,7 @@ int mailstream_setup_idle(mailstream * s)
   return 0;
 }
 
+LIBETPAN_EXPORT
 void mailstream_interrupt_idle(mailstream * s)
 {
   int r;
@@ -387,6 +401,7 @@ void mailstream_interrupt_idle(mailstream * s)
   }
 }
 
+LIBETPAN_EXPORT
 void mailstream_unsetup_idle(mailstream * s)
 {
   int r;
@@ -404,6 +419,7 @@ void mailstream_unsetup_idle(mailstream * s)
   s->idling = 0;
 }
 
+LIBETPAN_EXPORT
 void mailstream_set_logger(mailstream * s, void (* logger)(mailstream * s, int log_type,
   const char * str, size_t size, void * context), void * logger_context)
 {
@@ -411,11 +427,13 @@ void mailstream_set_logger(mailstream * s, void (* logger)(mailstream * s, int l
   s->logger_context = logger_context;
 }
 
+LIBETPAN_EXPORT
 carray * mailstream_get_certificate_chain(mailstream * s)
 {
   return mailstream_low_get_certificate_chain(s->low);
 }
 
+LIBETPAN_EXPORT
 void mailstream_certificate_chain_free(carray * certificate_chain)
 {
   unsigned int i;

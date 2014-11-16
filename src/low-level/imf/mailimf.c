@@ -161,26 +161,6 @@ static int mailimf_addr_spec_parse(const char * message, size_t length,
 				   size_t * indx,
 				   char ** address);
 
-#if 0
-static int mailimf_local_part_parse(const char * message, size_t length,
-				    size_t * indx,
-				    char ** result);
-
-static int mailimf_domain_parse(const char * message, size_t length,
-				size_t * indx,
-				char ** result);
-#endif
-
-#if 0
-static int mailimf_domain_literal_parse(const char * message, size_t length,
-					size_t * indx, char ** result);
-#endif
-
-#if 0
-static int mailimf_dcontent_parse(const char * message, size_t length,
-				  size_t * indx, char * result);
-#endif
-
 static int
 mailimf_orig_date_parse(const char * message, size_t length,
 			size_t * indx, struct mailimf_orig_date ** result);
@@ -218,32 +198,9 @@ mailimf_in_reply_to_parse(const char * message, size_t length,
 			  size_t * indx,
 			  struct mailimf_in_reply_to ** result);
 
-#if 0
-static int mailimf_references_parse(const char * message, size_t length,
-				    size_t * indx,
-				    struct mailimf_references **
-				    result);
-#endif
-
 static int mailimf_unstrict_msg_id_parse(const char * message, size_t length,
 					 size_t * indx,
 					 char ** result);
-
-#if 0
-static int mailimf_id_left_parse(const char * message, size_t length,
-				 size_t * indx, char ** result);
-
-static int mailimf_id_right_parse(const char * message, size_t length,
-				  size_t * indx, char ** result);
-#endif
-
-#if 0
-static int mailimf_no_fold_quote_parse(const char * message, size_t length,
-				       size_t * indx, char ** result);
-
-static int mailimf_no_fold_literal_parse(const char * message, size_t length,
-					 size_t * indx, char ** result);
-#endif
 
 static int mailimf_subject_parse(const char * message, size_t length,
 				 size_t * indx,
@@ -353,6 +310,7 @@ static int mailimf_digit_parse(const char * message, size_t length,
     return MAILIMF_ERROR_PARSE;
 }
 
+LIBETPAN_EXPORT
 int
 mailimf_number_parse(const char * message, size_t length,
 		     size_t * indx, uint32_t * result)
@@ -389,6 +347,7 @@ mailimf_number_parse(const char * message, size_t length,
   return MAILIMF_NO_ERROR;
 }
 
+LIBETPAN_EXPORT
 int mailimf_char_parse(const char * message, size_t length,
 		       size_t * indx, char token)
 {
@@ -408,6 +367,7 @@ int mailimf_char_parse(const char * message, size_t length,
     return MAILIMF_ERROR_PARSE;
 }
 
+LIBETPAN_EXPORT
 int mailimf_unstrict_char_parse(const char * message, size_t length,
 				size_t * indx, char token)
 {
@@ -429,6 +389,7 @@ int mailimf_unstrict_char_parse(const char * message, size_t length,
   return MAILIMF_NO_ERROR;
 }
 
+LIBETPAN_EXPORT
 int
 mailimf_token_case_insensitive_len_parse(const char * message, size_t length,
 					 size_t * indx, char * token,
@@ -510,20 +471,6 @@ static int mailimf_greater_parse(const char * message, size_t length,
   return mailimf_unstrict_char_parse(message, length, indx, '>');
 }
 
-#if 0
-static int mailimf_obracket_parse(const char * message, size_t length,
-				       size_t * indx)
-{
-  return mailimf_unstrict_char_parse(message, length, indx, '[');
-}
-
-static int mailimf_cbracket_parse(const char * message, size_t length,
-				       size_t * indx)
-{
-  return mailimf_unstrict_char_parse(message, length, indx, ']');
-}
-#endif
-
 static int mailimf_at_sign_parse(const char * message, size_t length,
 				      size_t * indx)
 {
@@ -536,6 +483,7 @@ static int mailimf_point_parse(const char * message, size_t length,
   return mailimf_unstrict_char_parse(message, length, indx, '.');
 }
 
+LIBETPAN_EXPORT
 int
 mailimf_custom_string_parse(const char * message, size_t length,
 			    size_t * indx, char ** result,
@@ -755,6 +703,7 @@ static inline int mailimf_wsp_parse(const char * message, size_t length,
 }
 
 
+LIBETPAN_EXPORT
 int mailimf_crlf_parse(const char * message, size_t length, size_t * indx)
 {
   size_t cur_token;
@@ -869,6 +818,7 @@ FWS             =       ([*WSP CRLF] 1*WSP) /   ; Folding white space
                         obs-FWS
 */
 
+LIBETPAN_EXPORT
 int mailimf_fws_parse(const char * message, size_t length, size_t * indx)
 {
   size_t cur_token;
@@ -1089,6 +1039,7 @@ static inline int mailimf_cfws_fws_comment_parse(const char * message, size_t le
 CFWS            =       *([FWS] comment) (([FWS] comment) / FWS)
 */
 
+LIBETPAN_EXPORT
 int mailimf_cfws_parse(const char * message, size_t length,
 		       size_t * indx)
 {
@@ -1165,6 +1116,7 @@ static inline int is_atext(char ch)
 atom            =       [CFWS] 1*atext [CFWS]
 */
 
+LIBETPAN_EXPORT
 int mailimf_atom_parse(const char * message, size_t length,
 		       size_t * indx, char ** result)
 {
@@ -1217,6 +1169,7 @@ int mailimf_atom_parse(const char * message, size_t length,
   return res;
 }
 
+LIBETPAN_EXPORT
 int mailimf_fws_atom_for_word_parse(const char * message, size_t length,
                                     size_t * indx, char ** result)
 {
@@ -1267,6 +1220,7 @@ err:
   return res;
 }
 
+LIBETPAN_EXPORT
 int mailimf_fws_atom_parse(const char * message, size_t length,
 			   size_t * indx, char ** result)
 {
@@ -1413,6 +1367,7 @@ quoted-string   =       [CFWS]
                         [CFWS]
 */
 
+LIBETPAN_EXPORT
 int mailimf_quoted_string_parse(const char * message, size_t length,
 				size_t * indx, char ** result)
 {
@@ -1509,6 +1464,7 @@ int mailimf_quoted_string_parse(const char * message, size_t length,
   return res;
 }
 
+LIBETPAN_EXPORT
 int mailimf_fws_quoted_string_parse(const char * message, size_t length,
 				    size_t * indx, char ** result)
 {
@@ -1609,6 +1565,7 @@ int mailimf_fws_quoted_string_parse(const char * message, size_t length,
 word            =       atom / quoted-string
 */
 
+LIBETPAN_EXPORT
 int mailimf_word_parse(const char * message, size_t length,
 		       size_t * indx, char ** result)
 {
@@ -1632,6 +1589,7 @@ int mailimf_word_parse(const char * message, size_t length,
   return MAILIMF_NO_ERROR;
 }
 
+LIBETPAN_EXPORT
 int mailimf_fws_word_parse(const char * message, size_t length,
 			   size_t * indx, char ** result)
 {
@@ -1943,6 +1901,7 @@ static int mailimf_ignore_unstructured_parse(const char * message, size_t length
 }
 
 
+LIBETPAN_EXPORT
 int mailimf_ignore_field_parse(const char * message, size_t length,
 			       size_t * indx)
 {
@@ -2065,6 +2024,7 @@ int mailimf_ignore_field_parse(const char * message, size_t length,
 date-time       =       [ day-of-week "," ] date FWS time [CFWS]
 */
 
+LIBETPAN_EXPORT
 int mailimf_date_time_parse(const char * message, size_t length,
 			    size_t * indx,
 			    struct mailimf_date_time ** result)
@@ -2850,6 +2810,7 @@ static int mailimf_zone_parse(const char * message, size_t length,
 address         =       mailbox / group
 */
 
+LIBETPAN_EXPORT
 int mailimf_address_parse(const char * message, size_t length,
 			  size_t * indx,
 			  struct mailimf_address ** result)
@@ -2909,6 +2870,7 @@ mailbox         =       name-addr / addr-spec
 */
 
 
+LIBETPAN_EXPORT
 int mailimf_mailbox_parse(const char * message, size_t length,
 			  size_t * indx,
 			  struct mailimf_mailbox ** result)
@@ -3125,6 +3087,7 @@ static int mailimf_display_name_parse(const char * message, size_t length,
 mailbox-list    =       (mailbox *("," mailbox)) / obs-mbox-list
 */
 
+LIBETPAN_EXPORT
 int
 mailimf_mailbox_list_parse(const char * message, size_t length,
 			   size_t * indx,
@@ -3172,6 +3135,7 @@ address-list    =       (address *("," address)) / obs-addr-list
 */
 
 
+LIBETPAN_EXPORT
 int
 mailimf_address_list_parse(const char * message, size_t length,
 			   size_t * indx,
@@ -3673,6 +3637,7 @@ message         =       (fields / obs-fields)
                         [CRLF body]
 */
 
+LIBETPAN_EXPORT
 int mailimf_message_parse(const char * message, size_t length,
 			  size_t * indx,
 			  struct mailimf_message ** result)
@@ -3727,6 +3692,7 @@ int mailimf_message_parse(const char * message, size_t length,
 body            =       *(*998text CRLF) *998text
 */
 
+LIBETPAN_EXPORT
 int mailimf_body_parse(const char * message, size_t length,
 		       size_t * indx,
 		       struct mailimf_body ** result)
@@ -4759,6 +4725,7 @@ mailimf_unparsed_fields_parse(const char * message, size_t length,
 }
 #endif
 
+LIBETPAN_EXPORT
 int mailimf_fields_parse(const char * message, size_t length,
 			 size_t * indx,
 			 struct mailimf_fields ** result)
@@ -5309,6 +5276,7 @@ static int mailimf_message_id_parse(const char * message, size_t length,
 in-reply-to     =       "In-Reply-To:" 1*msg-id CRLF
 */
 
+LIBETPAN_EXPORT
 int mailimf_msg_id_list_parse(const char * message, size_t length,
 			      size_t * indx, clist ** result)
 {
@@ -5379,6 +5347,7 @@ static int mailimf_in_reply_to_parse(const char * message, size_t length,
 references      =       "References:" 1*msg-id CRLF
 */
 
+LIBETPAN_EXPORT
 int mailimf_references_parse(const char * message, size_t length,
 			     size_t * indx,
 			     struct mailimf_references ** result)
@@ -5438,6 +5407,7 @@ int mailimf_references_parse(const char * message, size_t length,
 msg-id          =       [CFWS] "<" id-left "@" id-right ">" [CFWS]
 */
 
+LIBETPAN_EXPORT
 int mailimf_msg_id_parse(const char * message, size_t length,
 			 size_t * indx,
 			 char ** result)
@@ -7523,6 +7493,7 @@ static int mailimf_envelope_field_parse(const char * message, size_t length,
   return res;
 }
 
+LIBETPAN_EXPORT
 int mailimf_envelope_fields_parse(const char * message, size_t length,
 				  size_t * indx,
 				  struct mailimf_fields ** result)
@@ -7633,6 +7604,7 @@ mailimf_envelope_or_optional_field_parse(const char * message,
 }
 
 
+LIBETPAN_EXPORT
 int
 mailimf_envelope_and_optional_fields_parse(const char * message, size_t length,
 					   size_t * indx,
@@ -7729,6 +7701,7 @@ mailimf_only_optional_field_parse(const char * message,
 }
 
 
+LIBETPAN_EXPORT
 int
 mailimf_optional_fields_parse(const char * message, size_t length,
 			      size_t * indx,
