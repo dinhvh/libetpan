@@ -1,21 +1,17 @@
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libetpan", "libetpan\libetpan.vcproj", "{BA4DED3C-E56F-4484-BFC3-9C13E461A1BE}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "readmsg", "readmsg\readmsg.vcproj", "{5FEA913A-5CE4-4DEB-B6BE-B8EA1BF6F653}"
-	ProjectSection(ProjectDependencies) = postProject
-		{BA4DED3C-E56F-4484-BFC3-9C13E461A1BE} = {BA4DED3C-E56F-4484-BFC3-9C13E461A1BE}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "smtpsend", "smtpsend\smtpsend.vcproj", "{FF9F45C9-74A0-4B4E-99E9-6ADE0EB6D8AC}"
-	ProjectSection(ProjectDependencies) = postProject
-		{BA4DED3C-E56F-4484-BFC3-9C13E461A1BE} = {BA4DED3C-E56F-4484-BFC3-9C13E461A1BE}
-	EndProjectSection
-EndProject
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30723.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B2C11050-3E46-4E10-B734-F9203A75AA46}"
 	ProjectSection(SolutionItems) = preProject
 		README.txt = README.txt
 	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libetpan", "libetpan\libetpan.vcxproj", "{BA4DED3C-E56F-4484-BFC3-9C13E461A1BE}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "readmsg", "readmsg\readmsg.vcxproj", "{5FEA913A-5CE4-4DEB-B6BE-B8EA1BF6F653}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "smtpsend", "smtpsend\smtpsend.vcxproj", "{FF9F45C9-74A0-4B4E-99E9-6ADE0EB6D8AC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

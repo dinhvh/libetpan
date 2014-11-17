@@ -1,0 +1,424 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug_ssl|Win32">
+      <Configuration>Debug_ssl</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release_ssl|Win32">
+      <Configuration>Release_ssl</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{BA4DED3C-E56F-4484-BFC3-9C13E461A1BE}</ProjectGuid>
+    <RootNamespace>libetpan</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_ssl|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_ssl|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_ssl|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug_ssl|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>12.0.30501.0</_ProjectFileVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>Debug\</OutDir>
+    <IntDir>Debug\</IntDir>
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>Release\</OutDir>
+    <IntDir>Release\</IntDir>
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_ssl|Win32'">
+    <OutDir>$(Configuration)\</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_ssl|Win32'">
+    <OutDir>$(Configuration)\</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <AdditionalIncludeDirectories>../include;../include/libetpan;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;LIBETPAN_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader />
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <CompileAs>CompileAsC</CompileAs>
+      <DisableSpecificWarnings>4996; 4267;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <ForcedIncludeFiles>../StdAfx.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+    </ClCompile>
+    <Link>
+      <AdditionalOptions>/DLL %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalDependencies>oldnames.lib;Ws2_32.lib;mswsock.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>../Debug/libetpan.dll</OutputFile>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <IgnoreSpecificDefaultLibraries>C;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ModuleDefinitionFile />
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ProgramDatabaseFile>$(OutDir)libetpan.pdb</ProgramDatabaseFile>
+      <MapExports>true</MapExports>
+      <SubSystem>NotSet</SubSystem>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention />
+      <ImportLibrary>../Debug/libetpan.lib</ImportLibrary>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>../include;../include/libetpan;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;LIBETPAN_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <PrecompiledHeader />
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat />
+      <CompileAs>CompileAsC</CompileAs>
+      <DisableSpecificWarnings>4996; 4267;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <ForcedIncludeFiles>../StdAfx.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+    </ClCompile>
+    <Link>
+      <AdditionalOptions>/DLL %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalDependencies>oldnames.lib;Ws2_32.lib;mswsock.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>../Release/libetpan.dll</OutputFile>
+      <IgnoreSpecificDefaultLibraries>C;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <SubSystem>NotSet</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention />
+      <ImportLibrary>../Release/libetpan.lib</ImportLibrary>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_ssl|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <AdditionalIncludeDirectories>../include;../include/libetpan;../../../3include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;LIBETPAN_DLL;USE_SSL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader />
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <CompileAs>CompileAsC</CompileAs>
+      <DisableSpecificWarnings>4996; 4267;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <ForcedIncludeFiles>../StdAfx.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+    </ClCompile>
+    <Link>
+      <AdditionalOptions>/DLL %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalDependencies>oldnames.lib;Ws2_32.lib;mswsock.lib;ssleay32MDd.lib;libeay32MDd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>../Debug/libetpan.dll</OutputFile>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <AdditionalLibraryDirectories>../../../3lib/openssl;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <IgnoreSpecificDefaultLibraries>C;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ModuleDefinitionFile />
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ProgramDatabaseFile>$(OutDir)libetpan.pdb</ProgramDatabaseFile>
+      <MapExports>true</MapExports>
+      <SubSystem>NotSet</SubSystem>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention />
+      <ImportLibrary>../Debug/libetpan.lib</ImportLibrary>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_ssl|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>../include;../include/libetpan;../../../3include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;LIBETPAN_DLL;USE_SSL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <PrecompiledHeader />
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat />
+      <CompileAs>CompileAsC</CompileAs>
+      <DisableSpecificWarnings>4996; 4267;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <ForcedIncludeFiles>../StdAfx.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+    </ClCompile>
+    <Link>
+      <AdditionalOptions>/DLL %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalDependencies>oldnames.lib;Ws2_32.lib;mswsock.lib;ssleay32MD.lib;libeay32MD.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>../Release/libetpan.dll</OutputFile>
+      <AdditionalLibraryDirectories>../../../3lib/openssl;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <IgnoreSpecificDefaultLibraries>C;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <SubSystem>NotSet</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention />
+      <ImportLibrary>../Release/libetpan.lib</ImportLibrary>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="..\build_headers.list">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug_ssl|Win32'">cd ..
+build_headers.bat
+</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug_ssl|Win32'">%(RootDir)%(Directory)\_headers_depends;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">cd ..
+build_headers.bat
+</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(RootDir)%(Directory)\_headers_depends;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release_ssl|Win32'">cd ..
+build_headers.bat
+</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release_ssl|Win32'">%(RootDir)%(Directory)\_headers_depends;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">cd ..
+build_headers.bat
+</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(RootDir)%(Directory)\_headers_depends;%(Outputs)</Outputs>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\data-types\base64.c" />
+    <ClCompile Include="..\..\src\data-types\carray.c" />
+    <ClCompile Include="..\..\src\data-types\charconv.c" />
+    <ClCompile Include="..\..\src\data-types\chash.c" />
+    <ClCompile Include="..\..\src\data-types\clist.c" />
+    <ClCompile Include="..\..\src\data-types\connect.c" />
+    <ClCompile Include="..\..\src\data-types\maillock.c" />
+    <ClCompile Include="..\..\src\data-types\mailsasl.c" />
+    <ClCompile Include="..\..\src\data-types\mailsem.c" />
+    <ClCompile Include="..\..\src\data-types\mailstream.c" />
+    <ClCompile Include="..\..\src\data-types\mailstream_cancel.c" />
+    <ClCompile Include="..\..\src\data-types\mailstream_cfstream.c" />
+    <ClCompile Include="..\..\src\data-types\mailstream_compress.c" />
+    <ClCompile Include="..\..\src\data-types\mailstream_helper.c" />
+    <ClCompile Include="..\..\src\data-types\mailstream_low.c" />
+    <ClCompile Include="..\..\src\data-types\mailstream_socket.c" />
+    <ClCompile Include="..\..\src\data-types\mailstream_ssl.c" />
+    <ClCompile Include="..\..\src\data-types\mail_cache_db.c" />
+    <ClCompile Include="..\..\src\data-types\md5.c" />
+    <ClCompile Include="..\..\src\data-types\mmapstring.c" />
+    <ClCompile Include="..\..\src\data-types\timeutils.c" />
+    <ClCompile Include="..\..\src\driver\implementation\data-message\data_message_driver.c" />
+    <ClCompile Include="..\..\src\driver\implementation\feed\feeddriver.c" />
+    <ClCompile Include="..\..\src\driver\implementation\feed\feeddriver_message.c" />
+    <ClCompile Include="..\..\src\driver\implementation\feed\feedstorage.c" />
+    <ClCompile Include="..\..\src\driver\implementation\hotmail\hotmailstorage.c" />
+    <ClCompile Include="..\..\src\driver\implementation\imap\imapdriver.c" />
+    <ClCompile Include="..\..\src\driver\implementation\imap\imapdriver_cached.c" />
+    <ClCompile Include="..\..\src\driver\implementation\imap\imapdriver_cached_message.c" />
+    <ClCompile Include="..\..\src\driver\implementation\imap\imapdriver_message.c" />
+    <ClCompile Include="..\..\src\driver\implementation\imap\imapdriver_tools.c" />
+    <ClCompile Include="..\..\src\driver\implementation\imap\imapstorage.c" />
+    <ClCompile Include="..\..\src\driver\implementation\maildir\maildirdriver.c" />
+    <ClCompile Include="..\..\src\driver\implementation\maildir\maildirdriver_cached.c" />
+    <ClCompile Include="..\..\src\driver\implementation\maildir\maildirdriver_cached_message.c" />
+    <ClCompile Include="..\..\src\driver\implementation\maildir\maildirdriver_message.c" />
+    <ClCompile Include="..\..\src\driver\implementation\maildir\maildirdriver_tools.c" />
+    <ClCompile Include="..\..\src\driver\implementation\maildir\maildirstorage.c" />
+    <ClCompile Include="..\..\src\driver\implementation\mbox\mboxdriver.c" />
+    <ClCompile Include="..\..\src\driver\implementation\mbox\mboxdriver_cached.c" />
+    <ClCompile Include="..\..\src\driver\implementation\mbox\mboxdriver_cached_message.c" />
+    <ClCompile Include="..\..\src\driver\implementation\mbox\mboxdriver_message.c" />
+    <ClCompile Include="..\..\src\driver\implementation\mbox\mboxdriver_tools.c" />
+    <ClCompile Include="..\..\src\driver\implementation\mbox\mboxstorage.c" />
+    <ClCompile Include="..\..\src\driver\implementation\mh\mhdriver.c" />
+    <ClCompile Include="..\..\src\driver\implementation\mh\mhdriver_cached.c" />
+    <ClCompile Include="..\..\src\driver\implementation\mh\mhdriver_cached_message.c" />
+    <ClCompile Include="..\..\src\driver\implementation\mh\mhdriver_message.c" />
+    <ClCompile Include="..\..\src\driver\implementation\mh\mhdriver_tools.c" />
+    <ClCompile Include="..\..\src\driver\implementation\mh\mhstorage.c" />
+    <ClCompile Include="..\..\src\driver\implementation\mime-message\mime_message_driver.c" />
+    <ClCompile Include="..\..\src\driver\implementation\nntp\nntpdriver.c" />
+    <ClCompile Include="..\..\src\driver\implementation\nntp\nntpdriver_cached.c" />
+    <ClCompile Include="..\..\src\driver\implementation\nntp\nntpdriver_cached_message.c" />
+    <ClCompile Include="..\..\src\driver\implementation\nntp\nntpdriver_message.c" />
+    <ClCompile Include="..\..\src\driver\implementation\nntp\nntpdriver_tools.c" />
+    <ClCompile Include="..\..\src\driver\implementation\nntp\nntpstorage.c" />
+    <ClCompile Include="..\..\src\driver\implementation\pop3\pop3driver.c" />
+    <ClCompile Include="..\..\src\driver\implementation\pop3\pop3driver_cached.c" />
+    <ClCompile Include="..\..\src\driver\implementation\pop3\pop3driver_cached_message.c" />
+    <ClCompile Include="..\..\src\driver\implementation\pop3\pop3driver_message.c" />
+    <ClCompile Include="..\..\src\driver\implementation\pop3\pop3driver_tools.c" />
+    <ClCompile Include="..\..\src\driver\implementation\pop3\pop3storage.c" />
+    <ClCompile Include="..\..\src\driver\interface\maildriver.c" />
+    <ClCompile Include="..\..\src\driver\interface\maildriver_tools.c" />
+    <ClCompile Include="..\..\src\driver\interface\maildriver_types.c" />
+    <ClCompile Include="..\..\src\driver\interface\maildriver_types_helper.c" />
+    <ClCompile Include="..\..\src\driver\interface\mailfolder.c" />
+    <ClCompile Include="..\..\src\driver\interface\mailmessage.c" />
+    <ClCompile Include="..\..\src\driver\interface\mailmessage_tools.c" />
+    <ClCompile Include="..\..\src\driver\interface\mailmessage_types.c" />
+    <ClCompile Include="..\..\src\driver\interface\mailstorage.c" />
+    <ClCompile Include="..\..\src\driver\interface\mailstorage_tools.c" />
+    <ClCompile Include="..\..\src\driver\tools\generic_cache.c" />
+    <ClCompile Include="..\..\src\driver\tools\imfcache.c" />
+    <ClCompile Include="..\..\src\driver\tools\mailthread.c" />
+    <ClCompile Include="..\..\src\driver\tools\mailthread_types.c" />
+    <ClCompile Include="..\..\src\low-level\feed\date.c" />
+    <ClCompile Include="..\..\src\low-level\feed\newsfeed.c" />
+    <ClCompile Include="..\..\src\low-level\feed\newsfeed_item.c" />
+    <ClCompile Include="..\..\src\low-level\feed\newsfeed_item_enclosure.c" />
+    <ClCompile Include="..\..\src\low-level\feed\newsfeed_private.c" />
+    <ClCompile Include="..\..\src\low-level\feed\parser.c" />
+    <ClCompile Include="..\..\src\low-level\feed\parser_atom03.c" />
+    <ClCompile Include="..\..\src\low-level\feed\parser_atom10.c" />
+    <ClCompile Include="..\..\src\low-level\feed\parser_rdf.c" />
+    <ClCompile Include="..\..\src\low-level\feed\parser_rss20.c" />
+    <ClCompile Include="..\..\src\low-level\imap\acl.c" />
+    <ClCompile Include="..\..\src\low-level\imap\acl_parser.c" />
+    <ClCompile Include="..\..\src\low-level\imap\acl_sender.c" />
+    <ClCompile Include="..\..\src\low-level\imap\acl_types.c" />
+    <ClCompile Include="..\..\src\low-level\imap\annotatemore.c" />
+    <ClCompile Include="..\..\src\low-level\imap\annotatemore_parser.c" />
+    <ClCompile Include="..\..\src\low-level\imap\annotatemore_sender.c" />
+    <ClCompile Include="..\..\src\low-level\imap\annotatemore_types.c" />
+    <ClCompile Include="..\..\src\low-level\imap\condstore.c" />
+    <ClCompile Include="..\..\src\low-level\imap\condstore_types.c" />
+    <ClCompile Include="..\..\src\low-level\imap\enable.c" />
+    <ClCompile Include="..\..\src\low-level\imap\idle.c" />
+    <ClCompile Include="..\..\src\low-level\imap\mailimap.c" />
+    <ClCompile Include="..\..\src\low-level\imap\mailimap_compress.c" />
+    <ClCompile Include="..\..\src\low-level\imap\mailimap_extension.c" />
+    <ClCompile Include="..\..\src\low-level\imap\mailimap_helper.c" />
+    <ClCompile Include="..\..\src\low-level\imap\mailimap_id.c" />
+    <ClCompile Include="..\..\src\low-level\imap\mailimap_id_parser.c" />
+    <ClCompile Include="..\..\src\low-level\imap\mailimap_id_sender.c" />
+    <ClCompile Include="..\..\src\low-level\imap\mailimap_id_types.c" />
+    <ClCompile Include="..\..\src\low-level\imap\mailimap_keywords.c" />
+    <ClCompile Include="..\..\src\low-level\imap\mailimap_oauth2.c" />
+    <ClCompile Include="..\..\src\low-level\imap\mailimap_parser.c" />
+    <ClCompile Include="..\..\src\low-level\imap\mailimap_print.c" />
+    <ClCompile Include="..\..\src\low-level\imap\mailimap_sender.c" />
+    <ClCompile Include="..\..\src\low-level\imap\mailimap_socket.c" />
+    <ClCompile Include="..\..\src\low-level\imap\mailimap_sort.c" />
+    <ClCompile Include="..\..\src\low-level\imap\mailimap_sort_types.c" />
+    <ClCompile Include="..\..\src\low-level\imap\mailimap_ssl.c" />
+    <ClCompile Include="..\..\src\low-level\imap\mailimap_types.c" />
+    <ClCompile Include="..\..\src\low-level\imap\mailimap_types_helper.c" />
+    <ClCompile Include="..\..\src\low-level\imap\namespace.c" />
+    <ClCompile Include="..\..\src\low-level\imap\namespace_parser.c" />
+    <ClCompile Include="..\..\src\low-level\imap\namespace_sender.c" />
+    <ClCompile Include="..\..\src\low-level\imap\namespace_types.c" />
+    <ClCompile Include="..\..\src\low-level\imap\qresync.c" />
+    <ClCompile Include="..\..\src\low-level\imap\qresync_types.c" />
+    <ClCompile Include="..\..\src\low-level\imap\quota.c" />
+    <ClCompile Include="..\..\src\low-level\imap\quota_parser.c" />
+    <ClCompile Include="..\..\src\low-level\imap\quota_sender.c" />
+    <ClCompile Include="..\..\src\low-level\imap\quota_types.c" />
+    <ClCompile Include="..\..\src\low-level\imap\uidplus.c" />
+    <ClCompile Include="..\..\src\low-level\imap\uidplus_parser.c" />
+    <ClCompile Include="..\..\src\low-level\imap\uidplus_sender.c" />
+    <ClCompile Include="..\..\src\low-level\imap\uidplus_types.c" />
+    <ClCompile Include="..\..\src\low-level\imap\xgmlabels.c" />
+    <ClCompile Include="..\..\src\low-level\imap\xgmmsgid.c" />
+    <ClCompile Include="..\..\src\low-level\imap\xgmthrid.c" />
+    <ClCompile Include="..\..\src\low-level\imap\xlist.c" />
+    <ClCompile Include="..\..\src\low-level\imf\mailimf.c" />
+    <ClCompile Include="..\..\src\low-level\imf\mailimf_types.c" />
+    <ClCompile Include="..\..\src\low-level\imf\mailimf_types_helper.c" />
+    <ClCompile Include="..\..\src\low-level\imf\mailimf_write_file.c" />
+    <ClCompile Include="..\..\src\low-level\imf\mailimf_write_generic.c" />
+    <ClCompile Include="..\..\src\low-level\imf\mailimf_write_mem.c" />
+    <ClCompile Include="..\..\src\low-level\maildir\maildir.c" />
+    <ClCompile Include="..\..\src\low-level\mbox\mailmbox.c" />
+    <ClCompile Include="..\..\src\low-level\mbox\mailmbox_parse.c" />
+    <ClCompile Include="..\..\src\low-level\mbox\mailmbox_types.c" />
+    <ClCompile Include="..\..\src\low-level\mh\mailmh.c" />
+    <ClCompile Include="..\..\src\low-level\mime\mailmime.c" />
+    <ClCompile Include="..\..\src\low-level\mime\mailmime_content.c" />
+    <ClCompile Include="..\..\src\low-level\mime\mailmime_decode.c" />
+    <ClCompile Include="..\..\src\low-level\mime\mailmime_disposition.c" />
+    <ClCompile Include="..\..\src\low-level\mime\mailmime_types.c" />
+    <ClCompile Include="..\..\src\low-level\mime\mailmime_types_helper.c" />
+    <ClCompile Include="..\..\src\low-level\mime\mailmime_write_file.c" />
+    <ClCompile Include="..\..\src\low-level\mime\mailmime_write_generic.c" />
+    <ClCompile Include="..\..\src\low-level\mime\mailmime_write_mem.c" />
+    <ClCompile Include="..\..\src\low-level\nntp\newsnntp.c" />
+    <ClCompile Include="..\..\src\low-level\nntp\newsnntp_socket.c" />
+    <ClCompile Include="..\..\src\low-level\nntp\newsnntp_ssl.c" />
+    <ClCompile Include="..\..\src\low-level\pop3\mailpop3.c" />
+    <ClCompile Include="..\..\src\low-level\pop3\mailpop3_helper.c" />
+    <ClCompile Include="..\..\src\low-level\pop3\mailpop3_socket.c" />
+    <ClCompile Include="..\..\src\low-level\pop3\mailpop3_ssl.c" />
+    <ClCompile Include="..\..\src\low-level\smtp\mailsmtp.c" />
+    <ClCompile Include="..\..\src\low-level\smtp\mailsmtp_helper.c" />
+    <ClCompile Include="..\..\src\low-level\smtp\mailsmtp_oauth2.c" />
+    <ClCompile Include="..\..\src\low-level\smtp\mailsmtp_socket.c" />
+    <ClCompile Include="..\..\src\low-level\smtp\mailsmtp_ssl.c" />
+    <ClCompile Include="..\..\src\windows\dirent.c" />
+    <ClCompile Include="..\..\src\windows\inet_aton.c" />
+    <ClCompile Include="..\..\src\windows\misc.c" />
+    <ClCompile Include="..\..\src\windows\mmap.c" />
+    <ClCompile Include="..\..\src\windows\time_r.c" />
+    <ClCompile Include="..\..\src\windows\win_init.cpp">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug_ssl|Win32'">CompileAsCpp</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsCpp</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release_ssl|Win32'">CompileAsCpp</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsCpp</CompileAs>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\data-types\mailsem.h" />
+    <ClInclude Include="..\..\src\low-level\smtp\mailsmtp_oauth2.h" />
+    <ClInclude Include="..\..\src\windows\win_etpan.h" />
+    <ClInclude Include="..\libetpan-config.h" />
+    <ClInclude Include="..\libetpan_version.h" />
+    <ClInclude Include="..\StdAfx.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
