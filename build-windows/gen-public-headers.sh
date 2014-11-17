@@ -17,8 +17,6 @@ list_headers()
   echo $path | sed 's/^.\//..\/src\//' | sed 's/\//\\/g'
   files="$files[$filename]"
   subfilenames="`grep '#include <libetpan/' "$path" | sed 's/^#include <libetpan\/\(.*\)>$/\1/'`"
-  subfilenames+=" "
-  subfilenames+="`grep '#import <libetpan/' "$path" | sed 's/^#import <libetpan\/\(.*\)>$/\1/'`"
   for include_dir in $subfilenames ; do
     list_headers $include_dir
   done
