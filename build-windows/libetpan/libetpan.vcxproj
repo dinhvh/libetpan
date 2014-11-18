@@ -91,7 +91,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <InlineFunctionExpansion>Default</InlineFunctionExpansion>
-      <AdditionalIncludeDirectories>../include;../include/libetpan;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../src;../../src/data-types;../../src/low-level;../include;../../src/low-level/imap;../../src/low-level/pop3;../../src/low-level/smtp;../../src/low-level/imf;../../src/low-level/mime;../../src/low-level/mh;../../src/low-level/mbox;../../src/low-level/maildir;../../src/driver;../../src/driver/interface;../../src/driver/tools;../../src/windows;../../build-windows;../../src/low-level/nntp;../../src/low-level/feed;../../src/driver/implementation/pop3;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;LIBETPAN_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -106,7 +106,6 @@
     <Link>
       <AdditionalOptions>/DLL %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>oldnames.lib;Ws2_32.lib;mswsock.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>../Debug/libetpan.dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <IgnoreSpecificDefaultLibraries>C;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ModuleDefinitionFile />
