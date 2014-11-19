@@ -215,9 +215,11 @@ static ssize_t mailstream_low_compress_write(mailstream_low * s, const void * bu
   strm->next_out = data->output_buf;
 
   zr = deflate(strm, Z_PARTIAL_FLUSH);
-  assert(zr == Z_OK);
   if (zr < 0) {
-    printf("Error deflating: %d %s", zr, strm->msg);
+    //STREAM_LOG(s, 1, "<<<<<<< Error deflating ");
+    //STREAM_LOG(s, 1, strm->msg);
+    //STREAM_LOG(s, 1, " <<<<<<<");
+    //STREAM_LOG(s, 1, "\n");
     return -1;
   }
   
