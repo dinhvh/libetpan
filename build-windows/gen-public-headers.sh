@@ -14,7 +14,7 @@ list_headers()
   if test "x$path" = x ; then
     return
   fi
-  echo $path | sed 's/^.\///' | sed 's/\//\\/g'
+  echo $path | sed 's/^.\//..\/src\//' | sed 's/\//\\/g'
   files="$files[$filename]"
   subfilenames="`grep '#include <libetpan/' "$path" | sed 's/^#include <libetpan\/\(.*\)>$/\1/'`"
   for include_dir in $subfilenames ; do
