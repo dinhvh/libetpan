@@ -150,6 +150,7 @@ third-party
 /build-windows/smtpsend/Debug
 /build-windows/smtpsend/Release
 /build-windows/*.sdf
+/build-windows/*.opensdf
 *.vcxproj.user
 /build-windows/Debug
 /build-windows/Release
