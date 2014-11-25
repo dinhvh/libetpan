@@ -29,7 +29,7 @@
 
 include $(top_srcdir)/rules.mk
 
-EXTRA_DIST = libetpan/libetpan.vcxproj README.txt StdAfx.h	\
+EXTRA_DIST = libetpan/libetpan.vcxproj \
 	build_headers.bat build_headers.list libetpan-config.h	\
 	libetpan.sln libetpan_version.h readmsg/readmsg.vcxproj	\
 	smtpsend/smtpsend.vcxproj
