@@ -14,7 +14,7 @@ list_headers()
   if test "x$path" = x ; then
     return
   fi
-  echo $path | sed 's/^.\//..\/src\//' | sed 's/\//\\/g'
+  echo $path | sed 's/^.\//src\//' | sed 's/\//\\/g'
   files="$files[$filename]"
   subfilenames="`grep '#include <libetpan/' "$path" | sed 's/^#include <libetpan\/\(.*\)>$/\1/'`"
   for include_dir in $subfilenames ; do
@@ -24,6 +24,6 @@ list_headers()
 
 cd ../src
 list_headers libetpan.h | sort
-echo ..\\src\\windows\\win_etpan.h
-echo libetpan-config.h
-echo libetpan_version.h
+echo src\\windows\\win_etpan.h
+echo build-windows\\libetpan-config.h
+echo build-windows\\libetpan_version.h
