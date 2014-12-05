@@ -55,6 +55,9 @@
 #ifdef WIN32
 #	include "win_etpan.h"
 #endif
+#if defined(ANDROID) || defined(__ANDROID__)
+#include <sys/select.h>
+#endif
 
 #include "mailstream_cfstream.h"
 #include "mailstream_compress.h"
