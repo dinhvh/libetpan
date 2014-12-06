@@ -29,11 +29,6 @@ fi
 function build {
   rm -rf "$current_dir/obj"
   
-  mkdir -p "$current_dir/third-parties"
-  cd "$current_dir/third-parties"
-  unzip -qo "$current_dir/dependencies/openssl/openssl-android-$openssl_build_version.zip"
-  unzip -qo "$current_dir/dependencies/cyrus-sasl/cyrus-sasl-android-$cyrus_sasl_build_version.zip"
-
   cd "$current_dir/jni"
   $ANDROID_NDK/ndk-build TARGET_PLATFORM=$ANDROID_PLATFORM TARGET_ARCH_ABI=$TARGET_ARCH_ABI \
     OPENSSL_PATH="$current_dir/third-parties/openssl-android-$openssl_build_version" \
@@ -41,9 +36,13 @@ function build {
 
   mkdir -p "$current_dir/$package_name-$build_version/libs/$TARGET_ARCH_ABI"
   cp "$current_dir/obj/local/$TARGET_ARCH_ABI/libetpan.a" "$current_dir/$package_name-$build_version/libs/$TARGET_ARCH_ABI"
-  rm -rf "$current_dir/src"
   rm -rf "$current_dir/obj"
 }
+
+mkdir -p "$current_dir/third-parties"
+cd "$current_dir/third-parties"
+unzip -qo "$current_dir/dependencies/openssl/openssl-android-$openssl_build_version.zip"
+unzip -qo "$current_dir/dependencies/cyrus-sasl/cyrus-sasl-android-$cyrus_sasl_build_version.zip"
 
 cd "$current_dir/.."
 tar xzf "$current_dir/../build-mac/autogen-result.tar.gz"
@@ -61,6 +60,7 @@ for arch in $archs ; do
   build
 done
 
+rm -rf "$current_dir/third-parties"
 cd "$current_dir"
 zip -qry "$package_name-$build_version.zip" "$package_name-$build_version"
 rm -rf "$package_name-$build_version"
