@@ -1,0 +1,9 @@
+dependencies/cyrus-sasl/cyrus-sasl-android-*.zip
+dependencies/cyrus-sasl/build-android/obj
+dependencies/openssl/openssl-android-*.zip
+dependencies/openssl/packages
+include/libetpan
+third-parties
+obj
+libetpan-android-*.zip
+
