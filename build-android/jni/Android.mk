@@ -1,6 +1,14 @@
 LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 
+ifeq ($(OPENSSL_PATH),)
+$(error OPENSSL_PATH must be set)
+endif
+
+ifeq ($(CYRUS_SASL_PATH),)
+$(error CYRUS_SASL_PATH must be set)
+endif
+
 src_files = \
 ./src/data-types/base64.c \
 ./src/data-types/carray.c \
@@ -104,7 +112,6 @@ src_files = \
 NDK_TOOLCHAIN_VERSION := clang
 LOCAL_MODULE := etpan
 LOCAL_SRC_FILES := $(addprefix ../../, $(src_files))
-#LOCAL_LDLIBS += -L$(ANDROID_NDK)/sources/cxx-stl/llvm-libc++/libs/$(TARGET_ARCH_ABI)
 LOCAL_CFLAGS += -DHAVE_SYS_MMAN_H=1 -DUSE_SSL=1
 c_includes = \
 src \
