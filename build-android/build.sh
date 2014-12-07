@@ -31,16 +31,16 @@ function build {
   
   cd "$current_dir/jni"
   $ANDROID_NDK/ndk-build TARGET_PLATFORM=$ANDROID_PLATFORM TARGET_ARCH_ABI=$TARGET_ARCH_ABI \
-    OPENSSL_PATH="$current_dir/third-parties/openssl-android-$openssl_build_version" \
-    CYRUS_SASL_PATH="$current_dir/third-parties/cyrus-sasl-android-$cyrus_sasl_build_version"
+    OPENSSL_PATH="$current_dir/third-party/openssl-android-$openssl_build_version" \
+    CYRUS_SASL_PATH="$current_dir/third-party/cyrus-sasl-android-$cyrus_sasl_build_version"
 
   mkdir -p "$current_dir/$package_name-$build_version/libs/$TARGET_ARCH_ABI"
   cp "$current_dir/obj/local/$TARGET_ARCH_ABI/libetpan.a" "$current_dir/$package_name-$build_version/libs/$TARGET_ARCH_ABI"
   rm -rf "$current_dir/obj"
 }
 
-mkdir -p "$current_dir/third-parties"
-cd "$current_dir/third-parties"
+mkdir -p "$current_dir/third-party"
+cd "$current_dir/third-party"
 unzip -qo "$current_dir/dependencies/openssl/openssl-android-$openssl_build_version.zip"
 unzip -qo "$current_dir/dependencies/cyrus-sasl/cyrus-sasl-android-$cyrus_sasl_build_version.zip"
 
@@ -60,7 +60,7 @@ for arch in $archs ; do
   build
 done
 
-rm -rf "$current_dir/third-parties"
+rm -rf "$current_dir/third-party"
 cd "$current_dir"
 zip -qry "$package_name-$build_version.zip" "$package_name-$build_version"
 rm -rf "$package_name-$build_version"
