@@ -107,7 +107,18 @@ src_files = \
 ./src/low-level/smtp/mailsmtp_oauth2.c \
 ./src/low-level/smtp/mailsmtp_socket.c \
 ./src/low-level/smtp/mailsmtp_ssl.c \
-./src/main/libetpan_version.c
+./src/main/libetpan_version.c \
+./src/driver/implementation/data-message/data_message_driver.c \
+./src/driver/interface/maildriver.c \
+./src/driver/interface/maildriver_tools.c \
+./src/driver/interface/maildriver_types.c \
+./src/driver/interface/maildriver_types_helper.c \
+./src/driver/interface/mailfolder.c \
+./src/driver/interface/mailmessage.c \
+./src/driver/interface/mailmessage_tools.c \
+./src/driver/interface/mailmessage_types.c \
+./src/driver/interface/mailstorage.c \
+./src/driver/interface/mailstorage_tools.c
 
 NDK_TOOLCHAIN_VERSION := clang
 LOCAL_MODULE := etpan
@@ -123,7 +134,9 @@ src/low-level/mime \
 src/low-level/nntp \
 src/low-level/pop3 \
 src/low-level/smtp \
-src/main
+src/main \
+src/driver/implementation/data-message \
+src/driver/interface
 
 LOCAL_C_INCLUDES = $(addprefix ../../, $(c_includes)) \
   $(LOCAL_PATH)/../include $(LOCAL_PATH)/../include/libetpan \
