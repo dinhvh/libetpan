@@ -8,11 +8,13 @@ lib/checkpw.c \
 lib/client.c \
 lib/common.c \
 lib/config.c \
+lib/dlopen.c \
 lib/external.c \
 lib/getsubopt.c \
 lib/md5.c \
 lib/saslutil.c \
 lib/server.c \
+lib/seterror.c \
 lib/snprintf.c \
 plugins/anonymous.c \
 plugins/anonymous_init.c \
@@ -31,12 +33,8 @@ plugins/passdss_init.c \
 plugins/plain.c \
 plugins/plain_init.c \
 plugins/plugin_common.c \
-plugins/sasldb.c \
-plugins/sasldb_init.c \
 plugins/scram.c \
 plugins/scram_init.c \
-plugins/sql.c \
-plugins/sql_init.c \
 plugins/srp.c \
 plugins/srp_init.c
 

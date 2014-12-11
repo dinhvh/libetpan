@@ -123,7 +123,7 @@ src_files = \
 NDK_TOOLCHAIN_VERSION := clang
 LOCAL_MODULE := etpan
 LOCAL_SRC_FILES := $(addprefix ../../, $(src_files))
-LOCAL_CFLAGS += -DHAVE_SYS_MMAN_H=1 -DUSE_SSL=1
+LOCAL_CFLAGS += -DHAVE_CONFIG_H=1
 c_includes = \
 src \
 src/data-types \

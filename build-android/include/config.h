@@ -8,7 +8,7 @@
 #endif
 
 /* Define to detected Berkeley DB major version number */
-#define DBVERS 1
+/* #undef DBVERS */
 
 /* Define to 1 if you have the <arpa/inet.h> header file. */
 #define HAVE_ARPA_INET_H 1
@@ -35,7 +35,7 @@
 #define HAVE_GETPAGESIZE 1
 
 /* Define if you have the iconv() function. */
-#define HAVE_ICONV 1
+/* #undef HAVE_ICONV */
 
 /* prototype of iconv() has const parameters */
 /* #undef HAVE_ICONV_PROTO_CONST */
@@ -68,7 +68,7 @@
 #define HAVE_MMAP 1
 
 /* Define to 1 if you have the <netdb.h> header file. */
-#define HAVE_NETDB_H 1
+/* #undef HAVE_NETDB_H */
 
 /* Define to 1 if you have the <netinet/in.h> header file. */
 #define HAVE_NETINET_IN_H 1

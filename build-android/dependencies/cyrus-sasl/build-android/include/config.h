@@ -221,7 +221,7 @@
 #define HAVE_SNPRINTF /**/
 
 /* Does sockaddr have an sa_len? */
-//#define HAVE_SOCKADDR_SA_LEN /**/
+/* #undef HAVE_SOCKADDR_SA_LEN */
 
 /* Define to 1 if you have the `socket' function. */
 #define HAVE_SOCKET 1
@@ -394,7 +394,7 @@
 #define STATIC_DIGESTMD5 /**/
 
 /* Link GSSAPI Staticly */
-#define STATIC_GSSAPIV2 /**/
+/* #undef STATIC_GSSAPIV2 */
 
 /* User KERBEROS_V4 Staticly */
 /* #undef STATIC_KERBEROS4 */
@@ -418,7 +418,7 @@
 #define STATIC_PLAIN /**/
 
 /* Link SASLdb Staticly */
-#define STATIC_SASLDB /**/
+/* #undef STATIC_SASLDB */
 
 /* Link SCRAM Staticly */
 #define STATIC_SCRAM /**/

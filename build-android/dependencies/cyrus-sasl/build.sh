@@ -23,7 +23,7 @@ if [ ! -e "$package_dir/$ARCHIVE_NAME" ]; then
   exit 1
 fi
 
-if test ! -f "$current_dir/../openssl/openssl-$openssl_build_version.zip" ; then
+if test ! -f "$current_dir/../openssl/openssl-android-$openssl_build_version.zip" ; then
   echo Building OpenSSL first
   cd "$current_dir/../openssl"
   ./build.sh
@@ -49,7 +49,7 @@ function build {
   fi
 
   cd "$current_dir/src"
-  unzip -q "$current_dir/../openssl/openssl-$openssl_build_version.zip"
+  unzip -q "$current_dir/../openssl/openssl-android-$openssl_build_version.zip"
 
   cp -R "$current_dir/build-android" "$current_dir/src/$ARCHIVE"
   cd "$current_dir/src/$ARCHIVE/build-android/jni"
