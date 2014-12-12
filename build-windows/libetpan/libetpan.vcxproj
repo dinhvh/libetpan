@@ -84,7 +84,7 @@
       <Optimization>Disabled</Optimization>
       <InlineFunctionExpansion>Default</InlineFunctionExpansion>
       <AdditionalIncludeDirectories>../../src/data-types;../../src/driver;../../src/driver/interface;../../src/driver/tools;../../src/low-level/feed;../../src/low-level/imap;../../src/low-level/imf;../../src/low-level/maildir;../../src/low-level/mbox;../../src/low-level/mh;../../src/low-level/mime;../../src/low-level/nntp;../../src/low-level/pop3;../../src/low-level/smtp;../../src/windows;../../src/main;..;../include;../../src/driver/implementation/pop3;../../third-party/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>USE_SSL;WIN32;_WINDOWS;_USRDLL;LIBETPAN_DLL;USE_SSL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>HAVE_ZLIB;USE_SASL;USE_SSL;WIN32;_WINDOWS;_USRDLL;LIBETPAN_DLL;USE_SSL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -98,7 +98,7 @@
     </ClCompile>
     <Link>
       <AdditionalOptions>/DLL %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>oldnames.lib;Ws2_32.lib;mswsock.lib;ssleay32MDd.lib;libeay32MDd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libsasl2.dll;zlib.lib;Ws2_32.lib;ssleay32MDd.lib;libeay32MDd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>../../third-party/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>C;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
@@ -117,7 +117,7 @@
       <Optimization>Disabled</Optimization>
       <InlineFunctionExpansion>Default</InlineFunctionExpansion>
       <AdditionalIncludeDirectories>../../src/data-types;../../src/driver;../../src/driver/interface;../../src/driver/tools;../../src/low-level/feed;../../src/low-level/imap;../../src/low-level/imf;../../src/low-level/maildir;../../src/low-level/mbox;../../src/low-level/mh;../../src/low-level/mime;../../src/low-level/nntp;../../src/low-level/pop3;../../src/low-level/smtp;../../src/windows;../../src/main;..;../include;../../src/driver/implementation/pop3;../../third-party/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>USE_SSL;WIN32;_WINDOWS;_USRDLL;LIBETPAN_DLL;USE_SSL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>HAVE_ZLIB;USE_SASL;USE_SSL;WIN32;_WINDOWS;_USRDLL;LIBETPAN_DLL;USE_SSL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
@@ -130,7 +130,7 @@
     </ClCompile>
     <Link>
       <AdditionalOptions>/DLL %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>oldnames.lib;Ws2_32.lib;mswsock.lib;ssleay32MDd.lib;libeay32MDd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libsasl2.dll;zlib.lib;Ws2_32.lib;ssleay32MDd.lib;libeay32MDd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>../../third-party/lib64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>C;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
@@ -148,7 +148,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <AdditionalIncludeDirectories>../../src/data-types;../../src/driver;../../src/driver/interface;../../src/driver/tools;../../src/low-level/feed;../../src/low-level/imap;../../src/low-level/imf;../../src/low-level/maildir;../../src/low-level/mbox;../../src/low-level/mh;../../src/low-level/mime;../../src/low-level/nntp;../../src/low-level/pop3;../../src/low-level/smtp;../../src/windows;../../src/main;..;../include;../../src/driver/implementation/pop3;../../third-party/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>HAVE_ZLIB;NDEBUG;USE_SSL;WIN32;_WINDOWS;_USRDLL;LIBETPAN_DLL;USE_SSL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>HAVE_ZLIB;USE_SASL;USE_SSL;WIN32;_WINDOWS;_USRDLL;LIBETPAN_DLL;USE_SSL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
@@ -160,7 +160,7 @@
     </ClCompile>
     <Link>
       <AdditionalOptions>/DLL %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>zlib.lib;Ws2_32.lib;ssleay32MD.lib;libeay32MD.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libsasl2.lib;zlib.lib;Ws2_32.lib;ssleay32MD.lib;libeay32MD.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>../../third-party/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>C;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <GenerateDebugInformation>false</GenerateDebugInformation>
@@ -175,7 +175,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <AdditionalIncludeDirectories>../../src/data-types;../../src/driver;../../src/driver/interface;../../src/driver/tools;../../src/low-level/feed;../../src/low-level/imap;../../src/low-level/imf;../../src/low-level/maildir;../../src/low-level/mbox;../../src/low-level/mh;../../src/low-level/mime;../../src/low-level/nntp;../../src/low-level/pop3;../../src/low-level/smtp;../../src/windows;../../src/main;..;../include;../../src/driver/implementation/pop3;../../third-party/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>HAVE_ZLIB;NDEBUG;USE_SSL;WIN32;_WINDOWS;_USRDLL;LIBETPAN_DLL;USE_SSL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>HAVE_ZLIB;USE_SASL;USE_SSL;WIN32;_WINDOWS;_USRDLL;LIBETPAN_DLL;USE_SSL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
@@ -188,7 +188,7 @@
     </ClCompile>
     <Link>
       <AdditionalOptions>/DLL %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>zlib.lib;Ws2_32.lib;ssleay32MD.lib;libeay32MD.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libsasl2.lib;zlib.lib;Ws2_32.lib;ssleay32MD.lib;libeay32MD.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>../../third-party/lib64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>C;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <GenerateDebugInformation>false</GenerateDebugInformation>
