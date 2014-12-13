@@ -1007,8 +1007,7 @@ int mailstream_cfstream_set_ssl_enabled(mailstream * s, int ssl_enabled)
         }
     }
       
-    if (count == 0)
-    {
+    if (count == 0) {
       // No certificates, wait more.
       continue;
     }
@@ -1190,8 +1189,7 @@ static carray * mailstream_low_cfstream_get_certificate_chain(mailstream_low * s
       SecTrustEvaluate(secTrust, NULL);
       count = SecTrustGetCertificateCount(secTrust);
       result = carray_new(4);
-      for(i = 0 ; i < count ; i ++)
-      {
+      for(i = 0 ; i < count ; i ++) {
           SecCertificateRef cert = (SecCertificateRef) SecTrustGetCertificateAtIndex(secTrust, i);
           CFDataRef data = SecCertificateCopyData(cert);
           CFIndex length = CFDataGetLength(data);
@@ -1220,8 +1218,9 @@ static carray * mailstream_low_cfstream_get_certificate_chain(mailstream_low * s
           }
           CFRelease(certs);
       }
-      else
+      else {
           return NULL;
+      }
   }
     
   return result;
