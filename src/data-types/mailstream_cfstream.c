@@ -1010,11 +1010,9 @@ int mailstream_cfstream_set_ssl_enabled(mailstream * s, int ssl_enabled)
     if (count == 0)
     {
       // No certificates, wait more.
-      fprintf(stderr,"no certificates\n");
       continue;
     }
     
-    fprintf(stderr,"sec breaking\n");
     break;
   }
   
