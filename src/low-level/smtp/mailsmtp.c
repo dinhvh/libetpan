@@ -196,7 +196,12 @@ int mailsmtp_connect(mailsmtp * session, mailstream * s)
     session->stream = NULL;
     mailstream_close(s);
     return MAILSMTP_ERROR_SERVICE_NOT_AVAILABLE;
-      
+
+  case 0:
+    session->stream = NULL;
+    mailstream_close(s);
+    return MAILSMTP_ERROR_STREAM;
+
   default:
     session->stream = NULL;
     mailstream_close(s);
@@ -396,6 +401,9 @@ int mailsmtp_data(mailsmtp * session)
 
   case 503:
     return MAILSMTP_ERROR_BAD_SEQUENCE_OF_COMMAND;
+
+  case 0:
+    return MAILSMTP_ERROR_STREAM;
 
   default:
     return MAILSMTP_ERROR_UNEXPECTED_CODE;
@@ -977,6 +985,9 @@ int mailesmtp_starttls(mailsmtp * session)
 
   case 454:
     return MAILSMTP_ERROR_STARTTLS_TEMPORARY_FAILURE;
+
+  case 0:
+    return MAILSMTP_ERROR_STREAM;
 
   default:
     return MAILSMTP_ERROR_UNEXPECTED_CODE;

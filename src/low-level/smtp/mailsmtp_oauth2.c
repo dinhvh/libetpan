@@ -184,12 +184,20 @@ static int oauth2_authenticate(mailsmtp * session, int type, const char * auth_u
           res = MAILSMTP_NO_ERROR;
           goto free;
           
+        case 0:
+          res = MAILSMTP_ERROR_STREAM;
+          goto free;
+
         default:
           res = MAILSMTP_ERROR_UNEXPECTED_CODE;
           goto free;
       }
       break;
-      
+
+    case 0:
+      res = MAILSMTP_ERROR_STREAM;
+      goto free;
+
     default:
       res = MAILSMTP_ERROR_UNEXPECTED_CODE;
       goto free;
