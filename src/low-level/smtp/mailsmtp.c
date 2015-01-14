@@ -1300,6 +1300,10 @@ int mailesmtp_auth_sasl(mailsmtp * session, const char * auth_type,
   while (1) {
     r = read_response(session);
     switch (r) {
+    case 0:
+      res = MAILSMTP_ERROR_STREAM;
+      goto free_sasl_conn;
+        
     case 220:
     case 235:
       res = MAILSMTP_NO_ERROR;
