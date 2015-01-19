@@ -403,8 +403,7 @@ mailimap_sort_extension_parse(int calling_parser, mailstream * fd,
   int r;
   clist * number_list = NULL;
   struct mailimap_extension_data * ext_data;
-  void * data;
-  int type;
+  void * data = NULL;
   size_t cur_token;
   
   cur_token = * indx;
@@ -416,7 +415,6 @@ mailimap_sort_extension_parse(int calling_parser, mailstream * fd,
       r = mailimap_number_list_data_sort_parse(fd, buffer, &cur_token,
                                                &number_list, progr_rate, progr_fun);
       if (r == MAILIMAP_NO_ERROR) {
-        type = MAILIMAP_SORT_TYPE_SORT;
         data = number_list;
       }
       
@@ -425,7 +423,7 @@ mailimap_sort_extension_parse(int calling_parser, mailstream * fd,
       }
       
       ext_data = mailimap_extension_data_new(&mailimap_extension_sort,
-                                             type, data);
+                                             MAILIMAP_SORT_TYPE_SORT, data);
       if (ext_data == NULL) {
         if (number_list != NULL)
           mailimap_mailbox_data_search_free(number_list);

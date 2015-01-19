@@ -1274,7 +1274,8 @@ static int recursive_build_path(struct mailimap_body * root_part,
       r = try_build_part(current_part, part, count, &imap_id_list);
       if (r == MAILIMAP_ERROR_INVAL) {
         continue;
-      } if (r != MAILIMAP_NO_ERROR) {
+      }
+      else if (r != MAILIMAP_NO_ERROR) {
         return r;
       }
       else {

@@ -695,7 +695,6 @@ static int resp_text_code_parse(mailstream * fd,
     "NOMODSEQ" /
     "MODIFIED" SP set
   */
-  cur_token = * indx;
   
   r = mailimap_token_case_insensitive_parse(fd, buffer, &cur_token, "HIGHESTMODSEQ");
   if (r == MAILIMAP_NO_ERROR) {

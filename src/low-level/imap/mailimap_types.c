@@ -1642,7 +1642,6 @@ mailimap_message_data_new(uint32_t mdt_number, int mdt_type,
 
   msg_data = malloc(sizeof(* msg_data));
   if (msg_data == NULL) {
-    free(msg_data);
     return NULL;
   }
 
