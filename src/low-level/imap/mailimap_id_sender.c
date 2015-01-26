@@ -88,7 +88,7 @@ static int mailimap_id_param_send(mailstream * fd, struct mailimap_id_param * pa
 {
   int r;
   
-  r = mailimap_astring_send(fd, param->idpa_name);
+  r = mailimap_quoted_send(fd, param->idpa_name);
   if (r != MAILIMAP_NO_ERROR)
     return r;
   
@@ -102,7 +102,7 @@ static int mailimap_id_param_send(mailstream * fd, struct mailimap_id_param * pa
       return r;
   }
   else {
-    r = mailimap_astring_send(fd, param->idpa_value);
+    r = mailimap_quoted_send(fd, param->idpa_value);
     if (r != MAILIMAP_NO_ERROR)
       return r;
   }
