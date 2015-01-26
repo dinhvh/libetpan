@@ -88,6 +88,7 @@ static int mailimap_id_param_send(mailstream * fd, struct mailimap_id_param * pa
 {
   int r;
   
+  // Sends quoted string instead since Yahoo IMAP server will break when sending atoms.
   r = mailimap_quoted_send(fd, param->idpa_name);
   if (r != MAILIMAP_NO_ERROR)
     return r;
@@ -102,6 +103,7 @@ static int mailimap_id_param_send(mailstream * fd, struct mailimap_id_param * pa
       return r;
   }
   else {
+    // Sends quoted string instead since Yahoo IMAP server will break when sending atoms.
     r = mailimap_quoted_send(fd, param->idpa_value);
     if (r != MAILIMAP_NO_ERROR)
       return r;
