@@ -59,6 +59,8 @@
 #include <libgen.h>
 #endif
 
+#include "wrappers.h"
+
 /*
   We suppose the maildir mailbox remains on one unique filesystem.
 */
@@ -448,9 +450,9 @@ int maildir_update(struct maildir * md)
   if (stat(path_maildirfolder, &stat_info) == -1) {
     int fd;
     
-    fd = creat(path_maildirfolder, S_IRUSR | S_IWUSR);
+    fd = Creat(path_maildirfolder, S_IRUSR | S_IWUSR);
     if (fd != -1)
-      close(fd);
+      Close(fd);
   }
   
   return MAILDIR_NO_ERROR;
@@ -512,22 +514,22 @@ int maildir_message_add_uid(struct maildir * md,
 
   snprintf(tmpname, sizeof(tmpname), "%s/tmp/etpan-maildir-XXXXXX",
       md->mdir_path);
-  fd = mkstemp(tmpname);
+  fd = Mkstemp(tmpname);
   if (fd < 0) {
     res = MAILDIR_ERROR_FILE;
     goto err;
   }
   
-  r = ftruncate(fd, size);
+  r = Ftruncate(fd, size);
   if (r < 0) {
     res = MAILDIR_ERROR_FILE;
-    goto close;
+    goto Close;
   }
   
   mapping = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
   if (mapping == (char *)MAP_FAILED) {
     res = MAILDIR_ERROR_FILE;
-    goto close;
+    goto Close;
   }
   
   memcpy(mapping, message, size);
@@ -535,7 +537,7 @@ int maildir_message_add_uid(struct maildir * md,
   msync(mapping, size, MS_SYNC);
   munmap(mapping, size);
   
-  close(fd);
+  Close(fd);
 
   /* write to tmp/ with maildir standard name */
   
@@ -601,8 +603,8 @@ int maildir_message_add_uid(struct maildir * md,
   unlink(delivery_tmp_name);
   free(delivery_tmp_name);
   goto err;
- close:
-  close(fd);
+ Close:
+  Close(fd);
  unlink:
   unlink(tmpname);
  err:

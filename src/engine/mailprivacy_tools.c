@@ -58,6 +58,9 @@
 #include "mailprivacy.h"
 #include <libetpan/libetpan-config.h>
 #include <libetpan/data_message_driver.h>
+#include <errno.h>
+
+#include "../data-types/wrappers.h"
 
 void mailprivacy_mime_clear(struct mailmime * mime)
 {
@@ -111,14 +114,15 @@ static FILE * get_tmp_file(char * filename)
   FILE * f;
   
   old_mask = umask(0077);
-  fd = mkstemp(filename);
+  fd = Mkstemp(filename);
   umask(old_mask);
   if (fd == -1)
     return NULL;
-  
-  f = fdopen(fd, "r+");
+ 
+  f = Fdopen(fd, "r+");
   if (f == NULL) {
-    close(fd);
+    int r;
+    Close(fd);
     unlink(filename);
   }
   
@@ -136,12 +140,12 @@ int mailprivacy_get_tmp_filename(struct mailprivacy * privacy,
     char * filename, size_t size)
 {
   FILE * f;
-  
+
   f = mailprivacy_get_tmp_file(privacy, filename, size);
   if (f == NULL)
     return MAIL_ERROR_FILE;
   
-  fclose(f);
+  Fclose(f);
   
   return MAIL_NO_ERROR;
 }
@@ -166,7 +170,7 @@ static char * dup_file(struct mailprivacy * privacy,
   if (dest_filename == NULL)
     goto close_dest;
   
-  fd = open(source_filename, O_RDONLY);
+  fd = Open(source_filename, O_RDONLY);
   if (fd < 0)
     goto free_dest;
   
@@ -178,24 +182,24 @@ static char * dup_file(struct mailprivacy * privacy,
   if (mapping == (char *)MAP_FAILED)
     goto close_src;
   
-  written = fwrite(mapping, 1, stat_info.st_size, dest_f);
+  written = Fwrite(mapping, 1, stat_info.st_size, dest_f);
   if (written != (size_t) stat_info.st_size)
     goto unmap;
   
   munmap(mapping, stat_info.st_size);
-  close(fd);
-  fclose(dest_f);
+  Close(fd);
+  Fclose(dest_f);
   
   return dest_filename;
   
  unmap:
   munmap(mapping, stat_info.st_size);
  close_src:
-  close(fd);
+  Close(fd);
  free_dest:
   free(dest_filename);
  close_dest:
-  fclose(dest_f);
+  Fclose(dest_f);
  err:
   return NULL;
 }
@@ -246,9 +250,9 @@ static int mime_data_replace(struct mailprivacy * privacy,
     
       if (r == MAILIMF_NO_ERROR) {
         /* write decoded */
-        written = fwrite(content, 1, content_len, f);
+        written = Fwrite(content, 1, content_len, f);
         if (written != content_len) {
-          fclose(f);
+          Fclose(f);
           unlink(filename);
           res = MAIL_ERROR_FILE;
           goto err;
@@ -262,17 +266,17 @@ static int mime_data_replace(struct mailprivacy * privacy,
   }
   
   if (!decoded) {
-    written = fwrite(data->dt_data.dt_text.dt_data, 1,
+    written = Fwrite(data->dt_data.dt_text.dt_data, 1,
         data->dt_data.dt_text.dt_length, f);
     if (written != data->dt_data.dt_text.dt_length) {
-      fclose(f);
+      Fclose(f);
       unlink(filename);
       res = MAIL_ERROR_FILE;
       goto err;
     }
   }
-  
-  fclose(f);
+ 
+  Fclose(f);
   
   dup_filename = strdup(filename);
   if (dup_filename == NULL) {
@@ -670,7 +674,7 @@ int mailprivacy_fetch_mime_body_to_file(struct mailprivacy * privacy,
       &content, &content_len);
   if (r != MAIL_NO_ERROR) {
     res = MAIL_ERROR_FETCH;
-    goto close;
+    goto Close;
   }
   
   col = 0;
@@ -678,29 +682,29 @@ int mailprivacy_fetch_mime_body_to_file(struct mailprivacy * privacy,
   mailprivacy_msg_fetch_result_free(privacy, msg, content);
   if (r != MAILIMF_NO_ERROR) {
     res = r;
-    goto close;
+    goto Close;
   }
   
   r = mailprivacy_msg_fetch_section(privacy, msg, mime,
       &content, &content_len);
   if (r != MAIL_NO_ERROR) {
     res = MAIL_ERROR_FETCH;
-    goto close;
+    goto Close;
   }
   
   r = mailimf_string_write(f, &col, content, content_len);
   mailprivacy_msg_fetch_result_free(privacy, msg, content);
   if (r != MAILIMF_NO_ERROR) {
     res = r;
-    goto close;
+    goto Close;
   }
   
-  fclose(f);
+  Fclose(f);
   
   return MAIL_NO_ERROR;
   
- close:
-  fclose(f);
+ Close:
+  Fclose(f);
   unlink(filename);
  err:
   return res;
@@ -718,7 +722,7 @@ int mailprivacy_get_part_from_file(struct mailprivacy * privacy,
   int res;
   char * mapping;
 
-  fd = open(filename, O_RDONLY);
+  fd = Open(filename, O_RDONLY);
   if (fd < 0) {
     res = MAIL_ERROR_FILE;
     goto err;
@@ -727,13 +731,13 @@ int mailprivacy_get_part_from_file(struct mailprivacy * privacy,
   r = fstat(fd, &stat_info);
   if (r < 0) {
     res = MAIL_ERROR_FILE;
-    goto close;
+    goto Close;
   }
 
   mapping = mmap(NULL, stat_info.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
   if (mapping == (char *)MAP_FAILED) {
     res = MAIL_ERROR_FILE;
-    goto close;
+    goto Close;
   }
   
   mime = NULL;
@@ -758,8 +762,8 @@ int mailprivacy_get_part_from_file(struct mailprivacy * privacy,
   }
 
   munmap(mapping, stat_info.st_size);
-  
-  close(fd);
+ 
+  Close(fd);
 
   * result_mime = mime;
 
@@ -767,8 +771,8 @@ int mailprivacy_get_part_from_file(struct mailprivacy * privacy,
   
  unmap:
   munmap(mapping, stat_info.st_size);
- close:
-  close(fd);
+ Close:
+  Close(fd);
  err:
   return res;
 }
@@ -942,7 +946,7 @@ char * mailprivacy_dup_imf_file(struct mailprivacy * privacy,
   if (dest_filename == NULL)
     goto close_dest;
   
-  fd = open(source_filename, O_RDONLY);
+  fd = Open(source_filename, O_RDONLY);
   if (fd < 0)
     goto free_dest;
   
@@ -960,19 +964,19 @@ char * mailprivacy_dup_imf_file(struct mailprivacy * privacy,
     goto unmap;
   
   munmap(mapping, stat_info.st_size);
-  close(fd);
-  fclose(dest_f);
+  Close(fd);
+  Fclose(dest_f);
   
   return dest_filename;
   
  unmap:
   munmap(mapping, stat_info.st_size);
  close_src:
-  close(fd);
+  Close(fd);
  free_dest:
   free(dest_filename);
  close_dest:
-  fclose(dest_f);
+  Fclose(dest_f);
  err:
   return NULL;
 }
@@ -1003,7 +1007,7 @@ mailprivacy_mime_fields_dup(struct mailprivacy * privacy,
   if (r != MAILIMF_NO_ERROR)
     goto unlink;
   
-  fflush(f);
+  Fflush(f);
   
   fd = fileno(f);
   if (fd == -1)
@@ -1029,7 +1033,7 @@ mailprivacy_mime_fields_dup(struct mailprivacy * privacy,
     goto unmap;
   
   munmap(mapping, stat_info.st_size);
-  fclose(f);
+  Fclose(f);
   unlink(tmp_file);
 
   return dup_mime_fields;
@@ -1037,7 +1041,7 @@ mailprivacy_mime_fields_dup(struct mailprivacy * privacy,
  unmap:
   munmap(mapping, stat_info.st_size);
  unlink:
-  fclose(f);
+  Fclose(f);
   unlink(tmp_file);
  err:
   return NULL;
@@ -1265,19 +1269,19 @@ int mailprivacy_fetch_decoded_to_file(struct mailprivacy * privacy,
     res = MAIL_ERROR_FETCH;
     goto free_fetch;
   }
-  written = fwrite(parsed_content, 1, parsed_content_len, f);
+  written = Fwrite(parsed_content, 1, parsed_content_len, f);
   if (written != parsed_content_len) {
     res = MAIL_ERROR_FILE;
-    goto close;
+    goto Close;
   }
-  fclose(f);
+  Fclose(f);
   
   mmap_string_unref(parsed_content);
   
   return MAIL_NO_ERROR;
 
- close:
-  fclose(f);
+ Close:
+  Fclose(f);
   unlink(filename);
  free_fetch:
   mmap_string_unref(parsed_content);
@@ -1470,13 +1474,13 @@ int mailprivacy_spawn_and_wait(char * command, char * passphrase,
   int passphrase_input[2];
   int r;
 
-  fd_out = open(stdoutfile, O_RDWR | O_CREAT | O_TRUNC, 0600);
+  fd_out = Open(stdoutfile, O_RDWR | O_CREAT | O_TRUNC, 0600);
   if (fd_out < 0) {
     res = ERROR_PASSPHRASE_FILE;
     goto err;
   }
-  
-  fd_err = open(stderrfile, O_RDWR | O_CREAT | O_TRUNC, 0600);
+
+  fd_err = Open(stderrfile, O_RDWR | O_CREAT | O_TRUNC, 0600);
   if (fd_err < 0) {
     res = ERROR_PASSPHRASE_FILE;
     goto close_out;
@@ -1492,8 +1496,8 @@ int mailprivacy_spawn_and_wait(char * command, char * passphrase,
   switch (pid) {
   case -1:
     {
-      close (passphrase_input[0]);
-      close (passphrase_input[1]);
+      Close(passphrase_input[0]);
+      Close(passphrase_input[1]);
       res = ERROR_PASSPHRASE_COMMAND;
       goto close_err;
     }
@@ -1504,15 +1508,19 @@ int mailprivacy_spawn_and_wait(char * command, char * passphrase,
       int status;
       
       /* close unneeded fd */
-      close(passphrase_input[1]);
-      
-      dup2(passphrase_input[0], 0);
-      close(passphrase_input[0]);
-      dup2(fd_out, 1);
-      close(fd_out);
-      dup2(fd_err, 2);
-      close(fd_err);
-      
+      Close(passphrase_input[1]);
+
+      Dup2(passphrase_input[0], 0);
+      Close(passphrase_input[0]);
+      Dup2(fd_out, 1);
+      Close(fd_out);
+      Dup2(fd_err, 2);
+      Close(fd_err);
+ 
+      // BUG: status may be -1 and errno may be EINTR if waitpid(2) was
+      // interrupted by a signal; to handle that properly the PID of the
+      // fork(2)ed child has to be determined and waitpid(2) has to be
+      // called again
       status = system(command);
       
       exit(WEXITSTATUS(status));
@@ -1525,28 +1533,30 @@ int mailprivacy_spawn_and_wait(char * command, char * passphrase,
       int status;
       
       /* close unneeded fd */
-      close(fd_err);
-      close(fd_out);
-      close(passphrase_input[0]);
+      Close(fd_err);
+      Close(fd_out);
+      Close(passphrase_input[0]);
       
       if ((passphrase != NULL) && (strlen(passphrase) > 0)) {
-        r = (int) write(passphrase_input[1], passphrase, strlen(passphrase));
+        do {
+        r = (int) Write(passphrase_input[1], passphrase, strlen(passphrase));
+        } while (r == -1 && errno == EINTR);
         if (r != (int) strlen(passphrase)) {
-          close(passphrase_input[1]);
+          Close(passphrase_input[1]);
           return ERROR_PASSPHRASE_FILE;
         }
       }
       else {
         /* dummy password */
-        r = (int) write(passphrase_input[1], "*dummy*", 7);
+        r = (int) Write(passphrase_input[1], "*dummy*", 7);
         if (r != 7) {
-          close(passphrase_input[1]);
+          Close(passphrase_input[1]);
           return ERROR_PASSPHRASE_FILE;
         }
       }
-      close(passphrase_input[1]);
-      
-      waitpid(pid, &status, 0);
+      Close(passphrase_input[1]);
+
+      r = Waitpid(pid, &status, 0);
       
       if (WEXITSTATUS(status) != 0)
         *bad_passphrase = 1;
@@ -1557,9 +1567,9 @@ int mailprivacy_spawn_and_wait(char * command, char * passphrase,
   }
   
  close_err:
-  close(fd_err);
+  Close(fd_err);
  close_out:
-  close(fd_out);
+  Close(fd_out);
  err:
   return res;
 #endif

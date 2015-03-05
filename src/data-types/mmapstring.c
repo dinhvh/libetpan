@@ -57,6 +57,8 @@
 #endif
 #endif
 
+#include "wrappers.h"
+
 #define MMAPSTRING_MAX(a, b) ((a) > (b) ? (a) : (b))
 #define MMAPSTRING_MIN(a, b) ((a) < (b) ? (a) : (b))
 
@@ -244,17 +246,17 @@ static MMAPString * mmap_string_realloc_file(MMAPString * string)
     strcat(tmpfilename, tmpdir);
     strcat(tmpfilename, "/libetpan-mmapstring-XXXXXX");
 
-    fd = mkstemp(tmpfilename);
+    fd = Mkstemp(tmpfilename);
     if (fd == -1)
       return NULL;
 
     if (unlink(tmpfilename) == -1) {
-      close(fd);
+      r = Close(fd);
       return NULL;
     }
-    
-    if (ftruncate(fd, string->allocated_len) == -1) {
-      close(fd);
+   
+    if (Ftruncate(fd, string->allocated_len) == -1) {
+      Close(fd);
       return NULL;
     }
 
@@ -262,7 +264,7 @@ static MMAPString * mmap_string_realloc_file(MMAPString * string)
 		MAP_SHARED, fd, 0);
 
     if (data == (char *)MAP_FAILED) {
-      close(fd);
+      Close(fd);
       return NULL;
     }
 
@@ -278,7 +280,7 @@ static MMAPString * mmap_string_realloc_file(MMAPString * string)
     if (munmap(string->str, string->mmapped_size) == -1)
       return NULL;
 
-    if (ftruncate(string->fd, string->allocated_len) == -1)
+    if (Ftruncate(string->fd, string->allocated_len) == -1)
       return NULL;
     
     data = mmap(NULL, string->allocated_len, PROT_WRITE | PROT_READ,
@@ -414,7 +416,7 @@ mmap_string_free (MMAPString *string)
 #ifndef MMAP_UNAVAILABLE
   if (string->fd != -1) {
     munmap(string->str, string->mmapped_size);
-    close(string->fd);
+    Close(string->fd);
   }
   else
 #endif

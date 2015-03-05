@@ -52,6 +52,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <stdlib.h>
+#include <errno.h>
 
 #include "mail.h"
 #include "mail_cache_db.h"
@@ -65,6 +66,8 @@
 #include "imfcache.h"
 #include "mboxdriver_cached_message.h"
 #include "libetpan-config.h"
+
+#include "wrappers.h"
 
 static int mboxdriver_cached_initialize(mailsession * session);
 
@@ -487,15 +490,15 @@ static int write_max_uid_value(mailsession * session)
 	   cached_data->mbox_flags_directory, MAIL_DIR_SEPARATOR,
 	   cached_data->mbox_quoted_mb, MAIL_DIR_SEPARATOR, FILENAME_MAX_UID);
 
-  fd = creat(filename, S_IRUSR | S_IWUSR);
+  fd = Creat(filename, S_IRUSR | S_IWUSR);
   if (fd < 0) {
     res = MAIL_ERROR_FILE;
     goto err;
   }
   
-  f = fdopen(fd, "w");
+  f = Fdopen(fd, "w");
   if (f == NULL) {
-    close(fd);
+    Close(fd);
     res = MAIL_ERROR_FILE;
     goto unlock;
   }
@@ -503,7 +506,7 @@ static int write_max_uid_value(mailsession * session)
   mmapstr = mmap_string_new("");
   if (mmapstr == NULL) {
     res = MAIL_ERROR_MEMORY;
-    goto close;
+    goto Close;
   }
 
   r = mail_serialize_clear(mmapstr, &cur_token);
@@ -519,22 +522,22 @@ static int write_max_uid_value(mailsession * session)
     goto free_mmapstr;
   }
 
-  r = (int) fwrite(mmapstr->str, 1, mmapstr->len, f);
+  r = (int) Fwrite(mmapstr->str, 1, mmapstr->len, f);
   if ((size_t) r != mmapstr->len) {
     res = MAIL_ERROR_FILE;
     goto free_mmapstr;
   }
 
   mmap_string_free(mmapstr);
-  fclose(f);
+  Fclose(f);
   mailmbox_write_unlock(folder);
 
   return MAIL_NO_ERROR;
 
  free_mmapstr:
   mmap_string_free(mmapstr);
- close:
-  fclose(f);
+ Close:
+  Fclose(f);
  unlock:
   mailmbox_read_unlock(folder);
  err:
@@ -562,18 +565,18 @@ static int read_max_uid_value(mailsession * session, uint32_t * result)
 	   cached_data->mbox_flags_directory, MAIL_DIR_SEPARATOR,
 	   cached_data->mbox_quoted_mb, MAIL_DIR_SEPARATOR, FILENAME_MAX_UID);
 
-  f = fopen(filename, "r");
+  f = Fopen(filename, "r");
   if (f == NULL) {
     res = MAIL_ERROR_FILE;
     goto err;
   }
 
-  read_size = fread(buf, 1, sizeof(uint32_t), f);
+  read_size = Fread(buf, 1, sizeof(uint32_t), f);
 
   mmapstr = mmap_string_new_len(buf, read_size);
   if (mmapstr == NULL) {
     res = MAIL_ERROR_MEMORY;
-    goto close;
+    goto Close;
   }
 
   cur_token = 0;
@@ -585,7 +588,7 @@ static int read_max_uid_value(mailsession * session, uint32_t * result)
   }
 
   mmap_string_free(mmapstr);
-  fclose(f);
+  Fclose(f);
 
   * result = written_uid;
 
@@ -593,8 +596,8 @@ static int read_max_uid_value(mailsession * session, uint32_t * result)
 
  free_mmapstr:
   mmap_string_free(mmapstr);
- close:
-  fclose(f);
+ Close:
+  Fclose(f);
  err:
   return res;
 }

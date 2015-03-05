@@ -50,8 +50,11 @@
 #ifdef HAVE_UNISTD_H
 #	include <unistd.h>
 #endif
+#include <errno.h>
 
 #include "mailstream_cfstream.h"
+
+#include "wrappers.h"
 
 #define DEFAULT_IMAP_PORT 143
 #define SERVICE_NAME_IMAP "imap2"
@@ -88,7 +91,7 @@ int mailimap_socket_connect_voip(mailimap * f, const char * server, uint16_t por
   #ifdef WIN32
   	closesocket(s);
   #else
-      close(s);
+    Close(s);
   #endif
       return MAILIMAP_ERROR_MEMORY;
     }

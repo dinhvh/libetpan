@@ -65,6 +65,9 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <libetpan/libetpan-config.h>
+#include <errno.h>
+
+#include "../data-types/wrappers.h"
 
 /*
   global variable
@@ -348,8 +351,8 @@ static int smime_decrypt(struct mailprivacy * privacy,
         res = MAIL_ERROR_FILE;
         goto unlink_decrypted;
       }
-      fprintf(description_f, SMIME_DECRYPT_FAILED);
-      fclose(description_f);
+      Fprintf(description_f, SMIME_DECRYPT_FAILED);
+      Fclose(description_f);
     }
   }
   else {
@@ -747,12 +750,12 @@ static int smime_sign(struct mailprivacy * privacy,
   col = 0;
   r = mailmime_write(signed_f, &col, mime);
   if (r != MAILIMF_NO_ERROR) {
-    fclose(signed_f);
+    Fclose(signed_f);
     res = MAIL_ERROR_FILE;
     goto unlink_signed;
   }
   
-  fclose(signed_f);
+  Fclose(signed_f);
   
   /* prepare destination file for signature */
   
@@ -1047,12 +1050,12 @@ static int smime_encrypt(struct mailprivacy * privacy,
   col = 0;
   r = mailmime_write(decrypted_f, &col, mime);
   if (r != MAILIMF_NO_ERROR) {
-    fclose(decrypted_f);
+    Fclose(decrypted_f);
     res = MAIL_ERROR_FILE;
     goto unlink_decrypted;
   }
   
-  fclose(decrypted_f);
+  Fclose(decrypted_f);
   
   /* prepare destination file for encryption */
   
@@ -1474,7 +1477,7 @@ void mailprivacy_smime_set_CA_dir(struct mailprivacy * privacy,
   
   dir = opendir(directory);
   if (dir == NULL) {
-    fclose(f_CA);
+    Fclose(f_CA);
     goto unlink_CA;
   }
   
@@ -1486,19 +1489,19 @@ void mailprivacy_smime_set_CA_dir(struct mailprivacy * privacy,
     snprintf(filename, sizeof(filename),
         "%s/%s", directory, ent->d_name);
     
-    f = fopen(filename, "r");
+    f = Fopen(filename, "r");
     if (f == NULL)
       continue;
     
-    while (fgets(buf, sizeof(buf), f) != NULL)
-      fputs(buf, f_CA);
+    while (Fgets(buf, sizeof(buf), f) != NULL)
+      Fputs(buf, f_CA);
     
-    fclose(f);
+    Fclose(f);
   }
   
   closedir(dir);
   
-  fclose(f_CA);
+  Fclose(f_CA);
   
   CAfile = strdup(CA_filename);
   if (CAfile == NULL)

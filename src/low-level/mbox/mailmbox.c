@@ -55,12 +55,15 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <errno.h>
 
 #include "libetpan-config.h"
 
 #include "mmapstring.h"
 #include "mailmbox_parse.h"
 #include "maillock.h"
+
+#include "wrappers.h"
 
 #if 0
 #define CRLF_BADNESS
@@ -215,12 +218,12 @@ int mailmbox_open(struct mailmbox_folder * folder)
 
   if (!folder->mb_read_only) {
     read_only = FALSE;
-    fd = open(folder->mb_filename, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
+    fd = Open(folder->mb_filename, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
   }
 
   if (folder->mb_read_only || (fd < 0)) {
     read_only = TRUE;
-    fd = open(folder->mb_filename, O_RDONLY);
+    fd = Open(folder->mb_filename, O_RDONLY);
     if (fd < 0)
       return MAILMBOX_ERROR_FILE_NOT_FOUND;
   }
@@ -237,7 +240,7 @@ int mailmbox_open(struct mailmbox_folder * folder)
 
 void mailmbox_close(struct mailmbox_folder * folder)
 {
-  close(folder->mb_fd);
+  Close(folder->mb_fd);
   folder->mb_fd = -1;
 }
 
@@ -685,7 +688,7 @@ mailmbox_append_message_list_no_lock(struct mailmbox_folder * folder,
 #endif
   }
 
-  r = ftruncate(folder->mb_fd, extra_size + old_size);
+  r = Ftruncate(folder->mb_fd, extra_size + old_size);
   if (r < 0) {
     mailmbox_map(folder);
     res = MAILMBOX_ERROR_FILE;
@@ -694,7 +697,7 @@ mailmbox_append_message_list_no_lock(struct mailmbox_folder * folder,
 
   r = mailmbox_map(folder);
   if (r < 0) {
-    r = ftruncate(folder->mb_fd, old_size);
+    r = Ftruncate(folder->mb_fd, old_size);
     return MAILMBOX_ERROR_FILE;
   }
 
@@ -1168,7 +1171,7 @@ static int mailmbox_expunge_to_file_no_lock(char * dest_filename, int dest_fd,
   size_t cur_offset;
   char * dest;
   size_t size;
-  int i;
+  unsigned int i;
 
   size = 0;
   for(i = 0 ; i < carray_count(folder->mb_tab) ; i ++) {
@@ -1180,27 +1183,27 @@ static int mailmbox_expunge_to_file_no_lock(char * dest_filename, int dest_fd,
       size += info->msg_size + info->msg_padding;
 
       if (!folder->mb_no_uid) {
-	if (!info->msg_written_uid) {
-	  uint32_t uid;
-	  
+        if (!info->msg_written_uid) {
+          uint32_t uid;
+          
 #ifdef CRLF_BADNESS
-	  size += strlen(UID_HEADER " \r\n");
+          size += strlen(UID_HEADER " \r\n");
 #else
-	  size += strlen(UID_HEADER " \n");
+          size += strlen(UID_HEADER " \n");
 #endif
-	  
-	  uid = info->msg_uid;
-	  while (uid >= 10) {
-	    uid /= 10;
-	    size ++;
-	  }
-	  size ++;
-	}
+          
+          uid = info->msg_uid;
+          while (uid >= 10) {
+            uid /= 10;
+            size ++;
+          }
+          size ++;
+        }
       }
     }
   }
 
-  r = ftruncate(dest_fd, size);
+  r = Ftruncate(dest_fd, size);
   if (r < 0) {
     res = MAILMBOX_ERROR_FILE;
     goto err;
@@ -1250,7 +1253,7 @@ static int mailmbox_expunge_to_file_no_lock(char * dest_filename, int dest_fd,
 	+ info->msg_padding;
     }
   }
-  fflush(stdout);
+  Fflush(stdout);
   
   msync(dest, size, MS_SYNC);
   munmap(dest, size);
@@ -1273,7 +1276,7 @@ static int copy_to_old_file(char * source_filename,
   int res;
   int r;
   
-  source_fd = open(source_filename, O_RDONLY);
+  source_fd = Open(source_filename, O_RDONLY);
   if (source_fd < 0) {
     res = MAILMBOX_ERROR_FILE;
     goto err;
@@ -1285,13 +1288,13 @@ static int copy_to_old_file(char * source_filename,
     goto close_source;
   }
   
-  dest_fd = open(destination_filename, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
+  dest_fd = Open(destination_filename, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
   if (dest_fd < 0) {
     res = MAILMBOX_ERROR_FILE;
     goto unmap_source;
   }
   
-  r = ftruncate(dest_fd, size);
+  r = Ftruncate(dest_fd, size);
   if (r < 0) {
     res = MAILMBOX_ERROR_FILE;
     goto close_dest;
@@ -1307,18 +1310,18 @@ static int copy_to_old_file(char * source_filename,
   memcpy(dest, source, size);
   
   munmap(dest, size);
-  close(dest_fd);
+  Close(dest_fd);
   munmap(source, size);
-  close(source_fd);
+  Close(source_fd);
   
   return MAILMBOX_NO_ERROR;
   
  close_dest:
-  close(dest_fd);
+  Close(dest_fd);
  unmap_source:
   munmap(source, size);
  close_source:
-  close(source_fd);
+  Close(source_fd);
  err:
   return res;
 }
@@ -1343,7 +1346,7 @@ int mailmbox_expunge_no_lock(struct mailmbox_folder * folder)
 
   snprintf(tmp_file, PATH_MAX, "%sXXXXXX", folder->mb_filename);
   old_mask = umask(0077);
-  dest_fd = mkstemp(tmp_file);
+  dest_fd = Mkstemp(tmp_file);
   umask(old_mask);
   
   if (dest_fd < 0) {
@@ -1352,7 +1355,7 @@ int mailmbox_expunge_no_lock(struct mailmbox_folder * folder)
     snprintf(tmp_file, PATH_MAX, TMPDIR "/etpan-unsafe-XXXXXX");
     
     old_mask = umask(0077);
-    dest_fd = mkstemp(tmp_file);
+    dest_fd = Mkstemp(tmp_file);
     umask(old_mask);
     
     if (dest_fd < 0) {
@@ -1368,7 +1371,7 @@ int mailmbox_expunge_no_lock(struct mailmbox_folder * folder)
     goto unlink;
   }
   
-  close(dest_fd);
+  Close(dest_fd);
 
   r = rename(tmp_file, folder->mb_filename);
   if (r < 0) {
@@ -1416,7 +1419,7 @@ int mailmbox_expunge_no_lock(struct mailmbox_folder * folder)
   return MAILMBOX_NO_ERROR;
 
  unlink:
-  close(dest_fd);
+  Close(dest_fd);
   unlink(tmp_file);
  err:
   return res;
@@ -1525,7 +1528,7 @@ int mailmbox_init(const char * filename,
   r = mailmbox_map(folder);
   if (r != MAILMBOX_NO_ERROR) {
     res = r;
-    goto close;
+    goto Close;
   }
 
   r = mailmbox_validate_read_lock(folder);
@@ -1542,7 +1545,7 @@ int mailmbox_init(const char * filename,
 
  unmap:
   mailmbox_unmap(folder);
- close:
+ Close:
   mailmbox_close(folder);
  free:
   mailmbox_folder_free(folder);

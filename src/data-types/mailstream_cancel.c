@@ -78,6 +78,10 @@
 #	define MUTEX_UNLOCK(x)
 #endif
 
+#include <errno.h>
+
+#include "wrappers.h"
+
 struct mailstream_cancel_internal {
 #ifdef LIBETPAN_REENTRANT
   MUTEX_KEY ms_lock;
@@ -125,9 +129,9 @@ struct mailstream_cancel * mailstream_cancel_new(void)
   return cancel;
   
  close_pipe:
-#ifndef WIN32  
-  close(cancel->ms_fds[0]);
-  close(cancel->ms_fds[1]);
+#ifndef WIN32
+  Close(cancel->ms_fds[0]);
+  Close(cancel->ms_fds[1]);
 #else
   CloseHandle(ms_internal->event);
 #endif
@@ -142,14 +146,15 @@ struct mailstream_cancel * mailstream_cancel_new(void)
 void mailstream_cancel_free(struct mailstream_cancel * cancel)
 {
   struct mailstream_cancel_internal * ms_internal;
-  
+  int r;
+
   ms_internal = cancel->ms_internal;
 
   MUTEX_DESTROY(&ms_internal->ms_lock);
 
 #ifndef WIN32  
-  close(cancel->ms_fds[0]);
-  close(cancel->ms_fds[1]);
+  Close(cancel->ms_fds[0]);
+  Close(cancel->ms_fds[1]);
 #else
   CloseHandle(ms_internal->event);
 #endif
@@ -174,7 +179,8 @@ void mailstream_cancel_notify(struct mailstream_cancel * cancel)
   
   ch = 0;
 #ifndef WIN32
-  r = (int) write(cancel->ms_fds[1], &ch, 1);
+  // BUG: many errors are not covered
+  r = (int) Write(cancel->ms_fds[1], &ch, 1);
 #else
   SetEvent(ms_internal->event);
 #endif
@@ -185,7 +191,8 @@ void mailstream_cancel_ack(struct mailstream_cancel * cancel)
 #ifndef WIN32
   char ch;
   int r;
-  r = (int) read(cancel->ms_fds[0], &ch, 1);
+  // BUG: many errors are not covered
+  r = (int) Read(cancel->ms_fds[0], &ch, 1);
 #endif
 }
 

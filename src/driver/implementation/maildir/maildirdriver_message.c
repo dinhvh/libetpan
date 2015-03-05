@@ -57,9 +57,12 @@
 #include <fcntl.h>
 #include <string.h>
 #include <stdlib.h>
+#include <errno.h>
 #ifdef WIN32
 #	include "win_etpan.h"
 #endif
+
+#include "wrappers.h"
 
 static int get_flags(mailmessage * msg_info,
     struct mail_flags ** result);
@@ -137,7 +140,7 @@ static int prefetch(mailmessage * msg_info)
     goto err;
   }
   
-  fd = open(filename, O_RDONLY);
+  fd = Open(filename, O_RDONLY);
   free(filename);
   if (fd == -1) {
     res = MAIL_ERROR_FILE;
@@ -147,7 +150,7 @@ static int prefetch(mailmessage * msg_info)
   mapping = mmap(NULL, msg_info->msg_size, PROT_READ, MAP_PRIVATE, fd, 0);
   if (mapping == (char *)MAP_FAILED) {
     res = MAIL_ERROR_FILE;
-    goto close;
+    goto Close;
   }
   
   data = malloc(sizeof(* data));
@@ -168,8 +171,8 @@ static int prefetch(mailmessage * msg_info)
   
  unmap:
   munmap(mapping, msg_info->msg_size);
- close:
-  close(fd);
+ Close:
+  Close(fd);
  err:
   return res;
 }
@@ -182,7 +185,7 @@ static void prefetch_free(struct generic_message_t * msg)
     munmap(msg->msg_message, msg->msg_length);
     msg->msg_message = NULL;
     data = msg->msg_data;
-    close(data->fd);
+    Close(data->fd);
     free(data);
   }
 }

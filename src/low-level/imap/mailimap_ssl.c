@@ -50,8 +50,11 @@
 #ifdef HAVE_UNISTD_H
 #	include <unistd.h>
 #endif
+#include <errno.h>
 
 #include "mailstream_cfstream.h"
+
+#include "wrappers.h"
 
 #define DEFAULT_IMAPS_PORT 993
 #define SERVICE_NAME_IMAPS "imaps"
@@ -96,7 +99,7 @@ int mailimap_ssl_connect_voip_with_callback(mailimap * f, const char * server, u
 #ifdef WIN32
 	closesocket(s);
 #else
-    close(s);
+    Close(s);
 #endif
     return MAILIMAP_ERROR_SSL;
   }

@@ -49,6 +49,9 @@
 #ifdef HAVE_UNISTD_H
 #	include <unistd.h>
 #endif
+#include <errno.h>
+
+#include "wrappers.h"
 
 #define DEFAULT_NNTPS_PORT 563
 #define SERVICE_NAME_NNTPS "nntps"
@@ -93,7 +96,7 @@ int newsnntp_ssl_connect_with_callback(newsnntp * f, const char * server, uint16
 #ifdef WIN32
 	closesocket(s);
 #else
-    close(s);
+    Close(s);
 #endif
     return NEWSNNTP_ERROR_SSL;
   }

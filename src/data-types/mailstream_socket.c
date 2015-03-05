@@ -38,6 +38,7 @@
 #endif
 
 #include "mailstream_socket.h"
+#include <errno.h>
 
 #ifdef HAVE_UNISTD_H
 #	include <unistd.h>
@@ -65,9 +66,12 @@
 #	ifdef HAVE_SYS_SELECT_H
 #		include <sys/select.h>
 #	endif
+#   include <errno.h>
 #endif
 
 #include "mailstream_cancel.h"
+
+#include "wrappers.h"
 
 struct mailstream_socket_data {
   int fd;
@@ -140,7 +144,7 @@ static void socket_data_close(struct mailstream_socket_data * socket_data)
 /* SEB */ 
   closesocket(socket_data->fd);
 #else
-  close(socket_data->fd);
+  Close(socket_data->fd);
 #endif
   socket_data->fd = -1;
 }
@@ -252,7 +256,8 @@ static ssize_t mailstream_low_socket_read(mailstream_low * s,
     max_fd = socket_data->fd;
     if (fd > max_fd)
       max_fd = fd;
-    r = select(max_fd + 1, &fds_read, NULL,/* &fds_excp*/ NULL, &timeout);
+
+    r = Select(max_fd + 1, &fds_read, NULL,/* &fds_excp*/ NULL, &timeout);
     if (r <= 0)
       return -1;
     
@@ -271,10 +276,10 @@ static ssize_t mailstream_low_socket_read(mailstream_low * s,
   }
   
   if (socket_data->use_read) {
-    return read(socket_data->fd, buf, count);
+      return Read(socket_data->fd, buf, count);
   }
   else {
-    return recv(socket_data->fd, buf, count, 0);
+      return Recv(socket_data->fd, buf, count, 0);
   }
 }
 
@@ -334,7 +339,9 @@ static ssize_t mailstream_low_socket_write(mailstream_low * s,
     max_fd = socket_data->fd;
     if (fd > max_fd)
       max_fd = fd;
-    r = select(max_fd + 1, &fds_read, &fds_write, /*&fds_excp */ NULL, &timeout);
+
+    r = Select(max_fd + 1, &fds_read, &fds_write, /*&fds_excp */ NULL, &timeout);
+
     if (r <= 0)
       return -1;
 
@@ -351,8 +358,8 @@ static ssize_t mailstream_low_socket_write(mailstream_low * s,
     if (!write_enabled)
       return 0;
   }
-  
-  return send(socket_data->fd, buf, count, 0);
+
+  return Send(socket_data->fd, buf, count, 0);
 }
 
 

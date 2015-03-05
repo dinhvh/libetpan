@@ -53,12 +53,15 @@
 #include <fcntl.h>
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 
 #include "mailmh.h"
 #include "maildriver_tools.h"
 #include "mhdriver_tools.h"
 #include "mhdriver_message.h"
 #include "mailmessage.h"
+
+#include "wrappers.h"
 
 static int mhdriver_initialize(mailsession * session);
 
@@ -745,21 +748,21 @@ static int mhdriver_copy_message(mailsession * session,
   folder = mailmh_folder_find(mh->mh_main, mb);
   if (folder == NULL) {
     res = MAIL_ERROR_FOLDER_NOT_FOUND;
-    goto close;
+    goto Close;
   }
 
   r = mailmh_folder_add_message_file(folder, fd);
   if (r != MAIL_NO_ERROR) {
     res = MAIL_ERROR_COPY;
-    goto close;
+    goto Close;
   }
 
-  close(fd);
+  Close(fd);
 
   return MAIL_NO_ERROR;
   
- close:
-  close(fd);
+ Close:
+  Close(fd);
  err:
   return res;
 }

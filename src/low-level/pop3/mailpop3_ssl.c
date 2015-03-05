@@ -50,6 +50,9 @@
 #	include <unistd.h>
 #endif
 #include <stdlib.h>
+#include <errno.h>
+
+#include "wrappers.h"
 
 #define DEFAULT_POP3S_PORT 995
 #define SERVICE_NAME_POP3S "pop3s"
@@ -94,7 +97,7 @@ int mailpop3_ssl_connect_with_callback(mailpop3 * f, const char * server, uint16
 #ifdef WIN32
 	closesocket(s);
 #else
-    close(s);
+    Close(s);
 #endif
     return MAILPOP3_ERROR_SSL;
   }

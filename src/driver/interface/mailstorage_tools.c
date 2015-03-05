@@ -56,11 +56,14 @@
 #include <fcntl.h>
 #include <string.h>
 #include <stdio.h>
+#include <errno.h>
 
 #include "mail.h"
 #include "mailmessage.h"
 #include "maildriver.h"
 #include "connect.h"
+
+#include "wrappers.h"
 
 /* tools */
 
@@ -75,6 +78,7 @@
 static void do_exec_command(int fd, const char *command,
     char *servername, uint16_t port)
 {
+  int r;
   long i, maxopen;
 #ifndef HAVE_SETENV
   char env_buffer[ENV_BUFFER_SIZE];
@@ -118,25 +122,28 @@ static void do_exec_command(int fd, const char *command,
 #endif
   
   /* Not a lot we can do if there's an error other than bail. */
-  if (dup2(fd, 0) == -1)
+  r = Dup2(fd, 0);
+  if (r == -1)
     exit(1);
-  if (dup2(fd, 1) == -1)
+  r = Dup2(fd, 1);
+  if (r == -1)
     exit(1);
   
   /* Should we close stderr and reopen /dev/null? */
   
   maxopen = sysconf(_SC_OPEN_MAX);
-  for (i=3; i < maxopen; i++)
-    close((int) i);
+  for (i=3; i < maxopen; i++) {
+    Close((int) i);
+  }
   
 #ifdef TIOCNOTTY
   /* Detach from the controlling tty if we have one. Otherwise,
      SSH might do something stupid like trying to use it instead
      of running $SSH_ASKPASS. Doh. */
-  fd = open("/dev/tty", O_RDONLY);
+  fd = Open("/dev/tty", O_RDONLY);
   if (fd != -1) {
     ioctl(fd, TIOCNOTTY, NULL);
-    close(fd);
+    Close(fd);
   }
 #endif /* TIOCNOTTY */
 
@@ -165,16 +172,15 @@ static int subcommand_connect(char *command, char *servername, uint16_t port)
     do_exec_command(sockfds[1], command, servername, port);
   }
   else if (childpid == -1) {
-    close(sockfds[0]);
-    close(sockfds[1]);
+    Close(sockfds[0]);
+    Close(sockfds[1]);
     return -1;
   }
-  
-  close(sockfds[1]);
+  Close(sockfds[1]);
   
   /* Reap child, leaving grandchild process to run */
-  waitpid(childpid, NULL, 0);
-  
+  Waitpid(childpid, NULL, 0);
+
   return sockfds[0];
 #endif /* WIN32 */
 }
@@ -301,7 +307,7 @@ int mailstorage_generic_connect_with_local_address(mailsession_driver * driver,
   
   if (stream == NULL) {
     res = MAIL_ERROR_STREAM;
-    close(fd);
+    Close(fd);
     goto err;
   }
 

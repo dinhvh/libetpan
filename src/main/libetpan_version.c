@@ -50,3 +50,4 @@ int libetpan_get_version_minor(void)
 {
   return LIBETPAN_VERSION_MINOR;
 }
+

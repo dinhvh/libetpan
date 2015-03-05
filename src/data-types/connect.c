@@ -60,6 +60,10 @@
 #       include <arpa/inet.h>
 #endif
 
+#include "wrappers.h"
+
+int libetpan_deliver_sigpipe = 0;
+
 uint16_t mail_get_service_port(const char * name, char * protocol)
 {
   struct servent * service;
@@ -131,7 +135,9 @@ static int wait_connect(int s, int r, time_t timeout_seconds)
 		timeout.tv_usec = 0;
 	}
   /* TODO: how to cancel this ? -> could be cancelled using a cancel fd */
-  r = select(s + 1, NULL, &fds, NULL, &timeout);
+    // answer: see man 3 signal
+
+  r = Select(s + 1, NULL, &fds, NULL, &timeout);
   if (r <= 0) {
     return -1;
   }
@@ -181,6 +187,7 @@ int mail_tcp_connect_with_local_address_timeout(const char * server, uint16_t po
 
 #ifndef HAVE_IPV6
   s = socket(PF_INET, SOCK_STREAM, 0);
+
   if (s == -1)
     goto err;
 
@@ -212,7 +219,7 @@ int mail_tcp_connect_with_local_address_timeout(const char * server, uint16_t po
   if (r == -1) {
     goto close_socket;
   }
-  
+ 
   r = connect(s, (struct sockaddr *) &sa, sizeof(struct sockaddr_in));
   r = wait_connect(s, r, timeout);
   if (r == -1) {
@@ -244,13 +251,15 @@ int mail_tcp_connect_with_local_address_timeout(const char * server, uint16_t po
       continue;
     
     // Christopher Lyon Anderson - prevent SigPipe
+    // patch by fdik
+if (!libetpan_deliver_sigpipe) {
 #ifdef SO_NOSIGPIPE
     int kOne = 1;
     int err = setsockopt(s, SOL_SOCKET, SO_NOSIGPIPE, &kOne, sizeof(kOne));
     if (err != 0)
         continue;
 #endif
-
+}
     if ((local_address != NULL) || (local_port != 0)) {
       char local_port_str[6];
       char * p_local_port_str;
@@ -278,7 +287,7 @@ int mail_tcp_connect_with_local_address_timeout(const char * server, uint16_t po
     if (r == -1) {
       goto close_socket;
     }
-    
+ 
     r = connect(s, ai->ai_addr, ai->ai_addrlen);
     r = wait_connect(s, r, timeout);
     
@@ -291,7 +300,7 @@ int mail_tcp_connect_with_local_address_timeout(const char * server, uint16_t po
 #ifdef WIN32
 	  closesocket(s);
 #else
-	  close(s);
+      Close(s);
 #endif
 	  continue;
       } else {
@@ -318,8 +327,9 @@ int mail_tcp_connect_with_local_address_timeout(const char * server, uint16_t po
 #ifdef WIN32
   closesocket(s);
 #else
-  close(s);
+  Close(s);
 #endif
  err:
   return -1;
 }
+
