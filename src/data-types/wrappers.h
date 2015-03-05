@@ -104,7 +104,7 @@ static inline size_t Fwrite(const void *ptr, size_t size, size_t nitems, FILE *s
 
     do {
         clearerr(stream);
-        size_t n = fwrite(ptr + r, size, nitems, stream);
+        size_t n = fwrite((char *) ptr + r, size, nitems, stream);
         nitems -= n;
         r += n * size;
     } while (nitems && ferror(stream) == EINTR);
@@ -119,7 +119,7 @@ static inline size_t Fread(void *ptr, size_t size, size_t nitems, FILE *stream)
 
     do {
         clearerr(stream);
-        size_t n = fread(ptr + r, size, nitems, stream);
+        size_t n = fread((char *) ptr + r, size, nitems, stream);
         nitems -= n;
         r += n * size;
     } while (!feof(stream) && nitems && ferror(stream) == EINTR);
