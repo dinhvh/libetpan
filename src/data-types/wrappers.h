@@ -1,10 +1,5 @@
 #pragma once
 
-#include <errno.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <unistd.h>
-
 #ifdef EOF // stdio.h
 
 static inline FILE * Fopen(const char *filename, const char *mode)
