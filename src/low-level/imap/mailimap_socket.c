@@ -54,7 +54,7 @@
 
 #include "mailstream_cfstream.h"
 
-#include "wrappers.h"
+#include "syscall_wrappers.h"
 
 #define DEFAULT_IMAP_PORT 143
 #define SERVICE_NAME_IMAP "imap2"

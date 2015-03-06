@@ -53,7 +53,7 @@
 #include <stdlib.h>
 #include <errno.h>
 
-#include "wrappers.h"
+#include "syscall_wrappers.h"
 
 static int imap_initialize(mailmessage * msg_info);
 

@@ -80,7 +80,7 @@
 
 #include <errno.h>
 
-#include "wrappers.h"
+#include "syscall_wrappers.h"
 
 struct mailstream_cancel_internal {
 #ifdef LIBETPAN_REENTRANT

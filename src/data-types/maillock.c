@@ -58,7 +58,7 @@
 #endif
 #include <errno.h>
 
-#include "wrappers.h"
+#include "syscall_wrappers.h"
 
 /* ********************************************************************** */
 

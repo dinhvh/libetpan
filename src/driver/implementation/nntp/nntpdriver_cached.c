@@ -69,7 +69,7 @@
 #include "nntpdriver_cached_message.h"
 #include "nntpdriver_tools.h"
 
-#include "wrappers.h"
+#include "syscall_wrappers.h"
 
 static int nntpdriver_cached_initialize(mailsession * session);
 

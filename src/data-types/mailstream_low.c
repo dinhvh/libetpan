@@ -64,7 +64,7 @@
 #include "mailstream_compress.h"
 #include "mailstream_cancel.h"
 
-#include "wrappers.h"
+#include "syscall_wrappers.h"
 
 #define LOG_FILE "libetpan-stream-debug.log"
 

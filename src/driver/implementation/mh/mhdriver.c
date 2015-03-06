@@ -61,7 +61,7 @@
 #include "mhdriver_message.h"
 #include "mailmessage.h"
 
-#include "wrappers.h"
+#include "syscall_wrappers.h"
 
 static int mhdriver_initialize(mailsession * session);
 

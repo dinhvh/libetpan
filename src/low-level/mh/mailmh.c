@@ -70,7 +70,7 @@ sys     0m0.110s
 
 #include "libetpan-config.h"
 
-#include "wrappers.h"
+#include "syscall_wrappers.h"
 
 struct mailmh * mailmh_new(const char * foldername)
 {

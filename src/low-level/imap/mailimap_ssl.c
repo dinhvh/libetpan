@@ -54,7 +54,7 @@
 
 #include "mailstream_cfstream.h"
 
-#include "wrappers.h"
+#include "syscall_wrappers.h"
 
 #define DEFAULT_IMAPS_PORT 993
 #define SERVICE_NAME_IMAPS "imaps"

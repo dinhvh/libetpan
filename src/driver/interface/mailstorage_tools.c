@@ -63,7 +63,7 @@
 #include "maildriver.h"
 #include "connect.h"
 
-#include "wrappers.h"
+#include "syscall_wrappers.h"
 
 /* tools */
 

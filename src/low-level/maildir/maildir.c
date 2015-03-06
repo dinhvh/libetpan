@@ -59,7 +59,7 @@
 #include <libgen.h>
 #endif
 
-#include "wrappers.h"
+#include "syscall_wrappers.h"
 
 /*
   We suppose the maildir mailbox remains on one unique filesystem.

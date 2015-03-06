@@ -100,7 +100,7 @@
 #include "mmapstring.h"
 #include "mailstream_cancel.h"
 
-#include "wrappers.h"
+#include "syscall_wrappers.h"
 
 struct mailstream_ssl_context
 {

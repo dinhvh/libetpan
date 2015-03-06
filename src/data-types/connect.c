@@ -60,7 +60,7 @@
 #       include <arpa/inet.h>
 #endif
 
-#include "wrappers.h"
+#include "syscall_wrappers.h"
 
 int libetpan_deliver_sigpipe = 0;
 

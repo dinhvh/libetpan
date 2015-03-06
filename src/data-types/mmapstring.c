@@ -57,7 +57,7 @@
 #endif
 #endif
 
-#include "wrappers.h"
+#include "syscall_wrappers.h"
 
 #define MMAPSTRING_MAX(a, b) ((a) > (b) ? (a) : (b))
 #define MMAPSTRING_MIN(a, b) ((a) < (b) ? (a) : (b))

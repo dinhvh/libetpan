@@ -52,7 +52,7 @@
 #endif
 #include <errno.h>
 
-#include "wrappers.h"
+#include "syscall_wrappers.h"
 
 #define DEFAULT_NNTP_PORT 119
 #define SERVICE_NAME_NNTP "nntp"

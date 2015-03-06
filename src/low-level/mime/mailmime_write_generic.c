@@ -60,7 +60,7 @@
 #include "mailmime_content.h"
 #include "mailmime_types_helper.h"
 
-#include "wrappers.h"
+#include "syscall_wrappers.h"
 
 #define MAX_MAIL_COL 78
 

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __SYSCALL_WRAPPERS_H__
+#define __SYSCALL_WRAPPERS_H__
 
 #include <errno.h>
 #include <stdarg.h>
@@ -323,4 +324,6 @@ static inline pid_t Waitpid(pid_t pid, int *stat_loc, int options)
 #define waitpid >@<
 
 #endif
+
+#endif // __SYSCALL_WRAPPERS_H__
 

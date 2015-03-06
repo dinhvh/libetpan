@@ -62,7 +62,7 @@
 #	include "win_etpan.h"
 #endif
 
-#include "wrappers.h"
+#include "syscall_wrappers.h"
 
 static int get_flags(mailmessage * msg_info,
     struct mail_flags ** result);

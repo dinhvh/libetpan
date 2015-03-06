@@ -63,7 +63,7 @@
 #include "mailmbox_parse.h"
 #include "maillock.h"
 
-#include "wrappers.h"
+#include "syscall_wrappers.h"
 
 #if 0
 #define CRLF_BADNESS

@@ -52,7 +52,7 @@
 #include <stdlib.h>
 #include <errno.h>
 
-#include "wrappers.h"
+#include "syscall_wrappers.h"
 
 #define DEFAULT_POP3S_PORT 995
 #define SERVICE_NAME_POP3S "pop3s"

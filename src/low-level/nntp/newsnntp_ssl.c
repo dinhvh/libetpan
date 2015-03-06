@@ -51,7 +51,7 @@
 #endif
 #include <errno.h>
 
-#include "wrappers.h"
+#include "syscall_wrappers.h"
 
 #define DEFAULT_NNTPS_PORT 563
 #define SERVICE_NAME_NNTPS "nntps"

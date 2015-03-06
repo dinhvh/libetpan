@@ -68,7 +68,7 @@
 #include "mhdriver_tools.h"
 #include "mailmessage.h"
 
-#include "wrappers.h"
+#include "syscall_wrappers.h"
 
 static int mhdriver_cached_initialize(mailsession * session);
 

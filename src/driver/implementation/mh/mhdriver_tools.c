@@ -64,7 +64,7 @@
 #	include "win_etpan.h"
 #endif
 
-#include "wrappers.h"
+#include "syscall_wrappers.h"
 
 int mhdriver_mh_error_to_mail_error(int error)
 {

@@ -67,7 +67,7 @@
 #include "mboxdriver_cached_message.h"
 #include "libetpan-config.h"
 
-#include "wrappers.h"
+#include "syscall_wrappers.h"
 
 static int mboxdriver_cached_initialize(mailsession * session);
 
