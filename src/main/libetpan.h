@@ -46,6 +46,11 @@ extern "C" {
 
 extern int libetpan_deliver_sigpipe;
 
+// if you're writing a signal handler you can set this variable to 1 for
+// cancelling a pending I/O operation
+
+extern int libetpan_cancel_read_write;
+
 #include <libetpan/libetpan_version.h>
 #include <libetpan/maildriver.h>
 #include <libetpan/mailmessage.h>
