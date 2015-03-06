@@ -60,7 +60,7 @@
 #include <libetpan/data_message_driver.h>
 #include <errno.h>
 
-#include "../data-types/wrappers.h"
+#include "../data-types/syscall_wrappers.h"
 
 void mailprivacy_mime_clear(struct mailmime * mime)
 {

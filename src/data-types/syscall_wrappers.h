@@ -3,8 +3,12 @@
 
 #include <errno.h>
 #include <stdarg.h>
-
-#ifdef EOF // stdio.h
+#include <stdio.h>
+#include <unistd.h>
+#include <sys/select.h>
+#include <fcntl.h>
+#include <sys/socket.h>
+#include <sys/wait.h>
 
 static inline FILE * Fopen(const char *filename, const char *mode)
 {
@@ -141,10 +145,6 @@ static inline int Fflush(FILE *stream)
 }
 #define fflush >@<
 
-#endif // stdio.h
-
-#ifdef F_OK // unistd.h
-
 static inline int Mkstemp(char *template)
 {
     int fd;
@@ -217,10 +217,6 @@ static inline int Dup2(int fildes, int fildes2)
 }
 #define dup2 >@<
 
-#endif
-
-#ifdef FD_CLR // select.h
-
 static inline int Select(
         int nfds,
         fd_set *readfds,
@@ -238,10 +234,6 @@ static inline int Select(
     return r;
 }
 #define select >@<
-
-#endif // select.h
-
-#ifdef F_SETLKW // fcntl.h
 
 static inline int Fcntl(int fildes, int cmd, void *structure)
 {
@@ -279,10 +271,6 @@ static inline int Creat(const char *path, mode_t mode)
 }
 #define creat >@<
 
-#endif // fcntl.h
-
-#ifdef MSG_PEEK // socket.h
-
 static inline ssize_t Recv(int socket, void *buffer, size_t length, int flags)
 {
     ssize_t r;
@@ -307,10 +295,6 @@ static inline ssize_t Send(int socket, const void *buffer, size_t length, int fl
 }
 #define send >@<
 
-#endif // socket.h
-
-#ifdef WNOHANG // wait.h
-
 static inline pid_t Waitpid(pid_t pid, int *stat_loc, int options)
 {
     pid_t r;
@@ -322,8 +306,6 @@ static inline pid_t Waitpid(pid_t pid, int *stat_loc, int options)
     return r;
 }
 #define waitpid >@<
-
-#endif
 
 #endif // __SYSCALL_WRAPPERS_H__
 

@@ -67,7 +67,7 @@
 #include <libetpan/libetpan-config.h>
 #include <errno.h>
 
-#include "../data-types/wrappers.h"
+#include "../data-types/syscall_wrappers.h"
 
 /*
   global variable

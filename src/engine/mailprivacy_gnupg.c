@@ -72,7 +72,7 @@
 #include <ctype.h>
 #include <errno.h>
 
-#include "../data-types/wrappers.h"
+#include "../data-types/syscall_wrappers.h"
 
 enum {
   NO_ERROR_PGP = 0,

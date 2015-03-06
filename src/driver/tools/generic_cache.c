@@ -64,7 +64,7 @@
 #include "mailmessage.h"
 #include "mail_cache_db.h"
 
-#include "wrappers.h"
+#include "syscall_wrappers.h"
 
 int generic_cache_create_dir(char * dirname)
 {
