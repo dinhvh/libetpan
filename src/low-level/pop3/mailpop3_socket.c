@@ -50,6 +50,9 @@
 #	include <unistd.h>
 #endif
 #include <stdlib.h>
+#include <errno.h>
+
+#include "syscall_wrappers.h"
 
 #define DEFAULT_POP3_PORT 110
 #define SERVICE_NAME_POP3 "pop3"
@@ -85,7 +88,7 @@ int mailpop3_socket_connect(mailpop3 * f, const char * server, uint16_t port)
 #ifdef WIN32
 	closesocket(s);
 #else
-    close(s);
+    Close(s);
 #endif
     return MAILPOP3_ERROR_MEMORY;
   }

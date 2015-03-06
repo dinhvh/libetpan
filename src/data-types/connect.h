@@ -46,6 +46,8 @@
 extern "C" {
 #endif
 
+extern int libetpan_deliver_sigpipe;
+
 uint16_t mail_get_service_port(const char * name, char * protocol);
 int mail_tcp_connect(const char * server, uint16_t port);
 int mail_tcp_connect_timeout(const char * server, uint16_t port, time_t timeout);

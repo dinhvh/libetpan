@@ -58,10 +58,13 @@
 #if defined(ANDROID) || defined(__ANDROID__)
 #include <sys/select.h>
 #endif
+#include <errno.h>
 
 #include "mailstream_cfstream.h"
 #include "mailstream_compress.h"
 #include "mailstream_cancel.h"
+
+#include "syscall_wrappers.h"
 
 #define LOG_FILE "libetpan-stream-debug.log"
 
@@ -93,14 +96,14 @@ static inline void mailstream_logger_internal(mailstream_low * s, int is_stream_
       mode_t old_mask; \
       \
       old_mask = umask(0077); \
-      f = fopen(LOG_FILE, "a"); \
+      f = Fopen(LOG_FILE, "a"); \
       umask(old_mask); \
       if (f != NULL) { \
         size_t nmemb; \
         maillock_write_lock(LOG_FILE, fileno(f)); \
-        nmemb = fwrite((buf), 1, (size), f); \
+        nmemb = Fwrite((buf), 1, (size), f); \
         maillock_write_unlock(LOG_FILE, fileno(f)); \
-        fclose(f); \
+        Fclose(f); \
       } \
     } \
   }
@@ -120,14 +123,14 @@ static inline void mailstream_logger_internal(mailstream_low * s, int is_stream_
       mode_t old_mask; \
       \
       old_mask = umask(0077); \
-      f = fopen(LOG_FILE, "a"); \
+      f = Fopen(LOG_FILE, "a"); \
       umask(old_mask); \
       if (f != NULL) { \
         size_t nmemb; \
         maillock_write_lock(LOG_FILE, fileno(f)); \
-        nmemb = fwrite((buf), 1, (size), f); \
+        nmemb = Fwrite((buf), 1, (size), f); \
         maillock_write_unlock(LOG_FILE, fileno(f)); \
-        fclose(f); \
+        Fclose(f); \
       } \
     } \
   }
@@ -147,14 +150,14 @@ static inline void mailstream_logger_internal(mailstream_low * s, int is_stream_
       mode_t old_mask; \
       \
       old_mask = umask(0077); \
-      f = fopen(LOG_FILE, "a"); \
+      f = Fopen(LOG_FILE, "a"); \
       umask(old_mask); \
       if (f != NULL) { \
         size_t nmemb; \
         maillock_write_lock(LOG_FILE, fileno(f)); \
-        nmemb = fputs((str), f); \
+        nmemb = Fputs((str), f); \
         maillock_write_unlock(LOG_FILE, fileno(f)); \
-        fclose(f); \
+        Fclose(f); \
       } \
     } \
   }
@@ -464,7 +467,8 @@ int mailstream_low_wait_idle(mailstream_low * low, struct mailstream_cancel * id
   delay.tv_sec = max_idle_delay;
   delay.tv_usec = 0;
   
-  r = select(maxfd + 1, &readfds, NULL, NULL, &delay);
+  r = Select(maxfd + 1, &readfds, NULL, NULL, &delay);
+
   if (r == 0) {
     // timeout
     return MAILSTREAM_IDLE_TIMEOUT;

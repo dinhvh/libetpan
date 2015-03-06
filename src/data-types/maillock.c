@@ -56,6 +56,9 @@
 #ifdef HAVE_LIBLOCKFILE
 #include <lockfile.h>
 #endif
+#include <errno.h>
+
+#include "syscall_wrappers.h"
 
 /* ********************************************************************** */
 
@@ -233,7 +236,8 @@ static int lock_common(const char * filename, int fd, short locktype)
     lock.l_type = locktype;
     lock.l_whence = SEEK_SET;
 
-    r = fcntl(fd, F_SETLKW, &lock);
+    r = Fcntl(fd, F_SETLKW, &lock);
+
     if (r < 0) {
       /* WARNING POSIX lock could not be applied */
     }
@@ -252,11 +256,13 @@ static int lock_common(const char * filename, int fd, short locktype)
       goto unlock;
     }
 
-    fd2 = open(lockfilename, O_WRONLY|O_EXCL|O_CREAT, 0);
+    fd2 = Open(lockfilename, O_WRONLY|O_EXCL|O_CREAT, 0);
+
     if (fd2 >= 0) {
       /* defeat lock checking programs which test pid */
-      r = (int) write(fd2, "0", 2);
-      close(fd2);
+      // BUG: there are many errors not covered
+      r = (int) Write(fd2, "0", 2);
+      Close(fd2);
       break;
     }
     

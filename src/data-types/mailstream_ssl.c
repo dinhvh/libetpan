@@ -62,6 +62,7 @@
   these 3 headers MUST be included before <sys/select.h>
   to insure compatibility with Mac OS X (this is true for 10.2)
 */
+#include <errno.h>
 #ifdef WIN32
 #	include <win_etpan.h>
 #else
@@ -98,6 +99,8 @@
 
 #include "mmapstring.h"
 #include "mailstream_cancel.h"
+
+#include "syscall_wrappers.h"
 
 struct mailstream_ssl_context
 {
@@ -322,14 +325,18 @@ static int wait_SSL_connect(int s, int want_read, time_t timeout_seconds)
     timeout = mailstream_network_delay;
   }
   else {
-		timeout.tv_sec = timeout_seconds;
+	timeout.tv_sec = timeout_seconds;
     timeout.tv_usec = 0;
   }
+
   /* TODO: how to cancel this ? */
+  // see man 3 signal
+
   if (want_read)
-    r = select(s + 1, &fds, NULL, NULL, &timeout);
+    r = Select(s + 1, &fds, NULL, NULL, &timeout);
   else
-    r = select(s + 1, NULL, &fds, NULL, &timeout);
+    r = Select(s + 1, NULL, &fds, NULL, &timeout);
+
   if (r <= 0) {
     return -1;
   }
@@ -658,7 +665,7 @@ static void  ssl_data_close(struct mailstream_ssl_data * ssl_data)
 #ifdef WIN32
   closesocket(ssl_data->fd);
 #else
-  close(ssl_data->fd);
+  Close(ssl_data->fd);
 #endif
   ssl_data->fd = -1;
 }
@@ -676,7 +683,7 @@ static void  ssl_data_close(struct mailstream_ssl_data * ssl_data)
 #ifdef WIN32
   closesocket(ssl_data->fd);
 #else
-  close(ssl_data->fd);
+  Close(ssl_data->fd);
 #endif
   ssl_data->fd = -1;
 }
@@ -816,7 +823,7 @@ static int wait_read(mailstream_low * s)
   max_fd = ssl_data->fd;
   if (fd > max_fd)
     max_fd = fd;
-  r = select(max_fd + 1, &fds_read, NULL, NULL, &timeout);
+  r = Select(max_fd + 1, &fds_read, NULL, NULL, &timeout);
   if (r <= 0)
     return -1;
   
@@ -962,7 +969,7 @@ static int wait_write(mailstream_low * s)
   if (fd > max_fd)
     max_fd = fd;
   
-  r = select(max_fd + 1, &fds_read, &fds_write, NULL, &timeout);
+  r = Select(max_fd + 1, &fds_read, &fds_write, NULL, &timeout);
   if (r <= 0)
     return -1;
   
