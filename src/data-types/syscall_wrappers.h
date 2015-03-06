@@ -12,6 +12,10 @@
 
 #include "connect.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 static inline FILE * Fopen(const char *filename, const char *mode)
 {
     FILE * f;
@@ -425,6 +429,10 @@ static inline pid_t Waitpid(pid_t pid, int *stat_loc, int options)
     return r;
 }
 #define waitpid >@<
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // __SYSCALL_WRAPPERS_H__
 
