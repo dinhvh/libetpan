@@ -41,6 +41,11 @@
 extern "C" {
 #endif
 
+// set to 1 for delivering SIGPIPE for socket timeouts
+// as default this is 0 and socket timeouts lead to reconnection
+
+extern int libetpan_deliver_sigpipe;
+
 #include <libetpan/libetpan_version.h>
 #include <libetpan/maildriver.h>
 #include <libetpan/mailmessage.h>
