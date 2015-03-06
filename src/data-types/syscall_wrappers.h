@@ -10,11 +10,11 @@
 #include <sys/socket.h>
 #include <sys/wait.h>
 
-#include "connect.h"
-
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+extern int libetpan_cancel_read_write;
 
 static inline FILE * Fopen(const char *filename, const char *mode)
 {
