@@ -63,6 +63,7 @@
 #include "syscall_wrappers.h"
 
 int libetpan_deliver_sigpipe = 0;
+int libetpan_cancel_read_write = 0;
 
 uint16_t mail_get_service_port(const char * name, char * protocol)
 {

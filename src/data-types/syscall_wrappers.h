@@ -10,12 +10,19 @@
 #include <sys/socket.h>
 #include <sys/wait.h>
 
+#include "connect.h"
+
 static inline FILE * Fopen(const char *filename, const char *mode)
 {
     FILE * f;
 
     do {
         f = fopen(filename, mode);
+
+        if (libetpan_cancel_read_write) {
+            libetpan_cancel_read_write = 0;
+            break;
+        }
     } while (f == NULL && errno == EINTR);
 
     return f;
@@ -28,6 +35,11 @@ static inline FILE * Fdopen(int fildes, const char *mode)
 
     do {
         f = fdopen(fildes, mode);
+
+        if (libetpan_cancel_read_write) {
+            libetpan_cancel_read_write = 0;
+            break;
+        }
     } while (f == NULL && errno == EINTR);
 
     return f;
@@ -40,6 +52,11 @@ static inline char *Fgets(char * str, int size, FILE * stream)
 
     do {
         s = fgets(str, size, stream);
+
+        if (libetpan_cancel_read_write) {
+            libetpan_cancel_read_write = 0;
+            break;
+        }
     } while (s == NULL && errno == EINTR);
 
     return s;
@@ -52,6 +69,11 @@ static inline int Fputs(const char *str, FILE * stream)
 
     do {
         r = fputs(str, stream);
+
+        if (libetpan_cancel_read_write) {
+            libetpan_cancel_read_write = 0;
+            break;
+        }
     } while (r == EOF && errno == EINTR);
 
     return r;
@@ -64,6 +86,11 @@ static inline int Fclose(FILE *stream)
 
     do {
         r = fclose(stream);
+
+        if (libetpan_cancel_read_write) {
+            libetpan_cancel_read_write = 0;
+            break;
+        }
     } while (r == EOF && errno == EINTR);
 
     return r;
@@ -80,6 +107,11 @@ static inline FILE * Freopen(
 
     do {
         f = freopen(filename, mode, stream);
+
+        if (libetpan_cancel_read_write) {
+            libetpan_cancel_read_write = 0;
+            break;
+        }
     } while (f == NULL && errno == EINTR);
 
     return f;
@@ -95,6 +127,11 @@ static inline int Fprintf(FILE * stream, const char * format, ...)
 
     do {
         n = vfprintf(stream, format, arglist);
+
+        if (libetpan_cancel_read_write) {
+            libetpan_cancel_read_write = 0;
+            break;
+        }
     } while (n < 0 && errno == EINTR);
 
     va_end( arglist );
@@ -112,6 +149,11 @@ static inline size_t Fwrite(const void *ptr, size_t size, size_t nitems, FILE *s
         size_t n = fwrite((char *) ptr + r, size, nitems, stream);
         nitems -= n;
         r += n * size;
+
+        if (libetpan_cancel_read_write) {
+            libetpan_cancel_read_write = 0;
+            break;
+        }
     } while (nitems && ferror(stream) == EINTR);
 
     return r;
@@ -127,6 +169,11 @@ static inline size_t Fread(void *ptr, size_t size, size_t nitems, FILE *stream)
         size_t n = fread((char *) ptr + r, size, nitems, stream);
         nitems -= n;
         r += n * size;
+
+        if (libetpan_cancel_read_write) {
+            libetpan_cancel_read_write = 0;
+            break;
+        }
     } while (!feof(stream) && nitems && ferror(stream) == EINTR);
 
     return r;
@@ -139,6 +186,11 @@ static inline int Fflush(FILE *stream)
 
     do {
         r = fflush(stream);
+
+        if (libetpan_cancel_read_write) {
+            libetpan_cancel_read_write = 0;
+            break;
+        }
     } while (r == -1 && errno == EINTR);
 
     return r;
@@ -151,6 +203,11 @@ static inline int Mkstemp(char *template)
 
     do {
         fd = mkstemp(template);
+
+        if (libetpan_cancel_read_write) {
+            libetpan_cancel_read_write = 0;
+            break;
+        }
     } while (fd == -1 && errno == EINTR);
 
     return fd;
@@ -163,6 +220,11 @@ static inline int Close(int fildes)
 
     do {
         r = close(fildes);
+
+        if (libetpan_cancel_read_write) {
+            libetpan_cancel_read_write = 0;
+            break;
+        }
     } while (r == -1 && errno == EINTR);
 
     return r;
@@ -175,6 +237,11 @@ static inline ssize_t Write(int fildes, const void *buf, size_t nbyte)
 
     do {
         r = write(fildes, buf, nbyte);
+
+        if (libetpan_cancel_read_write) {
+            libetpan_cancel_read_write = 0;
+            break;
+        }
     } while (r == -1 && errno == EINTR);
 
     return r;
@@ -187,6 +254,11 @@ static inline ssize_t Read(int fildes, void *buf, size_t nbyte)
 
     do {
         r = read(fildes, buf, nbyte);
+
+        if (libetpan_cancel_read_write) {
+            libetpan_cancel_read_write = 0;
+            break;
+        }
     } while (r == -1 && errno == EINTR);
 
     return r;
@@ -199,6 +271,11 @@ static inline int Ftruncate(int fildes, off_t length)
 
     do {
         r = ftruncate(fildes, length);
+
+        if (libetpan_cancel_read_write) {
+            libetpan_cancel_read_write = 0;
+            break;
+        }
     } while (r == -1 && errno == EINTR);
 
     return r;
@@ -211,6 +288,11 @@ static inline int Dup2(int fildes, int fildes2)
 
     do {
         fd = dup2(fildes, fildes2);
+
+        if (libetpan_cancel_read_write) {
+            libetpan_cancel_read_write = 0;
+            break;
+        }
     } while (fd == -1 && errno == EINTR);
 
     return fd;
@@ -229,6 +311,11 @@ static inline int Select(
 
     do {
         r = select(nfds, readfds, writefds, errorfds, timeout);
+
+        if (libetpan_cancel_read_write) {
+            libetpan_cancel_read_write = 0;
+            break;
+        }
     } while (r == -1 && errno == EINTR);
 
     return r;
@@ -239,8 +326,15 @@ static inline int Fcntl(int fildes, int cmd, void *structure)
 {
     int r;
 
+    assert(cmd == F_SETLKW);
+
     do {
         r = fcntl(fildes, cmd, structure);
+
+        if (libetpan_cancel_read_write) {
+            libetpan_cancel_read_write = 0;
+            break;
+        }
     } while (r == -1 && errno == EINTR);
 
     return r;
@@ -253,6 +347,11 @@ static inline int Open(const char *path, int oflag, ...)
 
     do {
         fd = open(path, oflag, 0);
+
+        if (libetpan_cancel_read_write) {
+            libetpan_cancel_read_write = 0;
+            break;
+        }
     } while (fd == -1 && errno == EINTR);
 
     return fd;
@@ -265,6 +364,11 @@ static inline int Creat(const char *path, mode_t mode)
 
     do {
         fd = creat(path, mode);
+
+        if (libetpan_cancel_read_write) {
+            libetpan_cancel_read_write = 0;
+            break;
+        }
     } while (fd == -1 && errno == EINTR);
 
     return fd;
@@ -277,6 +381,11 @@ static inline ssize_t Recv(int socket, void *buffer, size_t length, int flags)
 
     do {
         r = recv(socket, buffer, length, flags);
+
+        if (libetpan_cancel_read_write) {
+            libetpan_cancel_read_write = 0;
+            break;
+        }
     } while (r == -1 && errno == EINTR);
 
     return r;
@@ -289,6 +398,11 @@ static inline ssize_t Send(int socket, const void *buffer, size_t length, int fl
 
     do {
         r = send(socket, buffer, length, flags);
+
+        if (libetpan_cancel_read_write) {
+            libetpan_cancel_read_write = 0;
+            break;
+        }
     } while (r == -1 && errno == EINTR);
 
     return r;
@@ -301,6 +415,11 @@ static inline pid_t Waitpid(pid_t pid, int *stat_loc, int options)
 
     do {
         r = waitpid(pid, stat_loc, options);
+
+        if (libetpan_cancel_read_write) {
+            libetpan_cancel_read_write = 0;
+            break;
+        }
     } while (r == -1 && errno == EINTR);
 
     return r;
