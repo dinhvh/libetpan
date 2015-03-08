@@ -1,7 +1,7 @@
 /*
  * libEtPan! -- a mail stuff library
  *
- * Copyright (C) 2015, Hoa V. DINH, Volker Birk
+ * Copyright (C) 2015, DINH Viet Hoa, Volker Birk
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

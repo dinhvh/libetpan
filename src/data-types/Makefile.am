@@ -36,17 +36,17 @@ etpaninclude_HEADERS = \
         mailstream_compress.h \
 	mailstream_types.h \
 	carray.h clist.h chash.h \
-	charconv.h mailsem.h maillock.h
+	charconv.h mailsem.h maillock.h quoted_printable.h
 
 AM_CPPFLAGS = -I$(top_builddir)/include
 
 noinst_LTLIBRARIES = libdata-types.la
 
-libdata_types_la_SOURCES = connect.h connect.c base64.h hmac-md5.h	\
+libdata_types_la_SOURCES = connect.h connect.c base64.h quoted_printable.h hmac-md5.h	\
 	md5global.h md5.h md5.c mmapstring.c mailstream_helper.c	\
 	mailstream_low.c mailstream.c mailstream_socket.c		\
 	mailstream_ssl.c carray.c clist.c chash.c		        \
-	charconv.c maillock.c base64.c mail_cache_db_types.h		\
+	charconv.c maillock.c base64.c quoted_printable.c mail_cache_db_types.h		\
 	mail_cache_db.h mail_cache_db.c mailsem.c mailsasl.h		\
 	mailsasl.c mailstream_cancel_types.h mailstream_cancel.h	\
 	mailstream_cancel.c timeutils.h timeutils.c			\
