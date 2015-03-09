@@ -33,7 +33,7 @@ EXTRA_DIST = TODO
 
 etpaninclude_HEADERS = \
 	mailmime.h mailmime_types.h mailmime_content.h mailmime_decode.h \
-	mailmime_disposition.h mailmime_write_file.h \
+	mailmime_disposition.h mailmime_write_file.h mailmime_encode.h \
 	mailmime_types_helper.h mailmime_write_generic.h \
 	mailmime_write_mem.h
 
@@ -45,6 +45,6 @@ noinst_LTLIBRARIES = libmime.la
 
 libmime_la_SOURCES = \
 	mailmime.c mailmime_types.c mailmime_content.c mailmime_decode.c \
-	mailmime_disposition.c mailmime_write_file.c \
+	mailmime_disposition.c mailmime_write_file.c mailmime_encode.c \
 	mailmime_types_helper.c mailmime_write_generic.c \
 	mailmime_write_mem.c mailmime_write.h

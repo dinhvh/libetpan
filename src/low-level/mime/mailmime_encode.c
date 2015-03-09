@@ -30,10 +30,10 @@
  */
 
 /*
- * $Id: quoted_printable.c,v 1.0 2015/03/08 20:56:00 fdik Exp $
+ * $Id: mailmime_encode.c,v 1.0 2015/03/08 20:56:00 fdik Exp $
  */
 
-#include "quoted_printable.h"
+#include "mailmime_encode.h"
 
 #include <string.h>
 #include <stdio.h>
@@ -181,7 +181,7 @@ static inline void get_word(const char * begin, const char ** pend, int
 }
 
 LIBETPAN_EXPORT
-char * etpan_make_full_quoted_printable(const char * display_charset,
+char * mailmime_encode_phrase(const char * display_charset,
     const char * phrase)
 {
   int needs_quote;
@@ -204,8 +204,8 @@ char * etpan_make_full_quoted_printable(const char * display_charset,
 }
 
 LIBETPAN_EXPORT
-char * etpan_make_quoted_printable(const char * display_charset, const
-    char * phrase, int subject)
+char * mailmime_encode_subject_header(const char * display_charset,
+        const char * phrase, int subject)
 {
   char * str;
   const char * cur;

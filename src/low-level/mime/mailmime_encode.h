@@ -30,7 +30,7 @@
  */
 
 /*
- * $Id: quoted_printable.h,v 1.0 2015/03/08 20:56:00 fdik Exp $
+ * $Id: mailmime_encode.h,v 1.0 2015/03/08 20:56:00 fdik Exp $
  */
 
 #ifndef __QUOTED_PRINTABLE_H__
@@ -45,12 +45,12 @@ extern "C" {
 #endif
 
 LIBETPAN_EXPORT
-char * etpan_make_full_quoted_printable(const char * display_charset,
+char * mailmime_encode_phrase(const char * display_charset,
     const char * phrase);
 
 LIBETPAN_EXPORT
-char * etpan_make_quoted_printable(const char * display_charset, const
-    char * phrase, int subject);
+char * mailmime_encode_subject_header(const char * display_charset,
+        const char * phrase, int subject);
 
 #ifdef __cplusplus
 }
