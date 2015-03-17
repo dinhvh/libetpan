@@ -12,6 +12,7 @@ Also, you'll need all the dependencies, download the most recent binary builds i
 
 - [zlib](http://d.etpan.org/mailcore2-deps/zlib-win32/)
 - [OpenSSL](http://d.etpan.org/mailcore2-deps/misc-win32/)
+- [SASL](http://d.etpan.org/mailcore2-deps/cyrus-sasl-win32/)
 
 ### Build using Visual Studio 2013 ###
 
@@ -19,6 +20,7 @@ You'll need all the dependencies, download the most recent binary builds in:
 
 - [zlib](http://d.etpan.org/mailcore2-deps/zlib-win32/)
 - [OpenSSL](http://d.etpan.org/mailcore2-deps/misc-win32/)
+- [SASL](http://d.etpan.org/mailcore2-deps/cyrus-sasl-win32/)
 
 #### Instructions for zlib ####
 
