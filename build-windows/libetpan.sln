@@ -4,7 +4,7 @@ VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B2C11050-3E46-4E10-B734-F9203A75AA46}"
 	ProjectSection(SolutionItems) = preProject
-		README.txt = README.txt
+		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libetpan", "libetpan\libetpan.vcxproj", "{BA4DED3C-E56F-4484-BFC3-9C13E461A1BE}"
