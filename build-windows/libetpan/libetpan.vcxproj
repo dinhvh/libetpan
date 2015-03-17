@@ -98,7 +98,7 @@
     </ClCompile>
     <Link>
       <AdditionalOptions>/DLL %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>libsasl2.dll;zlib.lib;Ws2_32.lib;ssleay32MDd.lib;libeay32MDd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libsasl2.lib;zlib.lib;Ws2_32.lib;ssleay32MDd.lib;libeay32MDd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>../../third-party/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>C;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
@@ -130,7 +130,7 @@
     </ClCompile>
     <Link>
       <AdditionalOptions>/DLL %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>libsasl2.dll;zlib.lib;Ws2_32.lib;ssleay32MDd.lib;libeay32MDd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libsasl2.lib;zlib.lib;Ws2_32.lib;ssleay32MDd.lib;libeay32MDd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>../../third-party/lib64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>C;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
