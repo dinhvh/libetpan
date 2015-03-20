@@ -2309,7 +2309,7 @@ int mailimap_send_current_tag(mailimap * session)
   int r;
   
   session->imap_tag ++;
-  snprintf(tag_str, 15, "X%i", session->imap_tag);
+  snprintf(tag_str, 15, "C%i", session->imap_tag);
 
   r = mailimap_tag_send(session->imap_stream, tag_str);
   if (r != MAILIMAP_NO_ERROR)
