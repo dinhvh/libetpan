@@ -80,7 +80,9 @@
 #include <limits.h>
 #ifdef _MSC_VER
 #	define MMAP_UNAVAILABLE
+# ifndef __cplusplus
 #	define inline __inline
+# endif
 #else
 #	include <sys/param.h>
 #endif
