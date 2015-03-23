@@ -809,9 +809,6 @@ void mailimap_set_complex_command_tag_enabled(mailimap * imap, int enabled);
 LIBETPAN_EXPORT
 int mailimap_is_complex_command_tag_enabled(mailimap * imap); 
 
- #ifdef __cplusplus
- }
- #endif
 #ifdef __cplusplus
 }
 #endif
