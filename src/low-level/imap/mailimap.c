@@ -2502,7 +2502,7 @@ mailimap * mailimap_new(size_t imap_progr_rate,
 
   f->imap_logger = NULL;
   f->imap_logger_context = NULL;
-
+  f->complex_command_tag_enabled = 0
   return f;
   
  free_stream_buffer:
