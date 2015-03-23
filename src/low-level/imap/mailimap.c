@@ -2590,3 +2590,13 @@ void mailimap_set_logger(mailimap * session, void (* logger)(mailimap * session,
   session->imap_logger = logger;
   session->imap_logger_context = logger_context;
 }
+
+LIBETPAN_EXPORT    
+void mailimap_set_complex_command_tag_enabled(mailimap * imap, int enabled) {
+	imap->complex_command_tag_enabled = enabled;
+}
+
+LIBETPAN_EXPORT
+int mailimap_is_complex_command_tag_enabled(mailimap * imap) {
+	return imap->complex_command_tag_enabled;
+}
