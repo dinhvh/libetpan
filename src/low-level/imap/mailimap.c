@@ -2598,10 +2598,10 @@ void mailimap_set_logger(mailimap * session, void (* logger)(mailimap * session,
 
 LIBETPAN_EXPORT    
 void mailimap_set_163_workaround_enabled(mailimap * session, int enabled) {
-	imap->is_163_workaround_enabled = enabled;
+	session->is_163_workaround_enabled = enabled;
 }
 
 LIBETPAN_EXPORT
 int mailimap_is_163_workaround_enabled(mailimap * session) {
-	return imap->is_163_workaround_enabled;
+	return session->is_163_workaround_enabled;
 }
