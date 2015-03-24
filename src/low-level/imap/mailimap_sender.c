@@ -184,6 +184,11 @@ static int mailimap_astring_literalplus_send(mailstream * fd, const char * astri
 static int
 mailimap_literalplus_count_send(mailstream * fd, size_t count);
 
+static int search_key_notoplevel_send(mailstream * fd,
+                                      struct mailimap_search_key * key);
+
+static int search_key_literalplus_notoplevel_send(mailstream * fd,
+                                                  struct mailimap_search_key * key);
 
 
 
@@ -2252,7 +2257,7 @@ int mailimap_uid_search_literalplus_send(mailstream * fd, const char * charset,
 
 static int search_key_send(mailstream * fd,
                            struct mailimap_search_key * key,
-                           int literalplus_enabled)
+                           int literalplus_enabled, int toplevel)
 {
   int r;
   
@@ -2479,7 +2484,7 @@ static int search_key_send(mailstream * fd,
       r = mailimap_space_send(fd);
       if (r != MAILIMAP_NO_ERROR)
         return r;
-      r = mailimap_search_key_send(fd, key->sk_data.sk_not);
+      r = search_key_send(fd, key->sk_data.sk_not, literalplus_enabled, 0);
       if (r != MAILIMAP_NO_ERROR)
         return r;
       return MAILIMAP_NO_ERROR;
@@ -2491,13 +2496,13 @@ static int search_key_send(mailstream * fd,
       r = mailimap_space_send(fd);
       if (r != MAILIMAP_NO_ERROR)
         return r;
-      r = mailimap_search_key_send(fd, key->sk_data.sk_or.sk_or1);
+      r = search_key_send(fd, key->sk_data.sk_or.sk_or1, literalplus_enabled, 0);
       if (r != MAILIMAP_NO_ERROR)
         return r;
       r = mailimap_space_send(fd);
       if (r != MAILIMAP_NO_ERROR)
         return r;
-      r = mailimap_search_key_send(fd, key->sk_data.sk_or.sk_or2);
+      r = search_key_send(fd, key->sk_data.sk_or.sk_or2, literalplus_enabled, 0);
       if (r != MAILIMAP_NO_ERROR)
         return r;
       return MAILIMAP_NO_ERROR;
@@ -2605,18 +2610,28 @@ static int search_key_send(mailstream * fd,
       return MAILIMAP_NO_ERROR;
       
     case MAILIMAP_SEARCH_KEY_MULTIPLE:
-      r = mailimap_oparenth_send(fd);
+      if (!toplevel) {
+        r = mailimap_oparenth_send(fd);
+        if (r != MAILIMAP_NO_ERROR)
+          return r;
+      }
+      
+      if (literalplus_enabled) {
+        r = mailimap_struct_spaced_list_send(fd, key->sk_data.sk_multiple,
+                                             (mailimap_struct_sender *) search_key_literalplus_notoplevel_send);
+      }
+      else {
+          r = mailimap_struct_spaced_list_send(fd, key->sk_data.sk_multiple,
+                                               (mailimap_struct_sender *) search_key_notoplevel_send);
+      }
       if (r != MAILIMAP_NO_ERROR)
         return r;
       
-      r = mailimap_struct_spaced_list_send(fd, key->sk_data.sk_multiple,
-                                           (mailimap_struct_sender *) mailimap_search_key_send);
-      if (r != MAILIMAP_NO_ERROR)
-        return r;
-      
-      r = mailimap_cparenth_send(fd);
-      if (r != MAILIMAP_NO_ERROR)
-        return r;
+      if (!toplevel) {
+        r = mailimap_cparenth_send(fd);
+        if (r != MAILIMAP_NO_ERROR)
+          return r;
+      }
       
       return MAILIMAP_NO_ERROR;
     case MAILIMAP_SEARCH_KEY_MODSEQ:
@@ -2682,16 +2697,28 @@ static int search_key_send(mailstream * fd,
   }
 }
 
+static int search_key_notoplevel_send(mailstream * fd,
+                                      struct mailimap_search_key * key)
+{
+    return search_key_send(fd, key, 0, 0);
+}
+
+static int search_key_literalplus_notoplevel_send(mailstream * fd,
+                                                  struct mailimap_search_key * key)
+{
+    return search_key_send(fd, key, 1, 0);
+}
+
 int mailimap_search_key_send(mailstream * fd,
                              struct mailimap_search_key * key)
 {
-  return search_key_send(fd, key, 0);
+  return search_key_send(fd, key, 0, 1);
 }
 
 int mailimap_search_key_literalplus_send(mailstream * fd,
                                          struct mailimap_search_key * key)
 {
-  return search_key_send(fd, key, 1);
+  return search_key_send(fd, key, 1, 1);
 }
 
 int mailimap_mod_sequence_value_send(mailstream * fd, uint64_t number)
