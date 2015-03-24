@@ -804,10 +804,10 @@ void mailimap_set_logger(mailimap * session, void (* logger)(mailimap * session,
     const char * str, size_t size, void * context), void * logger_context);
 
 LIBETPAN_EXPORT
-int mailimap_is_163_workaround_enabled(mailimap * imap);
+int mailimap_is_163_workaround_enabled(mailimap * session);
     
 LIBETPAN_EXPORT    
-void mailimap_set_163_workaround_enabled(mailimap * imap, int enabled);
+void mailimap_set_163_workaround_enabled(mailimap * session, int enabled);
 
 #ifdef __cplusplus
 }
