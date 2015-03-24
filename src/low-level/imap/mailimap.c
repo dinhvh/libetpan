@@ -2309,7 +2309,12 @@ int mailimap_send_current_tag(mailimap * session)
   int r;
   
   session->imap_tag ++;
-  snprintf(tag_str, 15, "%i", session->imap_tag);
+  
+  if(mailimap_is_163_workaround_enabled(session))
+    snprintf(tag_str, 15, "C%i", session->imap_tag);
+  else
+    snprintf(tag_str, 15, "%i", session->imap_tag);	
+  
 
   r = mailimap_tag_send(session->imap_stream, tag_str);
   if (r != MAILIMAP_NO_ERROR)
@@ -2502,7 +2507,7 @@ mailimap * mailimap_new(size_t imap_progr_rate,
 
   f->imap_logger = NULL;
   f->imap_logger_context = NULL;
-
+  f->is_163_workaround_enabled = 0;
   return f;
   
  free_stream_buffer:
@@ -2589,4 +2594,14 @@ void mailimap_set_logger(mailimap * session, void (* logger)(mailimap * session,
 {
   session->imap_logger = logger;
   session->imap_logger_context = logger_context;
+}
+
+LIBETPAN_EXPORT    
+void mailimap_set_163_workaround_enabled(mailimap * session, int enabled) {
+	session->is_163_workaround_enabled = enabled;
+}
+
+LIBETPAN_EXPORT
+int mailimap_is_163_workaround_enabled(mailimap * session) {
+	return session->is_163_workaround_enabled;
 }
