@@ -3386,7 +3386,7 @@ struct mailimap {
   void (* imap_logger)(mailimap * session, int log_type, const char * str, size_t size, void * context);
   void * imap_logger_context;
   
-  int complex_command_tag_enabled;
+  int is_163_workaround_enabled;
 };
 
 
