@@ -803,6 +803,10 @@ LIBETPAN_EXPORT
 void mailimap_set_logger(mailimap * session, void (* logger)(mailimap * session, int log_type,
     const char * str, size_t size, void * context), void * logger_context);
 
+#ifndef LIBETPAN_HAS_MAILIMAP_163_WORKAROUND
+  #define LIBETPAN_HAS_MAILIMAP_163_WORKAROUND	1
+#endif
+
 LIBETPAN_EXPORT
 int mailimap_is_163_workaround_enabled(mailimap * session);
     
