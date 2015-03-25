@@ -4,11 +4,29 @@
 #include <errno.h>
 #include <stdarg.h>
 #include <stdio.h>
+#include <assert.h>
+#ifdef WIN32
+#include <io.h>
+#include <fcntl.h>
+#include <sys/stat.h>
+
+static int mkstemp(char *template)
+{
+    char *pathname = _mktemp(template);
+    if (errno)
+        return -1;
+    return _open(pathname, _O_RDWR | _O_CREAT | _O_EXCL, _S_IREAD | _S_IWRITE);
+}
+#ifndef ftruncate
+#define ftruncate(A, B) _chsize((A), (B))
+#endif
+#else
 #include <unistd.h>
 #include <sys/select.h>
-#include <fcntl.h>
 #include <sys/socket.h>
 #include <sys/wait.h>
+#endif
+#include <fcntl.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -284,6 +302,9 @@ static inline int Ftruncate(int fildes, off_t length)
 
     return r;
 }
+#ifdef WIN32
+#undef ftruncate
+#endif
 #define ftruncate >@<
 
 static inline int Dup2(int fildes, int fildes2)
@@ -326,6 +347,7 @@ static inline int Select(
 }
 #define select >@<
 
+#ifndef WIN32
 static inline int Fcntl(int fildes, int cmd, void *structure)
 {
     int r;
@@ -344,6 +366,7 @@ static inline int Fcntl(int fildes, int cmd, void *structure)
     return r;
 }
 // fnctl does only risk EINTR if cmd == F_SETLKW
+#endif
 
 static inline int Open(const char *path, int oflag, ...)
 {
@@ -362,7 +385,11 @@ static inline int Open(const char *path, int oflag, ...)
 }
 #define open >@<
 
+#ifdef WIN32
+static inline int Creat(const char *path, int mode)
+#else
 static inline int Creat(const char *path, mode_t mode)
+#endif
 {
     int fd;
 
@@ -413,6 +440,7 @@ static inline ssize_t Send(int socket, const void *buffer, size_t length, int fl
 }
 #define send >@<
 
+#ifndef WIN32
 static inline pid_t Waitpid(pid_t pid, int *stat_loc, int options)
 {
     pid_t r;
@@ -429,6 +457,7 @@ static inline pid_t Waitpid(pid_t pid, int *stat_loc, int options)
     return r;
 }
 #define waitpid >@<
+#endif
 
 #ifdef __cplusplus
 }
