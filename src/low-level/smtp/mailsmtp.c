@@ -1378,6 +1378,7 @@ int mailesmtp_auth_sasl(mailsmtp * session, const char * auth_type,
         
           r = sasl_client_step(session->smtp_sasl.sasl_conn,
             decoded, decoded_len, NULL, &sasl_out, &sasl_out_len);
+          free(decoded);
         }
         
         if ((r != SASL_CONTINUE) && (r != SASL_OK)) {
