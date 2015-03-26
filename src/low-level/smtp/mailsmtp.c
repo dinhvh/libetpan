@@ -1350,19 +1350,25 @@ int mailesmtp_auth_sasl(mailsmtp * session, const char * auth_type,
           * p = '\0';
         }
         
-        response_len = (unsigned int) strlen(session->response);
-        if(strncasecmp(auth_type, "NTLM", strlen(auth_type)) == 0) {
-          r = sasl_client_step(session->smtp_sasl.sasl_conn, session->response, (unsigned) response_len, NULL, &sasl_out, &sasl_out_len);
-        } else {
-          max_decoded = response_len * 3 / 4;
-          decoded = malloc(max_decoded + 1);
-          if (decoded == NULL) {
-            res = MAILSMTP_ERROR_MEMORY;
-            goto free_sasl_conn;
-          }
         
-          r = sasl_decode64(session->response, response_len,
+        response_len = strlen(session->response);
+        max_decoded = response_len * 3 / 4;
+        decoded = malloc(max_decoded + 1);
+        if (decoded == NULL) {
+          res = MAILSMTP_ERROR_MEMORY;
+          goto free_sasl_conn;
+        }
+
+        r = sasl_decode64(session->response, response_len,
             decoded, max_decoded + 1, &decoded_len);
+        if(strncasecmp(auth_type, "NTLM", strlen(auth_type)) == 0) {
+          if(r != SASL_OK) {
+            r = sasl_client_step(session->smtp_sasl.sasl_conn, session->response, (unsigned) response_len, NULL, &sasl_out, &sasl_out_len);
+          } else {
+            r = sasl_client_step(session->smtp_sasl.sasl_conn, decoded, decoded_len, NULL, &sasl_out, &sasl_out_len);
+          }
+          free(decoded);
+        } else {
         
           if (r != SASL_OK) {
             free(decoded);
@@ -1372,8 +1378,6 @@ int mailesmtp_auth_sasl(mailsmtp * session, const char * auth_type,
         
           r = sasl_client_step(session->smtp_sasl.sasl_conn,
             decoded, decoded_len, NULL, &sasl_out, &sasl_out_len);
-        
-          free(decoded);
         }
         
         if ((r != SASL_CONTINUE) && (r != SASL_OK)) {
