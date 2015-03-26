@@ -618,6 +618,9 @@
     <ClCompile Include="..\..\src\low-level\smtp\mailsmtp_oauth2.c">
       <Filter>Source Files\low-level\smtp</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\low-level\mime\mailmime_encode.c">
+      <Filter>Source Files\low-level\mime</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\windows\win_etpan.h">
