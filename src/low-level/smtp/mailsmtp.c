@@ -1350,7 +1350,6 @@ int mailesmtp_auth_sasl(mailsmtp * session, const char * auth_type,
           * p = '\0';
         }
         
-        
         response_len = strlen(session->response);
         max_decoded = response_len * 3 / 4;
         decoded = malloc(max_decoded + 1);
@@ -1358,7 +1357,7 @@ int mailesmtp_auth_sasl(mailsmtp * session, const char * auth_type,
           res = MAILSMTP_ERROR_MEMORY;
           goto free_sasl_conn;
         }
-	
+        
         r = sasl_decode64(session->response, response_len,
             decoded, max_decoded + 1, &decoded_len);
         if(strlen(auth_type) == 4 && strcmp(auth_type, "NTLM", 4) == 0) {
