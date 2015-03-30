@@ -1488,6 +1488,29 @@ static int mailimap_address_parse(mailstream * fd, MMAPString * buffer,
   return res;
 }
 
+static int mailmap_addr_string_parse(mailstream * fd, MMAPString * buffer,
+                                  size_t * indx, char ** result,
+                                  size_t * result_len,
+                                  size_t progr_rate,
+                                  progress_function * progr_fun)
+{
+    char *p;
+    size_t cur_token = *indx;
+    int r = mailimap_nstring_parse(fd, buffer, indx, result, NULL,
+            progr_rate, progr_fun);
+ 
+    if (*result == NULL) return r;
+ 
+    p = strchr(*result, '"');
+    if (!p) return r;
+    *p = 0;
+ 
+    p = strchr(buffer->str + cur_token + 1, '"');
+    p++;
+    *indx = p - buffer->str;
+    return r;
+}
+
 /*
    addr-adl        = nstring
                        ; Holds route from [RFC-822] route-addr if
@@ -1499,7 +1522,7 @@ static int mailimap_addr_adl_parse(mailstream * fd, MMAPString * buffer,
 				   size_t progr_rate,
 				   progress_function * progr_fun)
 {
-  return mailimap_nstring_parse(fd, buffer, indx, result, NULL,
+  return mailmap_addr_string_parse(fd, buffer, indx, result, NULL,
 				progr_rate, progr_fun);
 }
 
@@ -1514,7 +1537,7 @@ static int mailimap_addr_host_parse(mailstream * fd, MMAPString * buffer,
 				    size_t progr_rate,
 				    progress_function * progr_fun)
 {
-  return mailimap_nstring_parse(fd, buffer, indx, result, NULL,
+  return mailmap_addr_string_parse(fd, buffer, indx, result, NULL,
 				progr_rate, progr_fun);
 }
 
@@ -1532,7 +1555,7 @@ static int mailimap_addr_mailbox_parse(mailstream * fd, MMAPString * buffer,
 				       size_t progr_rate,
 				       progress_function * progr_fun)
 {
-  return mailimap_nstring_parse(fd, buffer, indx, result, NULL,
+  return mailmap_addr_string_parse(fd, buffer, indx, result, NULL,
 				progr_rate, progr_fun);
 }
 
@@ -1548,7 +1571,7 @@ static int mailimap_addr_name_parse(mailstream * fd, MMAPString * buffer,
 				    size_t progr_rate,
 				    progress_function * progr_fun)
 {
-  return mailimap_nstring_parse(fd, buffer, indx, result, NULL,
+  return mailmap_addr_string_parse(fd, buffer, indx, result, NULL,
 				progr_rate, progr_fun);
 }
 
@@ -4600,6 +4623,76 @@ static int mailimap_digit_nz_parse(mailstream * fd, MMAPString * buffer,
   else
     return MAILIMAP_ERROR_PARSE;
 }
+#else
+static int mailimap_envelope_parse_unstrict(MMAPString * buffer, size_t * indx, struct mailimap_envelope ** result)
+{
+    size_t cur_token;
+    int r;
+    char * p;
+    char * date;
+    char * subject;
+    char * message_id;
+ 
+    struct mailimap_env_from * from;
+    struct mailimap_envelope * envelope;
+ 
+    date = NULL;
+    subject = NULL;
+    message_id = NULL;
+    from = NULL;
+    r = MAILIMAP_ERROR_PARSE;
+ 
+    /* base condition */
+    if (buffer->str[*indx] != '(') goto error;
+ 
+    
+    /* message id */
+    p = strstr(buffer->str + *indx, ">\")");
+    if (!p) goto error;
+ 
+    p = strstr(buffer->str + *indx, "\"<");
+    if (!p) goto error;
+ 
+    cur_token = p - buffer->str;
+    r = mailimap_env_message_id_parse(NULL, buffer, &cur_token, &message_id,
+            NULL, NULL);
+    if (r != MAILIMAP_NO_ERROR) goto error;
+ 
+ 
+    /* normal unstrict parse */
+    cur_token = *indx + 1;
+    mailimap_env_date_parse(NULL, buffer, &cur_token, &date, NULL, NULL);
+    mailimap_space_parse(NULL, buffer, &cur_token);
+    mailimap_env_subject_parse(NULL, buffer, &cur_token, &subject, NULL, NULL);
+    mailimap_space_parse(NULL, buffer, &cur_token);
+    mailimap_env_from_parse(NULL, buffer, &cur_token, &from, NULL, NULL);
+ 
+    if (NULL == date || NULL == from) {
+        r = MAILIMAP_ERROR_PARSE;
+        goto error;
+    }
+ 
+    /* return */
+    envelope = mailimap_envelope_new(date, subject, from, NULL, NULL, NULL,
+            NULL, NULL, NULL, message_id);
+    if (envelope == NULL) {
+        r = MAILIMAP_ERROR_MEMORY;
+        goto error;
+    }
+ 
+    *result = envelope;
+    p = strstr(buffer->str + *indx, ">\")");
+    *indx = p - buffer->str + 3;
+ 
+    return MAILIMAP_NO_ERROR;
+ 
+error:
+    if (message_id) mailimap_env_message_id_free(message_id);
+    if (date)       mailimap_env_date_free(date);
+    if (subject)    mailimap_env_subject_free(subject);
+    if (from)       mailimap_env_from_free(from);
+    return r;
+}
 #endif
 
 /*
@@ -4807,11 +4900,16 @@ static int mailimap_envelope_parse(mailstream * fd, MMAPString * buffer,
  from:
   mailimap_env_from_free(from);
  subject:
-  mailimap_env_subject_free(date);
+  mailimap_env_subject_free(subject);
  date:
   mailimap_env_date_free(date);
  err:
+#ifdef UNSTRICT_SYNTAX
+  /* workaround for qq.com */
+  return mailimap_envelope_parse_unstrict(buffer, indx, result);
+#else 
   return res;
++#endif  
 }
 
 /*
