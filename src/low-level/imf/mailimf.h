@@ -348,7 +348,7 @@ int mailimf_fws_atom_parse(const char * message, size_t length,
 
 LIBETPAN_EXPORT
 int mailimf_fws_word_parse(const char * message, size_t length,
-			   size_t * indx, char ** result);
+                           size_t * indx, char ** result, int * p_missing_closing_quote);
 
 LIBETPAN_EXPORT
 int mailimf_fws_quoted_string_parse(const char * message, size_t length,

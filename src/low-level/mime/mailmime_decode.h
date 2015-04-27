@@ -53,7 +53,7 @@ int
 mailmime_encoded_word_parse(const char * message, size_t length,
                             size_t * indx,
                             struct mailmime_encoded_word ** result,
-                            int * p_has_fwd);
+                            int * p_has_fwd, int * p_missing_closing_quote);
 
 #ifdef __cplusplus
 }
