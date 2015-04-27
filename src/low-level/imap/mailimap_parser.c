@@ -1532,6 +1532,14 @@ static int mailimap_addr_host_parse(mailstream * fd, MMAPString * buffer,
 				    size_t progr_rate,
 				    progress_function * progr_fun)
 {
+  int r;
+
+  /* workaround for qq.com IMAP Server. */
+  r = mailimap_token_case_insensitive_parse(fd, buffer, indx, "\"qq.com\\\"");
+  if (r == MAILIMAP_NO_ERROR) {
+    return r;
+  }
+
   return mailimap_nstring_parse(fd, buffer, indx, result, NULL,
 				progr_rate, progr_fun);
 }
@@ -4641,6 +4649,7 @@ static int mailimap_envelope_parse(mailstream * fd, MMAPString * buffer,
     return r;
   }
 
+  /* workaround for qq.com IMAP Server. */
   r = mailimap_envelope_parse_workaround_qq_mail(fd, buffer, indx, result, progr_rate, progr_fun);
   return r;
 }
@@ -4920,11 +4929,44 @@ static int mailimap_envelope_parse_workaround_qq_mail(mailstream * fd, MMAPStrin
     goto subject;
   }
 
+  if (from == NULL) {
+    clist * list;
+    struct mailimap_address * addr;
+
+    addr = mailimap_address_new("", NULL, "", "");
+    if (addr == NULL) {
+      goto subject;
+    }
+
+    list = clist_new();
+    if (list == NULL) {
+      mailimap_address_free(addr);
+      goto subject;
+    }
+
+    r = clist_append(list, addr);
+    if (r < 0) {
+      clist_free(list);
+      mailimap_address_free(addr);
+      goto subject;
+    }
+
+    from = mailimap_env_from_new(list);
+    if (from == NULL) {
+      clist_free(list);
+      mailimap_address_free(addr);
+      goto subject;
+    }
+  }
+
   while (1) {
     clist * list;
 
     r = mailimap_space_parse(fd, buffer, &cur_token);
-    if (r != MAILIMAP_NO_ERROR) {
+    if (r == MAILIMAP_ERROR_PARSE) {
+      break;
+    }
+    else if (r != MAILIMAP_NO_ERROR) {
       res = r;
       goto from;
     }
@@ -4945,7 +4987,7 @@ static int mailimap_envelope_parse_workaround_qq_mail(mailstream * fd, MMAPStrin
   }
 
   has_first_string = 0;
-  r = mailimap_nstring_parse(fd, buffer, indx, &first_string, NULL,
+  r = mailimap_nstring_parse(fd, buffer, &cur_token, &first_string, NULL,
                                 progr_rate, progr_fun);
   if (r == MAILIMAP_NO_ERROR) {
     has_first_string = 1;
@@ -4962,7 +5004,7 @@ static int mailimap_envelope_parse_workaround_qq_mail(mailstream * fd, MMAPStrin
   // ignore errors.
 
   has_second_string = 0;
-  r = mailimap_nstring_parse(fd, buffer, indx, &second_string, NULL,
+  r = mailimap_nstring_parse(fd, buffer, &cur_token, &second_string, NULL,
                              progr_rate, progr_fun);
   if (r == MAILIMAP_NO_ERROR) {
     has_second_string = 1;
@@ -4980,7 +5022,7 @@ static int mailimap_envelope_parse_workaround_qq_mail(mailstream * fd, MMAPStrin
     message_id = second_string;
   }
   else if (has_first_string) {
-    message_id = second_string;
+    message_id = first_string;
   }
 
   r = mailimap_cparenth_parse(fd, buffer, &cur_token);
