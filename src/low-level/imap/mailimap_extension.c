@@ -189,7 +189,7 @@ void mailimap_extension_data_store(mailimap * session,
 }
 
 LIBETPAN_EXPORT
-int mailimap_has_extension(mailimap * session, char * extension_name)
+int mailimap_has_extension(mailimap * session, const char * extension_name)
 {
   if (session->imap_connection_info != NULL) {
     if (session->imap_connection_info->imap_capability != NULL) {
@@ -214,7 +214,7 @@ int mailimap_has_extension(mailimap * session, char * extension_name)
 }
 
 LIBETPAN_EXPORT
-int mailimap_has_authentication(mailimap * session, char * authentication_name)
+int mailimap_has_authentication(mailimap * session, const char * authentication_name)
 {
   if (session->imap_connection_info != NULL) {
     if (session->imap_connection_info->imap_capability != NULL) {
