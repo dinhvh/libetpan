@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		2307A00C170AAA5500C43C59 /* mailstream_compress.c in Sources */ = {isa = PBXBuildFile; fileRef = 2307A00A170AAA5500C43C59 /* mailstream_compress.c */; };
 		365DFFD215D1C93100F2DD85 /* xgmmsgid.c in Sources */ = {isa = PBXBuildFile; fileRef = 365DFFD115D1C93100F2DD85 /* xgmmsgid.c */; };
+		647051C61B45E36C00796487 /* mailmime_encode.c in Sources */ = {isa = PBXBuildFile; fileRef = 649DE08D1B45D48200912F72 /* mailmime_encode.c */; };
+		647051C71B45E36D00796487 /* mailmime_encode.c in Sources */ = {isa = PBXBuildFile; fileRef = 649DE08D1B45D48200912F72 /* mailmime_encode.c */; };
+		647051C81B45E36E00796487 /* mailmime_encode.c in Sources */ = {isa = PBXBuildFile; fileRef = 649DE08D1B45D48200912F72 /* mailmime_encode.c */; };
 		8A75ECDA17040F92007F9972 /* mailimap_sort.c in Sources */ = {isa = PBXBuildFile; fileRef = 8A75ECD917040F91007F9972 /* mailimap_sort.c */; };
 		8A75ECDB17040F92007F9972 /* mailimap_sort.c in Sources */ = {isa = PBXBuildFile; fileRef = 8A75ECD917040F91007F9972 /* mailimap_sort.c */; };
 		8A75ECDC17040F92007F9972 /* mailimap_sort.c in Sources */ = {isa = PBXBuildFile; fileRef = 8A75ECD917040F91007F9972 /* mailimap_sort.c */; };
@@ -579,6 +582,9 @@
 		2307A00B170AAA5500C43C59 /* mailstream_compress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mailstream_compress.h; sourceTree = "<group>"; };
 		365DFFD115D1C93100F2DD85 /* xgmmsgid.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = xgmmsgid.c; sourceTree = "<group>"; };
 		365DFFD815D1CF1800F2DD85 /* xgmmsgid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = xgmmsgid.h; sourceTree = "<group>"; };
+		649DE08D1B45D48200912F72 /* mailmime_encode.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = mailmime_encode.c; sourceTree = "<group>"; };
+		649DE08E1B45D48200912F72 /* mailmime_encode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mailmime_encode.h; sourceTree = "<group>"; };
+		64FE34351B4564CA0084ED65 /* syscall_wrappers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = syscall_wrappers.h; sourceTree = "<group>"; };
 		8A75ECD917040F91007F9972 /* mailimap_sort.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mailimap_sort.c; sourceTree = "<group>"; };
 		8A75ECDD17040FBD007F9972 /* mailimap_sort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mailimap_sort.h; sourceTree = "<group>"; };
 		8A75ECE5170414B8007F9972 /* mailimap_sort_types.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mailimap_sort_types.c; sourceTree = "<group>"; };
@@ -1128,6 +1134,7 @@
 				C6F9E87B105335BC0059C3BA /* mmapstring.c */,
 				C6F9E87C105335BC0059C3BA /* mmapstring.h */,
 				C6F9E87D105335BC0059C3BA /* mmapstring_private.h */,
+				64FE34351B4564CA0084ED65 /* syscall_wrappers.h */,
 				C6F9E87E105335BC0059C3BA /* timeutils.c */,
 				C6F9E87F105335BC0059C3BA /* timeutils.h */,
 			);
@@ -1616,6 +1623,8 @@
 				C6F9EA72105335BC0059C3BA /* mailmime_content.h */,
 				C6F9EA73105335BC0059C3BA /* mailmime_decode.c */,
 				C6F9EA74105335BC0059C3BA /* mailmime_decode.h */,
+				649DE08D1B45D48200912F72 /* mailmime_encode.c */,
+				649DE08E1B45D48200912F72 /* mailmime_encode.h */,
 				C6F9EA75105335BC0059C3BA /* mailmime_disposition.c */,
 				C6F9EA76105335BC0059C3BA /* mailmime_disposition.h */,
 				C6F9EA77105335BC0059C3BA /* mailmime_types.c */,
@@ -1918,6 +1927,7 @@
 				C6F9EB27105335BD0059C3BA /* mmapstring.c in Sources */,
 				C6F9EB2A105335BD0059C3BA /* timeutils.c in Sources */,
 				C6F9EB30105335BD0059C3BA /* data_message_driver.c in Sources */,
+				647051C61B45E36C00796487 /* mailmime_encode.c in Sources */,
 				C6F9EB39105335BD0059C3BA /* dbdriver.c in Sources */,
 				C6F9EB3B105335BD0059C3BA /* dbdriver_message.c in Sources */,
 				C6F9EB3E105335BD0059C3BA /* dbstorage.c in Sources */,
@@ -2102,6 +2112,7 @@
 				C682E22D15B315EF00BE9DA7 /* dbdriver_message.c in Sources */,
 				C682E22E15B315EF00BE9DA7 /* dbstorage.c in Sources */,
 				C682E22F15B315EF00BE9DA7 /* feeddriver.c in Sources */,
+				647051C81B45E36E00796487 /* mailmime_encode.c in Sources */,
 				C682E23015B315EF00BE9DA7 /* feeddriver_message.c in Sources */,
 				C682E23115B315EF00BE9DA7 /* feedstorage.c in Sources */,
 				C682E23215B315EF00BE9DA7 /* generic_cache.c in Sources */,
@@ -2286,6 +2297,7 @@
 				C69AB1BA1054704000F32FBD /* dbdriver_message.c in Sources */,
 				C69AB1BD1054704000F32FBD /* dbstorage.c in Sources */,
 				C69AB1BF1054704000F32FBD /* feeddriver.c in Sources */,
+				647051C71B45E36D00796487 /* mailmime_encode.c in Sources */,
 				C69AB1C11054704000F32FBD /* feeddriver_message.c in Sources */,
 				C69AB1C41054704000F32FBD /* feedstorage.c in Sources */,
 				C69AB1C61054704000F32FBD /* generic_cache.c in Sources */,
