@@ -1192,6 +1192,11 @@ static carray * mailstream_low_cfstream_get_certificate_chain(mailstream_low * s
       for(i = 0 ; i < count ; i ++) {
           SecCertificateRef cert = (SecCertificateRef) SecTrustGetCertificateAtIndex(secTrust, i);
           CFDataRef data = SecCertificateCopyData(cert);
+          if (data == NULL) {
+            carray_free(result);
+            CFRelease(secTrust);
+            return NULL;
+          }
           CFIndex length = CFDataGetLength(data);
           const UInt8 * bytes = CFDataGetBytePtr(data);
           MMAPString * str = mmap_string_sized_new(length);
@@ -1209,6 +1214,11 @@ static carray * mailstream_low_cfstream_get_certificate_chain(mailstream_low * s
           for(i = 0 ; i < count ; i ++) {
               SecCertificateRef cert = (SecCertificateRef) CFArrayGetValueAtIndex(certs, i);
               CFDataRef data = SecCertificateCopyData(cert);
+              if (data == NULL) {
+                carray_free(result);
+                CFRelease(certs);
+                return NULL;
+              }
               CFIndex length = CFDataGetLength(data);
               const UInt8 * bytes = CFDataGetBytePtr(data);
               MMAPString * str = mmap_string_sized_new(length);
