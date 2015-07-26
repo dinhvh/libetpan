@@ -451,6 +451,30 @@ int mailstream_low_wait_idle(mailstream_low * low, struct mailstream_cancel * id
   cancel_fd = mailstream_cancel_get_fd(mailstream_low_get_cancel(low));
   
   FD_ZERO(&readfds);
+#ifdef WIN32
+  HANDLE event = CreateEvent(NULL, TRUE, FALSE, NULL);
+  WSAEventSelect(fd, event, FD_READ | FD_CLOSE);
+  FD_SET(event, &readfds);
+  FD_SET(idle_fd, &readfds);
+  FD_SET(cancel_fd, &readfds);
+  r = WaitForMultipleObjects(readfds.fd_count, readfds.fd_array, FALSE, max_idle_delay * 1000);
+  WSAEventSelect(fd, event, 0);
+  CloseHandle(event);
+  if (r == WAIT_TIMEOUT) {
+	  return MAILSTREAM_IDLE_TIMEOUT;
+  }
+  else if (r == WAIT_OBJECT_0){
+	  return MAILSTREAM_IDLE_HASDATA;
+  }
+  else if (r == WAIT_OBJECT_0 + 1){
+	  return MAILSTREAM_IDLE_INTERRUPTED;
+  }
+  else if (r == WAIT_OBJECT_0 + 2){
+	  return MAILSTREAM_IDLE_CANCELLED;
+  }
+  DWORD i = GetLastError();
+  return MAILSTREAM_IDLE_ERROR;
+#else
   FD_SET(fd, &readfds);
   FD_SET(idle_fd, &readfds);
   FD_SET(cancel_fd, &readfds);
@@ -490,6 +514,7 @@ int mailstream_low_wait_idle(mailstream_low * low, struct mailstream_cancel * id
     }
     return MAILSTREAM_IDLE_ERROR;
   }
+#endif
 }
 
 int mailstream_low_setup_idle(mailstream_low * low)
