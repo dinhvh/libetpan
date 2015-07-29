@@ -7,12 +7,12 @@ logfile="`pwd`/update.log"
 
 cd ..
 
-if test x$1 = xprepare ; then
+if test "x$1" = xprepare ; then
   echo preparing
   ./autogen.sh > "$logfile" 2>&1
   tar czf build-mac/autogen-result.tar.gz `find . -name '*.in'` configure install-sh config.sub missing config.guess
   exit 0
-elif test x$1 = xprepare-clean ; then
+elif test "x$1" = xprepare-clean ; then
   if test -f Makefile ; then
     make maintainer-clean >/dev/null
     cd build-mac
@@ -22,16 +22,16 @@ elif test x$1 = xprepare-clean ; then
   exit 0
 fi
 
-if test x$SRCROOT = x ; then
+if test "x$SRCROOT" = x ; then
   echo Should be run from Xcode
   exit 1
 fi
 
-if test x$ACTION = x ; then
+if test "x$ACTION" = x ; then
   ACTION=build
 fi
 
-if test x$ACTION = xbuild ; then
+if test "x$ACTION" = xbuild ; then
   
   md5 build-mac/autogen-result.tar.gz > build-mac/autogen-result.md5.new
   if ! cmp -s build-mac/autogen-result.md5 build-mac/autogen-result.md5.new ; then
@@ -53,14 +53,14 @@ if test x$ACTION = xbuild ; then
     make libetpan-config.h >> "$logfile" 2>&1
     md5 build-mac/autogen-result.tar.gz > build-mac/autogen-result.md5
   fi
-  if test x$PLATFORM_NAME = xiphoneos -o x$PLATFORM_NAME = xiphonesimulator ; then
+  if test "x$PLATFORM_NAME" = xiphoneos -o "x$PLATFORM_NAME" = xiphonesimulator ; then
     if test ! -d build-mac/libsasl-ios ; then
       # build dependencies for iOS
       cd build-mac
       sh ./prepare-ios.sh
     fi
   fi
-elif test x$ACTION = xclean ; then
+elif test "x$ACTION" = xclean ; then
   if test -f Makefile ; then
     make distclean >/dev/null
     cd build-mac
