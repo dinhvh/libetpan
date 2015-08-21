@@ -47,12 +47,12 @@ unzip -qo "$current_dir/dependencies/cyrus-sasl/cyrus-sasl-android-$cyrus_sasl_b
 cd "$current_dir/.."
 tar xzf "$current_dir/../build-mac/autogen-result.tar.gz"
 ./configure
-make prepare
+make stamp-prepare
 
 # Copy public headers to include
-cp -r include/libetpan "$current_dir/include"
+cp -rL include/libetpan "$current_dir/include"
 mkdir -p "$current_dir/$package_name-$build_version/include"
-cp -r include/libetpan "$current_dir/$package_name-$build_version/include"
+cp -rL include/libetpan "$current_dir/$package_name-$build_version/include"
 
 # Start building.
 for arch in $archs ; do

@@ -89,6 +89,7 @@ src_files = \
 ./src/low-level/mime/mailmime.c \
 ./src/low-level/mime/mailmime_content.c \
 ./src/low-level/mime/mailmime_decode.c \
+./src/low-level/mime/mailmime_encode.c \
 ./src/low-level/mime/mailmime_disposition.c \
 ./src/low-level/mime/mailmime_types.c \
 ./src/low-level/mime/mailmime_types_helper.c \

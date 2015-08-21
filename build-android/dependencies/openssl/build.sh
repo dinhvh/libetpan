@@ -90,7 +90,7 @@ function build {
   
   mkdir -p "$current_dir/$package_name-$build_version"
   mkdir -p "$current_dir/$package_name-$build_version/libs/$arch_dir_name"
-  cp -r include "$current_dir/$package_name-$build_version"
+  cp -rL include "$current_dir/$package_name-$build_version"
   cp libcrypto.a libssl.a "$current_dir/$package_name-$build_version/libs/$arch_dir_name"
   cd "$current_dir"
   rm -rf src
