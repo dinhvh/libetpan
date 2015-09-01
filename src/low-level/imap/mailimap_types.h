@@ -2044,6 +2044,7 @@ enum {
   MAILIMAP_MSG_ATT_RFC822_HEADER, /* this is the message header */
   MAILIMAP_MSG_ATT_RFC822_TEXT,   /* this is the message text part */
   MAILIMAP_MSG_ATT_RFC822_SIZE,   /* this is the size of the message content */
+  MAILIMAP_MSG_ATT_PLAIN_BODY,    /* this is the plain body the message content */
   MAILIMAP_MSG_ATT_BODY,          /* this is the MIME description of
                                      the message */
   MAILIMAP_MSG_ATT_BODYSTRUCTURE, /* this is the MIME description of the
@@ -2789,6 +2790,7 @@ enum {
   MAILIMAP_FETCH_ATT_RFC822_HEADER,     /* to fetch the headers */
   MAILIMAP_FETCH_ATT_RFC822_SIZE,       /* to fetch the size */
   MAILIMAP_FETCH_ATT_RFC822_TEXT,       /* to fetch the text part */
+  MAILIMAP_FETCH_ATT_PLAIN_BODY,        /* to fetch the plain text */
   MAILIMAP_FETCH_ATT_BODY,              /* to fetch the MIME structure */
   MAILIMAP_FETCH_ATT_BODYSTRUCTURE,     /* to fetch the MIME structure with
                                            additional information */

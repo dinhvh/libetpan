@@ -1256,6 +1256,9 @@ static int mailimap_fetch_att_send(mailstream * fd,
 
   case MAILIMAP_FETCH_ATT_RFC822_TEXT:
     return mailimap_token_send(fd, "RFC822.TEXT");
+          
+  case MAILIMAP_FETCH_ATT_PLAIN_BODY:
+      return mailimap_token_send(fd, "BODY[1]");
 
   case MAILIMAP_FETCH_ATT_BODY:
     return mailimap_token_send(fd, "BODY");

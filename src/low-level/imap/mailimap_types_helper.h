@@ -285,6 +285,15 @@ mailimap_fetch_att_new_rfc822_size(void);
 LIBETPAN_EXPORT
 struct mailimap_fetch_att *
 mailimap_fetch_att_new_rfc822_text(void);
+  
+/*
+ this function creates a mailimap_fetch_att structure to request
+ plain body of a message
+ */
+
+LIBETPAN_EXPORT
+struct mailimap_fetch_att *
+mailimap_fetch_att_new_plain_body(void);
 
 /*
   this function creates a mailimap_fetch_att structure to request
