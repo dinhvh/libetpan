@@ -555,13 +555,6 @@ mailimap_fetch_att_new_body(void)
 
 LIBETPAN_EXPORT
 struct mailimap_fetch_att *
-mailimap_fetch_att_new_plain_body(void)
-{
-  return mailimap_fetch_att_new(MAILIMAP_FETCH_ATT_PLAIN_BODY, NULL, 0, 0, NULL);
-}
-
-LIBETPAN_EXPORT
-struct mailimap_fetch_att *
 mailimap_fetch_att_new_bodystructure(void)
 {
   return mailimap_fetch_att_new(MAILIMAP_FETCH_ATT_BODYSTRUCTURE, NULL, 0, 0, NULL);
