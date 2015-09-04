@@ -372,8 +372,15 @@ int mailmime_encoded_word_parse(const char * message, size_t length,
   size_t cur_token;
   char * charset;
   int encoding;
+  char * body;
+  size_t old_body_len;
   char * text;
   size_t end_encoding;
+  size_t lookfwd_cur_token;
+  char * lookfwd_charset;
+  int lookfwd_encoding;
+  size_t copy_len;
+  size_t decoded_token;
   char * decoded;
   size_t decoded_len;
   struct mailmime_encoded_word * ew;
@@ -381,6 +388,7 @@ int mailmime_encoded_word_parse(const char * message, size_t length,
   int res;
   int opening_quote;
   int end;
+  int has_padding;
   int has_fwd;
   int missing_closing_quote;
   
@@ -403,7 +411,7 @@ int mailmime_encoded_word_parse(const char * message, size_t length,
     opening_quote = TRUE;
   }
   else if (r == MAILIMF_ERROR_PARSE) {
-    /* do nothing */  
+    /* do nothing */
   }
   else {
     res = r;
@@ -440,48 +448,125 @@ int mailmime_encoded_word_parse(const char * message, size_t length,
     goto free_charset;
   }
 
-  end = FALSE;
-  end_encoding = cur_token;
+  lookfwd_cur_token = cur_token;
+  body = NULL;
+  old_body_len = 0;
   while (1) {
-    if (end_encoding >= length)
-      break;
-
-    if (end_encoding + 1 < length) {
-      if ((message[end_encoding] == '?') && (message[end_encoding + 1] == '=')) {
-        end = TRUE;
+    end = FALSE;
+    has_padding = FALSE;
+    end_encoding = cur_token;
+    while (1) {
+      if (end_encoding >= length)
+        break;
+      
+      if (end_encoding + 1 < length) {
+        if ((message[end_encoding] == '?') && (message[end_encoding + 1] == '=')) {
+          end = TRUE;
+          if (message[end_encoding - 1] == '=') {
+            has_padding = TRUE;
+          }
+        }
       }
+      
+      if (end)
+        break;
+      
+      end_encoding ++;
     }
 
-    if (end)
-      break;
+    copy_len = end_encoding - lookfwd_cur_token - (has_padding && encoding == MAILMIME_ENCODING_Q ? 1 : 0);
+    if (copy_len > 0) {
+      body = realloc(body, old_body_len + copy_len + 1);
+      if (body == NULL) {
+        res = MAILIMF_ERROR_MEMORY;
+        goto free_charset;
+      }
 
-    end_encoding ++;
+      memcpy(body + old_body_len, &message[cur_token], copy_len);
+      body[old_body_len + copy_len] = '\0';
+      
+      old_body_len = strlen(body);
+    }
+    cur_token = end_encoding;
+    
+    r = mailimf_token_case_insensitive_parse(message, length, &cur_token, "?=");
+    if (r != MAILIMF_NO_ERROR) {
+      break;
+    }
+    
+    if ((has_padding && encoding == MAILMIME_ENCODING_B) || cur_token == length) {
+      break;
+    }
+    
+    lookfwd_cur_token = cur_token;
+    
+    r = mailimf_fws_parse(message, length, &lookfwd_cur_token);
+    if ((r != MAILIMF_NO_ERROR) && (r != MAILIMF_ERROR_PARSE)) {
+      break;
+    }
+    
+    r = mailimf_token_case_insensitive_parse(message, length, &lookfwd_cur_token, "=?");
+    if (r != MAILIMF_NO_ERROR) {
+      break;
+    }
+    
+    r = mailmime_charset_parse(message, length, &lookfwd_cur_token, &lookfwd_charset);
+    if (r != MAILIMF_NO_ERROR) {
+      goto free_lookfwd_charset;
+    }
+    
+    r = mailimf_char_parse(message, length, &lookfwd_cur_token, '?');
+    if (r != MAILIMF_NO_ERROR) {
+      goto free_lookfwd_charset;
+    }
+    
+    r = mailmime_encoding_parse(message, length, &lookfwd_cur_token, &lookfwd_encoding);
+    if (r != MAILIMF_NO_ERROR) {
+      goto free_lookfwd_charset;
+    }
+    
+    r = mailimf_char_parse(message, length, &lookfwd_cur_token, '?');
+    if (r != MAILIMF_NO_ERROR) {
+      goto free_lookfwd_charset;
+    }
+    
+    if (strcasecmp(charset, lookfwd_charset) == 0 && encoding == lookfwd_encoding) {
+      mailmime_charset_free(lookfwd_charset);
+      cur_token = lookfwd_cur_token;
+    } else {
+    free_lookfwd_charset:
+      mailmime_charset_free(lookfwd_charset);
+      break;
+    }
   }
 
+  decoded_token = 0;
   decoded_len = 0;
   decoded = NULL;
   switch (encoding) {
-  case MAILMIME_ENCODING_B:
-    r = mailmime_base64_body_parse(message, end_encoding,
-				   &cur_token, &decoded,
-				   &decoded_len);
+    case MAILMIME_ENCODING_B:
+      r = mailmime_base64_body_parse(body, strlen(body),
+                                     &decoded_token, &decoded,
+                                     &decoded_len);
+      free(body);
       
-    if (r != MAILIMF_NO_ERROR) {
-      res = r;
-      goto free_charset;
-    }
-    break;
-  case MAILMIME_ENCODING_Q:
-    r = mailmime_quoted_printable_body_parse(message, end_encoding,
-					     &cur_token, &decoded,
-					     &decoded_len, TRUE);
-
-    if (r != MAILIMF_NO_ERROR) {
-      res = r;
-      goto free_charset;
-    }
-
-    break;
+      if (r != MAILIMF_NO_ERROR) {
+        res = r;
+        goto free_charset;
+      }
+      break;
+    case MAILMIME_ENCODING_Q:
+      r = mailmime_quoted_printable_body_parse(body, strlen(body),
+                                               &decoded_token, &decoded,
+                                               &decoded_len, TRUE);
+      free(body);
+      
+      if (r != MAILIMF_NO_ERROR) {
+        res = r;
+        goto free_charset;
+      }
+      
+      break;
   }
 
   text = malloc(decoded_len + 1);
@@ -495,15 +580,7 @@ int mailmime_encoded_word_parse(const char * message, size_t length,
   text[decoded_len] = '\0';
 
   mailmime_decoded_part_free(decoded);
-
-  r = mailimf_token_case_insensitive_parse(message, length, &cur_token, "?=");
-#if 0
-  if (r != MAILIMF_NO_ERROR) {
-    res = r;
-    goto free_encoded_text;
-  }
-#endif
-
+  
   if (opening_quote) {
     r = mailimf_char_parse(message, length, &cur_token, '\"');
 #if 0
