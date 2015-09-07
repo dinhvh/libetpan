@@ -494,6 +494,7 @@ int mailmime_encoded_word_parse(const char * message, size_t length,
       break;
     }
     
+    // Have padding (for base64), if append the next word to the current body, it won't be able to be correctly decoded
     if ((has_padding && encoding == MAILMIME_ENCODING_B) || cur_token == length) {
       break;
     }
@@ -534,6 +535,7 @@ int mailmime_encoded_word_parse(const char * message, size_t length,
       mailmime_charset_free(lookfwd_charset);
       cur_token = lookfwd_cur_token;
     } else {
+      // the next charset is not matched with the current one, free lookfwd_charset then break to decode the body appended so far
     free_lookfwd_charset:
       mailmime_charset_free(lookfwd_charset);
       break;
