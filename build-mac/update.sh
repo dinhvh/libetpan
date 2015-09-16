@@ -31,7 +31,7 @@ if test "x$ACTION" = x ; then
   ACTION=build
 fi
 
-if test "x$ACTION" = xbuild ; then
+if test "x$ACTION" = xbuild -o "x$ACTION" = xinstall ; then
   
   md5 build-mac/autogen-result.tar.gz > build-mac/autogen-result.md5.new
   if ! cmp -s build-mac/autogen-result.md5 build-mac/autogen-result.md5.new ; then
