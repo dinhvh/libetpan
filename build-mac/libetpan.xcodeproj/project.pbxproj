@@ -2522,7 +2522,6 @@
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (
-					"$(inherited)",
 					"-DHAVE_CFNETWORK=1",
 					"-DHAVE_CONFIG_H=1",
 					"-DLIBETPAN_IOS_DISABLE_SSL=1",
@@ -2542,7 +2541,6 @@
 					"$(SRCROOT)/include",
 				);
 				OTHER_CFLAGS = (
-					"$(inherited)",
 					"-DHAVE_CFNETWORK=1",
 					"-DHAVE_CONFIG_H=1",
 					"-DLIBETPAN_IOS_DISABLE_SSL=1",
