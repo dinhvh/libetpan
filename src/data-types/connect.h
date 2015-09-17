@@ -37,9 +37,8 @@
 
 #define CONNECT_H
 
-#ifdef HAVE_INTTYPES_H
-#	include <inttypes.h>
-#endif
+#include <libetpan/libetpan-config.h>
+
 #include <time.h>
 
 #ifdef __cplusplus
