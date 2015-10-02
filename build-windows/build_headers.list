@@ -152,7 +152,6 @@ src\low-level\smtp\mailsmtp_socket.h
 src\low-level\smtp\mailsmtp_ssl.h
 src\low-level\smtp\mailsmtp_types.h
 src\main\libetpan.h
-src\main\libetpan_version.h
 src\windows\win_etpan.h
 build-windows\libetpan-config.h
 build-windows\libetpan_version.h

@@ -1773,10 +1773,12 @@ static int mailimf_path_write_driver(int (* do_write)(void *, const char *, size
   if (r != MAILIMF_NO_ERROR)
     return r;
 
-  r = mailimf_string_write_driver(do_write, data, col, path->pt_addr_spec,
-      strlen(path->pt_addr_spec));
-  if (r != MAILIMF_NO_ERROR)
-    return r;
+  if (path->pt_addr_spec != NULL) {
+    r = mailimf_string_write_driver(do_write, data, col, path->pt_addr_spec,
+        strlen(path->pt_addr_spec));
+    if (r != MAILIMF_NO_ERROR)
+      return r;
+  }
 
   r = mailimf_string_write_driver(do_write, data, col, ">", 1);
   if (r != MAILIMF_NO_ERROR)

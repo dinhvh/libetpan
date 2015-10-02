@@ -1170,8 +1170,8 @@ int mailimf_atom_parse(const char * message, size_t length,
 }
 
 LIBETPAN_EXPORT
-int mailimf_fws_atom_for_word_parse(const char * message, size_t length,
-                                    size_t * indx, char ** result)
+static int mailimf_fws_atom_for_word_parse(const char * message, size_t length,
+                                           size_t * indx, char ** result, int * p_missing_closing_quote)
 {
   size_t end;
   size_t cur_token;
@@ -1179,9 +1179,11 @@ int mailimf_fws_atom_for_word_parse(const char * message, size_t length,
   int res;
   struct mailmime_encoded_word * word;
   int has_fwd;
+  int missing_closing_quote;
   char * atom;
   
   cur_token = * indx;
+  missing_closing_quote = 0;
   
   r = mailimf_fws_parse(message, length, &cur_token);
   if ((r != MAILIMF_NO_ERROR) && (r != MAILIMF_ERROR_PARSE)) {
@@ -1191,7 +1193,7 @@ int mailimf_fws_atom_for_word_parse(const char * message, size_t length,
   
   end = cur_token;
   
-  r = mailmime_encoded_word_parse(message, length, &cur_token, &word, &has_fwd);
+  r = mailmime_encoded_word_parse(message, length, &cur_token, &word, &has_fwd, &missing_closing_quote);
   if ((r != MAILIMF_NO_ERROR) && (r != MAILIMF_ERROR_PARSE)) {
     res = r;
     goto err;
@@ -1213,6 +1215,7 @@ int mailimf_fws_atom_for_word_parse(const char * message, size_t length,
   
   * result = atom;
   * indx = cur_token;
+  * p_missing_closing_quote = missing_closing_quote;
   
   return MAILIMF_NO_ERROR;
   
@@ -1591,15 +1594,17 @@ int mailimf_word_parse(const char * message, size_t length,
 
 LIBETPAN_EXPORT
 int mailimf_fws_word_parse(const char * message, size_t length,
-			   size_t * indx, char ** result)
+			   size_t * indx, char ** result, int * p_missing_closing_quote)
 {
   size_t cur_token;
   char * word;
   int r;
+  int missing_closing_quote;
 
   cur_token = * indx;
+  missing_closing_quote = 0;
 
-  r = mailimf_fws_atom_for_word_parse(message, length, &cur_token, &word);
+  r = mailimf_fws_atom_for_word_parse(message, length, &cur_token, &word, &missing_closing_quote);
 
   if (r == MAILIMF_ERROR_PARSE)
     r = mailimf_fws_quoted_string_parse(message, length, &cur_token, &word);
@@ -1609,6 +1614,7 @@ int mailimf_fws_word_parse(const char * message, size_t length,
 
   * result = word;
   * indx = cur_token;
+  * p_missing_closing_quote = missing_closing_quote;
 
   return MAILIMF_NO_ERROR;
 }
@@ -1627,8 +1633,10 @@ static int mailimf_phrase_parse(const char * message, size_t length,
   int r;
   int res;
   char * str;
+  int has_missing_closing_quote;
 
   cur_token = * indx;
+  has_missing_closing_quote = 0;
 
   gphrase = mmap_string_new("");
   if (gphrase == NULL) {
@@ -1639,7 +1647,11 @@ static int mailimf_phrase_parse(const char * message, size_t length,
   first = TRUE;
 
   while (1) {
-    r = mailimf_fws_word_parse(message, length, &cur_token, &word);
+    int missing_quote = 0;
+    r = mailimf_fws_word_parse(message, length, &cur_token, &word, &missing_quote);
+    if (missing_quote) {
+      has_missing_closing_quote = 1;
+    }
     if (r == MAILIMF_NO_ERROR) {
       if (!first) {
 	if (mmap_string_append_c(gphrase, ' ') == NULL) {
@@ -1667,6 +1679,10 @@ static int mailimf_phrase_parse(const char * message, size_t length,
   if (first) {
     res = MAILIMF_ERROR_PARSE;
     goto free;
+  }
+
+  if (has_missing_closing_quote) {
+    r = mailimf_char_parse(message, length, &cur_token, '\"');
   }
 
   str = strdup(gphrase->str);

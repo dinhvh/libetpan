@@ -1,6 +1,9 @@
 #!/bin/sh
 set -e
 
+IOSSDK="`xcodebuild -showsdks 2>/dev/null | grep iphoneos | sed 's/.*iphoneos\(.*\)/\1/'`"
+OSXSDK="`xcodebuild -showsdks 2>/dev/null | grep macosx | sed 's/.*macosx\(.*\)/\1/'`"
+
 if test "x`uname`" = xLinux ; then
   distdir=libetpan-travis-build
   ./autogen.sh --with-curl=no --disable-db --with-expat=no
@@ -13,12 +16,12 @@ if test "x`uname`" = xLinux ; then
   make imap-sample
 else
   echo Building library for iPhoneOS
-  xctool -project build-mac/libetpan.xcodeproj -sdk iphoneos8.1 -scheme "libetpan ios" build ARCHS="armv7 armv7s arm64"
+  xctool -project build-mac/libetpan.xcodeproj -sdk iphoneos$IOSSDK -scheme "libetpan ios" build ARCHS="armv7 armv7s arm64"
   echo Building library for iPhoneSimulator
-  xctool -project build-mac/libetpan.xcodeproj -sdk iphonesimulator8.1 -scheme "libetpan ios" build ARCHS="i386 x86_64"
+  xctool -project build-mac/libetpan.xcodeproj -sdk iphonesimulator$IOSSDK -scheme "libetpan ios" build ARCHS="i386 x86_64"
 
   echo Building library for Mac
-  xctool -project build-mac/libetpan.xcodeproj -sdk macosx10.10 -scheme "static libetpan" build
+  xctool -project build-mac/libetpan.xcodeproj -sdk macosx$OSXSDK -scheme "static libetpan" build
   echo Building framework for Mac
-  xctool -project build-mac/libetpan.xcodeproj -sdk macosx10.10 -scheme "libetpan" build
+  xctool -project build-mac/libetpan.xcodeproj -sdk macosx$OSXSDK -scheme "libetpan" build
 fi

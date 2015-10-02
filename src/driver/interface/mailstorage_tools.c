@@ -307,7 +307,11 @@ int mailstorage_generic_connect_with_local_address(mailsession_driver * driver,
   
   if (stream == NULL) {
     res = MAIL_ERROR_STREAM;
+#ifdef WIN32
+	closesocket(fd);
+#else
     Close(fd);
+#endif
     goto err;
   }
 

@@ -111,27 +111,27 @@ LIB_NAME=$ARCHIVE
 TARGETS="iPhoneOS iPhoneSimulator"
 
 SDK_IOS_MIN_VERSION=7.0
-SDK_IOS_VERSION="`xcodebuild -version -sdk 2>/dev/null | egrep SDKVersion | tail -n 1 | sed -E -n -e 's|SDKVersion: *(.*) *$|\1|p'`"
+SDK_IOS_VERSION="`xcodebuild -showsdks 2>/dev/null | grep iphoneos | sed 's/.*iphoneos\(.*\)/\1/'`"
 BUILD_DIR="$tmpdir/build"
 INSTALL_PATH="${BUILD_DIR}/${LIB_NAME}/universal"
 
 for TARGET in $TARGETS; do
 
     DEVELOPER="$(xcode-select --print-path)"
-    SYSROOT="`xcodebuild -version -sdk 2>/dev/null | egrep $TARGET -B 3 | egrep '^Path: '| egrep $SDK_IOS_VERSION | sort -u | tail -n 1| cut -d ' ' -f 2`"
+    SDK_ID="$(echo "$TARGET$SDK_IOS_VERSION" | tr A-Z a-z)"
+    SYSROOT="$(xcodebuild -version -sdk "$SDK_ID" 2>/dev/null | egrep '^Path: ' | cut -d ' ' -f 2)"
 
     case $TARGET in
         (iPhoneOS) 
             ARCH=arm
             MARCHS="armv7 armv7s arm64"
-            EXTRA_FLAGS="-miphoneos-version-min=$SDK_IOS_MIN_VERSION"
             ;;
         (iPhoneSimulator)
             ARCH=i386
             MARCHS="i386 x86_64"
-            EXTRA_FLAGS="-miphoneos-version-min=$SDK_IOS_MIN_VERSION"
             ;;
     esac
+    EXTRA_FLAGS="-fembed-bitcode -miphoneos-version-min=$SDK_IOS_MIN_VERSION"
     
     for MARCH in $MARCHS; do
 				echo "building for $TARGET - $MARCH"

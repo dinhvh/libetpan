@@ -23,7 +23,7 @@ list_headers()
 }
 
 cd ../src
-list_headers libetpan.h | sort
+list_headers libetpan.h | grep -v libetpan_version.h | sort
 echo src\\windows\\win_etpan.h
 echo build-windows\\libetpan-config.h
 echo build-windows\\libetpan_version.h

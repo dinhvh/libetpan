@@ -110,6 +110,7 @@ int mailmime_encoded_phrase_parse(const char * default_fromcode,
   char * str;
   char * wordutf8;
   int type;
+  int missing_closing_quote;
   
   cur_token = * indx;
   
@@ -127,7 +128,7 @@ int mailmime_encoded_phrase_parse(const char * default_fromcode,
     int has_fwd;
     
     word = NULL;
-    r = mailmime_encoded_word_parse(message, length, &cur_token, &word, &has_fwd);
+    r = mailmime_encoded_word_parse(message, length, &cur_token, &word, &has_fwd, &missing_closing_quote);
     if (r == MAILIMF_NO_ERROR) {
       if ((!first) && has_fwd) {
         if (type != TYPE_ENCODED_WORD) {
@@ -366,7 +367,7 @@ mailmime_non_encoded_word_parse(const char * message, size_t length,
 int mailmime_encoded_word_parse(const char * message, size_t length,
                                 size_t * indx,
                                 struct mailmime_encoded_word ** result,
-                                int * p_has_fwd)
+                                int * p_has_fwd, int * p_missing_closing_quote)
 {
   size_t cur_token;
   char * charset;
@@ -381,9 +382,11 @@ int mailmime_encoded_word_parse(const char * message, size_t length,
   int opening_quote;
   int end;
   int has_fwd;
+  int missing_closing_quote;
   
   cur_token = * indx;
   
+  missing_closing_quote = 0;
   has_fwd = 0;
   r = mailimf_fws_parse(message, length, &cur_token);
   if (r == MAILIMF_NO_ERROR) {
@@ -509,6 +512,9 @@ int mailmime_encoded_word_parse(const char * message, size_t length,
       goto free_encoded_text;
     }
 #endif
+    if (r == MAILIMF_ERROR_PARSE) {
+      missing_closing_quote = 1;
+    }
   }
   
   /* fix charset */
@@ -525,6 +531,7 @@ int mailmime_encoded_word_parse(const char * message, size_t length,
   * result = ew;
   * indx = cur_token;
   * p_has_fwd = has_fwd;
+  * p_missing_closing_quote = missing_closing_quote;
   
   return MAILIMF_NO_ERROR;
 
