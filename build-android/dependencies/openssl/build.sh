@@ -1,7 +1,7 @@
 #!/bin/sh
 
-build_version=1
-version=1.0.1j
+build_version=2
+version=1.0.2d
 android_platform=android-16
 package_name=openssl-android
 

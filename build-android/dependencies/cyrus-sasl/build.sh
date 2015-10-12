@@ -1,7 +1,7 @@
 #!/bin/sh
 
-version=2.1.25
-build_version=1
+version=2.1.26
+build_version=2
 ARCHIVE=cyrus-sasl-$version
 ANDROID_PLATFORM=android-16
 openssl_build_version=1
