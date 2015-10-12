@@ -2,8 +2,8 @@
 
 build_version=2
 ANDROID_PLATFORM=android-16
-openssl_build_version=1
-cyrus_sasl_build_version=1
+openssl_build_version=2
+cyrus_sasl_build_version=2
 archs="armeabi armeabi-v7a x86"
 package_name=libetpan-android
 

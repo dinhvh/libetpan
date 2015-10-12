@@ -1,10 +1,10 @@
 #!/bin/sh
 
-version=2.1.26
+version=2.1.25
 build_version=2
 ARCHIVE=cyrus-sasl-$version
 ANDROID_PLATFORM=android-16
-openssl_build_version=1
+openssl_build_version=2
 archs="armeabi armeabi-v7a x86"
 package_name=cyrus-sasl-android
 
