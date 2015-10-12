@@ -3,9 +3,9 @@
 version=2.1.25
 build_version=1
 ARCHIVE=cyrus-sasl-$version
-ANDROID_PLATFORM=android-21
+ANDROID_PLATFORM=android-16
 openssl_build_version=1
-archs="armeabi armeabi-v7a x86 x86_64"
+archs="armeabi armeabi-v7a x86"
 package_name=cyrus-sasl-android
 
 if test "x$ANDROID_NDK" = x ; then
