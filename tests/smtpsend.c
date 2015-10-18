@@ -42,6 +42,7 @@ char *smtp_password;
 char *smtp_from;
 int smtp_tls = 0;
 int smtp_esmtp = 1;
+int smtp_ssl = 0;
 
 struct mem_message {
   char *data;
@@ -155,11 +156,22 @@ int send_message(char *data, size_t len, char**rcpts) {
   }
 
   /* first open the stream */
-  if ((ret = mailsmtp_socket_connect(smtp, 
-				     (smtp_server != NULL ? smtp_server : "localhost"),
-				     smtp_port)) != MAILSMTP_NO_ERROR) {
-    fprintf(stderr, "mailsmtp_socket_connect: %s\n", mailsmtp_strerror(ret));
-    goto error;
+  if(smtp_ssl) {
+    // use SMTP over SSL
+    if ((ret = mailsmtp_ssl_connect(smtp, 
+                                    (smtp_server != NULL ? smtp_server : "localhost"),
+                                    smtp_port)) != MAILSMTP_NO_ERROR) {
+      fprintf(stderr, "mailsmtp_socket_connect: %s\n", mailsmtp_strerror(ret));
+      goto error;
+    }
+  } else {
+    // use STARTTLS
+    if ((ret = mailsmtp_socket_connect(smtp, 
+                                       (smtp_server != NULL ? smtp_server : "localhost"),
+                                       smtp_port)) != MAILSMTP_NO_ERROR) {
+      fprintf(stderr, "mailsmtp_socket_connect: %s\n", mailsmtp_strerror(ret));
+      goto error;
+    }
   }
   
   /* then introduce ourselves */
@@ -253,14 +265,15 @@ int main(int argc, char **argv) {
     {"from",     1, 0, 'f'},
     {"tls",      0, 0, 'S'},
     {"no-esmtp", 0, 0, 'E'},
+    {"ssl",      0, 0, 'L'},
   };
 #endif
 
   while(1) {
 #if HAVE_GETOPT_LONG
-	r = getopt_long(argc, argv, "s:p:u:v:f:SE", long_options, &indx);
+	r = getopt_long(argc, argv, "s:p:u:v:f:SEL", long_options, &indx);
 #else
-	r = getopt(argc, argv, "s:p:u:v:f:SE");
+	r = getopt(argc, argv, "s:p:u:v:f:SEL");
 #endif
     if (r < 0)
       break;
@@ -294,6 +307,9 @@ int main(int argc, char **argv) {
     case 'E':
       smtp_esmtp = 0;
       break;
+    case 'L':
+      smtp_ssl = 1;
+      break;
     }
   }
 
@@ -301,7 +317,7 @@ int main(int argc, char **argv) {
   argv += optind;
 
   if (argc < 1) {
-    fprintf(stderr, "usage: smtpsend [-f from] [-u user] [-v password] [-s server] [-p port] [-S] <rcpts>...\n");
+    fprintf(stderr, "usage: smtpsend [-f from] [-u user] [-v password] [-s server] [-p port] [-S] [-L] <rcpts>...\n");
     return EXIT_FAILURE;
   }
 
