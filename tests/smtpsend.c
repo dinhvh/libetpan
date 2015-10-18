@@ -161,7 +161,7 @@ int send_message(char *data, size_t len, char**rcpts) {
     if ((ret = mailsmtp_ssl_connect(smtp, 
                                     (smtp_server != NULL ? smtp_server : "localhost"),
                                     smtp_port)) != MAILSMTP_NO_ERROR) {
-      fprintf(stderr, "mailsmtp_socket_connect: %s\n", mailsmtp_strerror(ret));
+      fprintf(stderr, "mailsmtp_ssl_connect: %s\n", mailsmtp_strerror(ret));
       goto error;
     }
   } else {
