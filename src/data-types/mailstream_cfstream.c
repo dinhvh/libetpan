@@ -34,6 +34,7 @@
 #if HAVE_CFNETWORK
 #include <CoreFoundation/CoreFoundation.h>
 #include <TargetConditionals.h>
+#include <Security/SecTrust.h>
 #if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
 #include <CFNetwork/CFNetwork.h>
 #include <Security/Security.h>
@@ -995,7 +996,8 @@ int mailstream_cfstream_set_ssl_enabled(mailstream * s, int ssl_enabled)
         count = SecTrustGetCertificateCount(secTrust);
         CFRelease(secTrust);
     }
-    else {
+    // This is work around for Mac OS X 10.6.
+    if(!secTrust || count == 0)  {
         certs = CFReadStreamCopyProperty(cfstream_data->readStream, kCFStreamPropertySSLPeerCertificates);
         if (certs) {
             count = CFArrayGetCount(certs);
