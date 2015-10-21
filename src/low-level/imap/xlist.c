@@ -151,8 +151,15 @@ int mailimap_xlist(mailimap * session, const char * mb,
     ext_data->ext_data = NULL;
   }
   
-  * result = result_list;
+  if (clist_isempty(result_list) && !clist_isempty(session->imap_response_info->rsp_mailbox_list)) {
+    // workaround, if server makes LIST-like response, example: cyon.ch
+    clist_free(result_list);
+    result_list = session->imap_response_info->rsp_mailbox_list;
+    session->imap_response_info->rsp_mailbox_list = NULL;
+  }
   
+  * result = result_list;
+
   error_code = response->rsp_resp_done->rsp_data.rsp_tagged->rsp_cond_state->rsp_type;
   
   mailimap_response_free(response);
