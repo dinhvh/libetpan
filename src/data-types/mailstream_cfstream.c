@@ -996,7 +996,7 @@ int mailstream_cfstream_set_ssl_enabled(mailstream * s, int ssl_enabled)
         // SecTrustEvaluate() needs to be called before SecTrustGetCertificateCount() in Mac OS X <= 10.8
         SecTrustEvaluate(secTrust, NULL);
         count = SecTrustGetCertificateCount(secTrust);
-        fprintf(stderr, "CFReadStreamCopyProperty kCFStreamPropertySSLPeerTrust %d\n", count);
+        // fprintf(stderr, "CFReadStreamCopyProperty kCFStreamPropertySSLPeerTrust %d\n", count);
         CFRelease(secTrust);
     }
     // This is work around for Mac OS X 10.6.
@@ -1005,7 +1005,7 @@ int mailstream_cfstream_set_ssl_enabled(mailstream * s, int ssl_enabled)
         certs = CFReadStreamCopyProperty(cfstream_data->readStream, kCFStreamPropertySSLPeerCertificates);
         if (certs) {
             count = CFArrayGetCount(certs);
-            fprintf(stderr, "CFReadStreamCopyProperty kCFStreamPropertySSLPeerCertificates %d\n", count);
+            // fprintf(stderr, "CFReadStreamCopyProperty kCFStreamPropertySSLPeerCertificates %d\n", count);
             CFRelease(certs);
         }
         else {
