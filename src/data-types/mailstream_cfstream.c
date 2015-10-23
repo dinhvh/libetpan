@@ -1000,8 +1000,8 @@ int mailstream_cfstream_set_ssl_enabled(mailstream * s, int ssl_enabled)
         CFRelease(secTrust);
     }
     // This is work around for Mac OS X 10.6.
-//    if(!secTrust || count == 0)  {
-    else {
+    if(!secTrust || count == 0)  {
+//    else {
         certs = CFReadStreamCopyProperty(cfstream_data->readStream, kCFStreamPropertySSLPeerCertificates);
         if (certs) {
             count = CFArrayGetCount(certs);
