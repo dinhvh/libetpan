@@ -125,13 +125,14 @@ for TARGET in $TARGETS; do
         (iPhoneOS) 
             ARCH=arm
             MARCHS="armv7 armv7s arm64"
+            EXTRA_FLAGS="-fembed-bitcode -miphoneos-version-min=$SDK_IOS_MIN_VERSION"
             ;;
         (iPhoneSimulator)
             ARCH=i386
             MARCHS="i386 x86_64"
+            EXTRA_FLAGS="-miphoneos-version-min=$SDK_IOS_MIN_VERSION"
             ;;
     esac
-    EXTRA_FLAGS="-fembed-bitcode -miphoneos-version-min=$SDK_IOS_MIN_VERSION"
     
     for MARCH in $MARCHS; do
 				echo "building for $TARGET - $MARCH"
