@@ -114,6 +114,10 @@ SDK_IOS_MIN_VERSION=7.0
 SDK_IOS_VERSION="`xcodebuild -showsdks 2>/dev/null | grep iphoneos | sed 's/.*iphoneos\(.*\)/\1/'`"
 BUILD_DIR="$tmpdir/build"
 INSTALL_PATH="${BUILD_DIR}/${LIB_NAME}/universal"
+BITCODE_FLAGS="-fembed-bitcode"
+if test "x$NOBITCODE" != x ; then
+   BITCODE_FLAGS=""
+fi
 
 for TARGET in $TARGETS; do
 
@@ -125,7 +129,7 @@ for TARGET in $TARGETS; do
         (iPhoneOS) 
             ARCH=arm
             MARCHS="armv7 armv7s arm64"
-            EXTRA_FLAGS="-fembed-bitcode -miphoneos-version-min=$SDK_IOS_MIN_VERSION"
+            EXTRA_FLAGS="$BITCODE_FLAGS -miphoneos-version-min=$SDK_IOS_MIN_VERSION"
             ;;
         (iPhoneSimulator)
             ARCH=i386
