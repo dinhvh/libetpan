@@ -40,6 +40,8 @@
 
 #define MD5GLOBAL_H
 
+#include "md5namespace.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif

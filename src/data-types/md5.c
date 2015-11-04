@@ -72,7 +72,6 @@ documentation and/or software.
 #	include <netinet/in.h>
 #endif
 
-#include "md5namespace.h"
 #include "md5global.h"
 #include "md5.h"
 #include "hmac-md5.h"
