@@ -3270,6 +3270,22 @@ int mailimap_starttls_send(mailstream * fd)
   return mailimap_token_send(fd, "STARTTLS");
 }
 
+int
+mailimap_send_custom_command(mailstream *fd, const char * command)
+{
+  int r;
+  
+  r = mailimap_token_send(fd, command);
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+  
+  r = mailimap_space_send(fd);
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+  
+  return MAILIMAP_NO_ERROR;
+}
+
 /*
 =>   userid          = astring
 */
