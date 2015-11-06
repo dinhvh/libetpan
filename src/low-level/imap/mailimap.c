@@ -2018,6 +2018,16 @@ mailimap_custom_command(mailimap * session, const char * command)
   if (r != MAILIMAP_NO_ERROR)
     return r;
   
+  r = mailimap_crlf_send(session->imap_stream);
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+  
+  if (mailstream_flush(session->imap_stream) == -1)
+    return MAILIMAP_ERROR_STREAM;
+  
+  if (mailimap_read_line(session) == NULL)
+    return MAILIMAP_ERROR_STREAM;
+  
   r = mailimap_parse_response(session, &response);
   if (r != MAILIMAP_NO_ERROR)
     return r;
