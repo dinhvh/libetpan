@@ -2004,6 +2004,49 @@ mailimap_select(mailimap * session, const char * mb)
 
 LIBETPAN_EXPORT
 int
+mailimap_custom_command(mailimap * session, const char * command)
+{
+  int r;
+  int error_code;
+  struct mailimap_response * response;
+  
+  r = mailimap_send_current_tag(session);
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+  
+  r = mailimap_send_custom_command(session->imap_stream, command);
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+  
+  r = mailimap_crlf_send(session->imap_stream);
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+  
+  if (mailstream_flush(session->imap_stream) == -1)
+    return MAILIMAP_ERROR_STREAM;
+  
+  if (mailimap_read_line(session) == NULL)
+    return MAILIMAP_ERROR_STREAM;
+  
+  r = mailimap_parse_response(session, &response);
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+  
+  error_code = response->rsp_resp_done->rsp_data.rsp_tagged->rsp_cond_state->rsp_type;
+  
+  mailimap_response_free(response);
+  
+  switch (error_code) {
+    case MAILIMAP_RESP_COND_STATE_OK:
+      return MAILIMAP_NO_ERROR;
+      
+    default:
+      return MAILIMAP_ERROR_CUSTOM_COMMAND;
+  }
+}
+
+LIBETPAN_EXPORT
+int
 mailimap_status(mailimap * session, const char * mb,
     struct mailimap_status_att_list * status_att_list,
     struct mailimap_mailbox_data_status ** result)

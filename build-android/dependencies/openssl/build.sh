@@ -1,8 +1,8 @@
 #!/bin/sh
 
-build_version=1
-version=1.0.1j
-android_platform=android-21
+build_version=2
+version=1.0.2d
+android_platform=android-16
 package_name=openssl-android
 
 if test "x$ANDROID_NDK" = x ; then
@@ -101,7 +101,6 @@ current_dir="`pwd`"
 build_armeabi
 build_armeabi_v7a
 build_x86
-build_x86_64
 
 cd "$current_dir"
 zip -qry "$package_name-$build_version.zip" "$package_name-$build_version"

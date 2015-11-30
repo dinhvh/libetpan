@@ -103,6 +103,9 @@ mailstream_low * mailstream_low_compress_open(mailstream_low * ms)
   if (compress_data == NULL)
     goto err;
 
+  compress_data->compress_stream = NULL;
+  compress_data->decompress_stream = NULL;
+
   /* allocate deflate state */
   compress_data->compress_stream = malloc(sizeof(z_stream));
   compress_data->compress_stream->zalloc = Z_NULL;

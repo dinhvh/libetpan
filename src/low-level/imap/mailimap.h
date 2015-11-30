@@ -561,6 +561,19 @@ int
 mailimap_select(mailimap * session, const char * mb);
 
 /*
+ mailimap_custom_command()
+ 
+ @param session   IMAP session
+ @param command   Custom IMAP command to be send
+ 
+ @return the return code is one of MAILIMAP_ERROR_XXX or
+ MAILIMAP_NO_ERROR_XXX codes
+ */
+
+LIBETPAN_EXPORT
+int mailimap_custom_command(mailimap * session, const char * command);
+  
+/*
    mailimap_status()
 
    This function will return informations about a given mailbox.

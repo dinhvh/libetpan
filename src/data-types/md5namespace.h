@@ -1,7 +1,7 @@
 /*
  * libEtPan! -- a mail stuff library
  *
- * Copyright (C) 2001, 2005 - DINH Viet Hoa
+ * Copyright (C) 2001, 2015 - DINH Viet Hoa
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,54 +29,17 @@
  * SUCH DAMAGE.
  */
 
-/*
- * $Id: md5global.h,v 1.7 2006/06/02 15:44:29 smarinier Exp $
- */
+#ifndef MD5NAMESPACE_H
 
-/* GLOBAL.H - RSAREF types and constants
- */
+#define MD5NAMESPACE_H
 
-#ifndef MD5GLOBAL_H
-
-#define MD5GLOBAL_H
-
-#include "md5namespace.h"
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-/* PROTOTYPES should be set to one if and only if the compiler supports
-  function argument prototyping.
-The following makes PROTOTYPES default to 0 if it has not already
-  been defined with C compiler flags.
- */
-#ifndef PROTOTYPES
-#define PROTOTYPES 1
-#endif
-
-/* POINTER defines a generic pointer type */
-typedef unsigned char *POINTER;
-typedef const unsigned char *CONST_POINTER;
-
-/* UINT2 defines a two byte word */
-typedef unsigned short int UINT2;
-
-/* UINT4 defines a four byte word */
-typedef unsigned long int UINT4;
-
-/* PROTO_LIST is defined depending on how PROTOTYPES is defined above.
-If using PROTOTYPES, then PROTO_LIST returns the list, otherwise it
-  returns an empty list.
- */
-#if PROTOTYPES
-#define PROTO_LIST(list) list
-#else
-#define PROTO_LIST(list) ()
-#endif
-
-#ifdef __cplusplus
-}
-#endif
+#define MD5Init lep_MD5Init
+#define MD5Update lep_MD5Update
+#define MD5Final lep_MD5Final
+#define hmac_md5 lep_hmac_md5
+#define hmac_md5_init lep_hmac_md5_init
+#define hmac_md5_precalc lep_hmac_md5_precalc
+#define hmac_md5_import lep_hmac_md5_import
+#define hmac_md5_final lep_hmac_md5_final
 
 #endif

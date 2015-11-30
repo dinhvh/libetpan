@@ -1,8 +1,8 @@
 #!/bin/sh
 set -e
 
-IOSSDK=8.4
-OSXSDK=10.10
+IOSSDK="`xcodebuild -showsdks 2>/dev/null | grep iphoneos | sed 's/.*iphoneos\(.*\)/\1/'`"
+OSXSDK="`xcodebuild -showsdks 2>/dev/null | grep macosx | sed 's/.*macosx\(.*\)/\1/'`"
 
 if test "x`uname`" = xLinux ; then
   distdir=libetpan-travis-build

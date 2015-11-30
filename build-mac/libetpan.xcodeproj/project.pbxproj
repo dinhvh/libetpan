@@ -585,6 +585,7 @@
 		8A75ECEA170414E9007F9972 /* mailimap_sort_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mailimap_sort_types.h; sourceTree = "<group>"; };
 		8DC2EF5A0486A6940098B216 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8DC2EF5B0486A6940098B216 /* libetpan.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = libetpan.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		BD5495471BEAC5EB00E7974E /* md5namespace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = md5namespace.h; sourceTree = "<group>"; };
 		C60136961776D16A00A5AF45 /* mailimap_oauth2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mailimap_oauth2.c; sourceTree = "<group>"; };
 		C60136971776D16A00A5AF45 /* mailimap_oauth2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mailimap_oauth2.h; sourceTree = "<group>"; };
 		C60E7B9816C3809400A25BF4 /* enable.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = enable.c; sourceTree = "<group>"; };
@@ -1125,6 +1126,7 @@
 				C6F9E878105335BC0059C3BA /* md5.c */,
 				C6F9E879105335BC0059C3BA /* md5.h */,
 				C6F9E87A105335BC0059C3BA /* md5global.h */,
+				BD5495471BEAC5EB00E7974E /* md5namespace.h */,
 				C6F9E87B105335BC0059C3BA /* mmapstring.c */,
 				C6F9E87C105335BC0059C3BA /* mmapstring.h */,
 				C6F9E87D105335BC0059C3BA /* mmapstring_private.h */,
@@ -2481,6 +2483,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@loader_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				PRODUCT_NAME = libetpan;
 				SDKROOT = macosx;
 				WRAPPER_EXTENSION = framework;
@@ -2499,6 +2502,7 @@
 				GCC_MODEL_TUNING = G5;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@loader_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				PRODUCT_NAME = libetpan;
 				SDKROOT = macosx;
 				STRIP_INSTALLED_PRODUCT = YES;
@@ -2523,6 +2527,7 @@
 				OTHER_CFLAGS = (
 					"-DHAVE_CFNETWORK=1",
 					"-DHAVE_CONFIG_H=1",
+					"-DLIBETPAN_IOS_DISABLE_SSL=1",
 				);
 			};
 			name = Debug;
@@ -2542,6 +2547,7 @@
 				OTHER_CFLAGS = (
 					"-DHAVE_CFNETWORK=1",
 					"-DHAVE_CONFIG_H=1",
+					"-DLIBETPAN_IOS_DISABLE_SSL=1",
 				);
 			};
 			name = Release;
@@ -2590,11 +2596,8 @@
 					"$(SRCROOT)/libsasl-ios/include",
 				);
 				INSTALL_PATH = /usr/local/lib;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/libsasl-ios/lib";
-				OTHER_CFLAGS = (
-					"$(inherited)",
-					"-DLIBETPAN_IOS_DISABLE_SSL=1",
-				);
 				PRODUCT_NAME = "etpan-ios";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -2614,11 +2617,8 @@
 					"$(SRCROOT)/libsasl-ios/include",
 				);
 				INSTALL_PATH = /usr/local/lib;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/libsasl-ios/lib";
-				OTHER_CFLAGS = (
-					"$(inherited)",
-					"-DLIBETPAN_IOS_DISABLE_SSL=1",
-				);
 				PRODUCT_NAME = "etpan-ios";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -2636,6 +2636,7 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INSTALL_PATH = /usr/local/lib;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				PRODUCT_NAME = etpan;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
@@ -2651,6 +2652,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_MODEL_TUNING = G5;
 				INSTALL_PATH = /usr/local/lib;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				PRODUCT_NAME = etpan;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;

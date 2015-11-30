@@ -43,7 +43,7 @@ AM_CPPFLAGS = -I$(top_builddir)/include
 noinst_LTLIBRARIES = libdata-types.la
 
 libdata_types_la_SOURCES = connect.h connect.c base64.h hmac-md5.h	\
-	md5global.h md5.h md5.c mmapstring.c mailstream_helper.c	\
+	md5global.h md5namespace.h md5.h md5.c mmapstring.c mailstream_helper.c	\
 	mailstream_low.c mailstream.c mailstream_socket.c		\
 	mailstream_ssl.c carray.c clist.c chash.c		        \
 	charconv.c maillock.c base64.c mail_cache_db_types.h		\
