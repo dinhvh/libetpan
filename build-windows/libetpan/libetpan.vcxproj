@@ -69,6 +69,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>C:\Program Files %28x86%29\zlib128-dll\include;C:\Program Files %28x86%29\OpenSSL\include;C:\CMU\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Program Files %28x86%29\zlib128-dll\lib;C:\Program Files %28x86%29\OpenSSL\lib;C:\CMU\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -372,6 +374,7 @@ build_headers.bat
     <ClCompile Include="..\..\src\low-level\mime\mailmime_content.c" />
     <ClCompile Include="..\..\src\low-level\mime\mailmime_decode.c" />
     <ClCompile Include="..\..\src\low-level\mime\mailmime_disposition.c" />
+    <ClCompile Include="..\..\src\low-level\mime\mailmime_encode.c" />
     <ClCompile Include="..\..\src\low-level\mime\mailmime_types.c" />
     <ClCompile Include="..\..\src\low-level\mime\mailmime_types_helper.c" />
     <ClCompile Include="..\..\src\low-level\mime\mailmime_write_file.c" />

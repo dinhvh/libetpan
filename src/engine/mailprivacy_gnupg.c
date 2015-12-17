@@ -70,6 +70,9 @@
 #endif
 #endif
 #include <ctype.h>
+#include <errno.h>
+
+#include "../data-types/syscall_wrappers.h"
 
 enum {
   NO_ERROR_PGP = 0,
@@ -249,10 +252,10 @@ static int get_pgp_output(FILE * dest_f, char * command)
   while ((size = fread(buf, 1, sizeof(buf), p)) != 0) {
     size_t written;
     
-    written = fwrite(buf, 1, size, dest_f);
+    written = Fwrite(buf, 1, size, dest_f);
     if (written != size) {
       res = ERROR_PGP_FILE;
-      goto close;
+      goto Close;
     }
   }
   status = pclose(p);
@@ -262,7 +265,7 @@ static int get_pgp_output(FILE * dest_f, char * command)
   else
     return NO_ERROR_PGP;
   
- close:
+ Close:
   pclose(p);
  err:
   return res;
@@ -282,15 +285,16 @@ static int get_userid(char * filename, char * username, size_t length)
   int state;
   char buffer[4096];
   int exit_code;
-  
+  int r;
+
   exit_code = -1;
   
-  f = fopen(filename, "r");
+  f = Fopen(filename, "r");
   if (f == NULL)
     goto exit;
   
   state = STATE_NORMAL;
-  while (fgets(buffer, sizeof(buffer), f) != NULL) {
+  while (Fgets(buffer, sizeof(buffer), f) != NULL) {
     
     switch (state) {
     case STATE_NORMAL:
@@ -342,8 +346,8 @@ static int get_userid(char * filename, char * username, size_t length)
       break;
     }
   }
-  
-  fclose(f);
+ 
+  Fclose(f);
   
  exit:
   return exit_code;
@@ -792,14 +796,15 @@ static int pgp_verify_clearsigned(struct mailprivacy * privacy,
     goto err;
   }
   
-  written = fwrite(content, 1, content_len, signed_f);
+  // BUGS: many other errors are not covered
+  written = Fwrite(content, 1, content_len, signed_f);
   if (written != content_len) {
-    fclose(signed_f);
+    Fclose(signed_f);
     unlink(signed_filename);
     res = MAIL_ERROR_FILE;
     goto err;
   }
-  fclose(signed_f);
+  Fclose(signed_f);
 
   /* XXX - prepare file for PGP, remove trailing WS */
   
@@ -1011,15 +1016,15 @@ static int pgp_decrypt_armor(struct mailprivacy * privacy,
     goto err;
   }
   
-  written = fwrite(content, 1, content_len, encrypted_f);
+  written = Fwrite(content, 1, content_len, encrypted_f);
   if (written != content_len) {
-    fclose(encrypted_f);
+    Fclose(encrypted_f);
     unlink(encrypted_filename);
     res = MAIL_ERROR_FILE;
     goto err;
   }
   
-  fclose(encrypted_f);
+  Fclose(encrypted_f);
   
   /* we are in a safe directory */
   
@@ -1443,12 +1448,12 @@ static int pgp_sign_mime(struct mailprivacy * privacy,
   col = 0;
   r = mailmime_write(to_sign_f, &col, mime);
   if (r != MAILIMF_NO_ERROR) {
-    fclose(to_sign_f);
+    Fclose(to_sign_f);
     res = MAIL_ERROR_FILE;
     goto unlink_to_sign;
   }
   
-  fclose(to_sign_f);
+  Fclose(to_sign_f);
   
   /* prepare destination file for signature */
   
@@ -1823,12 +1828,12 @@ static int pgp_sign_encrypt_mime(struct mailprivacy * privacy,
   col = 0;
   r = mailmime_write(original_f, &col, mime);
   if (r != MAILIMF_NO_ERROR) {
-    fclose(original_f);
+    Fclose(original_f);
     res = MAIL_ERROR_FILE;
     goto unlink_original;
   }
   
-  fclose(original_f);
+  Fclose(original_f);
   
   /* prepare destination file for encryption */
   
@@ -1915,15 +1920,15 @@ static int pgp_sign_encrypt_mime(struct mailprivacy * privacy,
     res = MAIL_ERROR_FILE;
     goto unlink_description;
   }
-  written = fwrite(PGP_VERSION, 1, sizeof(PGP_VERSION) - 1, version_f);
+  written = Fwrite(PGP_VERSION, 1, sizeof(PGP_VERSION) - 1, version_f);
   if (written != sizeof(PGP_VERSION) - 1) {
-    fclose(version_f);
+    Fclose(version_f);
     mailprivacy_mime_clear(multipart);
     mailmime_free(multipart);
     res = MAIL_ERROR_FILE;
     goto unlink_description;
   }
-  fclose(version_f);
+  Fclose(version_f);
   
   version_mime = mailprivacy_new_file_part(privacy,
       version_filename,
@@ -2045,12 +2050,12 @@ static int pgp_encrypt_mime(struct mailprivacy * privacy,
   col = 0;
   r = mailmime_write(original_f, &col, mime);
   if (r != MAILIMF_NO_ERROR) {
-    fclose(original_f);
+    Fclose(original_f);
     res = MAIL_ERROR_FILE;
     goto unlink_original;
   }
   
-  fclose(original_f);
+  Fclose(original_f);
   
   /* prepare destination file for encryption */
   
@@ -2135,15 +2140,15 @@ static int pgp_encrypt_mime(struct mailprivacy * privacy,
     res = MAIL_ERROR_FILE;
     goto unlink_description;
   }
-  written = fwrite(PGP_VERSION, 1, sizeof(PGP_VERSION) - 1, version_f);
+  written = Fwrite(PGP_VERSION, 1, sizeof(PGP_VERSION) - 1, version_f);
   if (written != sizeof(PGP_VERSION) - 1) {
-    fclose(version_f);
+    Fclose(version_f);
     mailprivacy_mime_clear(multipart);
     mailmime_free(multipart);
     res = MAIL_ERROR_FILE;
     goto unlink_description;
   }
-  fclose(version_f);
+  Fclose(version_f);
   
   version_mime = mailprivacy_new_file_part(privacy,
       version_filename,
@@ -2260,11 +2265,11 @@ static int pgp_clear_sign(struct mailprivacy * privacy,
   col = 0;
   r = mailmime_data_write(original_f, &col, mime->mm_data.mm_single, 1);
   if (r != MAILIMF_NO_ERROR) {
-    fclose(original_f);
+    Fclose(original_f);
     res = MAIL_ERROR_FILE;
     goto unlink_original;
   }
-  fclose(original_f);
+  Fclose(original_f);
 
   r = mailprivacy_get_tmp_filename(privacy, signed_filename,
       sizeof(signed_filename));
@@ -2440,11 +2445,11 @@ static int pgp_armor_encrypt(struct mailprivacy * privacy,
   col = 0;
   r = mailmime_data_write(original_f, &col, mime->mm_data.mm_single, 1);
   if (r != MAILIMF_NO_ERROR) {
-    fclose(original_f);
+    Fclose(original_f);
     res = MAIL_ERROR_FILE;
     goto unlink_original;
   }
-  fclose(original_f);
+  Fclose(original_f);
 
   r = mailprivacy_get_tmp_filename(privacy, encrypted_filename,
       sizeof(encrypted_filename));
@@ -2631,11 +2636,11 @@ static int pgp_armor_sign_encrypt(struct mailprivacy * privacy,
   col = 0;
   r = mailmime_data_write(original_f, &col, mime->mm_data.mm_single, 1);
   if (r != MAILIMF_NO_ERROR) {
-    fclose(original_f);
+    Fclose(original_f);
     res = MAIL_ERROR_FILE;
     goto unlink_original;
   }
-  fclose(original_f);
+  Fclose(original_f);
 
   r = mailprivacy_get_tmp_filename(privacy, encrypted_filename,
       sizeof(encrypted_filename));

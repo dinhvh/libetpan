@@ -70,6 +70,8 @@ sys     0m0.110s
 
 #include "libetpan-config.h"
 
+#include "syscall_wrappers.h"
+
 struct mailmh * mailmh_new(const char * foldername)
 {
   struct mailmh * f;
@@ -427,9 +429,9 @@ int mailmh_folder_update(struct mailmh_folder * folder)
   if (stat(mh_seq, &buf) == -1) {
     int fd;
 
-    fd = creat(mh_seq, S_IRUSR | S_IWUSR);
+    fd = Creat(mh_seq, S_IRUSR | S_IWUSR);
     if (fd != -1)
-      close(fd);
+        Close(fd);
   }
   free(mh_seq);
 
@@ -664,7 +666,7 @@ int mailmh_folder_get_message_fd(struct mailmh_folder * folder,
   if (r != MAILMH_NO_ERROR)
     return r;
 
-  fd = open(filename, flags);
+  fd = Open(filename, flags);
   free(filename);
   if (fd == -1)
     return MAILMH_ERROR_MSG_NOT_FOUND;
@@ -717,7 +719,7 @@ int mailmh_folder_add_message_uid(struct mailmh_folder * folder,
   tmpname = malloc(namesize);
   snprintf(tmpname, namesize, "%s%ctmpXXXXXX",
 	   folder->fl_filename, MAIL_DIR_SEPARATOR);
-  fd = mkstemp(tmpname);
+  fd = Mkstemp(tmpname);
   if (fd < 0) {
     error = MAILMH_ERROR_FILE;
     goto free;
@@ -725,16 +727,16 @@ int mailmh_folder_add_message_uid(struct mailmh_folder * folder,
 
   left = size;
   while (left > 0) {
-    res = write(fd, message, left);
+    res = Write(fd, message, left);
     if (res == -1) {
-      close(fd);
+      Close(fd);
       error = MAILMH_ERROR_FILE;
       goto free;
     }
 
     left -= res;
   }
-  close(fd);
+  Close(fd);
 
   r = stat(tmpname, &buf);
   if (r < 0) {
@@ -889,11 +891,11 @@ int mailmh_folder_move_message(struct mailmh_folder * dest_folder,
 
   r = mailmh_folder_add_message_file(dest_folder, fd);
   if (r != MAILMH_NO_ERROR) {
-    close(fd);
+    Close(fd);
     return r;
   }
 
-  close(fd);
+  Close(fd);
 
   r = mailmh_folder_remove_message(src_folder, indx);
 

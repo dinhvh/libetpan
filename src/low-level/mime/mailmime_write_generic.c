@@ -51,6 +51,7 @@
 #ifdef HAVE_SYS_MMAN_H
 #	include <sys/mman.h>
 #endif
+#include <errno.h>
 #ifdef WIN32
 #	include "win_etpan.h"
 #endif
@@ -58,6 +59,8 @@
 #include "mailimf_write_generic.h"
 #include "mailmime_content.h"
 #include "mailmime_types_helper.h"
+
+#include "syscall_wrappers.h"
 
 #define MAX_MAIL_COL 78
 
@@ -1088,7 +1091,7 @@ int mailmime_data_write_driver(int (* do_write)(void *, const char *, size_t), v
     break;
 
   case MAILMIME_DATA_FILE:
-    fd = open(mime_data->dt_data.dt_filename, O_RDONLY);
+    fd = Open(mime_data->dt_data.dt_filename, O_RDONLY);
     if (fd < 0) {
       res = MAILIMF_ERROR_FILE;
       goto err;
@@ -1097,35 +1100,35 @@ int mailmime_data_write_driver(int (* do_write)(void *, const char *, size_t), v
     r = fstat(fd, &buf);
     if (r < 0) {
       res = MAILIMF_ERROR_FILE;
-      goto close;
+      goto Close;
     }
 
     if (buf.st_size != 0) {
       text = mmap(NULL, buf.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
       if (text == (char *)MAP_FAILED) {
-	res = MAILIMF_ERROR_FILE;
-	goto close;
+        res = MAILIMF_ERROR_FILE;
+        goto Close;
       }
       
       if (mime_data->dt_encoded) {
-	r = mailimf_string_write_driver(do_write, data, col, text, buf.st_size);
-	if (r != MAILIMF_NO_ERROR) {
-	  res = r;
+        r = mailimf_string_write_driver(do_write, data, col, text, buf.st_size);
+        if (r != MAILIMF_NO_ERROR) {
+          res = r;
           goto unmap;
         }
       }
       else {
-	r = mailmime_text_content_write_driver(do_write, data, col, mime_data->dt_encoding, istext,
-            text, buf.st_size);
-	if (r != MAILIMF_NO_ERROR) {
-	  res = r;
+        r = mailmime_text_content_write_driver(do_write, data, col, mime_data->dt_encoding, istext,
+                text, buf.st_size);
+        if (r != MAILIMF_NO_ERROR) {
+          res = r;
           goto unmap;
         }
       }
       
       munmap(text, buf.st_size);
     }
-    close(fd);
+    Close(fd);
 
     if (r != MAILIMF_NO_ERROR)
       return r;
@@ -1134,8 +1137,8 @@ int mailmime_data_write_driver(int (* do_write)(void *, const char *, size_t), v
 
   unmap:
     munmap(text, buf.st_size);
-  close:
-    close(fd);
+  Close:
+    Close(fd);
   err:
     return res;
   }

@@ -56,12 +56,15 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <stdlib.h>
+#include <errno.h>
 
 #include "maildriver_types.h"
 #include "imfcache.h"
 #include "chash.h"
 #include "mailmessage.h"
 #include "mail_cache_db.h"
+
+#include "syscall_wrappers.h"
 
 int generic_cache_create_dir(char * dirname)
 {
@@ -90,29 +93,31 @@ int generic_cache_create_dir(char * dirname)
 
 int generic_cache_store(char * filename, char * content, size_t length)
 {
+  int r;
   int fd;
   char * str;
 
-  fd = open(filename, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
+  fd = Open(filename, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
   if (fd == -1)
     return MAIL_ERROR_FILE;
 
-  if (ftruncate(fd, length) < 0) {
-	  close(fd);
+  r = Ftruncate(fd, length);
+  if (r == -1) {
+    Close(fd);
     return MAIL_ERROR_FILE;
-	}
+  }
   
   str = mmap(NULL, length, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
   if (str == (char *)MAP_FAILED) {
-	  close(fd);
+    Close(fd);
     return MAIL_ERROR_FILE;
-	}
+  }
 
   memcpy(str, content, length);
   msync(str, length, MS_SYNC);
   munmap(str, length);
 
-  close(fd);
+  Close(fd);
 
   return MAIL_NO_ERROR;
 }
@@ -131,7 +136,7 @@ int generic_cache_read(char * filename, char ** result, size_t * result_len)
     goto err;
   }
 
-  fd = open(filename, O_RDONLY);
+  fd = Open(filename, O_RDONLY);
   if (fd == -1) {
     res = MAIL_ERROR_CACHE_MISS;
     goto err;
@@ -140,7 +145,7 @@ int generic_cache_read(char * filename, char ** result, size_t * result_len)
   str = mmap(NULL, buf.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
   if (str == (char *)MAP_FAILED) {
     res = MAIL_ERROR_FILE;
-    goto close;
+    goto Close;
   }
 
   mmapstr = mmap_string_new_len(str, buf.st_size);
@@ -157,7 +162,7 @@ int generic_cache_read(char * filename, char ** result, size_t * result_len)
   content = mmapstr->str;
 
   munmap(str, buf.st_size);
-  close(fd);
+  Close(fd);
 
   * result = content;
   * result_len = buf.st_size;
@@ -168,8 +173,8 @@ int generic_cache_read(char * filename, char ** result, size_t * result_len)
   mmap_string_free(mmapstr);
  unmap:
   munmap(str, buf.st_size);
- close:
-  close(fd);
+ Close:
+  Close(fd);
  err:
   return res;
 }

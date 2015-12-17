@@ -1,7 +1,7 @@
 /*
  * libEtPan! -- a mail stuff library
  *
- * Copyright (C) 2001 - 2005 - DINH Viet Hoa
+ * Copyright (C) 2015 - DINH Viet Hoa, Volker Birk
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,24 +30,31 @@
  */
 
 /*
- * $Id: libetpan_version.c,v 1.4 2006/05/22 13:39:45 hoa Exp $
+ * $Id: mailmime_encode.h,v 1.0 2015/03/08 20:56:00 fdik Exp $
  */
 
-#ifdef HAVE_CONFIG_H
-#	include <config.h>
+#ifndef __QUOTED_PRINTABLE_H__
+#define __QUOTED_PRINTABLE_H__
+
+#ifdef __cplusplus
+extern "C" {
 #endif
 
-#include "libetpan_version.h"
+#ifndef LIBETPAN_CONFIG_H
+#   include "libetpan-config.h"
+#endif
 
-/* version of libEtPan! at runtime */
+LIBETPAN_EXPORT
+char * mailmime_encode_phrase(const char * display_charset,
+    const char * phrase);
 
-int libetpan_get_version_major(void)
-{
-  return LIBETPAN_VERSION_MAJOR;
+LIBETPAN_EXPORT
+char * mailmime_encode_subject_header(const char * display_charset,
+        const char * phrase, int subject);
+
+#ifdef __cplusplus
 }
+#endif    
 
-int libetpan_get_version_minor(void)
-{
-  return LIBETPAN_VERSION_MINOR;
-}
+#endif // __QUOTED_PRINTABLE_H__
 

@@ -59,9 +59,12 @@
 #include <fcntl.h>
 #include <string.h>
 #include <stdlib.h>
+#include <errno.h>
 #ifdef WIN32
 #	include "win_etpan.h"
 #endif
+
+#include "syscall_wrappers.h"
 
 int mhdriver_mh_error_to_mail_error(int error)
 {
@@ -153,7 +156,7 @@ int mhdriver_fetch_message(mailsession * session, uint32_t indx,
 
   default:
     res = mhdriver_mh_error_to_mail_error(r);
-    goto close;
+    goto Close;
   }
 
   r = mhdriver_fetch_size(session, indx, &size);
@@ -164,13 +167,13 @@ int mhdriver_fetch_message(mailsession * session, uint32_t indx,
 
   default:
     res = mhdriver_mh_error_to_mail_error(r);
-    goto close;
+    goto Close;
   }
 
   str = mmap(NULL, size, PROT_READ, MAP_PRIVATE, fd, 0);
   if (str == (char *)MAP_FAILED) {
     res = MAIL_ERROR_FETCH;
-    goto close;
+    goto Close;
   }
 
   /* strip "From " header for broken implementations */
@@ -204,7 +207,7 @@ int mhdriver_fetch_message(mailsession * session, uint32_t indx,
   }
 
   munmap(str, size);
-  close(fd);
+  Close(fd);
 
   * result = mmapstr->str;
   * result_len = mmapstr->len;
@@ -215,8 +218,8 @@ int mhdriver_fetch_message(mailsession * session, uint32_t indx,
   mmap_string_free(mmapstr);
  unmap:
   munmap(str, size);
- close:
-  close(fd);
+ Close:
+  Close(fd);
  err:
   return res;
 }
@@ -249,7 +252,7 @@ int mhdriver_fetch_header(mailsession * session, uint32_t indx,
 
   default:
     res = mhdriver_mh_error_to_mail_error(r);
-    goto close;
+    goto Close;
   }
 
   r = mhdriver_fetch_size(session, indx, &size);
@@ -260,13 +263,13 @@ int mhdriver_fetch_header(mailsession * session, uint32_t indx,
 
   default:
     res = mhdriver_mh_error_to_mail_error(r);
-    goto close;
+    goto Close;
   }
 
   str = mmap(NULL, size, PROT_READ, MAP_PRIVATE, fd, 0);
   if (str == (char *)MAP_FAILED) {
     res = MAIL_ERROR_FETCH;
-    goto close;
+    goto Close;
   }
 
   /* strip "From " header for broken implementations */
@@ -311,7 +314,7 @@ int mhdriver_fetch_header(mailsession * session, uint32_t indx,
   }
 
   munmap(str, size);
-  close(fd);
+  Close(fd);
 
   * result = mmapstr->str;
   * result_len = mmapstr->len;
@@ -322,8 +325,8 @@ int mhdriver_fetch_header(mailsession * session, uint32_t indx,
   mmap_string_free(mmapstr);
  unmap:
   munmap(str, size);
- close:
-  close(fd);
+ Close:
+  Close(fd);
  err:
   return res;
 }

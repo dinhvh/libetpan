@@ -51,6 +51,9 @@
 
 #include <string.h>
 #include <stdlib.h>
+#include <errno.h>
+
+#include "syscall_wrappers.h"
 
 static int imap_initialize(mailmessage * msg_info);
 
@@ -517,17 +520,17 @@ static int imap_get_bodystructure(mailmessage * msg_info,
     msg_info->msg_mime = get_ancestor(msg_info)->msg_mime;
     get_ancestor(msg_info)->msg_mime = NULL;
     
-    f = fopen(filename, "w");
+    f = Fopen(filename, "w");
     if (f == NULL) {
       return MAIL_ERROR_FILE;
     }
     col = 0;
     r = mailmime_write(f, &col, msg_info->msg_mime);
     if (r != MAILIMF_NO_ERROR) {
-      fclose(f);
+      r = Fclose(f);
       return MAIL_ERROR_FILE;
     }
-    fclose(f);
+    Fclose(f);
   }
   
   return r;

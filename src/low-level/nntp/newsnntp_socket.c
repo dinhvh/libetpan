@@ -50,6 +50,9 @@
 #ifdef HAVE_UNISTD_H
 #	include <unistd.h>
 #endif
+#include <errno.h>
+
+#include "syscall_wrappers.h"
 
 #define DEFAULT_NNTP_PORT 119
 #define SERVICE_NAME_NNTP "nntp"
@@ -85,7 +88,7 @@ int newsnntp_socket_connect(newsnntp * f, const char * server, uint16_t port)
 #ifdef WIN32
     closesocket(s);
 #else
-    close(s);
+    Close(s);
 #endif
 		
     return NEWSNNTP_ERROR_MEMORY;

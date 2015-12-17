@@ -790,7 +790,7 @@ void mailimap_set_msg_att_handler(mailimap * session,
 */
 
 LIBETPAN_EXPORT
-void mailimap_set_timeout(mailimap * session, time_t timeout);;
+void mailimap_set_timeout(mailimap * session, time_t timeout);
 
 /*
     mailimap_get_timeout() get the network timeout of the IMAP session.

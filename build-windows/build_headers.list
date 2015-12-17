@@ -129,6 +129,7 @@ src\low-level\mh\mailmh.h
 src\low-level\mime\mailmime.h
 src\low-level\mime\mailmime_content.h
 src\low-level\mime\mailmime_decode.h
+src\low-level\mime\mailmime_encode.h
 src\low-level\mime\mailmime_disposition.h
 src\low-level\mime\mailmime_types.h
 src\low-level\mime\mailmime_types_helper.h

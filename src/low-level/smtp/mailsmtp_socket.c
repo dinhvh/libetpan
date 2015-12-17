@@ -51,6 +51,7 @@
 #ifdef HAVE_UNISTD_H
 #	include <unistd.h>
 #endif
+#include <errno.h>
 
 #define DEFAULT_SMTP_PORT 25
 #define SERVICE_NAME_SMTP "smtp"
@@ -63,6 +64,7 @@ int mailsmtp_socket_connect(mailsmtp * session,
     const char * server, uint16_t port)
 {
   int s;
+  int r;
   mailstream * stream;
 
 #if HAVE_CFNETWORK
@@ -88,7 +90,9 @@ int mailsmtp_socket_connect(mailsmtp * session,
 #ifdef WIN32
 	closesocket(s);
 #else
-    close(s);
+    do {
+        r = close(s);
+    } while (r == -1 && errno == EINTR);
 #endif
     return MAILSMTP_ERROR_MEMORY;
   }

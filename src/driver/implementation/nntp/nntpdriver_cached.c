@@ -53,6 +53,7 @@
 #ifdef WIN32
 #	include "win_etpan.h"
 #endif
+#include <errno.h>
 
 #include "mail_cache_db.h"
 
@@ -67,6 +68,8 @@
 #include "maillock.h"
 #include "nntpdriver_cached_message.h"
 #include "nntpdriver_tools.h"
+
+#include "syscall_wrappers.h"
 
 static int nntpdriver_cached_initialize(mailsession * session);
 
@@ -728,7 +731,7 @@ static void read_article_seq(mailsession * session,
   snprintf(seq_filename, PATH_MAX, "%s/%s/%s",
       cached_data->nntp_cache_directory,
       ancestor_data->nntp_group_name, SEQ_FILENAME);
-  f = fopen(seq_filename, "r");
+  f = Fopen(seq_filename, "r");
 
   if (f != NULL) {
     int fd;
@@ -741,20 +744,21 @@ static void read_article_seq(mailsession * session,
       size_t cur_token;
       char buf[sizeof(uint32_t) * 2];
       size_t read_size;
-      
-      read_size = fread(buf, 1, sizeof(uint32_t) * 2, f);
+ 
+      // BUG: many other errors are not covered
+      read_size = Fread(buf, 1, sizeof(uint32_t) * 2, f);
       mmapstr = mmap_string_new_len(buf, read_size);
       if (mmapstr != NULL) {
-	cur_token = 0;
-	r = mailimf_cache_int_read(mmapstr, &cur_token, &first);
-	r = mailimf_cache_int_read(mmapstr, &cur_token, &last);
-	
-	mmap_string_free(mmapstr);
+        cur_token = 0;
+        r = mailimf_cache_int_read(mmapstr, &cur_token, &first);
+        r = mailimf_cache_int_read(mmapstr, &cur_token, &last);
+        
+        mmap_string_free(mmapstr);
       }
       
       maillock_read_unlock(seq_filename, fd);
     }
-    fclose(f);
+    Fclose(f);
   }
 
   * pfirst = first;
@@ -781,11 +785,11 @@ static void write_article_seq(mailsession * session,
       cached_data->nntp_cache_directory,
       ancestor_data->nntp_group_name, SEQ_FILENAME);
 
-  fd = creat(seq_filename, S_IRUSR | S_IWUSR);
+  fd = Creat(seq_filename, S_IRUSR | S_IWUSR);
   if (fd < 0)
     return;
-  
-  f = fdopen(fd, "w");
+ 
+  f = Fdopen(fd, "w");
   if (f != NULL) {
     r = maillock_write_lock(seq_filename, fd);
     if (r == 0) {
@@ -794,23 +798,25 @@ static void write_article_seq(mailsession * session,
 
       mmapstr = mmap_string_new("");
       if (mmapstr != NULL) {
-	r = mail_serialize_clear(mmapstr, &cur_token);
-	if (r == MAIL_NO_ERROR) {
-	  r = mailimf_cache_int_write(mmapstr, &cur_token, first);
-	  r = mailimf_cache_int_write(mmapstr, &cur_token, last);
-	  
-	  fwrite(mmapstr->str, 1, mmapstr->len, f);
-	}
+        r = mail_serialize_clear(mmapstr, &cur_token);
+        if (r == MAIL_NO_ERROR) {
+          r = mailimf_cache_int_write(mmapstr, &cur_token, first);
+          r = mailimf_cache_int_write(mmapstr, &cur_token, last);
+        
+          // BUG: many other errors are not covered
+          Fwrite(mmapstr->str, 1, mmapstr->len, f);
+        }
 
-	mmap_string_free(mmapstr);
+        mmap_string_free(mmapstr);
       }
 	  
       r = maillock_write_unlock(seq_filename, fd);
     }
-    fclose(f);
+    Fclose(f);
   }
-  else
-    close(fd);
+  else {
+    Close(fd);
+  }
 }
 
 
