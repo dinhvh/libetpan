@@ -204,12 +204,13 @@ int mailstream_cancel_cancelled(struct mailstream_cancel * cancel)
 
 int mailstream_cancel_get_fd(struct mailstream_cancel * cancel)
 {
-  struct mailstream_cancel_internal * ms_internal;
-  
-  ms_internal = cancel->ms_internal;
 #ifndef WIN32
   return cancel->ms_fds[0];
 #else
+  struct mailstream_cancel_internal * ms_internal;
+  
+  ms_internal = cancel->ms_internal;
+
   return ms_internal->event;
 #endif
 }
