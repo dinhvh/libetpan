@@ -411,7 +411,6 @@ static int pgp_decrypt(struct mailprivacy * privacy,
     goto err;
   }
   
-  clist_content(cur);
   cur = clist_next(cur);
   if (cur == NULL) {
     res = MAIL_ERROR_INVAL;
