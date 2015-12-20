@@ -774,7 +774,6 @@ static int wait_read(mailstream_low * s)
   int max_fd;
   int r;
   int cancelled;
-  int got_data;
 #ifdef WIN32
   HANDLE event;
 #endif
@@ -808,7 +807,6 @@ static int wait_read(mailstream_low * s)
 	}
   
   cancelled = (fds_read.fd_array[r - WAIT_OBJECT_0] == fd);
-  got_data = (fds_read.fd_array[r - WAIT_OBJECT_0] == event);
 	WSAEventSelect(ssl_data->fd, event, 0);
 	CloseHandle(event);
 #else
@@ -821,7 +819,6 @@ static int wait_read(mailstream_low * s)
     return -1;
   
   cancelled = (FD_ISSET(fd, &fds_read));
-  got_data = FD_ISSET(ssl_data->fd, &fds_read);
 #endif
   if (cancelled) {
     /* cancelled */

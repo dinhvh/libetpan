@@ -361,14 +361,12 @@ mailimap_number_list_data_sort_parse(mailstream * fd, MMAPString * buffer,
   size_t cur_token;
   clist * number_list;
   int r;
-  int res;
   size_t final_token;
   
   cur_token = * indx;
   
   r = mailimap_token_case_insensitive_parse(fd, buffer, &cur_token, "SORT");
   if (r != MAILIMAP_NO_ERROR) {
-    res = r;
     return r;
   }
   

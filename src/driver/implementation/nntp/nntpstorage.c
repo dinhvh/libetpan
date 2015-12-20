@@ -300,9 +300,7 @@ static int nntp_mailstorage_connect(struct mailstorage * storage)
 static int nntp_mailstorage_get_folder_session(struct mailstorage * storage,
     char * pathname, mailsession ** result)
 {
-  int r;
-  
-  r = mailsession_select_folder(storage->sto_session, pathname);
+  mailsession_select_folder(storage->sto_session, pathname);
   
   * result = storage->sto_session;
   

@@ -617,9 +617,6 @@ static int nntpdriver_append_message(mailsession * session,
 				     const char * message, size_t size)
 {
   int r;
-  struct nntp_session_state_data * data;
-
-  data = get_data(session);
 
   do {
     r = newsnntp_post(get_nntp_session(session), message, size);

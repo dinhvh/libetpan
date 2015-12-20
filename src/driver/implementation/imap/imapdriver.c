@@ -1119,9 +1119,7 @@ static int imapdriver_starttls(mailsession * session)
   clistiter * cur;
   int starttls;
   int capability_available;
-  struct imap_session_state_data * data;
   
-  data = get_data(session);
   imap = get_imap_session(session);
 
   capability_available = FALSE;

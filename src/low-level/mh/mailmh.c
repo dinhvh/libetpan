@@ -576,7 +576,6 @@ static int mailmh_folder_alloc_msg(struct mailmh_folder * folder,
   char * new_filename;
   size_t len;
   int got_file;
-  int r;
   
   len = strlen(folder->fl_filename) + 20;
   new_filename = malloc(len);
@@ -615,7 +614,7 @@ static int mailmh_folder_alloc_msg(struct mailmh_folder * folder,
       free(new_filename);
       
       if (k > MAX_TRY_ALLOC / 2) {
-	r = mailmh_folder_update(folder);
+	mailmh_folder_update(folder);
 	/* ignore errors */
       }
       

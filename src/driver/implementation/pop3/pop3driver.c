@@ -208,9 +208,7 @@ static int pop3driver_starttls(mailsession * session)
 {
   int r;
   mailpop3 * pop3;
-  struct pop3_session_state_data * data;
 
-  data = get_data(session);
   pop3 = get_pop3_session(session);
 
   r = mailpop3_socket_starttls(pop3);
