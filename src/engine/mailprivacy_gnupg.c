@@ -2823,17 +2823,17 @@ static int mailprivacy_gnupg_init_lock_done = 0;
 #endif
 static chash * encryption_id_hash = NULL;
 
-static void mailprivacy_gnupg_init_lock(void)
-{
 #ifdef LIBETPAN_REENTRANT
 #if defined(HAVE_PTHREAD_H) && !defined(IGNORE_PTHREAD_H)
 #elif (defined WIN32)
+static void mailprivacy_gnupg_init_lock(void)
+{
   if (InterlockedExchange(&mailprivacy_gnupg_init_lock_done, 1) == 0){
     InitializeCriticalSection(&encryption_id_hash_lock);
   }
-#endif
-#endif
 }
+#endif
+#endif
 
 int mailprivacy_gnupg_init(struct mailprivacy * privacy)
 {

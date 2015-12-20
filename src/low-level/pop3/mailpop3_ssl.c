@@ -55,7 +55,9 @@
 #define SERVICE_NAME_POP3S "pop3s"
 #define SERVICE_TYPE_TCP "tcp"
 
+#if HAVE_CFNETWORK
 static int mailpop3_cfssl_connect(mailpop3 * f, const char * server, uint16_t port);
+#endif
 
 int mailpop3_ssl_connect(mailpop3 * f, const char * server, uint16_t port)
 {
@@ -102,6 +104,7 @@ int mailpop3_ssl_connect_with_callback(mailpop3 * f, const char * server, uint16
   return mailpop3_connect(f, stream);
 }
 
+#if HAVE_CFNETWORK
 static int mailpop3_cfssl_connect_ssl_level(mailpop3 * f, const char * server, uint16_t port, int ssl_level)
 {
   mailstream * stream;
@@ -126,3 +129,4 @@ static int mailpop3_cfssl_connect(mailpop3 * f, const char * server, uint16_t po
 {
     return mailpop3_cfssl_connect_ssl_level(f, server, port, MAILSTREAM_CFSTREAM_SSL_LEVEL_NEGOCIATED_SSL);
 }
+#endif

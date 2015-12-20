@@ -182,7 +182,7 @@ free_list:
   clist_free(result_list);
 free_response:
   mailimap_response_free(response);
-err:
+
   return res;
 }
 
