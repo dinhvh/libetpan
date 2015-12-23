@@ -3682,18 +3682,11 @@ imapdriver_get_cached_envelope(struct mail_cache_db * cache_db,
     mailsession * session, mailmessage * msg,
     struct mailimf_fields ** result)
 {
-#if 0
-  mailsession * imap_session;
-#endif
   int r;
   struct mailimf_fields * fields;
   int res;
   char keyname[PATH_MAX];
   
-#if 0
-  imap_session = cached_session_get_ancestor(session);
-  ((struct imap_session_state_data *) (imap_session->data))->session;
-#endif
   generate_key_from_message(keyname, PATH_MAX,
 			    msg, MAILIMAP_MSG_ATT_ENVELOPE);
 
