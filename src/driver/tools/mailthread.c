@@ -368,19 +368,15 @@ static char * extract_subject(char * default_from,
       subj-fwd-hdr and subj-fwd-trl and repeat from step (2).
     */
 
-    if (len >= 5) {
-      if (strncasecmp(subj + begin, "[fwd:", 5) == 0) {
-	begin += 5;
-	
-	if (subj[len - 1] != ']')
-	  ;
-	else {
-	  tree->node_is_reply = TRUE;
+    if ((len >= 5) && (strncasecmp(subj + begin, "[fwd:", 5) == 0)) {
+      begin += 5;
 
-	  subj[len - 1] = '\0';
-	  len --;
-	  do_repeat_6 = TRUE;
-	}
+      if (subj[len - 1] == ']') {
+	tree->node_is_reply = TRUE;
+
+	subj[len - 1] = '\0';
+	len --;
+	do_repeat_6 = TRUE;
       }
     }
 
