@@ -66,4 +66,7 @@ LIBETPAN_EXPORT
 int mailstream_low_compress_interrupt_idle(mailstream_low * low);
 */
   
+#ifdef __cplusplus
+}
+#endif
 #endif

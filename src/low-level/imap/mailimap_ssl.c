@@ -57,7 +57,9 @@
 #define SERVICE_NAME_IMAPS "imaps"
 #define SERVICE_TYPE_TCP "tcp"
 
+#if HAVE_CFNETWORK
 static int mailimap_cfssl_connect_voip(mailimap * f, const char * server, uint16_t port, int voip_enabled);
+#endif
 
 int mailimap_ssl_connect_with_callback(mailimap * f, const char * server, uint16_t port,
     void (* callback)(struct mailstream_ssl_context * ssl_context, void * data), void * data)
@@ -115,6 +117,7 @@ int mailimap_ssl_connect_voip(mailimap * f, const char * server, uint16_t port, 
       NULL, NULL);
 }
 
+#if HAVE_CFNETWORK
 static int mailimap_cfssl_connect_voip_ssl_level(mailimap * f, const char * server, uint16_t port, int voip_enabled, int ssl_level)
 {
   mailstream * stream;
@@ -139,3 +142,4 @@ static int mailimap_cfssl_connect_voip(mailimap * f, const char * server, uint16
 {
     return mailimap_cfssl_connect_voip_ssl_level(f, server, port, voip_enabled, MAILSTREAM_CFSTREAM_SSL_LEVEL_NEGOCIATED_SSL);
 }
+#endif

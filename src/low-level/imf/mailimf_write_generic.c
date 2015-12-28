@@ -639,16 +639,12 @@ int mailimf_header_string_write_driver(int (* do_write)(void *, const char *, si
   int state;
   const char * p;
   const char * word_begin;
-  const char * word_end;
-  const char * next_word;
   int first;
   
   state = STATE_BEGIN;
   
   p = str;
   word_begin = p;
-  word_end = p;
-  next_word = p;
   first = 1;
   
   while (length > 0) {

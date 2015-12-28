@@ -253,12 +253,10 @@ static int initialize(mailmessage * msg_info)
 
 static void check(mailmessage * msg_info)
 {
-  int r;
-
   if (msg_info->msg_flags != NULL) {
-    r = mail_flags_store_set(get_session_ancestor_data(msg_info)->md_flags_store, msg_info);
+    mail_flags_store_set(get_session_ancestor_data(msg_info)->md_flags_store, msg_info);
     
-    r = mail_flags_store_set(get_cached_session_data(msg_info)->md_flags_store, msg_info);
+    mail_flags_store_set(get_cached_session_data(msg_info)->md_flags_store, msg_info);
     /* ignore errors */
   }
 }

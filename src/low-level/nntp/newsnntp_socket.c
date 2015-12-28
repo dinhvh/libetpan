@@ -55,7 +55,9 @@
 #define SERVICE_NAME_NNTP "nntp"
 #define SERVICE_TYPE_TCP "tcp"
 
+#if HAVE_CFNETWORK
 static int newsnntp_cfsocket_connect(newsnntp * f, const char * server, uint16_t port);
+#endif
 
 int newsnntp_socket_connect(newsnntp * f, const char * server, uint16_t port)
 {
@@ -94,6 +96,7 @@ int newsnntp_socket_connect(newsnntp * f, const char * server, uint16_t port)
   return newsnntp_connect(f, stream);
 }
 
+#if HAVE_CFNETWORK
 static int newsnntp_cfsocket_connect(newsnntp * f, const char * server, uint16_t port)
 {
   mailstream * stream;
@@ -105,3 +108,4 @@ static int newsnntp_cfsocket_connect(newsnntp * f, const char * server, uint16_t
   
   return newsnntp_connect(f, stream);
 }
+#endif

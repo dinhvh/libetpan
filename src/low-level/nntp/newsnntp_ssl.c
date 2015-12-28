@@ -54,7 +54,9 @@
 #define SERVICE_NAME_NNTPS "nntps"
 #define SERVICE_TYPE_TCP "tcp"
 
+#if HAVE_CFNETWORK
 static int newsnntp_cfssl_connect(newsnntp * f, const char * server, uint16_t port);
+#endif
 
 int newsnntp_ssl_connect(newsnntp * f, const char * server, uint16_t port)
 {
@@ -101,6 +103,7 @@ int newsnntp_ssl_connect_with_callback(newsnntp * f, const char * server, uint16
   return newsnntp_connect(f, stream);
 }
 
+#if HAVE_CFNETWORK
 static int newsnntp_cfssl_connect_ssl_level(newsnntp * f, const char * server, uint16_t port, int ssl_level)
 {
   mailstream * stream;
@@ -120,9 +123,12 @@ static int newsnntp_cfssl_connect_ssl_level(newsnntp * f, const char * server, u
   
   return newsnntp_connect(f, stream);
 }
+#endif
 
+#if HAVE_CFNETWORK
 static int newsnntp_cfssl_connect(newsnntp * f, const char * server, uint16_t port)
 {
     return newsnntp_cfssl_connect_ssl_level(f, server, port, MAILSTREAM_CFSTREAM_SSL_LEVEL_NEGOCIATED_SSL);
 }
+#endif
 

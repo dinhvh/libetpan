@@ -187,10 +187,7 @@ mailimap_quota_quota_list_parse(mailstream * fd, MMAPString *buffer,
     size_t * indx, clist ** result,
     size_t progr_rate, progress_function * progr_fun)
 {
-  size_t cur_token;
   int r;
-
-  cur_token = * indx;
 
   r = mailimap_quota_quota_list_empty_parse(fd, buffer, indx, result,
       progr_rate, progr_fun);

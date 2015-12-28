@@ -56,8 +56,10 @@
 #define SERVICE_NAME_SMTP "smtp"
 #define SERVICE_TYPE_TCP "tcp"
 
+#if HAVE_CFNETWORK
 static int mailsmtp_cfsocket_connect(mailsmtp * session,
                                      const char * server, uint16_t port);
+#endif
 
 int mailsmtp_socket_connect(mailsmtp * session,
     const char * server, uint16_t port)
@@ -135,6 +137,7 @@ int mailsmtp_socket_starttls_with_callback(mailsmtp * session,
   return MAILSMTP_NO_ERROR;
 }
 
+#if HAVE_CFNETWORK
 static int mailsmtp_cfsocket_connect(mailsmtp * session,
                                      const char * server, uint16_t port)
 {
@@ -147,6 +150,7 @@ static int mailsmtp_cfsocket_connect(mailsmtp * session,
   
   return mailsmtp_connect(session, stream);
 }
+#endif
 
 static int mailsmtp_cfsocket_starttls(mailsmtp * session)
 {

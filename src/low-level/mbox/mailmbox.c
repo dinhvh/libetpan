@@ -522,7 +522,6 @@ static char * write_fixed_message(char * str,
 				  const char * message, size_t size,
 				  uint32_t uid, int force_no_uid)
 {
-  size_t fixed_size;
   size_t cur_token;
   size_t left;
   int end;
@@ -531,8 +530,6 @@ static char * write_fixed_message(char * str,
   size_t numlen;
 
   cur_token = 0;
-
-  fixed_size = 0;
 
   /* headers */
 
@@ -615,7 +612,6 @@ mailmbox_append_message_list_no_lock(struct mailmbox_folder * folder,
   char * str;
   unsigned int i;
   size_t from_size;
-  size_t maxuid;
   size_t left;
   size_t crlf_count;
 
@@ -632,8 +628,6 @@ mailmbox_append_message_list_no_lock(struct mailmbox_folder * folder,
 #else
     from_size = strftime(from_line, MAX_FROM_LINE_SIZE, "From - %c\n", &time_info);
 #endif
-
-  maxuid = /* */ folder->mb_max_uid;
 
   extra_size = 0;
   for(i = 0 ; i < carray_count(append_tab) ; i ++) {

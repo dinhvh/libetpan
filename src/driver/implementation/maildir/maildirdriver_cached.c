@@ -478,7 +478,6 @@ static int append_message_flags(mailsession * session,
   struct maildir * md;
   int r;
   char uid[PATH_MAX];
-  struct maildir_msg * md_msg;
   chashdatum key;
   chashdatum value;
   uint32_t md_flags;
@@ -527,8 +526,6 @@ static int append_message_flags(mailsession * session,
   r = chash_get(md->mdir_msg_hash, &key, &value);
   if (r < 0)
     goto exit;
-  
-  md_msg = value.data;
   
   md_flags = maildirdriver_flags_to_maildir_flags(flags->fl_flags);
   

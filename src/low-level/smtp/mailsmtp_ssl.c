@@ -56,8 +56,10 @@
 #define SERVICE_NAME_SMTPS "smtps"
 #define SERVICE_TYPE_TCP "tcp"
 
+#if HAVE_CFNETWORK
 static int mailsmtp_cfssl_connect(mailsmtp * session,
                                   const char * server, uint16_t port);
+#endif
 
 int mailsmtp_ssl_connect(mailsmtp * session,
     const char * server, uint16_t port)
@@ -106,6 +108,7 @@ int mailsmtp_ssl_connect_with_callback(mailsmtp * session,
   return mailsmtp_connect(session, stream);
 }
 
+#if HAVE_CFNETWORK
 static int mailsmtp_cfssl_connect_ssl_level(mailsmtp * session,
                                             const char * server, uint16_t port, int ssl_level)
 {
@@ -132,3 +135,4 @@ static int mailsmtp_cfssl_connect(mailsmtp * session,
 {
     return mailsmtp_cfssl_connect_ssl_level(session, server, port, MAILSTREAM_CFSTREAM_SSL_LEVEL_NEGOCIATED_SSL);
 }
+#endif

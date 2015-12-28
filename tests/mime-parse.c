@@ -17,11 +17,6 @@ static void display_mime_data(struct mailmime_data * data)
   }
 }
 
-static void display_mime_parameter(struct mailmime_parameter * param)
-{
-  printf("%s = %s\n", param->pa_name, param->pa_value);
-}
-
 static void display_mime_dsp_parm(struct mailmime_disposition_parm * param)
 {
   switch (param->pa_type) {

@@ -174,9 +174,7 @@ mailmessage_generic_prefetch_bodystructure(mailmessage * msg_info)
 void
 mailmessage_generic_fetch_result_free(mailmessage * msg_info, char * msg)
 {
-  int r;
-  
-  r = mmap_string_unref(msg);
+  mmap_string_unref(msg);
 }
 
 int mailmessage_generic_fetch(mailmessage * msg_info,
@@ -185,7 +183,6 @@ int mailmessage_generic_fetch(mailmessage * msg_info,
 {
   int r;
   char * message;
-  size_t cur_token;
   size_t length;
   MMAPString * mmapstr;
   int res;
@@ -200,7 +197,6 @@ int mailmessage_generic_fetch(mailmessage * msg_info,
 
   message = msg->msg_message;
   length = msg->msg_length;
-  cur_token = 0;
   
   mmapstr = mmap_string_new_len(message, length);
   if (mmapstr == NULL) {
