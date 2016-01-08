@@ -744,6 +744,14 @@ int mailmime_encoded_word_parse(const char * message, size_t length,
     lookfwd_charset = NULL;
   }
 
+  if (body == NULL) {
+    body = strdup("");
+    if (body == NULL) {
+      res = MAILIMF_ERROR_MEMORY;
+      goto free_body;
+    }
+  }
+
   decoded_token = 0;
   decoded_len = 0;
   decoded = NULL;
