@@ -163,7 +163,6 @@ int main(int argc, char ** argv)
   char * cache_directory;
   char * flags_directory;
   struct mailstorage * storage;
-  int cached;
   struct mailfolder * folder;
 
   /* get options */
@@ -172,8 +171,6 @@ int main(int argc, char ** argv)
       &driver, &server, &port, &connection_type,
       &user, &password, &auth_type,
       &path, &cache_directory, &flags_directory);
-
-  cached = (cache_directory != NULL);
 
   /* build the storage structure */
 

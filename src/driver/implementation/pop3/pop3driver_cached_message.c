@@ -229,10 +229,8 @@ static void pop3_flush(mailmessage * msg_info)
 
 static void pop3_check(mailmessage * msg_info)
 {
-  int r;
-
   if (msg_info->msg_flags != NULL) {
-    r = mail_flags_store_set(get_cached_session_data(msg_info)->pop3_flags_store,
+    mail_flags_store_set(get_cached_session_data(msg_info)->pop3_flags_store,
         msg_info);
   }
 }

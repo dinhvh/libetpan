@@ -516,10 +516,9 @@ static int mhdriver_cached_connect_path(mailsession * session, const char * path
 
 static int mhdriver_cached_logout(mailsession * session)
 {
-  int r;
   struct mh_cached_session_state_data * cached_data;
 
-  r = write_max_uid_value(session);
+  write_max_uid_value(session);
 
   cached_data = get_cached_data(session);
 

@@ -306,10 +306,6 @@ static char * extract_subject(char * default_from,
     */
 
     while (len > 0) {
-      int chg;
-
-      chg = FALSE;
-
       /* subj-trailer    = "(fwd)" / WSP */
       if (subj[len - 1] == ' ') {
 	subj[len - 1] = '\0';
@@ -372,22 +368,15 @@ static char * extract_subject(char * default_from,
       subj-fwd-hdr and subj-fwd-trl and repeat from step (2).
     */
 
-    if (len >= 5) {
-      size_t saved_begin;
+    if ((len >= 5) && (strncasecmp(subj + begin, "[fwd:", 5) == 0)) {
+      begin += 5;
 
-      saved_begin = begin;
-      if (strncasecmp(subj + begin, "[fwd:", 5) == 0) {
-	begin += 5;
-	
-	if (subj[len - 1] != ']')
-	  saved_begin = begin;
-	else {
-	  tree->node_is_reply = TRUE;
+      if (subj[len - 1] == ']') {
+	tree->node_is_reply = TRUE;
 
-	  subj[len - 1] = '\0';
-	  len --;
-	  do_repeat_6 = TRUE;
-	}
+	subj[len - 1] = '\0';
+	len --;
+	do_repeat_6 = TRUE;
       }
     }
 
@@ -1093,10 +1082,8 @@ mail_build_thread_references(char * default_from,
 	  "(fwd)" subj-trailer) and the current message is not.
 	*/
 	struct mailmessage_tree * msg_in_table;
-	unsigned int * iter_in_table;
 	int replace;
 
-	iter_in_table = data.data;
 	msg_in_table = carray_get(rootlist, cur);
 
 	replace = FALSE;

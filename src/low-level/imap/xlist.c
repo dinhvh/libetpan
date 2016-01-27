@@ -182,7 +182,7 @@ free_list:
   clist_free(result_list);
 free_response:
   mailimap_response_free(response);
-err:
+
   return res;
 }
 
@@ -196,26 +196,22 @@ mailimap_mailbox_data_xlist_parse(mailstream * fd, MMAPString * buffer,
   size_t cur_token;
   struct mailimap_mailbox_list * mb_list;
   int r;
-  int res;
   
   cur_token = * indx;
   
   r = mailimap_token_case_insensitive_parse(fd, buffer, &cur_token, "XLIST");
   if (r != MAILIMAP_NO_ERROR) {
-    res = r;
     return r;
   }
   
   r = mailimap_space_parse(fd, buffer, &cur_token);
   if (r != MAILIMAP_NO_ERROR) {
-    res = r;
     return r;
   }
   
   r = mailimap_mailbox_list_parse(fd, buffer, &cur_token, &mb_list,
                                   progr_rate, progr_fun);
   if (r != MAILIMAP_NO_ERROR) {
-    res = r;
     return r;
   }
   

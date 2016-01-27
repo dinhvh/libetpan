@@ -1617,7 +1617,6 @@ int mailmime_base64_body_parse(const char * message, size_t length,
 			       size_t * result_len)
 {
   size_t cur_token;
-  size_t i;
   char chunk[4];
   int chunk_index;
   char out[3];
@@ -1641,7 +1640,6 @@ int mailmime_base64_body_parse(const char * message, size_t length,
     goto err;
   }
 
-  i = 0;
   while (1) {
     signed char value;
 

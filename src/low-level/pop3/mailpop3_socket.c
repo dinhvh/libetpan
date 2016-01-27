@@ -55,7 +55,9 @@
 #define SERVICE_NAME_POP3 "pop3"
 #define SERVICE_TYPE_TCP "tcp"
 
+#if HAVE_CFNETWORK
 static int mailpop3_cfsocket_connect(mailpop3 * f, const char * server, uint16_t port);
+#endif
 
 int mailpop3_socket_connect(mailpop3 * f, const char * server, uint16_t port)
 {
@@ -140,6 +142,7 @@ int mailpop3_socket_starttls_with_callback(mailpop3 * f,
   return MAILPOP3_NO_ERROR;
 }
 
+#if HAVE_CFNETWORK
 static int mailpop3_cfsocket_connect(mailpop3 * f, const char * server, uint16_t port)
 {
   mailstream * stream;
@@ -151,6 +154,7 @@ static int mailpop3_cfsocket_connect(mailpop3 * f, const char * server, uint16_t
   
   return mailpop3_connect(f, stream);
 }
+#endif
 
 static int mailpop3_cfsocket_starttls(mailpop3 * f)
 {

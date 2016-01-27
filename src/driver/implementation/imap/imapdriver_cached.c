@@ -656,10 +656,7 @@ static int imapdriver_cached_select_folder(mailsession * session, const char * m
   int r;
   char * quoted_mb;
   struct imap_cached_session_state_data * data;
-  mailsession * imap;
   char * old_mb;
-  
-  imap = get_ancestor(session);
   
   old_mb = get_ancestor_data(session)->imap_mailbox;
   if (old_mb != NULL)
@@ -868,7 +865,6 @@ static int boostrap_cache(mailsession * session)
 {
   struct mail_cache_db * cache_db;
   char filename[PATH_MAX];
-  mailimap * imap;
   struct imap_cached_session_state_data * data;
   MMAPString * mmapstr;
   int r;
@@ -878,7 +874,6 @@ static int boostrap_cache(mailsession * session)
   chash * keys_uid;
   
   data = get_cached_data(session);
-  imap = get_imap_session(session);
   
   if (data->imap_quoted_mb == NULL) {
     res = MAIL_ERROR_BAD_STATE;

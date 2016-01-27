@@ -507,7 +507,6 @@ mailprivacy_new_file_part(struct mailprivacy * privacy,
     char * default_content_type, int default_encoding)
 {
   char basename_buf[PATH_MAX];
-  char * name;
   struct mailmime_mechanism * encoding;
   struct mailmime_content * content;
   struct mailmime * mime;
@@ -520,10 +519,7 @@ mailprivacy_new_file_part(struct mailprivacy * privacy,
   
   if (filename != NULL) {
     strncpy(basename_buf, filename, PATH_MAX);
-    name = libetpan_basename(basename_buf);
-  }
-  else {
-    name = NULL;
+    libetpan_basename(basename_buf);
   }
   
   encoding = NULL;

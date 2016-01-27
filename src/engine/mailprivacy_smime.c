@@ -1527,7 +1527,6 @@ static int get_cert_from_sig(struct mailprivacy * privacy,
     struct mailmime * mime)
 {
   clistiter * cur;
-  struct mailmime * signed_mime;
   struct mailmime * signature_mime;
   int res;
   char signature_filename[PATH_MAX];
@@ -1561,7 +1560,6 @@ static int get_cert_from_sig(struct mailprivacy * privacy,
     goto err;
   }
   
-  signed_mime = cur->data;
   cur = clist_next(cur);
   if (cur == NULL) {
     res = MAIL_ERROR_INVAL;

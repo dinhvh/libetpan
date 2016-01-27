@@ -318,7 +318,6 @@ int mailstorage_connect(struct mailstorage * storage)
 LIBETPAN_EXPORT
 void mailstorage_disconnect(struct mailstorage * storage)
 {
-  int r;
   clistiter * cur;
 
   while ((cur = clist_begin(storage->sto_shared_folders)) != NULL) {
@@ -331,7 +330,7 @@ void mailstorage_disconnect(struct mailstorage * storage)
   if (storage->sto_session == NULL)
     return;
 
-  r = mailsession_logout(storage->sto_session);
+  mailsession_logout(storage->sto_session);
 
   mailsession_free(storage->sto_session);
   storage->sto_session = NULL;

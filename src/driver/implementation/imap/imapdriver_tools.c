@@ -370,14 +370,12 @@ imap_body_media_basic_to_content_type(struct mailimap_media_basic *
   int discrete_type_type;
   int composite_type_type;
   int mime_type_type;
-  char * subtype;
   int r;
   int res;
 
   discrete_type = NULL;
   composite_type = NULL;
   discrete_type_extension = NULL;
-  subtype = NULL;
   discrete_type_type = 0;
   composite_type_type = 0;
   mime_type_type = 0;
@@ -1650,11 +1648,9 @@ imap_mailbox_list_to_mailbox_list(clist * imap_mailbox_list,
   clist * list;
   struct mailimf_mailbox_list * mb_list;
   int r;
-  int res;
 
   list = clist_new();
   if (list == NULL) {
-    res = MAIL_ERROR_MEMORY;
     goto err;
   }
 
@@ -1670,21 +1666,18 @@ imap_mailbox_list_to_mailbox_list(clist * imap_mailbox_list,
 
     r = imap_address_to_mailbox(imap_addr, &mb);
     if (r != MAIL_NO_ERROR) {
-      res = r;
       goto free_list;
     }
     
     r = clist_append(list, mb);
     if (r != 0) {
       mailimf_mailbox_free(mb);
-      res = MAIL_ERROR_MEMORY;
       goto free_list;
     }
   }
 
   mb_list = mailimf_mailbox_list_new(list);
   if (mb_list == NULL) {
-    res = MAIL_ERROR_MEMORY;
     goto free_list;
   }
 
@@ -3689,21 +3682,11 @@ imapdriver_get_cached_envelope(struct mail_cache_db * cache_db,
     mailsession * session, mailmessage * msg,
     struct mailimf_fields ** result)
 {
-#if 0
-  mailsession * imap_session;
-#endif
-  mailimap * imap;
   int r;
   struct mailimf_fields * fields;
   int res;
   char keyname[PATH_MAX];
   
-#if 0
-  imap_session = cached_session_get_ancestor(session);
-  imap = ((struct imap_session_state_data *) (imap_session->data))->session;
-#endif
-  imap = cached_session_get_imap_session(session);
-
   generate_key_from_message(keyname, PATH_MAX,
 			    msg, MAILIMAP_MSG_ATT_ENVELOPE);
 
