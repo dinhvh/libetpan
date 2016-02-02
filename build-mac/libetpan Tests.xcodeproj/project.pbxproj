@@ -141,6 +141,25 @@
 		367863A616AB61F6002F2B96 /* libetpan.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678639816AB61BA002F2B96 /* libetpan.a */; };
 		367863A816AB61F9002F2B96 /* libetpan.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678639816AB61BA002F2B96 /* libetpan.a */; };
 		367863A916AB61FA002F2B96 /* libetpan.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678639816AB61BA002F2B96 /* libetpan.a */; };
+		8568A3DF1C609B8500FF4470 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 8568A3DE1C609B8500FF4470 /* libz.tbd */; };
+		8568A3E01C609BD400FF4470 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 8568A3DE1C609B8500FF4470 /* libz.tbd */; };
+		8568A3E11C609BDC00FF4470 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 8568A3DE1C609B8500FF4470 /* libz.tbd */; };
+		8568A3E21C609BE600FF4470 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 8568A3DE1C609B8500FF4470 /* libz.tbd */; };
+		8568A3E31C609BE900FF4470 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 8568A3DE1C609B8500FF4470 /* libz.tbd */; };
+		8568A3E41C609BE900FF4470 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 8568A3DE1C609B8500FF4470 /* libz.tbd */; };
+		8568A3E51C609BFA00FF4470 /* libiconv.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678619616AB4671002F2B96 /* libiconv.2.dylib */; };
+		8568A3E61C609BFC00FF4470 /* libiconv.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678619616AB4671002F2B96 /* libiconv.2.dylib */; };
+		8568A3E71C609C0700FF4470 /* libiconv.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678619616AB4671002F2B96 /* libiconv.2.dylib */; };
+		8568A3E81C609C2200FF4470 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 8568A3DE1C609B8500FF4470 /* libz.tbd */; };
+		8568A3E91C609C2400FF4470 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 8568A3DE1C609B8500FF4470 /* libz.tbd */; };
+		8568A3EA1C609C2E00FF4470 /* libiconv.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678619616AB4671002F2B96 /* libiconv.2.dylib */; };
+		8568A3EB1C609C3700FF4470 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 8568A3DE1C609B8500FF4470 /* libz.tbd */; };
+		8568A3EC1C609C3900FF4470 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 8568A3DE1C609B8500FF4470 /* libz.tbd */; };
+		8568A3ED1C609C4700FF4470 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 8568A3DE1C609B8500FF4470 /* libz.tbd */; };
+		8568A3EE1C609C4800FF4470 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 8568A3DE1C609B8500FF4470 /* libz.tbd */; };
+		8568A3EF1C609C5400FF4470 /* libiconv.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678619616AB4671002F2B96 /* libiconv.2.dylib */; };
+		8568A3F01C609C5400FF4470 /* libiconv.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678619616AB4671002F2B96 /* libiconv.2.dylib */; };
+		8568A3F11C609C5A00FF4470 /* libiconv.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678619616AB4671002F2B96 /* libiconv.2.dylib */; };
 		C6ED6CF917A1862C00A4A14C /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6ED6CF817A1862C00A4A14C /* Security.framework */; };
 		C6ED6CFA17A1863E00A4A14C /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6ED6CF817A1862C00A4A14C /* Security.framework */; };
 		C6ED6CFB17A1865600A4A14C /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6ED6CF817A1862C00A4A14C /* Security.framework */; };
@@ -463,6 +482,7 @@
 		3678623516AB4EE6002F2B96 /* smime */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = smime; sourceTree = BUILT_PRODUCTS_DIR; };
 		3678624816AB4F32002F2B96 /* smtpsend */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = smtpsend; sourceTree = BUILT_PRODUCTS_DIR; };
 		3678639816AB61BA002F2B96 /* libetpan.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libetpan.a; path = "../../../Library/Developer/Xcode/DerivedData/libetpan-dazyuihjymonnybirhcistixjbll/Build/Products/Debug/libetpan.a"; sourceTree = "<group>"; };
+		8568A3DE1C609B8500FF4470 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		C6ED6CF817A1862C00A4A14C /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		C6ED6D0817A1883000A4A14C /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = System/Library/Frameworks/CoreServices.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -478,6 +498,7 @@
 				3678612116AB411F002F2B96 /* libssl.dylib in Frameworks */,
 				3678612316AB4131002F2B96 /* libsasl2.2.dylib in Frameworks */,
 				3678612516AB4142002F2B96 /* libcrypto.dylib in Frameworks */,
+				8568A3DF1C609B8500FF4470 /* libz.tbd in Frameworks */,
 				3678639916AB61BA002F2B96 /* libetpan.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -486,6 +507,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8568A3EA1C609C2E00FF4470 /* libiconv.2.dylib in Frameworks */,
 				3678612C16AB4314002F2B96 /* CoreFoundation.framework in Frameworks */,
 				C6ED6CFA17A1863E00A4A14C /* Security.framework in Frameworks */,
 				3678612E16AB4314002F2B96 /* libssl.dylib in Frameworks */,
@@ -501,8 +523,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				3678613E16AB4411002F2B96 /* CoreFoundation.framework in Frameworks */,
+				8568A3E31C609BE900FF4470 /* libz.tbd in Frameworks */,
 				3678614016AB4411002F2B96 /* libssl.dylib in Frameworks */,
 				3678614116AB4411002F2B96 /* libsasl2.2.dylib in Frameworks */,
+				8568A3E61C609BFC00FF4470 /* libiconv.2.dylib in Frameworks */,
 				C6ED6CFB17A1865600A4A14C /* Security.framework in Frameworks */,
 				3678614216AB4411002F2B96 /* libcrypto.dylib in Frameworks */,
 				C6ED6D0B17A1884200A4A14C /* CoreServices.framework in Frameworks */,
@@ -515,8 +539,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				3678615016AB44A6002F2B96 /* CoreFoundation.framework in Frameworks */,
+				8568A3E41C609BE900FF4470 /* libz.tbd in Frameworks */,
 				3678615216AB44A6002F2B96 /* libssl.dylib in Frameworks */,
 				3678615316AB44A6002F2B96 /* libsasl2.2.dylib in Frameworks */,
+				8568A3E71C609C0700FF4470 /* libiconv.2.dylib in Frameworks */,
 				C6ED6CFC17A1865700A4A14C /* Security.framework in Frameworks */,
 				3678615416AB44A6002F2B96 /* libcrypto.dylib in Frameworks */,
 				C6ED6D0D17A1884400A4A14C /* CoreServices.framework in Frameworks */,
@@ -535,6 +561,7 @@
 				3678619716AB4671002F2B96 /* libiconv.2.dylib in Frameworks */,
 				C6ED6CFD17A1865700A4A14C /* Security.framework in Frameworks */,
 				3678639E16AB61DE002F2B96 /* libetpan.a in Frameworks */,
+				8568A3E91C609C2400FF4470 /* libz.tbd in Frameworks */,
 				C6ED6D0E17A1884800A4A14C /* CoreServices.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -550,6 +577,7 @@
 				3678619816AB4685002F2B96 /* libiconv.2.dylib in Frameworks */,
 				C6ED6CFE17A1865800A4A14C /* Security.framework in Frameworks */,
 				3678639F16AB61E1002F2B96 /* libetpan.a in Frameworks */,
+				8568A3EB1C609C3700FF4470 /* libz.tbd in Frameworks */,
 				C6ED6D0F17A1884800A4A14C /* CoreServices.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -565,6 +593,7 @@
 				3678619916AB4689002F2B96 /* libiconv.2.dylib in Frameworks */,
 				C6ED6CFF17A1865900A4A14C /* Security.framework in Frameworks */,
 				367863A016AB61E5002F2B96 /* libetpan.a in Frameworks */,
+				8568A3E01C609BD400FF4470 /* libz.tbd in Frameworks */,
 				C6ED6D1017A1884900A4A14C /* CoreServices.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -580,6 +609,7 @@
 				367861AD16AB47DC002F2B96 /* libiconv.2.dylib in Frameworks */,
 				C6ED6D0017A1865900A4A14C /* Security.framework in Frameworks */,
 				367863A116AB61E9002F2B96 /* libetpan.a in Frameworks */,
+				8568A3ED1C609C4700FF4470 /* libz.tbd in Frameworks */,
 				C6ED6D1117A1884A00A4A14C /* CoreServices.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -589,8 +619,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				367861B316AB48E1002F2B96 /* CoreFoundation.framework in Frameworks */,
+				8568A3EC1C609C3900FF4470 /* libz.tbd in Frameworks */,
 				367861B516AB48E1002F2B96 /* libssl.dylib in Frameworks */,
 				367861B616AB48E1002F2B96 /* libsasl2.2.dylib in Frameworks */,
+				8568A3F11C609C5A00FF4470 /* libiconv.2.dylib in Frameworks */,
 				C6ED6D0117A1865B00A4A14C /* Security.framework in Frameworks */,
 				367861B716AB48E1002F2B96 /* libcrypto.dylib in Frameworks */,
 				C6ED6D1217A1884A00A4A14C /* CoreServices.framework in Frameworks */,
@@ -609,6 +641,7 @@
 				367861D316AB4BDA002F2B96 /* libiconv.2.dylib in Frameworks */,
 				C6ED6D0217A1865C00A4A14C /* Security.framework in Frameworks */,
 				367863A316AB61F5002F2B96 /* libetpan.a in Frameworks */,
+				8568A3E11C609BDC00FF4470 /* libz.tbd in Frameworks */,
 				C6ED6D1317A1884B00A4A14C /* CoreServices.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -617,6 +650,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8568A3EF1C609C5400FF4470 /* libiconv.2.dylib in Frameworks */,
 				367861F116AB4D4F002F2B96 /* CoreFoundation.framework in Frameworks */,
 				367861F316AB4D4F002F2B96 /* libssl.dylib in Frameworks */,
 				367861F416AB4D4F002F2B96 /* libsasl2.2.dylib in Frameworks */,
@@ -631,6 +665,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8568A3F01C609C5400FF4470 /* libiconv.2.dylib in Frameworks */,
 				3678620516AB4DFE002F2B96 /* CoreFoundation.framework in Frameworks */,
 				3678620716AB4DFE002F2B96 /* libssl.dylib in Frameworks */,
 				3678620816AB4DFE002F2B96 /* libsasl2.2.dylib in Frameworks */,
@@ -646,6 +681,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3678621816AB4E63002F2B96 /* CoreFoundation.framework in Frameworks */,
+				8568A3E81C609C2200FF4470 /* libz.tbd in Frameworks */,
 				3678621A16AB4E63002F2B96 /* libssl.dylib in Frameworks */,
 				3678621B16AB4E63002F2B96 /* libsasl2.2.dylib in Frameworks */,
 				C6ED6D0417A1865D00A4A14C /* Security.framework in Frameworks */,
@@ -660,8 +696,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				3678622B16AB4EE6002F2B96 /* CoreFoundation.framework in Frameworks */,
+				8568A3E21C609BE600FF4470 /* libz.tbd in Frameworks */,
 				3678622D16AB4EE6002F2B96 /* libssl.dylib in Frameworks */,
 				3678622E16AB4EE6002F2B96 /* libsasl2.2.dylib in Frameworks */,
+				8568A3E51C609BFA00FF4470 /* libiconv.2.dylib in Frameworks */,
 				C6ED6D0717A1865F00A4A14C /* Security.framework in Frameworks */,
 				3678622F16AB4EE6002F2B96 /* libcrypto.dylib in Frameworks */,
 				C6ED6D1717A1884E00A4A14C /* CoreServices.framework in Frameworks */,
@@ -674,6 +712,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3678623E16AB4F32002F2B96 /* CoreFoundation.framework in Frameworks */,
+				8568A3EE1C609C4800FF4470 /* libz.tbd in Frameworks */,
 				3678624016AB4F32002F2B96 /* libssl.dylib in Frameworks */,
 				3678624116AB4F32002F2B96 /* libsasl2.2.dylib in Frameworks */,
 				C6ED6D0617A1865E00A4A14C /* Security.framework in Frameworks */,
@@ -768,6 +807,7 @@
 				3678612216AB4131002F2B96 /* libsasl2.2.dylib */,
 				3678612016AB411F002F2B96 /* libssl.dylib */,
 				3678619616AB4671002F2B96 /* libiconv.2.dylib */,
+				8568A3DE1C609B8500FF4470 /* libz.tbd */,
 				3678639816AB61BA002F2B96 /* libetpan.a */,
 			);
 			name = "External Frameworks and Libraries";
