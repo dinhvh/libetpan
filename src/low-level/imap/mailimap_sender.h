@@ -75,6 +75,14 @@ int mailimap_uid_copy_send(mailstream * fd,
 				struct mailimap_set * set,
 				const char * mb);
 
+int mailimap_move_send(mailstream * fd,
+                       struct mailimap_set * set,
+                       const char * mb);
+
+int mailimap_uid_move_send(mailstream * fd,
+                           struct mailimap_set * set,
+                           const char * mb);
+
 int mailimap_create_send(mailstream * fd,
 				const char * mb);
 
