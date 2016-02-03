@@ -1146,6 +1146,98 @@ int mailimap_uid_copy(mailimap * session, struct mailimap_set * set,
 }
 
 LIBETPAN_EXPORT
+int mailimap_move(mailimap * session, struct mailimap_set * set,
+                  const char * mb)
+{
+  struct mailimap_response * response;
+  int r;
+  int error_code;
+
+  if (session->imap_state != MAILIMAP_STATE_SELECTED)
+    return MAILIMAP_ERROR_BAD_STATE;
+
+  r = mailimap_send_current_tag(session);
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+
+  r = mailimap_move_send(session->imap_stream, set, mb);
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+
+  r = mailimap_crlf_send(session->imap_stream);
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+
+  if (mailstream_flush(session->imap_stream) == -1)
+    return MAILIMAP_ERROR_STREAM;
+
+  if (mailimap_read_line(session) == NULL)
+    return MAILIMAP_ERROR_STREAM;
+
+  r = mailimap_parse_response(session, &response);
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+
+  error_code = response->rsp_resp_done->rsp_data.rsp_tagged->rsp_cond_state->rsp_type;
+
+  mailimap_response_free(response);
+
+  switch (error_code) {
+    case MAILIMAP_RESP_COND_STATE_OK:
+      return MAILIMAP_NO_ERROR;
+
+    default:
+      return MAILIMAP_ERROR_MOVE;
+  }
+}
+
+LIBETPAN_EXPORT
+int mailimap_uid_move(mailimap * session, struct mailimap_set * set,
+                      const char * mb)
+{
+  struct mailimap_response * response;
+  int r;
+  int error_code;
+
+  if (session->imap_state != MAILIMAP_STATE_SELECTED)
+    return MAILIMAP_ERROR_BAD_STATE;
+
+  r = mailimap_send_current_tag(session);
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+
+  r = mailimap_uid_move_send(session->imap_stream, set, mb);
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+
+  r = mailimap_crlf_send(session->imap_stream);
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+
+  if (mailstream_flush(session->imap_stream) == -1)
+    return MAILIMAP_ERROR_STREAM;
+
+  if (mailimap_read_line(session) == NULL)
+    return MAILIMAP_ERROR_STREAM;
+
+  r = mailimap_parse_response(session, &response);
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+
+  error_code = response->rsp_resp_done->rsp_data.rsp_tagged->rsp_cond_state->rsp_type;
+
+  mailimap_response_free(response);
+
+  switch (error_code) {
+    case MAILIMAP_RESP_COND_STATE_OK:
+      return MAILIMAP_NO_ERROR;
+
+    default:
+      return MAILIMAP_ERROR_UID_MOVE;
+  }
+}
+
+LIBETPAN_EXPORT
 int mailimap_create(mailimap * session, const char * mb)
 {
   struct mailimap_response * response;

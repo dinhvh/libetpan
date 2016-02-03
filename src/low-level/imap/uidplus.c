@@ -174,6 +174,42 @@ int mailimap_uidplus_uid_copy(mailimap * session, struct mailimap_set * set,
   return MAILIMAP_NO_ERROR;
 }
 
+LIBETPAN_EXPORT
+int mailimap_uidplus_move(mailimap * session, struct mailimap_set * set,
+    const char * mb,
+    uint32_t * uidvalidity_result,
+    struct mailimap_set ** source_result,
+    struct mailimap_set ** dest_result)
+{
+  int r;
+  
+  r = mailimap_move(session, set, mb);
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+
+  extract_copy_uid(session, uidvalidity_result, source_result, dest_result);
+  
+  return MAILIMAP_NO_ERROR;
+}
+
+LIBETPAN_EXPORT
+int mailimap_uidplus_uid_move(mailimap * session, struct mailimap_set * set,
+    const char * mb,
+    uint32_t * uidvalidity_result,
+    struct mailimap_set ** source_result,
+    struct mailimap_set ** dest_result)
+{
+  int r;
+  
+  r = mailimap_uid_move(session, set, mb);
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+
+  extract_copy_uid(session, uidvalidity_result, source_result, dest_result);
+  
+  return MAILIMAP_NO_ERROR;
+}
+
 static void extract_apnd_uid(mailimap * session,
     uint32_t * uidvalidity_result,
     struct mailimap_set ** result)
