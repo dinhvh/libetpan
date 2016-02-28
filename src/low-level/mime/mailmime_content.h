@@ -82,10 +82,84 @@ int mailmime_binary_body_parse(const char * message, size_t length,
 			       size_t * indx, char ** result,
 			       size_t * result_len);
 
+/*
+ mailmime_part_parse()
+
+ This function gets full MIME part for parsing at once.
+ It is not suitable, if we want parse incomplete message in a stream mode.
+ 
+ @return the return code is one of MAILIMF_ERROR_XXX or
+   MAILIMF_NO_ERROR codes
+ */
 LIBETPAN_EXPORT
 int mailmime_part_parse(const char * message, size_t length,
 			size_t * indx,
 			int encoding, char ** result, size_t * result_len);
+
+
+/*
+ mailmime_part_parse_partial()
+
+ This function may parse incomplete MIME part (i.e. in streaming mode).
+ It stops when detect incomplete encoding unit at the end of data.
+ Position of the first unparsed byte will be returned in (*indx) value.
+
+ For parsing last portion of data must be used mailmime_part_parse() version.
+
+ @param message    Message for unparsed data.
+ @param length     Length of the unparsed data.
+ @param INOUT indx Index of first unparsed symbol in the message.
+ @param encoding   Encoding of the input data.
+ @param result     Parsed MIME part content. Must be freed with mmap_string_unref().
+ @param result_len Length of parsed data.
+
+ @return the return code is one of MAILIMF_ERROR_XXX or
+   MAILIMF_NO_ERROR codes
+
+ Example Usage:
+ @code
+ uint32_t received = 0;
+ uint32_t partLength = bodystructure[partId]->length;
+ for (;;) {
+   bool isThisRangeLast;
+   struct imap_range_t range = { received, 1024*1024 };
+   char *result;
+   size_t result_len;
+   int error = imap_fetch_part_range(uid, partId, range, &result, &result_len);
+   if (error != NoError) {
+     // handle network error
+     break;
+   }
+
+   if (result_len == 0) {
+     // requested range is empty. part is completely fetched
+     break;
+   }
+
+   isThisRangeLast = (received + result_len >= partLength); // determine that the received data is the last,
+                                                            // may be more difficult (in case of invalid metadata on the server).
+
+   char *decoded;
+   size_t decoded_len;
+   if (isThisRangeLast) {
+     uint32_t index = 0;
+     mailmime_part_parse(result, result_len, encoding, &index, &decoded, &decoded_len);
+     break;
+   }
+   else {
+     uint32_t index = 0;
+     mailmime_part_parse_partial(result, result_len, encoding, &index, &decoded, &decoded_len);
+     // we may have some non-decoded bytes at the end of chunk.
+     // in this case we just request it in the next chunk 
+     received += index;
+   }
+ }
+ @endcode
+ */
+LIBETPAN_EXPORT
+int mailmime_part_parse_partial(const char * message, size_t length,
+                                size_t * indx,
+                                int encoding, char ** result, size_t * result_len);
 
 
 LIBETPAN_EXPORT

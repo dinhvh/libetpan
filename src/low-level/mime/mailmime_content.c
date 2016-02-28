@@ -1612,11 +1612,12 @@ static inline signed char get_base64_value(char ch)
   }
 }
 
-int mailmime_base64_body_parse(const char * message, size_t length,
+static int mailmime_base64_body_parse_impl(
+             const char * message, size_t length,
 			       size_t * indx, char ** result,
-			       size_t * result_len)
+			       size_t * result_len, int partial)
 {
-  size_t cur_token;
+  size_t cur_token, last_full_token_end;
   char chunk[4];
   int chunk_index;
   char out[3];
@@ -1631,6 +1632,7 @@ int mailmime_base64_body_parse(const char * message, size_t length,
   chunk[3] = 0;
 
   cur_token = * indx;
+  last_full_token_end = * indx;
   chunk_index = 0;
   written = 0;
 
@@ -1647,7 +1649,7 @@ int mailmime_base64_body_parse(const char * message, size_t length,
     while (value == -1) {
 
       if (cur_token >= length)
-	break;
+        break;
 
       value = get_base64_value(message[cur_token]);
       cur_token ++;
@@ -1670,16 +1672,17 @@ int mailmime_base64_body_parse(const char * message, size_t length,
       chunk[3] = 0;
       
       chunk_index = 0;
+      last_full_token_end = cur_token;
 
       if (mmap_string_append_len(mmapstr, out, 3) == NULL) {
-	res = MAILIMF_ERROR_MEMORY;
-	goto free;
+        res = MAILIMF_ERROR_MEMORY;
+        goto free;
       }
       written += 3;
     }
   }
 
-  if (chunk_index != 0) {
+  if (chunk_index != 0 && !partial) {
     size_t len;
 
     len = 0;
@@ -1698,6 +1701,10 @@ int mailmime_base64_body_parse(const char * message, size_t length,
     written += len;
   }
 
+  if (partial) {
+    cur_token = last_full_token_end;
+  }
+
   r = mmap_string_ref(mmapstr);
   if (r < 0) {
     res = MAILIMF_ERROR_MEMORY;
@@ -1714,6 +1721,13 @@ int mailmime_base64_body_parse(const char * message, size_t length,
   mmap_string_free(mmapstr);
  err:
   return res;
+}
+
+int mailmime_base64_body_parse(const char * message, size_t length,
+			       size_t * indx, char ** result,
+			       size_t * result_len)
+{
+  return mailmime_base64_body_parse_impl(message, length, indx, result, result_len, 0);
 }
 
 
@@ -1754,9 +1768,11 @@ static int write_decoded_qp(MMAPString * mmapstr,
 
 #define WRITE_MAX_QP 512
 
-int mailmime_quoted_printable_body_parse(const char * message, size_t length,
+static int mailmime_quoted_printable_body_parse_impl(
+					 const char * message, size_t length,
 					 size_t * indx, char ** result,
-					 size_t * result_len, int in_header)
+					 size_t * result_len, int in_header,
+					 int partial)
 {
   size_t cur_token;
   int state;
@@ -1797,6 +1813,9 @@ int mailmime_quoted_printable_body_parse(const char * message, size_t length,
 
     if (cur_token >= length) {
       state = STATE_OUT;
+      if (partial) {
+        cur_token = length;
+      }
       break;
     }
 
@@ -1816,14 +1835,18 @@ int mailmime_quoted_printable_body_parse(const char * message, size_t length,
       
       switch (message[cur_token]) {
       case '=':
-	if (cur_token + 1 >= length) {
+        if (cur_token + 1 >= length) {
+          if (partial) {
+            state = STATE_OUT;
+            break;
+          }
           /* error but ignore it */
-	  state = STATE_NORMAL;
+          state = STATE_NORMAL;
           start = message + cur_token;
           cur_token ++;
           count ++;
-	  break;
-	}
+          break;
+        }
 
 	switch (message[cur_token + 1]) {
 
@@ -1852,8 +1875,12 @@ int mailmime_quoted_printable_body_parse(const char * message, size_t length,
 
 	  break;
 
-	default:
-	  if (cur_token + 2 >= length) {
+    default:
+          if (cur_token + 2 >= length) {
+            if (partial) {
+              state = STATE_OUT;
+              break;
+            }
             /* error but ignore it */
             cur_token ++;
             
@@ -2053,6 +2080,14 @@ int mailmime_quoted_printable_body_parse(const char * message, size_t length,
   return res;
 }
 
+int mailmime_quoted_printable_body_parse(const char * message, size_t length,
+					 size_t * indx, char ** result,
+					 size_t * result_len, int in_header)
+{
+  return mailmime_quoted_printable_body_parse_impl(message, length, indx,
+                                result, result_len, in_header, FALSE);
+}
+
 int mailmime_binary_body_parse(const char * message, size_t length,
 			       size_t * indx, char ** result,
 			       size_t * result_len)
@@ -2100,18 +2135,18 @@ int mailmime_binary_body_parse(const char * message, size_t length,
 }
 
 
-int mailmime_part_parse(const char * message, size_t length,
+static int mailmime_part_parse_impl(const char * message, size_t length,
 			size_t * indx,
-			int encoding, char ** result, size_t * result_len)
+			int encoding, char ** result, size_t * result_len, int partial)
 {
   switch (encoding) {
   case MAILMIME_MECHANISM_BASE64:
-    return mailmime_base64_body_parse(message, length, indx,
-				      result, result_len);
+    return mailmime_base64_body_parse_impl(message, length, indx,
+				      result, result_len, partial);
     
   case MAILMIME_MECHANISM_QUOTED_PRINTABLE:
-    return mailmime_quoted_printable_body_parse(message, length, indx,
-						result, result_len, FALSE);
+    return mailmime_quoted_printable_body_parse_impl(message, length, indx,
+						result, result_len, FALSE, partial);
 
   case MAILMIME_MECHANISM_7BIT:
   case MAILMIME_MECHANISM_8BIT:
@@ -2120,6 +2155,22 @@ int mailmime_part_parse(const char * message, size_t length,
     return mailmime_binary_body_parse(message, length, indx,
 				      result, result_len);
   }
+}
+
+int mailmime_part_parse(const char * message, size_t length,
+			size_t * indx,
+			int encoding, char ** result, size_t * result_len)
+{
+  return mailmime_part_parse_impl(message, length, indx,
+                                  encoding, result, result_len, FALSE);
+}
+
+int mailmime_part_parse_partial(const char * message, size_t length,
+			size_t * indx,
+			int encoding, char ** result, size_t * result_len)
+{
+  return mailmime_part_parse_impl(message, length, indx,
+                                  encoding, result, result_len, TRUE);
 }
 
 int mailmime_get_section_id(struct mailmime * mime,
