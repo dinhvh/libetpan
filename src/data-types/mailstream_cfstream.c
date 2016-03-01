@@ -483,7 +483,12 @@ mailstream_low * mailstream_low_cfstream_open_voip_timeout(const char * hostname
     CFWriteStreamSetProperty(writeStream, kCFStreamNetworkServiceType, kCFStreamNetworkServiceTypeVoIP);
   }
 #endif
-  
+
+  CFDictionaryRef proxySettings = CFNetworkCopySystemProxySettings();
+  CFReadStreamSetProperty(readStream, kCFStreamPropertySOCKSProxy, proxySettings);
+  CFWriteStreamSetProperty(writeStream, kCFStreamPropertySOCKSProxy, proxySettings);
+  CFRelease(proxySettings);
+
   cfstream_data = cfstream_data_new(readStream, writeStream);
   s = mailstream_low_new(cfstream_data, mailstream_cfstream_driver);
 	mailstream_low_set_timeout(s, timeout);  
