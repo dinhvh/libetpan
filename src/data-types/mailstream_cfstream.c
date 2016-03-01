@@ -460,6 +460,17 @@ mailstream_low * mailstream_low_cfstream_open_voip(const char * hostname, int16_
 	return mailstream_low_cfstream_open_voip_timeout(hostname, port, voip_enabled, 0);
 }
 
+static int numberIntValue(CFNumberRef nb)
+{
+  if (nb == NULL) {
+    return 0;
+  }
+
+  int result;
+  CFNumberGetValue(nb, kCFNumberIntType, &result);
+  return result;
+}
+
 mailstream_low * mailstream_low_cfstream_open_voip_timeout(const char * hostname, int16_t port,
   int voip_enabled, time_t timeout)
 {
@@ -485,8 +496,11 @@ mailstream_low * mailstream_low_cfstream_open_voip_timeout(const char * hostname
 #endif
 
   CFDictionaryRef proxySettings = CFNetworkCopySystemProxySettings();
-  CFReadStreamSetProperty(readStream, kCFStreamPropertySOCKSProxy, proxySettings);
-  CFWriteStreamSetProperty(writeStream, kCFStreamPropertySOCKSProxy, proxySettings);
+  CFNumberRef nbEnabled = CFDictionaryGetValue(proxySettings, kCFNetworkProxiesSOCKSEnable);
+  if (numberIntValue(nbEnabled)) {
+    CFReadStreamSetProperty(readStream, kCFStreamPropertySOCKSProxy, proxySettings);
+    CFWriteStreamSetProperty(writeStream, kCFStreamPropertySOCKSProxy, proxySettings);
+  }
   CFRelease(proxySettings);
 
   cfstream_data = cfstream_data_new(readStream, writeStream);
