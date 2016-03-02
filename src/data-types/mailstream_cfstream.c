@@ -495,6 +495,7 @@ mailstream_low * mailstream_low_cfstream_open_voip_timeout(const char * hostname
   }
 #endif
 
+#if !TARGET_OS_IPHONE && !TARGET_IPHONE_SIMULATOR
   CFDictionaryRef proxySettings = CFNetworkCopySystemProxySettings();
   CFNumberRef nbEnabled = CFDictionaryGetValue(proxySettings, kCFNetworkProxiesSOCKSEnable);
   if (numberIntValue(nbEnabled)) {
@@ -502,6 +503,7 @@ mailstream_low * mailstream_low_cfstream_open_voip_timeout(const char * hostname
     CFWriteStreamSetProperty(writeStream, kCFStreamPropertySOCKSProxy, proxySettings);
   }
   CFRelease(proxySettings);
+#endif
 
   cfstream_data = cfstream_data_new(readStream, writeStream);
   s = mailstream_low_new(cfstream_data, mailstream_cfstream_driver);
