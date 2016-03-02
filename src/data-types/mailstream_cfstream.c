@@ -460,6 +460,7 @@ mailstream_low * mailstream_low_cfstream_open_voip(const char * hostname, int16_
 	return mailstream_low_cfstream_open_voip_timeout(hostname, port, voip_enabled, 0);
 }
 
+#if HAVE_CFNETWORK
 static int numberIntValue(CFNumberRef nb)
 {
   if (nb == NULL) {
@@ -470,6 +471,7 @@ static int numberIntValue(CFNumberRef nb)
   CFNumberGetValue(nb, kCFNumberIntType, &result);
   return result;
 }
+#endif
 
 mailstream_low * mailstream_low_cfstream_open_voip_timeout(const char * hostname, int16_t port,
   int voip_enabled, time_t timeout)
