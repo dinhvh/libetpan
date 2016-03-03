@@ -45,6 +45,7 @@ if test "x$ACTION" = xbuild -o "x$ACTION" = xinstall ; then
     export IPHONEOS_DEPLOYMENT_TARGET=
     ./configure --enable-debug > "$logfile" 2>&1
     if [[ "$?" != "0" ]]; then
+      cat "$logfile"
       echo "configure failed"
       exit 1
     fi
