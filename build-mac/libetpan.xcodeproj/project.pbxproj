@@ -2553,6 +2553,104 @@
 			};
 			name = Release;
 		};
+		3D2DB9371C62AC4000C247D2 /* Staging */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/..",
+					"$(SRCROOT)/include",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = (
+					"-DHAVE_CFNETWORK=1",
+					"-DHAVE_CONFIG_H=1",
+					"-DLIBETPAN_IOS_DISABLE_SSL=1",
+				);
+			};
+			name = Staging;
+		};
+		3D2DB9381C62AC4000C247D2 /* Staging */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INFOPLIST_FILE = Info.plist;
+				INSTALL_PATH = "@loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.etpan.${PRODUCT_NAME:identifier}";
+				PRODUCT_NAME = libetpan;
+				SDKROOT = macosx;
+				WRAPPER_EXTENSION = framework;
+			};
+			name = Staging;
+		};
+		3D2DB9391C62AC4000C247D2 /* Staging */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INSTALL_PATH = /usr/local/lib;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				PRODUCT_NAME = etpan;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+			};
+			name = Staging;
+		};
+		3D2DB93A1C62AC4000C247D2 /* Staging */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_BITCODE = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/libsasl-ios/include",
+				);
+				INSTALL_PATH = /usr/local/lib;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/libsasl-ios/lib";
+				PRODUCT_NAME = "etpan-ios";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+			};
+			name = Staging;
+		};
+		3D2DB93B1C62AC4000C247D2 /* Staging */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				SDKROOT = macosx;
+			};
+			name = Staging;
+		};
+		3D2DB93C1C62AC4000C247D2 /* Staging */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PLATFORM_NAME = iphoneos;
+				SDKROOT = iphoneos;
+			};
+			name = Staging;
+		};
 		C6635C4516DFFE6E0066276E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -2668,6 +2766,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1DEB91AE08733DA50010E9CD /* Debug */,
+				3D2DB9381C62AC4000C247D2 /* Staging */,
 				1DEB91AF08733DA50010E9CD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -2677,6 +2776,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1DEB91B208733DA50010E9CD /* Debug */,
+				3D2DB9371C62AC4000C247D2 /* Staging */,
 				1DEB91B308733DA50010E9CD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -2686,6 +2786,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C6635C4516DFFE6E0066276E /* Debug */,
+				3D2DB93B1C62AC4000C247D2 /* Staging */,
 				C6635C4616DFFE6E0066276E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -2695,6 +2796,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C6635C4F16E002340066276E /* Debug */,
+				3D2DB93C1C62AC4000C247D2 /* Staging */,
 				C6635C5016E002340066276E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -2704,6 +2806,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C682E2BE15B315EF00BE9DA7 /* Debug */,
+				3D2DB93A1C62AC4000C247D2 /* Staging */,
 				C682E2BF15B315EF00BE9DA7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -2713,6 +2816,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C69AB10B10546FE600F32FBD /* Debug */,
+				3D2DB9391C62AC4000C247D2 /* Staging */,
 				C69AB10C10546FE600F32FBD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
