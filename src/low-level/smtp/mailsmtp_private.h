@@ -36,6 +36,8 @@
 
 int mailsmtp_send_command(mailsmtp * f, char * command);
 
+int mailsmtp_send_command_private(mailsmtp * f, char * command);
+
 int mailsmtp_read_response(mailsmtp * session);
 
 #endif

@@ -1498,6 +1498,11 @@ int mailsmtp_send_command(mailsmtp * f, char * command)
   return send_command(f, command);
 }
 
+int mailsmtp_send_command_private(mailsmtp * f, char * command)
+{
+    return send_command_private(f, command, 0);
+}
+
 int mailsmtp_read_response(mailsmtp * session)
 {
   return read_response(session);
