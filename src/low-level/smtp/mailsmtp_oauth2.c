@@ -105,18 +105,18 @@ static int oauth2_authenticate(mailsmtp * session, int type, const char * auth_u
     default:
     {
       snprintf(command, SMTP_STRING_SIZE, "AUTH XOAUTH2 ");
-      r = mailsmtp_send_command(session, command);
+      r = mailsmtp_send_command_private(session, command);
       if (r == -1) {
         res = MAILSMTP_ERROR_STREAM;
         goto free;
       }
-      r = mailsmtp_send_command(session, full_auth_string_b64);
+      r = mailsmtp_send_command_private(session, full_auth_string_b64);
       if (r == -1) {
         res = MAILSMTP_ERROR_STREAM;
         goto free;
       }
       snprintf(command, SMTP_STRING_SIZE, "\r\n");
-      r = mailsmtp_send_command(session, command);
+      r = mailsmtp_send_command_private(session, command);
       if (r == -1) {
         res = MAILSMTP_ERROR_STREAM;
         goto free;
@@ -125,7 +125,7 @@ static int oauth2_authenticate(mailsmtp * session, int type, const char * auth_u
     }
     case XOAUTH2_TYPE_OUTLOOK_COM:
       snprintf(command, SMTP_STRING_SIZE, "AUTH XOAUTH2\r\n");
-      r = mailsmtp_send_command(session, command);
+      r = mailsmtp_send_command_private(session, command);
       if (r == -1) {
         res = MAILSMTP_ERROR_STREAM;
         goto free;
@@ -149,7 +149,7 @@ static int oauth2_authenticate(mailsmtp * session, int type, const char * auth_u
         {
           /* There's probably an error, send an empty line as acknowledgement. */
           snprintf(command, SMTP_STRING_SIZE, "\r\n");
-          r = mailsmtp_send_command(session, command);
+          r = mailsmtp_send_command_private(session, command);
           if (r == -1) {
             res = MAILSMTP_ERROR_STREAM;
             goto free;
@@ -158,13 +158,13 @@ static int oauth2_authenticate(mailsmtp * session, int type, const char * auth_u
         }
         case XOAUTH2_TYPE_OUTLOOK_COM:
         {
-          r = mailsmtp_send_command(session, full_auth_string_b64);
+          r = mailsmtp_send_command_private(session, full_auth_string_b64);
           if (r == -1) {
             res = MAILSMTP_ERROR_STREAM;
             goto free;
           }
           snprintf(command, SMTP_STRING_SIZE, "\r\n");
-          r = mailsmtp_send_command(session, command);
+          r = mailsmtp_send_command_private(session, command);
           if (r == -1) {
             res = MAILSMTP_ERROR_STREAM;
             goto free;

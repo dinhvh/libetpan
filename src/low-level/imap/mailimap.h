@@ -241,6 +241,42 @@ int mailimap_uid_copy(mailimap * session,
     struct mailimap_set * set, const char * mb);
 
 /*
+   mailimap_move()
+
+   This function will move the given messages from the selected mailbox
+   to the given mailbox. 
+
+   @param session IMAP session
+   @param set     This is a set of message numbers.
+   @param mb      This is the destination mailbox.
+
+   @return the return code is one of MAILIMAP_ERROR_XXX or
+     MAILIMAP_NO_ERROR codes
+ */
+
+LIBETPAN_EXPORT
+int mailimap_move(mailimap * session, struct mailimap_set * set,
+                  const char * mb);
+
+/*
+   mailimap_uid_move()
+
+   This function will move the given messages from the selected mailbox
+   to the given mailbox. 
+
+   @param session IMAP session
+   @param set     This is a set of message unique identifiers.
+   @param mb      This is the destination mailbox.
+
+   @return the return code is one of MAILIMAP_ERROR_XXX or
+   MAILIMAP_NO_ERROR codes
+ */
+
+LIBETPAN_EXPORT
+int mailimap_uid_move(mailimap * session, struct mailimap_set * set,
+                      const char * mb);
+
+/*
    mailimap_create()
 
    This function will create a mailbox.

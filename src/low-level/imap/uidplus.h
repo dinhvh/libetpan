@@ -61,6 +61,20 @@ int mailimap_uidplus_uid_copy(mailimap * session, struct mailimap_set * set,
     struct mailimap_set ** dest_result);
 
 LIBETPAN_EXPORT
+int mailimap_uidplus_move(mailimap * session, struct mailimap_set * set,
+    const char * mb,
+    uint32_t * uidvalidity_result,
+    struct mailimap_set ** source_result,
+    struct mailimap_set ** dest_result);
+
+LIBETPAN_EXPORT
+int mailimap_uidplus_uid_move(mailimap * session, struct mailimap_set * set,
+    const char * mb,
+    uint32_t * uidvalidity_result,
+    struct mailimap_set ** source_result,
+    struct mailimap_set ** dest_result);
+
+LIBETPAN_EXPORT
 int mailimap_uidplus_append(mailimap * session, const char * mailbox,
     struct mailimap_flag_list * flag_list,
     struct mailimap_date_time * date_time,

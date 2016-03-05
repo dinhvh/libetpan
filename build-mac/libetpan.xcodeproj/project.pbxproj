@@ -1765,7 +1765,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = C682E2BD15B315EF00BE9DA7 /* Build configuration list for PBXNativeTarget "libetpan ios" */;
 			buildPhases = (
-				C6635C3416DFF0030066276E /* ShellScript */,
+				C6635C3416DFF0030066276E /* Run Script */,
 				C682E21B15B315EF00BE9DA7 /* Sources */,
 				C682E2BC15B315EF00BE9DA7 /* Frameworks */,
 				C6740DB515B384FB00D4A16B /* ShellScript */,
@@ -1854,7 +1854,7 @@
 			shellPath = /bin/sh;
 			shellScript = "mkdir -p \"$BUILT_PRODUCTS_DIR/include\"\nrsync -aL \"$SRCROOT/../include/libetpan/\" \"$BUILT_PRODUCTS_DIR/include/libetpan/\"\n";
 		};
-		C6635C3416DFF0030066276E /* ShellScript */ = {
+		C6635C3416DFF0030066276E /* Run Script */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
