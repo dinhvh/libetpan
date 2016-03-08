@@ -581,7 +581,7 @@ dnl libcurl
 libcurl=no
 AC_ARG_WITH(curl,   [  --with-curl[=DIR]    curl install directory (default=auto)],
             [], [with_curl=auto])
-if test "x$with_curl" != "xno"; then
+if test "x$with_curl" = "xno"; then
   :
 elif test "x$with_curl" != "xauto"; then
   OCPPFLAGS="$CPPFLAGS"
@@ -639,7 +639,7 @@ dnl expat
 libexpat=no
 AC_ARG_WITH(expat,   [  --with-expat[=DIR]    expat install directory (default=auto)],
             [], [with_expat=auto])
-if test "x$with_expat" != "xno"; then
+if test "x$with_expat" = "xno"; then
 	:
 elif test "x$with_expat" != "xauto"; then
   OCPPFLAGS="$CPPFLAGS"
