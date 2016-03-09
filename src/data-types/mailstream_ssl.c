@@ -495,13 +495,13 @@ again:
 static struct mailstream_ssl_data * ssl_data_new(int fd, time_t timeout,
 	void (* callback)(struct mailstream_ssl_context * ssl_context, void * cb_data), void * cb_data)
 {
-  return ssl_data_new_full(fd, timeout, SSLv23_client_method(), callback, cb_data);
+  return ssl_data_new_full(fd, timeout, TLSv1_2_client_method(), callback, cb_data);
 }
 
 static struct mailstream_ssl_data * tls_data_new(int fd, time_t timeout,
-  void (* callback)(struct mailstream_ssl_context * ssl_context, void * cb_data), void * cb_data)
+	void (* callback)(struct mailstream_ssl_context * ssl_context, void * cb_data), void * cb_data)
 {
-  return ssl_data_new_full(fd, timeout, TLSv1_client_method(), callback, cb_data);
+  return ssl_data_new_full(fd, timeout, TLSv1_2_client_method(), callback, cb_data);
 }
 
 #else
