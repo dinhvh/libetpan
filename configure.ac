@@ -563,8 +563,10 @@ if test "x$enable_ipv6" != "xno"; then
     dnl check for getaddrinfo and freeaddrinfo function presence
     for func in "getaddrinfo" "freeaddrinfo"; do
       AC_MSG_CHECKING([for $func])
-      AC_TRY_LINK([], [$func();], 
-                      [func_present=yes], 
+      AC_TRY_LINK([#include <sys/socket.h>
+                   #include <netdb.h>],
+                      [(void)$func;],
+                      [func_present=yes],
                       [func_present=no])
       AC_MSG_RESULT($func_present)
 
