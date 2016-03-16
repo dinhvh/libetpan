@@ -108,6 +108,14 @@ static int mailimf_date_parse(const char * message, size_t length,
 			      size_t * indx,
 			      int * pday, int * pmonth, int * pyear);
 
+static int mailimf_hack_date_parse(const char * message, size_t length,
+                              size_t * indx,
+                              int * pday, int * pmonth, int * pyear);
+
+static int mailimf_hack_date_time_parse(const char * message, size_t length,
+                                        size_t * indx,
+                                        struct mailimf_date_time ** result);
+
 static int mailimf_year_parse(const char * message, size_t length,
 			      size_t * indx, int * result);
 
@@ -2056,7 +2064,8 @@ int mailimf_date_time_parse(const char * message, size_t length,
   int sec;
   int zone;
   int r;
-
+  int res;
+  
   cur_token = * indx;
 
   day_of_week = -1;
@@ -2064,7 +2073,10 @@ int mailimf_date_time_parse(const char * message, size_t length,
   if (r == MAILIMF_NO_ERROR) {
     r = mailimf_comma_parse(message, length, &cur_token);
     if (r != MAILIMF_NO_ERROR)
-      return r;
+    {
+      res = r;
+      goto err;
+    }
   }
   else if (r != MAILIMF_ERROR_PARSE)
     return r;
@@ -2072,7 +2084,7 @@ int mailimf_date_time_parse(const char * message, size_t length,
   day = 0;
   month = 0;
   year = 0;
-  r = mailimf_date_parse(message, length, &cur_token, &day, &month, &year);
+    r = mailimf_date_parse(message, length, &cur_token, &day, &month, &year);
   if (r != MAILIMF_NO_ERROR)
     return r;
 
@@ -2096,6 +2108,66 @@ int mailimf_date_time_parse(const char * message, size_t length,
   * indx = cur_token;
   * result = date_time;
 
+  return MAILIMF_NO_ERROR;
+  
+  err:
+    return mailimf_hack_date_time_parse(message, length, indx, result);
+}
+
+static int mailimf_hack_date_time_parse(const char * message, size_t length,
+                                        size_t * indx,
+                                        struct mailimf_date_time ** result)
+{
+  size_t cur_token;
+  int day_of_week;
+  struct mailimf_date_time * date_time;
+  int day;
+  int month;
+  int year;
+  int hour;
+  int min;
+  int sec;
+  int zone;
+  int r;
+  
+  cur_token = * indx;
+  
+  day_of_week = -1;
+  r = mailimf_day_of_week_parse(message, length, &cur_token, &day_of_week);
+  if (r == MAILIMF_NO_ERROR) {
+    r = mailimf_comma_parse(message, length, &cur_token);
+  }
+  else if (r != MAILIMF_ERROR_PARSE)
+    return r;
+  
+  day = 0;
+  month = 0;
+  year = 0;
+
+  r = mailimf_hack_date_parse(message, length, &cur_token, &day, &month, &year);
+  if (r != MAILIMF_NO_ERROR)
+    return r;
+  
+  r = mailimf_fws_parse(message, length, &cur_token);
+  if (r != MAILIMF_NO_ERROR)
+    return r;
+  
+  hour = 0;
+  min = 0;
+  sec = 0;
+  zone = 0;
+  r = mailimf_time_parse(message, length, &cur_token,
+                         &hour, &min, &sec, &zone);
+  if (r != MAILIMF_NO_ERROR)
+    return r;
+  
+  date_time = mailimf_date_time_new(day, month, year, hour, min, sec, zone);
+  if (date_time == NULL)
+    return MAILIMF_ERROR_MEMORY;
+  
+  * indx = cur_token;
+  * result = date_time;
+  
   return MAILIMF_NO_ERROR;
 }
 
@@ -2274,6 +2346,42 @@ static int mailimf_date_parse(const char * message, size_t length,
 
   * indx = cur_token;
 
+  return MAILIMF_NO_ERROR;
+}
+
+static int mailimf_hack_date_parse(const char * message, size_t length,
+                              size_t * indx,
+                              int * pday, int * pmonth, int * pyear)
+{
+  size_t cur_token;
+  int day;
+  int month;
+  int year;
+  int r;
+  
+  cur_token = * indx;
+  
+  month = 1;
+  r = mailimf_month_parse(message, length, &cur_token, &month);
+  if (r != MAILIMF_NO_ERROR)
+    return r;
+  
+  day = 1;
+  r = mailimf_day_parse(message, length, &cur_token, &day);
+  if (r != MAILIMF_NO_ERROR)
+    return r;
+  
+  year = 2001;
+  r = mailimf_year_parse(message, length, &cur_token, &year);
+  if (r != MAILIMF_NO_ERROR)
+    return r;
+  
+  * pday = day;
+  * pmonth = month;
+  * pyear = year;
+  
+  * indx = cur_token;
+  
   return MAILIMF_NO_ERROR;
 }
 
@@ -2727,8 +2835,16 @@ static int mailimf_zone_parse(const char * message, size_t length,
 	switch (message[cur_token]) {
 	case 'G':
 	  if (message[cur_token + 1] == 'M' && message[cur_token + 2] == 'T') {
-	    zone = 0;
-	    state = STATE_ZONE_OK;
+      
+      if (message[cur_token + 3] == '+') {
+        cur_token += 3;
+        state = STATE_ZONE_CONT;
+      }
+      else {
+        zone = 0;
+        state = STATE_ZONE_OK;
+      }
+	    
 	  }
 	  else {
 	    state = STATE_ZONE_ERR;
