@@ -43,7 +43,7 @@ if test "x$ACTION" = xbuild -o "x$ACTION" = xinstall ; then
     tar xzf build-mac/autogen-result.tar.gz
     export SDKROOT=
     export IPHONEOS_DEPLOYMENT_TARGET=
-    ./configure --enable-debug > "$logfile" 2>&1
+    ./configure --with-expat=no --with-curl=no --enable-debug > "$logfile" 2>&1
     if [[ "$?" != "0" ]]; then
       cat "$logfile"
       echo "configure failed"
