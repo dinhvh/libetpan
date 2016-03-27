@@ -846,6 +846,10 @@ static ssize_t mailstream_low_cfstream_read(mailstream_low * s,
   if (cfstream_data->cancelled) {
     return -1;
   }
+ 
+  if (CFReadStreamGetStatus(cfstream_data->readStream) == kCFStreamStatusError) {
+    return -1;
+  }
   
   if (CFReadStreamHasBytesAvailable(cfstream_data->readStream)) {
     readDataFromStream(s);
@@ -876,6 +880,10 @@ static ssize_t mailstream_low_cfstream_write(mailstream_low * s,
   
   if (cfstream_data->cancelled)
     return -1;
+  
+  if (CFWriteStreamGetStatus(cfstream_data->writeStream) == kCFStreamStatusError) {
+    return -1;
+  }
   
   if (CFWriteStreamCanAcceptBytes(cfstream_data->writeStream)) {
     writeDataToStream(s);
