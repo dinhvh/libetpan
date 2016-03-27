@@ -108,6 +108,10 @@ static int mailimf_date_parse(const char * message, size_t length,
 			      size_t * indx,
 			      int * pday, int * pmonth, int * pyear);
 
+static int mailimf_broken_date_parse(const char * message, size_t length,
+                                     size_t * indx,
+                                     int * pday, int * pmonth, int * pyear);
+
 static int mailimf_year_parse(const char * message, size_t length,
 			      size_t * indx, int * result);
 
@@ -2063,8 +2067,12 @@ int mailimf_date_time_parse(const char * message, size_t length,
   r = mailimf_day_of_week_parse(message, length, &cur_token, &day_of_week);
   if (r == MAILIMF_NO_ERROR) {
     r = mailimf_comma_parse(message, length, &cur_token);
-    if (r != MAILIMF_NO_ERROR)
+    if (r == MAILIMF_ERROR_PARSE) {
+      // ignore parse error.
+    }
+    else if (r != MAILIMF_NO_ERROR) {
       return r;
+    }
   }
   else if (r != MAILIMF_ERROR_PARSE)
     return r;
@@ -2073,8 +2081,12 @@ int mailimf_date_time_parse(const char * message, size_t length,
   month = 0;
   year = 0;
   r = mailimf_date_parse(message, length, &cur_token, &day, &month, &year);
-  if (r != MAILIMF_NO_ERROR)
+  if (r == MAILIMF_ERROR_PARSE) {
+    r = mailimf_broken_date_parse(message, length, &cur_token, &day, &month, &year);
+  }
+  else if (r != MAILIMF_NO_ERROR) {
     return r;
+  }
 
   r = mailimf_fws_parse(message, length, &cur_token);
   if (r != MAILIMF_NO_ERROR)
@@ -2260,6 +2272,42 @@ static int mailimf_date_parse(const char * message, size_t length,
 
   month = 1;
   r = mailimf_month_parse(message, length, &cur_token, &month);
+  if (r != MAILIMF_NO_ERROR)
+    return r;
+
+  year = 2001;
+  r = mailimf_year_parse(message, length, &cur_token, &year);
+  if (r != MAILIMF_NO_ERROR)
+    return r;
+
+  * pday = day;
+  * pmonth = month;
+  * pyear = year;
+
+  * indx = cur_token;
+
+  return MAILIMF_NO_ERROR;
+}
+
+static int mailimf_broken_date_parse(const char * message, size_t length,
+                                     size_t * indx,
+                                     int * pday, int * pmonth, int * pyear)
+{
+  size_t cur_token;
+  int day;
+  int month;
+  int year;
+  int r;
+
+  cur_token = * indx;
+
+  month = 1;
+  r = mailimf_month_parse(message, length, &cur_token, &month);
+  if (r != MAILIMF_NO_ERROR)
+    return r;
+
+  day = 1;
+  r = mailimf_day_parse(message, length, &cur_token, &day);
   if (r != MAILIMF_NO_ERROR)
     return r;
 
@@ -2696,7 +2744,7 @@ enum {
 };
 
 static int mailimf_zone_parse(const char * message, size_t length,
-			      size_t * indx, int * result)
+                              size_t * indx, int * result)
 {
   int zone;
   int sign;
@@ -2720,74 +2768,80 @@ static int mailimf_zone_parse(const char * message, size_t length,
     int state;
 
     state = STATE_ZONE_1;
-    
+
     while (state <= 2) {
       switch (state) {
-      case STATE_ZONE_1:
-	switch (message[cur_token]) {
-	case 'G':
-	  if (message[cur_token + 1] == 'M' && message[cur_token + 2] == 'T') {
-	    zone = 0;
-	    state = STATE_ZONE_OK;
-	  }
-	  else {
-	    state = STATE_ZONE_ERR;
-	  }
-	  break;
-	case 'E':
-	  zone = -5;
-	  state = STATE_ZONE_2;
-	  break;
-	case 'C':
-	  zone = -6;
-	  state = STATE_ZONE_2;
-	  break;
-	case 'M':
-	  zone = -7;
-	  state = STATE_ZONE_2;
-	  break;
-	case 'P':
-	  zone = -8;
-	  state = STATE_ZONE_2;
-	  break;
-	default:
-	  state = STATE_ZONE_CONT;
-	  break;
-	}
-	break;
-      case STATE_ZONE_2:
-	switch (message[cur_token + 1]) {
-	case 'S':
-	  state = STATE_ZONE_3;
-	  break;
-	case 'D':
-	  zone ++;
-	  state = STATE_ZONE_3;
-	  break;
-	default:
-	  state = STATE_ZONE_ERR;
-	  break;
-	}
-	break;
-      case STATE_ZONE_3:
-	if (message[cur_token + 2] == 'T') {
-	  zone *= 100;
-	  state = STATE_ZONE_OK;
-	}
-	else
-	  state = STATE_ZONE_ERR;
-	break;
+        case STATE_ZONE_1:
+          switch (message[cur_token]) {
+            case 'G':
+              if (message[cur_token + 1] == 'M' && message[cur_token + 2] == 'T') {
+                if ((cur_token + 3 < length) && ((message[cur_token + 3] == '+') || (message[cur_token + 3] == '-'))) {
+                  cur_token += 3;
+                  state = STATE_ZONE_CONT;
+                }
+                else {
+                  zone = 0;
+                  state = STATE_ZONE_OK;
+                }
+              }
+              else {
+                state = STATE_ZONE_ERR;
+              }
+              break;
+            case 'E':
+              zone = -5;
+              state = STATE_ZONE_2;
+              break;
+            case 'C':
+              zone = -6;
+              state = STATE_ZONE_2;
+              break;
+            case 'M':
+              zone = -7;
+              state = STATE_ZONE_2;
+              break;
+            case 'P':
+              zone = -8;
+              state = STATE_ZONE_2;
+              break;
+            default:
+              state = STATE_ZONE_CONT;
+              break;
+          }
+          break;
+        case STATE_ZONE_2:
+          switch (message[cur_token + 1]) {
+            case 'S':
+              state = STATE_ZONE_3;
+              break;
+            case 'D':
+              zone ++;
+              state = STATE_ZONE_3;
+              break;
+            default:
+              state = STATE_ZONE_ERR;
+              break;
+          }
+          break;
+        case STATE_ZONE_3:
+          if (message[cur_token + 2] == 'T') {
+            zone *= 100;
+            state = STATE_ZONE_OK;
+          }
+          else
+            state = STATE_ZONE_ERR;
+          break;
       }
     }
 
     switch (state) {
-    case STATE_ZONE_OK:
-      * result = zone;
-      * indx = cur_token + 3;
-      return MAILIMF_NO_ERROR;
-      
-    case STATE_ZONE_ERR:
-      return MAILIMF_ERROR_PARSE;
+      case STATE_ZONE_OK:
+        * result = zone;
+        * indx = cur_token + 3;
+        return MAILIMF_NO_ERROR;
+
+      case STATE_ZONE_ERR:
+        return MAILIMF_ERROR_PARSE;
     }
   }
 
