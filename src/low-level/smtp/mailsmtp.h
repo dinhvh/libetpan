@@ -159,6 +159,11 @@ LIBETPAN_EXPORT
 void mailsmtp_set_progress_callback(mailsmtp * session,
                                     mailprogress_function * progr_fun,
                                     void * context);
+
+LIBETPAN_EXPORT
+void mailsmtp_set_should_cancel_callback(mailsmtp * session,
+                                         should_cancel_function * cancel_fun,
+                                         void * context);
    
 LIBETPAN_EXPORT
 void mailsmtp_set_logger(mailsmtp * session, void (* logger)(mailsmtp * session, int log_type,
