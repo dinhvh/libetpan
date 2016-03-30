@@ -489,6 +489,43 @@ int mailsmtp_data_message_quit(mailsmtp * session,
     }
 }
 
+int mailsmtp_data_message_quit_no_disconnect(mailsmtp * session,
+                                             const char * message,
+                                             size_t size)
+{
+  int r;
+  
+  r = send_data(session, message, size);
+  if (r == -1)
+    return MAILSMTP_ERROR_STREAM;
+  
+  r = send_quit(session);
+  r = read_response(session);
+  
+  switch(r) {
+    case 250:
+      return MAILSMTP_NO_ERROR;
+      
+    case 552:
+      return MAILSMTP_ERROR_EXCEED_STORAGE_ALLOCATION;
+      
+    case 554:
+      return MAILSMTP_ERROR_TRANSACTION_FAILED;
+      
+    case 451:
+      return MAILSMTP_ERROR_IN_PROCESSING;
+      
+    case 452:
+      return MAILSMTP_ERROR_INSUFFICIENT_SYSTEM_STORAGE;
+      
+    case 0:
+      return MAILSMTP_ERROR_STREAM;
+      
+    default:
+      return MAILSMTP_ERROR_UNEXPECTED_CODE;
+  }
+}
+
 /* esmtp operations */
 
 
