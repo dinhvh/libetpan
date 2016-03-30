@@ -111,6 +111,11 @@ int mailsmtp_data_message_quit(mailsmtp * session,
                                size_t size);
 
 LIBETPAN_EXPORT
+int mailsmtp_data_message_quit_no_disconnect(mailsmtp * session,
+                                             const char * message,
+                                             size_t size);
+
+LIBETPAN_EXPORT
 int mailesmtp_ehlo(mailsmtp * session);
 
 LIBETPAN_EXPORT
