@@ -109,13 +109,13 @@ AC_PROG_CC
 AC_PROG_CXX
 
 # Compiler flags.
-AC_ARG_ENABLE(debug,   [  --enable-debug          setup flags (gcc) for debugging (default=no)],
+AC_ARG_ENABLE(debug, [AC_HELP_STRING([--enable-debug], [setup flags (gcc) for debugging (default=no)])],
 if test "x$enable_debug" = xyes; then
   CFLAGS="$CFLAGS -O2 -g"
 fi
 CPPFLAGS="$CPPFLAGS -DDEBUG"
 LDFLAGS="$LDFLAGS",)
-AC_ARG_ENABLE(optim,   [  --enable-optim          setup flags (gcc) for optimizations (default=no)],
+AC_ARG_ENABLE(optim, [AC_HELP_STRING([--enable-optim], [setup flags (gcc) for optimizations (default=no)])],
 if test "x$enable_debug" != "xyes" ; then
   if test "x$GCC" = xyes; then
     CFLAGS="$CFLAGS -O2 -ffast-math -funroll-loops -g0"
@@ -128,7 +128,7 @@ fi,)
 if test "x$GCC" = xyes; then
   CFLAGS="$CFLAGS -W -Wall"
 fi
-AC_ARG_ENABLE(syntax,   [  --enable-unstrict-syntax be lazy on syntax checking for protocols (default=no)], , [AC_DEFINE(UNSTRICT_SYNTAX, 1, [Define to be lazy on protocol syntax])])
+AC_ARG_ENABLE(syntax, [AC_HELP_STRING([--enable-unstrict-syntax], [be lazy on syntax checking for protocols (default=no)])], , [AC_DEFINE(UNSTRICT_SYNTAX, 1, [Define to be lazy on protocol syntax])])
 
 AH_VERBATIM([CONFIG_H_FIRST], [/* Check for Linux's /usr/include/features.h
  */
@@ -186,7 +186,7 @@ if test "x$has_getoptlong" = "xyes"; then
 fi
 
 dnl OpenSSL -- very primitive right now
-AC_ARG_WITH(openssl,   [  --with-openssl[=DIR]    include OpenSSL support (default=auto)],
+AC_ARG_WITH(openssl, [AC_HELP_STRING([--with-openssl[=DIR]], [include OpenSSL support (default=auto)])],
             [], [with_openssl=yes])
 if test "x$with_openssl" != "xno"; then
   OCPPFLAGS="$CPPFLAGS"
@@ -217,7 +217,7 @@ fi
 AC_SUBST(SSLLIBS)
 
 dnl GNUTLS
-AC_ARG_WITH(gnutls,    [ --with-gnutls[=DIR]      include GnuTLS support (default=auto)],
+AC_ARG_WITH(gnutls, [AC_HELP_STRING([--with-gnutls[=DIR]], [include GnuTLS support (default=auto)])],
             [], [with_gnutls=no])
 if test "x$with_gnutls" != "xno"; then
   OCPPFLAGS="$CPPFLAGS"
@@ -255,8 +255,7 @@ fi
 dnl iconv
 LIBICONV=""
 
-AC_ARG_ENABLE(iconv,
-	[ --disable-iconv	make a version not using iconv],
+AC_ARG_ENABLE(iconv, [AC_HELP_STRING([--disable-iconv], [make a version not using iconv])],
 		enable_iconv=no, enable_iconv=yes)
 if test x$enable_iconv = xyes; then
    dnl get prototype
@@ -343,7 +342,7 @@ DBVERS=0
 DBLINKED=0
 DBLIB=""
 
-AC_ARG_ENABLE(db,   [  --disable-db            disable Berkeley DB (default=try to detect DB)],[enable_db=$enableval],[enable_db=yes])
+AC_ARG_ENABLE(db, [AC_HELP_STRING([--disable-db], [disable Berkeley DB (default=try to detect DB)])],[enable_db=$enableval],[enable_db=yes])
 
 dnl Check for a presence of Berkeley DB header
 if test "x$enable_db" != "xyes"; then
@@ -386,7 +385,7 @@ dnl Look for db3 or superior with db_create call
   case "$DBVERS" in
     3)
     AC_MSG_RESULT([version 3.x or above])
-    for lib in db-5.3 db-5.1 db-5.0 db-4.8 db-4.7 db-4.6 db-4.5 db-4.4 db-4.3 db-4.2 db-4.1 db-4.0 db-4 db4 db-3.2 db-3 db3 db; do
+    for lib in db-6.0 db-5.3 db-5.1 db-5.0 db-4.8 db-4.7 db-4.6 db-4.5 db-4.4 db-4.3 db-4.2 db-4.1 db-4.0 db-4 db4 db-3.2 db-3 db3 db; do
       if test "x$DBLINKED" = "x0"; then
 dnl        AC_CHECK_LIB($lib, db_create, [DBLIB="-l$lib"; DBLINKED=1], [])
 dnl installations of libdb4 function names are defined in db.h
@@ -439,8 +438,8 @@ AC_DEFINE_UNQUOTED(DBVERS, $DBVERS,
 AC_SUBST(DBLIB)
 
 dnl Threading support, if enabled
-AC_ARG_ENABLE(threads,  [  --disable-threads        do not include multithreading support using pthread],,[enable_threads=yes])
-AC_ARG_ENABLE(windows-threads,  [  --enable-windows-threads        include multithreading support using windows threads],[enable_windows_threads=yes],)
+AC_ARG_ENABLE(threads, [AC_HELP_STRING([--disable-threads], [do not include multithreading support using pthread])],,[enable_threads=yes])
+AC_ARG_ENABLE(windows-threads, [AC_HELP_STRING([--enable-windows-threads], [include multithreading support using windows threads])],[enable_windows_threads=yes],)
 
 if test "x$enable_windows_threads" = "xyes"; then
   AC_CHECK_HEADERS(pthread.h, [], [])
@@ -496,7 +495,7 @@ AC_SUBST(LIBSUFFIX)
 AC_SUBST(REENTRANT)
 
 dnl liblockfile on debian systems
-AC_ARG_ENABLE(lockfile,  [  --disable-lockfile      do not use liblockfile for locking mailboxes])
+AC_ARG_ENABLE(lockfile, [AC_HELP_STRING([--disable-lockfile], [do not use liblockfile for locking mailboxes])])
 if test "x$enable_lockfile" != "xno"; then
   AC_CHECK_LIB(lockfile, lockfile_create,, [
     if test "x$enable_lockfile" = "xyes"; then
@@ -512,7 +511,7 @@ AC_SUBST(VERSION_MAJOR)
 AC_SUBST(VERSION_MINOR)
 
 dnl Cyrus SASL
-AC_ARG_WITH(sasl,   [  --with-sasl[=DIR]    include SASL support (default=auto)],
+AC_ARG_WITH(sasl, [AC_HELP_STRING([--with-sasl[=DIR]], [include SASL support (default=auto)])],
             [], [with_sasl=yes])
 if test "x$with_sasl" != "xno"; then
   OCPPFLAGS="$CPPFLAGS"
@@ -564,8 +563,10 @@ if test "x$enable_ipv6" != "xno"; then
     dnl check for getaddrinfo and freeaddrinfo function presence
     for func in "getaddrinfo" "freeaddrinfo"; do
       AC_MSG_CHECKING([for $func])
-      AC_TRY_LINK([], [$func();], 
-                      [func_present=yes], 
+      AC_TRY_LINK([#include <sys/socket.h>
+                   #include <netdb.h>],
+                      [(void)$func;],
+                      [func_present=yes],
                       [func_present=no])
       AC_MSG_RESULT($func_present)
 
@@ -579,9 +580,9 @@ fi
 dnl libcurl
 
 libcurl=no
-AC_ARG_WITH(curl,   [  --with-curl[=DIR]    curl install directory (default=auto)],
+AC_ARG_WITH(curl, [AC_HELP_STRING([--with-curl[=DIR]], [curl install directory (default=auto)])],
             [], [with_curl=auto])
-if test "x$with_curl" != "xno"; then
+if test "x$with_curl" = "xno"; then
   :
 elif test "x$with_curl" != "xauto"; then
   OCPPFLAGS="$CPPFLAGS"
@@ -637,9 +638,9 @@ fi
 
 dnl expat
 libexpat=no
-AC_ARG_WITH(expat,   [  --with-expat[=DIR]    expat install directory (default=auto)],
+AC_ARG_WITH(expat, [AC_HELP_STRING([--with-expat[=DIR]], [expat install directory (default=auto)])],
             [], [with_expat=auto])
-if test "x$with_expat" != "xno"; then
+if test "x$with_expat" = "xno"; then
 	:
 elif test "x$with_expat" != "xauto"; then
   OCPPFLAGS="$CPPFLAGS"

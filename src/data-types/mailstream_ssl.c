@@ -495,13 +495,19 @@ again:
 static struct mailstream_ssl_data * ssl_data_new(int fd, time_t timeout,
 	void (* callback)(struct mailstream_ssl_context * ssl_context, void * cb_data), void * cb_data)
 {
-  return ssl_data_new_full(fd, timeout, SSLv23_client_method(), callback, cb_data);
-}
-
-static struct mailstream_ssl_data * tls_data_new(int fd, time_t timeout,
-  void (* callback)(struct mailstream_ssl_context * ssl_context, void * cb_data), void * cb_data)
-{
-  return ssl_data_new_full(fd, timeout, TLSv1_client_method(), callback, cb_data);
+  return ssl_data_new_full(fd, timeout,
+#if (OPENSSL_VERSION_NUMBER >= 0x10100000L)
+		TLS_client_method(),
+#else
+	/* Despite their name the SSLv23_*method() functions have nothing to do
+	 * with the availability of SSLv2 or SSLv3. What these functions do is
+	 * negotiate with the peer the highest available SSL/TLS protocol version
+	 * available. The name is as it is for historic reasons. This is a very
+	 * common confusion and is the main reason why these names have been
+	 * deprecated in the latest dev version of OpenSSL. */
+		SSLv23_client_method(),
+#endif
+		callback, cb_data);
 }
 
 #else
@@ -635,11 +641,6 @@ static struct mailstream_ssl_data * ssl_data_new(int fd, time_t timeout,
  err:
   return NULL;
 }
-static struct mailstream_ssl_data * tls_data_new(int fd, time_t timeout,
-  void (* callback)(struct mailstream_ssl_context * ssl_context, void * cb_data), void * cb_data)
-{
-  return ssl_data_new(fd, timeout, callback, cb_data);
-}
 #endif
 
 static void  ssl_data_free(struct mailstream_ssl_data * ssl_data)
@@ -691,10 +692,7 @@ static mailstream_low * mailstream_low_ssl_open_full(int fd, int starttls, time_
   mailstream_low * s;
   struct mailstream_ssl_data * ssl_data;
 
-  if (starttls)
-    ssl_data = tls_data_new(fd, timeout, callback, cb_data);
-  else
-    ssl_data = ssl_data_new(fd, timeout, callback, cb_data);
+  ssl_data = ssl_data_new(fd, timeout, callback, cb_data);
 
   if (ssl_data == NULL)
     goto err;

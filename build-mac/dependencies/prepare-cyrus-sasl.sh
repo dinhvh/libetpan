@@ -154,6 +154,7 @@ for TARGET in $TARGETS; do
         make -j 8 >> "$logfile" 2>&1
         if [[ "$?" != "0" ]]; then
           echo "CONFIGURE FAILED"
+          cat "$logfile"
           exit 1
         fi
         cd lib
@@ -167,6 +168,7 @@ for TARGET in $TARGETS; do
         cd ..
         if [[ "$?" != "0" ]]; then
           echo "BUILD FAILED"
+          cat "$logfile"
           exit 1
         fi
         make clean >> "$logfile" 2>&1

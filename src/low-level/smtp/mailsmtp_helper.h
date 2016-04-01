@@ -67,6 +67,13 @@ int mailesmtp_send_quit(mailsmtp * session,
                         const char * envid,
                         clist * addresses,
                         const char * message, size_t size);
+LIBETPAN_EXPORT
+int mailesmtp_send_quit_no_disconnect(mailsmtp * session,
+                                      const char * from,
+                                      int return_full,
+                                      const char * envid,
+                                      clist * addresses,
+                                      const char * message, size_t size);
 
 LIBETPAN_EXPORT
 int mailsmtp_send(mailsmtp * session,
