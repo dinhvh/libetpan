@@ -197,34 +197,6 @@ static ssize_t read_from_internal_buffer(mailstream * s,
   return count;
 }
 
-static ssize_t read_through_buffer(mailstream * s, void * buf, size_t count)
-{
-  size_t left;
-  char * cur_buf;
-  ssize_t bytes_read;
-
-  cur_buf = buf;
-  left = count;
-
-  while (left > 0) {
-    bytes_read = mailstream_low_read(s->low, cur_buf, left);
-
-    if (bytes_read < 0) {
-      if (count == left)
-	return -1;
-      else
-	return count - left;
-    }
-    else if (bytes_read == 0)
-      return count - left;
-
-    cur_buf += bytes_read;
-    left -= bytes_read;
-  }
-
-  return count;
-}
-
 LIBETPAN_EXPORT
 ssize_t mailstream_read(mailstream * s, void * buf, size_t count)
 {
@@ -246,12 +218,13 @@ ssize_t mailstream_read(mailstream * s, void * buf, size_t count)
   }
 
   if (left > s->buffer_max_size) {
-    read_bytes = read_through_buffer(s, cur_buf, left);
+    read_bytes = mailstream_low_read(s->low, cur_buf, left);
+
     if (read_bytes == -1) {
       if (count == left)
-	return -1;
+        return -1;
       else {
-	return count - left;
+        return count - left;
       }
     }
 

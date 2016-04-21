@@ -67,7 +67,7 @@ mailimap_extension_unregister_all(void);
 LIBETPAN_EXPORT
 int
 mailimap_extension_data_parse(int calling_parser,
-        mailstream * fd, MMAPString * buffer,
+        mailstream * fd, MMAPString * buffer, struct mailimap_parser_context * parser_ctx,
         size_t * indx, struct mailimap_extension_data ** result,
         size_t progr_rate,
         progress_function * progr_fun);

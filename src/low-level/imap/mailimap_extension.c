@@ -104,7 +104,7 @@ mailimap_extension_unregister_all(void)
 LIBETPAN_EXPORT
 int
 mailimap_extension_data_parse(int calling_parser,
-        mailstream * fd, MMAPString * buffer,
+        mailstream * fd, MMAPString * buffer, struct mailimap_parser_context * parser_ctx,
         size_t * indx, struct mailimap_extension_data ** result,
         size_t progr_rate,
         progress_function * progr_fun)
@@ -117,7 +117,7 @@ mailimap_extension_data_parse(int calling_parser,
     struct mailimap_extension_api * ext;
     
     ext = internal_extension_list[i];
-    r = ext->ext_parser(calling_parser, fd, buffer, indx, result,
+    r = ext->ext_parser(calling_parser, fd, buffer, parser_ctx, indx, result,
         progr_rate, progr_fun);
     if (r != MAILIMAP_ERROR_PARSE)
       return r;
@@ -131,7 +131,7 @@ mailimap_extension_data_parse(int calling_parser,
     struct mailimap_extension_api * ext;
     
     ext = clist_content(cur);
-    r = ext->ext_parser(calling_parser, fd, buffer, indx, result,
+    r = ext->ext_parser(calling_parser, fd, buffer, parser_ctx, indx, result,
         progr_rate, progr_fun);
     if (r != MAILIMAP_ERROR_PARSE)
       return r;

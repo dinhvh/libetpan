@@ -87,7 +87,7 @@ static void
 
 static int
 	mailimap_qresync_extension_parse(int calling_parser, mailstream * fd,
-	MMAPString * buffer, size_t * indx,
+	MMAPString * buffer, struct mailimap_parser_context * parser_ctx, size_t * indx,
 	struct mailimap_extension_data ** result,
 	size_t progr_rate, progress_function * progr_fun);
 
@@ -538,16 +538,16 @@ static void
 }
 
 static int resp_text_code_parse(mailstream * fd,
-  MMAPString * buffer, size_t * indx,
+  MMAPString * buffer, struct mailimap_parser_context * parser_ctx, size_t * indx,
   struct mailimap_qresync_resptextcode ** result);
 
 static int vanished_parse(mailstream * fd,
-  MMAPString * buffer, size_t * indx,
+  MMAPString * buffer, struct mailimap_parser_context * parser_ctx, size_t * indx,
   struct mailimap_qresync_vanished ** result);
 
 static int
 	mailimap_qresync_extension_parse(int calling_parser, mailstream * fd,
-	MMAPString * buffer, size_t * indx,
+	MMAPString * buffer, struct mailimap_parser_context * parser_ctx, size_t * indx,
 	struct mailimap_extension_data ** result,
 	size_t progr_rate, progress_function * progr_fun)
 {
@@ -561,7 +561,7 @@ static int
       struct mailimap_qresync_resptextcode * resptextcode;
       struct mailimap_extension_data * ext_data;
       
-      r = resp_text_code_parse(fd, buffer, &cur_token, &resptextcode);
+      r = resp_text_code_parse(fd, buffer, parser_ctx, &cur_token, &resptextcode);
       if (r != MAILIMAP_NO_ERROR)
         return r;
       ext_data = mailimap_extension_data_new(&mailimap_extension_qresync,
@@ -579,7 +579,7 @@ static int
       struct mailimap_qresync_vanished * vanished;
       struct mailimap_extension_data * ext_data;
       
-      r = vanished_parse(fd, buffer, &cur_token, &vanished);
+      r = vanished_parse(fd, buffer, parser_ctx, &cur_token, &vanished);
       if (r != MAILIMAP_NO_ERROR)
         return r;
       ext_data = mailimap_extension_data_new(&mailimap_extension_qresync,
@@ -598,7 +598,7 @@ static int
 }
 
 static int resp_text_code_parse(mailstream * fd,
-  MMAPString * buffer, size_t * indx,
+  MMAPString * buffer, struct mailimap_parser_context * parser_ctx, size_t * indx,
   struct mailimap_qresync_resptextcode ** result)
 {
   int r;
@@ -628,7 +628,7 @@ expunged-resp       =  "VANISHED" [SP "(EARLIER)"] SP known-uids
 */
 
 static int vanished_parse(mailstream * fd,
-  MMAPString * buffer, size_t * indx,
+  MMAPString * buffer, struct mailimap_parser_context * parser_ctx, size_t * indx,
   struct mailimap_qresync_vanished ** result)
 {
   int r;
@@ -664,7 +664,7 @@ static int vanished_parse(mailstream * fd,
     }
   }
   
-  r = mailimap_set_parse(fd, buffer, &cur_token, &set);
+  r = mailimap_set_parse(fd, buffer, parser_ctx, &cur_token, &set);
   if (r != MAILIMAP_NO_ERROR) {
     res = r;
     goto err;

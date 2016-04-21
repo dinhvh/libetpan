@@ -41,7 +41,7 @@ extern "C" {
 #include <libetpan/mailimap_id_types.h>
 
 int mailimap_id_parse(int calling_parser, mailstream * fd,
-    MMAPString * buffer, size_t * indx,
+    MMAPString * buffer, struct mailimap_parser_context * parser_ctx, size_t * indx,
     struct mailimap_extension_data ** result,
     size_t progr_rate,
     progress_function * progr_fun);
