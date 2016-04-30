@@ -3247,6 +3247,10 @@ mailimf_address_list_parse(const char * message, size_t length,
   }
 
   * result = address_list;
+  //Some email address list end with a ',' or ';'
+  while ((message[cur_token] == ',' || message[cur_token] == ';') && cur_token < length) {
+    cur_token++;
+  }
   * indx = cur_token;
 
   return MAILIMF_NO_ERROR;
