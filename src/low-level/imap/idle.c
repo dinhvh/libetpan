@@ -101,7 +101,7 @@ int mailimap_idle(mailimap * session)
   indx = 0;
 
   r = mailimap_struct_multiple_parse(session->imap_stream,
-					session->imap_stream_buffer,
+					session->imap_stream_buffer, NULL,
 					&indx,
 					&resp_data_list,
 					(mailimap_struct_parser *)
@@ -118,7 +118,7 @@ int mailimap_idle(mailimap * session)
   }
 
   r = mailimap_continue_req_parse(session->imap_stream,
-      session->imap_stream_buffer,
+      session->imap_stream_buffer, NULL,
       &indx, &cont_req,
       session->imap_progr_rate, session->imap_progr_fun);
   

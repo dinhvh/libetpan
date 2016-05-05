@@ -84,7 +84,7 @@ int mailimap_oauth2_authenticate(mailimap * session, const char *auth_user, cons
 
   indx = 0;
   r = mailimap_continue_req_parse(session->imap_stream,
-      session->imap_stream_buffer,
+      session->imap_stream_buffer, NULL,
       &indx, &cont_req,
       session->imap_progr_rate, session->imap_progr_fun);
   if (r == MAILIMAP_NO_ERROR) {

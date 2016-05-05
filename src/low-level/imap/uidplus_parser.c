@@ -39,15 +39,15 @@
 #include "uidplus_types.h"
 #include "uidplus.h"
 
-static int mailimap_uid_range_parse(mailstream * fd, MMAPString * buffer,
+static int mailimap_uid_range_parse(mailstream * fd, MMAPString * buffer, struct mailimap_parser_context * parser_ctx,
     size_t * indx, struct mailimap_set_item ** result);
 
-static int mailimap_uidplus_resp_code_parse(mailstream * fd, MMAPString * buffer,
+static int mailimap_uidplus_resp_code_parse(mailstream * fd, MMAPString * buffer, struct mailimap_parser_context * parser_ctx,
     size_t * indx,
     struct mailimap_extension_data ** result);
 
 int mailimap_uidplus_parse(int calling_parser, mailstream * fd,
-    MMAPString * buffer, size_t * indx,
+    MMAPString * buffer, struct mailimap_parser_context * parser_ctx, size_t * indx,
     struct mailimap_extension_data ** result,
     size_t progr_rate,
     progress_function * progr_fun)
@@ -55,7 +55,7 @@ int mailimap_uidplus_parse(int calling_parser, mailstream * fd,
   if (calling_parser != MAILIMAP_EXTENDED_PARSER_RESP_TEXT_CODE)
     return MAILIMAP_ERROR_PARSE;
   
-  return mailimap_uidplus_resp_code_parse(fd, buffer, indx, result);
+  return mailimap_uidplus_resp_code_parse(fd, buffer, parser_ctx, indx, result);
 }
 
 
@@ -63,7 +63,7 @@ int mailimap_uidplus_parse(int calling_parser, mailstream * fd,
    uid-set         = (uniqueid / uid-range) *("," uid-set)
 */
 
-static int uid_set_item_parse(mailstream * fd, MMAPString * buffer,
+static int uid_set_item_parse(mailstream * fd, MMAPString * buffer, struct mailimap_parser_context * parser_ctx,
     size_t * indx, struct mailimap_set_item ** result,
     size_t progr_rate,
     progress_function * progr_fun)
@@ -75,7 +75,7 @@ static int uid_set_item_parse(mailstream * fd, MMAPString * buffer,
   
   cur_token = * indx;
   
-  r = mailimap_uid_range_parse(fd, buffer, &cur_token, &set_item);
+  r = mailimap_uid_range_parse(fd, buffer, parser_ctx, &cur_token, &set_item);
   if (r == MAILIMAP_NO_ERROR) {
     * result = set_item;
     * indx = cur_token;
@@ -85,7 +85,7 @@ static int uid_set_item_parse(mailstream * fd, MMAPString * buffer,
   if (r != MAILIMAP_ERROR_PARSE)
     return r;
   
-  r = mailimap_uniqueid_parse(fd, buffer, &cur_token, &uniqueid);
+  r = mailimap_uniqueid_parse(fd, buffer, parser_ctx, &cur_token, &uniqueid);
   if (r == MAILIMAP_NO_ERROR) {
     set_item = mailimap_set_item_new(uniqueid, uniqueid);
     if (set_item == NULL)
@@ -105,7 +105,7 @@ static void uid_set_item_destructor(struct mailimap_set_item * set_item)
   mailimap_set_item_free(set_item);
 }
 
-static int mailimap_uid_set_parse(mailstream * fd, MMAPString *buffer,
+static int mailimap_uid_set_parse(mailstream * fd, MMAPString * buffer, struct mailimap_parser_context * parser_ctx,
     size_t * indx,
     struct mailimap_set ** result)
 {
@@ -116,7 +116,7 @@ static int mailimap_uid_set_parse(mailstream * fd, MMAPString *buffer,
   
   cur_token = * indx;
   
-  r = mailimap_struct_list_parse(fd, buffer, &cur_token, &list,
+  r = mailimap_struct_list_parse(fd, buffer, parser_ctx, &cur_token, &list,
       ',',
       (mailimap_struct_parser *) uid_set_item_parse,
       (mailimap_struct_destructor *) uid_set_item_destructor,
@@ -151,7 +151,7 @@ static int mailimap_uid_set_parse(mailstream * fd, MMAPString *buffer,
                      ; Example: 2:4 and 4:2 are equivalent.
 */
 
-static int mailimap_uid_range_parse(mailstream * fd, MMAPString * buffer,
+static int mailimap_uid_range_parse(mailstream * fd, MMAPString * buffer, struct mailimap_parser_context * parser_ctx,
     size_t * indx, struct mailimap_set_item ** result)
 {
   uint32_t first;
@@ -162,15 +162,15 @@ static int mailimap_uid_range_parse(mailstream * fd, MMAPString * buffer,
   
   cur_token = * indx;
   
-  r = mailimap_uniqueid_parse(fd, buffer, &cur_token, &first);
+  r = mailimap_uniqueid_parse(fd, buffer, parser_ctx, &cur_token, &first);
   if (r != MAILIMAP_NO_ERROR)
     return r;
   
-  r = mailimap_colon_parse(fd, buffer, &cur_token);
+  r = mailimap_colon_parse(fd, buffer, parser_ctx, &cur_token);
   if (r != MAILIMAP_NO_ERROR)
     return r;
   
-  r = mailimap_uniqueid_parse(fd, buffer, &cur_token, &last);
+  r = mailimap_uniqueid_parse(fd, buffer, parser_ctx, &cur_token, &last);
   if (r != MAILIMAP_NO_ERROR)
     return r;
   
@@ -192,18 +192,18 @@ static int mailimap_uid_range_parse(mailstream * fd, MMAPString * buffer,
                      ; to append multiple messages.
 */
 
-static int mailimap_append_uid_parse(mailstream * fd, MMAPString * buffer,
+static int mailimap_append_uid_parse(mailstream * fd, MMAPString * buffer, struct mailimap_parser_context * parser_ctx,
     size_t * indx,
     struct mailimap_set ** result)
 {
-  return mailimap_uid_set_parse(fd, buffer, indx, result);
+  return mailimap_uid_set_parse(fd, buffer, parser_ctx, indx, result);
 }
 
 /*
    resp-code-apnd  = "APPENDUID" SP nz-number SP append-uid
 */
 
-static int mailimap_resp_code_apnd_parse(mailstream * fd, MMAPString * buffer,
+static int mailimap_resp_code_apnd_parse(mailstream * fd, MMAPString * buffer, struct mailimap_parser_context * parser_ctx,
     size_t * indx,
     struct mailimap_uidplus_resp_code_apnd ** result)
 {
@@ -224,7 +224,7 @@ static int mailimap_resp_code_apnd_parse(mailstream * fd, MMAPString * buffer,
   if (r != MAILIMAP_NO_ERROR)
     return r;
   
-  r = mailimap_nz_number_parse(fd, buffer, &cur_token, &uidvalidity);
+  r = mailimap_nz_number_parse(fd, buffer, parser_ctx, &cur_token, &uidvalidity);
   if (r != MAILIMAP_NO_ERROR)
     return r;
   
@@ -232,7 +232,7 @@ static int mailimap_resp_code_apnd_parse(mailstream * fd, MMAPString * buffer,
   if (r != MAILIMAP_NO_ERROR)
     return r;
   
-  r = mailimap_append_uid_parse(fd, buffer, &cur_token, &set);
+  r = mailimap_append_uid_parse(fd, buffer, parser_ctx, &cur_token, &set);
   if (r != MAILIMAP_NO_ERROR)
     return r;
 
@@ -252,7 +252,7 @@ static int mailimap_resp_code_apnd_parse(mailstream * fd, MMAPString * buffer,
    resp-code-copy  = "COPYUID" SP nz-number SP uid-set SP uid-set
 */
 
-static int mailimap_resp_code_copy_parse(mailstream * fd, MMAPString * buffer,
+static int mailimap_resp_code_copy_parse(mailstream * fd, MMAPString * buffer, struct mailimap_parser_context * parser_ctx,
     size_t * indx,
     struct mailimap_uidplus_resp_code_copy ** result)
 {
@@ -279,7 +279,7 @@ static int mailimap_resp_code_copy_parse(mailstream * fd, MMAPString * buffer,
     goto err;
   }
   
-  r = mailimap_nz_number_parse(fd, buffer, &cur_token, &uidvalidity);
+  r = mailimap_nz_number_parse(fd, buffer, parser_ctx, &cur_token, &uidvalidity);
   if (r != MAILIMAP_NO_ERROR) {
     res = r;
     goto err;
@@ -291,7 +291,7 @@ static int mailimap_resp_code_copy_parse(mailstream * fd, MMAPString * buffer,
     goto err;
   }
   
-  r = mailimap_uid_set_parse(fd, buffer, &cur_token, &source_set);
+  r = mailimap_uid_set_parse(fd, buffer, parser_ctx, &cur_token, &source_set);
   if (r != MAILIMAP_NO_ERROR) {
     res = r;
     goto err;
@@ -303,7 +303,7 @@ static int mailimap_resp_code_copy_parse(mailstream * fd, MMAPString * buffer,
     goto free_source_set;
   }
   
-  r = mailimap_uid_set_parse(fd, buffer, &cur_token, &dest_set);
+  r = mailimap_uid_set_parse(fd, buffer, parser_ctx, &cur_token, &dest_set);
   if (r != MAILIMAP_NO_ERROR) {
     res = r;
     goto free_source_set;
@@ -333,7 +333,7 @@ static int mailimap_resp_code_copy_parse(mailstream * fd, MMAPString * buffer,
   "UIDNOTSTICKY"
 */
 
-static int mailimap_uidplus_uidnotsticky_parse(mailstream * fd, MMAPString * buffer,
+static int mailimap_uidplus_uidnotsticky_parse(mailstream * fd, MMAPString * buffer, struct mailimap_parser_context * parser_ctx,
     size_t * indx)
 {
   return mailimap_token_case_insensitive_parse(fd, buffer, indx,
@@ -347,7 +347,7 @@ static int mailimap_uidplus_uidnotsticky_parse(mailstream * fd, MMAPString * buf
                      ; that appears in [IMAP]
 */
 
-static int mailimap_uidplus_resp_code_parse(mailstream * fd, MMAPString * buffer,
+static int mailimap_uidplus_resp_code_parse(mailstream * fd, MMAPString * buffer, struct mailimap_parser_context * parser_ctx,
     size_t * indx,
     struct mailimap_extension_data ** result)
 {
@@ -361,7 +361,7 @@ static int mailimap_uidplus_resp_code_parse(mailstream * fd, MMAPString * buffer
   
   resp_code_apnd = NULL;
   resp_code_copy = NULL;
-  r = mailimap_resp_code_apnd_parse(fd, buffer, &cur_token, &resp_code_apnd);
+  r = mailimap_resp_code_apnd_parse(fd, buffer, parser_ctx, &cur_token, &resp_code_apnd);
   if (r == MAILIMAP_NO_ERROR) {
     ext = mailimap_extension_data_new(&mailimap_extension_uidplus,
         MAILIMAP_UIDPLUS_RESP_CODE_APND, resp_code_apnd);
@@ -377,7 +377,7 @@ static int mailimap_uidplus_resp_code_parse(mailstream * fd, MMAPString * buffer
   }
   
   resp_code_copy = NULL;
-  r = mailimap_resp_code_copy_parse(fd, buffer, &cur_token, &resp_code_copy);
+  r = mailimap_resp_code_copy_parse(fd, buffer, parser_ctx, &cur_token, &resp_code_copy);
   if (r == MAILIMAP_NO_ERROR) {
     ext = mailimap_extension_data_new(&mailimap_extension_uidplus,
         MAILIMAP_UIDPLUS_RESP_CODE_COPY, resp_code_copy);
@@ -392,7 +392,7 @@ static int mailimap_uidplus_resp_code_parse(mailstream * fd, MMAPString * buffer
     return MAILIMAP_NO_ERROR;
   }
   
-  r = mailimap_uidplus_uidnotsticky_parse(fd, buffer, &cur_token);
+  r = mailimap_uidplus_uidnotsticky_parse(fd, buffer, parser_ctx, &cur_token);
   if (r == MAILIMAP_NO_ERROR) {
     ext = mailimap_extension_data_new(&mailimap_extension_uidplus,
         MAILIMAP_UIDPLUS_RESP_CODE_UIDNOTSTICKY, resp_code_copy);

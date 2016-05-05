@@ -60,7 +60,7 @@ int mailimap_sort_key_send(mailstream * fd,
 
 static int
 mailimap_sort_extension_parse(int calling_parser, mailstream * fd,
-                               MMAPString * buffer, size_t * indx,
+                               MMAPString * buffer, struct mailimap_parser_context * parser_ctx, size_t * indx,
                                struct mailimap_extension_data ** result,
                                size_t progr_rate, progress_function * progr_fun);
 
@@ -352,7 +352,7 @@ int mailimap_sort_key_send(mailstream * fd,
 }
 
 static int
-mailimap_number_list_data_sort_parse(mailstream * fd, MMAPString * buffer,
+mailimap_number_list_data_sort_parse(mailstream * fd, MMAPString * buffer, struct mailimap_parser_context * parser_ctx,
                                      size_t * indx,
                                      clist ** result,
                                      size_t progr_rate,
@@ -375,7 +375,7 @@ mailimap_number_list_data_sort_parse(mailstream * fd, MMAPString * buffer,
   
   r = mailimap_space_parse(fd, buffer, &cur_token);
   if (r == MAILIMAP_NO_ERROR) {
-    r = mailimap_struct_spaced_list_parse(fd, buffer, &cur_token, &number_list,
+    r = mailimap_struct_spaced_list_parse(fd, buffer, parser_ctx, &cur_token, &number_list,
                                           (mailimap_struct_parser *)
                                           mailimap_nz_number_alloc_parse,
                                           (mailimap_struct_destructor *)
@@ -394,7 +394,7 @@ mailimap_number_list_data_sort_parse(mailstream * fd, MMAPString * buffer,
 
 static int
 mailimap_sort_extension_parse(int calling_parser, mailstream * fd,
-                              MMAPString * buffer, size_t * indx,
+                              MMAPString * buffer, struct mailimap_parser_context * parser_ctx, size_t * indx,
                               struct mailimap_extension_data ** result,
                               size_t progr_rate, progress_function * progr_fun)
 {
@@ -410,7 +410,7 @@ mailimap_sort_extension_parse(int calling_parser, mailstream * fd,
   {
     case MAILIMAP_EXTENDED_PARSER_RESPONSE_DATA:
     case MAILIMAP_EXTENDED_PARSER_MAILBOX_DATA:
-      r = mailimap_number_list_data_sort_parse(fd, buffer, &cur_token,
+      r = mailimap_number_list_data_sort_parse(fd, buffer, NULL, &cur_token,
                                                &number_list, progr_rate, progr_fun);
       if (r == MAILIMAP_NO_ERROR) {
         data = number_list;

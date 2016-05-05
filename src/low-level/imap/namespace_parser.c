@@ -44,18 +44,18 @@
 #include <string.h>
 
 static int mailimap_namespace_data_parse(mailstream * fd,
-                                         MMAPString * buffer, size_t * indx,
+                                         MMAPString * buffer, struct mailimap_parser_context * parser_ctx, size_t * indx,
                                          struct mailimap_namespace_data ** result,
                                          size_t progr_rate, progress_function * progr_fun);
 
 static int mailimap_namespace_response_extension_parse(mailstream * fd,
-                                                       MMAPString * buffer, size_t * indx,
+                                                       MMAPString * buffer, struct mailimap_parser_context * parser_ctx, size_t * indx,
                                                        struct mailimap_namespace_response_extension ** result,
                                                        size_t progr_rate, progress_function * progr_fun);
 
 int
 mailimap_namespace_extension_parse(int calling_parser, mailstream * fd,
-                                   MMAPString * buffer, size_t * indx,
+                                   MMAPString * buffer, struct mailimap_parser_context * parser_ctx, size_t * indx,
                                    struct mailimap_extension_data ** result,
                                    size_t progr_rate, progress_function * progr_fun)
 {
@@ -71,7 +71,7 @@ mailimap_namespace_extension_parse(int calling_parser, mailstream * fd,
   switch (calling_parser)
   {
     case MAILIMAP_EXTENDED_PARSER_RESPONSE_DATA:
-      r = mailimap_namespace_data_parse(fd, buffer, &cur_token,
+      r = mailimap_namespace_data_parse(fd, buffer, parser_ctx, &cur_token,
                                         &namespace_data, progr_rate, progr_fun);
       if (r == MAILIMAP_NO_ERROR) {
         type = MAILIMAP_NAMESPACE_TYPE_NAMESPACE;
@@ -108,7 +108,7 @@ mailimap_namespace_extension_parse(int calling_parser, mailstream * fd,
  */
 
 static int mailimap_namespace_info_parse(mailstream * fd,
-                                         MMAPString * buffer, size_t * indx,
+                                         MMAPString * buffer, struct mailimap_parser_context * parser_ctx, size_t * indx,
                                          struct mailimap_namespace_info ** result,
                                          size_t progr_rate, progress_function * progr_fun)
 {
@@ -122,13 +122,13 @@ static int mailimap_namespace_info_parse(mailstream * fd,
   char delimiter;
   struct mailimap_namespace_info * info;
   
-  r = mailimap_oparenth_parse(fd, buffer, &cur_token);
+  r = mailimap_oparenth_parse(fd, buffer, parser_ctx, &cur_token);
   if (r != MAILIMAP_NO_ERROR) {
     res = r;
     goto err;
   }
   
-  r = mailimap_string_parse(fd, buffer, &cur_token, &prefix, &prefix_len, progr_rate, progr_fun);
+  r = mailimap_string_parse(fd, buffer, parser_ctx, &cur_token, &prefix, &prefix_len, progr_rate, progr_fun);
   if (r != MAILIMAP_NO_ERROR) {
     res = r;
     goto err;
@@ -139,38 +139,38 @@ static int mailimap_namespace_info_parse(mailstream * fd,
     /* do nothing */
   }
   
-  r = mailimap_nil_parse(fd, buffer, &cur_token);
+  r = mailimap_nil_parse(fd, buffer, parser_ctx, &cur_token);
   if (r == MAILIMAP_NO_ERROR) {
 	delimiter = 0;
   }
   else {
-    r = mailimap_dquote_parse(fd, buffer, &cur_token);
+    r = mailimap_dquote_parse(fd, buffer, parser_ctx, &cur_token);
     if (r == MAILIMAP_ERROR_PARSE) {
       res = r;
       goto free_prefix;
     }
     
-    r = mailimap_quoted_char_parse(fd, buffer, &cur_token, &delimiter);
+    r = mailimap_quoted_char_parse(fd, buffer, parser_ctx, &cur_token, &delimiter);
     if (r == MAILIMAP_ERROR_PARSE) {
       // could not parse, use delimiter as fallback
       // this is an issue on Courier-IMAP
       delimiter = prefix[strlen(prefix) - 1];
     }
     
-    r = mailimap_dquote_parse(fd, buffer, &cur_token);
+    r = mailimap_dquote_parse(fd, buffer, parser_ctx, &cur_token);
     if (r == MAILIMAP_ERROR_PARSE) {
       res = r;
       goto free_prefix;
     }
   }
 
-  r = mailimap_cparenth_parse(fd, buffer, &cur_token);
+  r = mailimap_cparenth_parse(fd, buffer, parser_ctx, &cur_token);
   if (r != MAILIMAP_NO_ERROR) {
     res = r;
     goto free_prefix;
   }
   
-  r = mailimap_struct_multiple_parse(fd, buffer, &cur_token,
+  r = mailimap_struct_multiple_parse(fd, buffer, parser_ctx, &cur_token,
                                      &ext_list,
                                      (mailimap_struct_parser *)
                                      mailimap_namespace_response_extension_parse,
@@ -221,7 +221,7 @@ err:
 
 
 static int mailimap_namespace_item_parse(mailstream * fd,
-                                         MMAPString * buffer, size_t * indx,
+                                         MMAPString * buffer, struct mailimap_parser_context * parser_ctx, size_t * indx,
                                          struct mailimap_namespace_item ** result,
                                          size_t progr_rate, progress_function * progr_fun)
 {
@@ -232,19 +232,19 @@ static int mailimap_namespace_item_parse(mailstream * fd,
   clistiter * cur;
   struct mailimap_namespace_item * item;
   
-  r = mailimap_nil_parse(fd, buffer, &cur_token);
+  r = mailimap_nil_parse(fd, buffer, parser_ctx, &cur_token);
   if (r == MAILIMAP_NO_ERROR) {
     * indx = cur_token;
     * result = NULL;
     return MAILIMAP_NO_ERROR;
   }
   
-  r = mailimap_oparenth_parse(fd, buffer, &cur_token);
+  r = mailimap_oparenth_parse(fd, buffer, parser_ctx, &cur_token);
   if (r != MAILIMAP_NO_ERROR) {
     return r;
   }
   
-  r = mailimap_struct_multiple_parse(fd, buffer, &cur_token,
+  r = mailimap_struct_multiple_parse(fd, buffer, parser_ctx, &cur_token,
                                      &info_list,
                                      (mailimap_struct_parser *)
                                      mailimap_namespace_info_parse,
@@ -256,7 +256,7 @@ static int mailimap_namespace_item_parse(mailstream * fd,
     goto err;
   }
   
-  r = mailimap_cparenth_parse(fd, buffer, &cur_token);
+  r = mailimap_cparenth_parse(fd, buffer, parser_ctx, &cur_token);
   if (r != MAILIMAP_NO_ERROR) {
 	res = r;
     goto free_info_list;
@@ -293,18 +293,18 @@ err:
  Namespace_Response_Extension = SP string SP "(" string *(SP string) ")"
  */
 
-static int namespace_extension_value_parse(mailstream * fd, MMAPString * buffer,
+static int namespace_extension_value_parse(mailstream * fd, MMAPString * buffer, struct mailimap_parser_context * parser_ctx,
                                            size_t * indx, char ** result,
                                            size_t progr_rate,
                                            progress_function * progr_fun)
 {
   size_t result_len;
   
-  return mailimap_string_parse(fd, buffer, indx, result, &result_len, progr_rate, progr_fun);
+  return mailimap_string_parse(fd, buffer, parser_ctx, indx, result, &result_len, progr_rate, progr_fun);
 }
 
 static int mailimap_namespace_response_extension_parse(mailstream * fd,
-                                                       MMAPString * buffer, size_t * indx,
+                                                       MMAPString * buffer, struct mailimap_parser_context * parser_ctx, size_t * indx,
                                                        struct mailimap_namespace_response_extension ** result,
                                                        size_t progr_rate, progress_function * progr_fun)
 {
@@ -324,7 +324,7 @@ static int mailimap_namespace_response_extension_parse(mailstream * fd,
     /* do nothing */
   }
   
-  r = mailimap_string_parse(fd, buffer, &cur_token, &name, &name_len, progr_rate, progr_fun);
+  r = mailimap_string_parse(fd, buffer, parser_ctx, &cur_token, &name, &name_len, progr_rate, progr_fun);
   if (r != MAILIMAP_NO_ERROR) {
     res = r;
     goto err;
@@ -335,13 +335,13 @@ static int mailimap_namespace_response_extension_parse(mailstream * fd,
     /* do nothing */
   }
   
-  r = mailimap_oparenth_parse(fd, buffer, &cur_token);
+  r = mailimap_oparenth_parse(fd, buffer, parser_ctx, &cur_token);
   if (r != MAILIMAP_NO_ERROR) {
     res = r;
     goto err;
   }
   
-  r = mailimap_struct_spaced_list_parse(fd, buffer, &cur_token, &value_list,
+  r = mailimap_struct_spaced_list_parse(fd, buffer, parser_ctx, &cur_token, &value_list,
                                         (mailimap_struct_parser *)  namespace_extension_value_parse,
                                         (mailimap_struct_destructor *) mailimap_string_free,
                                         progr_rate, progr_fun);
@@ -350,7 +350,7 @@ static int mailimap_namespace_response_extension_parse(mailstream * fd,
     goto free_name;
   }
   
-  r = mailimap_cparenth_parse(fd, buffer, &cur_token);
+  r = mailimap_cparenth_parse(fd, buffer, parser_ctx, &cur_token);
   if (r != MAILIMAP_NO_ERROR) {
     res = r;
     goto free_value_list;
@@ -391,7 +391,7 @@ err:
 */
 
 static int mailimap_namespace_data_parse(mailstream * fd,
-                                         MMAPString * buffer, size_t * indx,
+                                         MMAPString * buffer, struct mailimap_parser_context * parser_ctx, size_t * indx,
                                          struct mailimap_namespace_data ** result,
                                          size_t progr_rate, progress_function * progr_fun)
 {
@@ -418,19 +418,19 @@ static int mailimap_namespace_data_parse(mailstream * fd,
     goto err;
   }
   
-  r = mailimap_namespace_item_parse(fd, buffer, &cur_token, &personal_namespace, progr_rate, progr_fun);
+  r = mailimap_namespace_item_parse(fd, buffer, parser_ctx, &cur_token, &personal_namespace, progr_rate, progr_fun);
   if (r != MAILIMAP_NO_ERROR) {
     res = r;
     goto err;
   }
   
-  r = mailimap_namespace_item_parse(fd, buffer, &cur_token, &other_namespace, progr_rate, progr_fun);
+  r = mailimap_namespace_item_parse(fd, buffer, parser_ctx, &cur_token, &other_namespace, progr_rate, progr_fun);
   if (r != MAILIMAP_NO_ERROR) {
     res = r;
     goto free_personal;
   }
   
-  r = mailimap_namespace_item_parse(fd, buffer, &cur_token, &shared_namespace, progr_rate, progr_fun);
+  r = mailimap_namespace_item_parse(fd, buffer, parser_ctx, &cur_token, &shared_namespace, progr_rate, progr_fun);
   if (r != MAILIMAP_NO_ERROR) {
     res = r;
     goto free_other;

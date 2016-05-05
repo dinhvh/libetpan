@@ -48,7 +48,7 @@ enum {
 
 static int
 mailimap_xgmmsgid_extension_parse(int calling_parser, mailstream * fd,
-                                   MMAPString * buffer, size_t * indx,
+                                   MMAPString * buffer, struct mailimap_parser_context * parser_ctx, size_t * indx,
                                    struct mailimap_extension_data ** result,
                                    size_t progr_rate, progress_function * progr_fun);
 
@@ -64,7 +64,7 @@ struct mailimap_extension_api mailimap_extension_xgmmsgid = {
 };
 
 static int fetch_data_xgmmsgid_parse(mailstream * fd,
-                                      MMAPString * buffer, size_t * indx,
+                                      MMAPString * buffer, struct mailimap_parser_context * parser_ctx, size_t * indx,
                                       uint64_t * result, size_t progr_rate, progress_function * progr_fun)
 {
     size_t cur_token;
@@ -82,7 +82,7 @@ static int fetch_data_xgmmsgid_parse(mailstream * fd,
     if (r != MAILIMAP_NO_ERROR)
         return r;
     
-    r = mailimap_uint64_parse(fd, buffer, &cur_token, &msgid);
+    r = mailimap_uint64_parse(fd, buffer, parser_ctx, &cur_token, &msgid);
     if (r != MAILIMAP_NO_ERROR)
         return r;
     
@@ -94,7 +94,7 @@ static int fetch_data_xgmmsgid_parse(mailstream * fd,
 
 static int
 mailimap_xgmmsgid_extension_parse(int calling_parser, mailstream * fd,
-                                   MMAPString * buffer, size_t * indx,
+                                   MMAPString * buffer, struct mailimap_parser_context * parser_ctx, size_t * indx,
                                    struct mailimap_extension_data ** result,
                                    size_t progr_rate, progress_function * progr_fun)
 {
@@ -110,7 +110,7 @@ mailimap_xgmmsgid_extension_parse(int calling_parser, mailstream * fd,
     {
         case MAILIMAP_EXTENDED_PARSER_FETCH_DATA:
             
-            r = fetch_data_xgmmsgid_parse(fd, buffer, &cur_token, &msgid, progr_rate, progr_fun);
+            r = fetch_data_xgmmsgid_parse(fd, buffer, parser_ctx, &cur_token, &msgid, progr_rate, progr_fun);
             if (r != MAILIMAP_NO_ERROR)
               return r;
             
