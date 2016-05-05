@@ -56,8 +56,9 @@
 #	include <netdb.h>
 #	include <netinet/in.h>
 #	include <sys/socket.h>
+#	include <sys/poll.h>
 #	include <unistd.h>
-#       include <arpa/inet.h>
+#	include <arpa/inet.h>
 #endif
 
 uint16_t mail_get_service_port(const char * name, char * protocol)
@@ -105,7 +106,11 @@ static int verify_sock_errors(int s)
 
 static int wait_connect(int s, int r, time_t timeout_seconds)
 {
+#ifdef WIN32
   fd_set fds;
+#else
+  struct pollfd pfd;
+#endif // WIN32
   struct timeval timeout;
   
   if (r == 0) {
@@ -121,6 +126,15 @@ static int wait_connect(int s, int r, time_t timeout_seconds)
     }
   }
   
+  if (timeout_seconds == 0) {
+		timeout = mailstream_network_delay;
+	}
+	else {
+		timeout.tv_sec = timeout_seconds;
+		timeout.tv_usec = 0;
+	}
+  
+#ifdef WIN32
   FD_ZERO(&fds);
   FD_SET(s, &fds);
   if (timeout_seconds == 0) {
@@ -140,7 +154,21 @@ static int wait_connect(int s, int r, time_t timeout_seconds)
     /* though, it's strange */
     return -1;
   }
+#else
+  pfd.fd = s;
+  pfd.events = POLLOUT;
+  pfd.revents = 0;
   
+  r = poll(&pfd, 1, timeout.tv_sec * 1000 + timeout.tv_usec / 1000);
+  if (r < 0) {
+    return -1;
+  }
+  
+  if (pfd.revents & POLLHUP) {
+    return -1;
+  }
+#endif
+
   return 0;
 }
 
