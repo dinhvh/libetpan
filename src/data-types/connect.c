@@ -56,9 +56,9 @@
 #	include <netdb.h>
 #	include <netinet/in.h>
 #	include <sys/socket.h>
-#   if USE_POLL
-#	    include <sys/poll.h>
-#   endif
+#	ifdef HAVE_SYS_POLL_H
+#		include <sys/poll.h>
+#	endif
 #	include <unistd.h>
 #	include <arpa/inet.h>
 #endif
