@@ -67,12 +67,11 @@
 #else
 #	include <sys/time.h>
 #	include <sys/types.h>
-#   if USE_POLL
+#   ifdef HAVE_SYS_POLL_H
 #	    include <sys/poll.h>
-#   else 
-#       ifdef HAVE_SELECT_H
-#	        include <sys/poll.h>
-#       endif
+#   endif
+#   ifdef HAVE_SELECT_H
+#	    include <sys/poll.h>
 #   endif
 #endif
 
