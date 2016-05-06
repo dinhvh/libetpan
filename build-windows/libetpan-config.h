@@ -75,6 +75,8 @@
 
 	/* avoid config.h*/
 #	define CONFIG_H
+#else
+#   define USE_POLL 1
 #endif // WIN32
 
 #include <limits.h>
