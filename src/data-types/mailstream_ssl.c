@@ -804,6 +804,7 @@ static int wait_read(mailstream_low * s)
   struct pollfd pfd[2];
 #else
   fd_set fds_read;
+  int max_fd;
 #endif
 
   ssl_data = (struct mailstream_ssl_data *) s->data;
@@ -1003,7 +1004,7 @@ static int wait_write(mailstream_low * s)
   pfd[0].revents = 0;
 
   pfd[1].fd = fd;
-  pfd[1].events = POLLOUT;
+  pfd[1].events = POLLIN;
   pfd[1].revents = 0;
 
   r = poll(&pfd[0], 2, timeout.tv_sec * 1000 + timeout.tv_usec / 1000);

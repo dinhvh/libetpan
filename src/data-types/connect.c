@@ -139,13 +139,6 @@ static int wait_connect(int s, int r, time_t timeout_seconds)
 #if defined(WIN32) || !USE_POLL
   FD_ZERO(&fds);
   FD_SET(s, &fds);
-  if (timeout_seconds == 0) {
-    timeout = mailstream_network_delay;
-  }
-  else {
-    timeout.tv_sec = timeout_seconds;
-    timeout.tv_usec = 0;
-  }
   /* TODO: how to cancel this ? -> could be cancelled using a cancel fd */
   r = select(s + 1, NULL, &fds, NULL, &timeout);
   if (r <= 0) {
