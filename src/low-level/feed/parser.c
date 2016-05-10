@@ -230,7 +230,7 @@ static int iconv_utf32_char(iconv_t cd, const char * inbuf, size_t insize,
     return LEP_ICONV_OK;
   }
 #else
-  return LEP_ICONV_FAIL;
+  return LEP_ICONV_FAILED;
 #endif
 }
 

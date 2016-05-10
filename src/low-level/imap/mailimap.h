@@ -862,6 +862,33 @@ int mailimap_is_163_workaround_enabled(mailimap * session);
 LIBETPAN_EXPORT    
 void mailimap_set_163_workaround_enabled(mailimap * session, int enabled);
 
+#ifndef LIBETPAN_HAS_MAILIMAP_RAMBLER_WORKAROUND
+  #define LIBETPAN_HAS_MAILIMAP_RAMBLER_WORKAROUND	1
+#endif
+
+/*
+    Enable workaround for Rambler IMAP server.
+
+    Occasionally, for large attachments (~20MB) Rambler returns wrong length of the literal.
+    Since this workaround is not completely free from false positives, by default is is off.
+
+    It is proposed to enable it only during downloading large attachments from Rambler:
+
+    @code
+    if (encoding is (base64 or uuencode) and server is rambler.ru) {
+        mailimap_set_rambler_workaround_enabled(imap, 1);
+            … fetch part ...
+        mailimap_set_rambler_workaround_enabled(imap, 0);
+    }
+    @endcode
+*/
+
+LIBETPAN_EXPORT
+int mailimap_is_rambler_workaround_enabled(mailimap * session);
+
+LIBETPAN_EXPORT
+void mailimap_set_rambler_workaround_enabled(mailimap * session, int enabled);
+
 #ifdef __cplusplus
 }
 #endif

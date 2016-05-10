@@ -1,6 +1,6 @@
 #!/bin/sh
 
-build_version=2
+build_version=4
 ANDROID_PLATFORM=android-16
 openssl_build_version=2
 cyrus_sasl_build_version=2

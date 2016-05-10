@@ -118,7 +118,7 @@ enum {
 
 static int
 mailimap_xgmlabels_extension_parse(int calling_parser, mailstream * fd,
-                                   MMAPString * buffer, size_t * indx,
+                                   MMAPString * buffer, struct mailimap_parser_context * parser_ctx, size_t * indx,
                                    struct mailimap_extension_data ** result,
                                    size_t progr_rate, progress_function * progr_fun);
 
@@ -134,7 +134,7 @@ struct mailimap_extension_api mailimap_extension_xgmlabels = {
 };
 
 static int mailimap_xgmlabels_parse(mailstream * fd,
-                                    MMAPString * buffer, size_t * indx,
+                                    MMAPString * buffer, struct mailimap_parser_context * parser_ctx, size_t * indx,
                                     clist ** result)
 {
     size_t cur_token;
@@ -144,13 +144,13 @@ static int mailimap_xgmlabels_parse(mailstream * fd,
     
     cur_token = * indx;
     
-    r = mailimap_oparenth_parse(fd, buffer, &cur_token);
+    r = mailimap_oparenth_parse(fd, buffer, parser_ctx, &cur_token);
     if (r != MAILIMAP_NO_ERROR) {
       res = r;
       goto err;
     }
     
-    r = mailimap_struct_spaced_list_parse(fd, buffer,
+    r = mailimap_struct_spaced_list_parse(fd, buffer, parser_ctx,
                                           &cur_token, &list,
                                           (mailimap_struct_parser * ) mailimap_astring_parse,
                                           (mailimap_struct_destructor * ) mailimap_astring_free,
@@ -167,7 +167,7 @@ static int mailimap_xgmlabels_parse(mailstream * fd,
       goto err;
     }
     
-    r = mailimap_cparenth_parse(fd, buffer, &cur_token);
+    r = mailimap_cparenth_parse(fd, buffer, parser_ctx, &cur_token);
     if (r != MAILIMAP_NO_ERROR) {
       res = r;
       goto free_list;
@@ -186,7 +186,7 @@ err:
 }
 
 static int fetch_data_xgmlabels_parse(mailstream * fd,
-                                      MMAPString * buffer, size_t * indx,
+                                      MMAPString * buffer, struct mailimap_parser_context * parser_ctx, size_t * indx,
                                       struct mailimap_msg_att_xgmlabels ** result)
 {
   size_t cur_token;
@@ -205,7 +205,7 @@ static int fetch_data_xgmlabels_parse(mailstream * fd,
   if (r != MAILIMAP_NO_ERROR)
     return r;
   
-  r = mailimap_xgmlabels_parse(fd, buffer, &cur_token, &label_list);
+  r = mailimap_xgmlabels_parse(fd, buffer, parser_ctx, &cur_token, &label_list);
   if (r != MAILIMAP_NO_ERROR)
     return r;
   
@@ -224,7 +224,7 @@ static int fetch_data_xgmlabels_parse(mailstream * fd,
 
 static int
 mailimap_xgmlabels_extension_parse(int calling_parser, mailstream * fd,
-                                   MMAPString * buffer, size_t * indx,
+                                   MMAPString * buffer, struct mailimap_parser_context * parser_ctx, size_t * indx,
                                    struct mailimap_extension_data ** result,
                                    size_t progr_rate, progress_function * progr_fun)
 {
@@ -241,7 +241,7 @@ mailimap_xgmlabels_extension_parse(int calling_parser, mailstream * fd,
   {
     case MAILIMAP_EXTENDED_PARSER_FETCH_DATA:
       att = NULL;
-      r = fetch_data_xgmlabels_parse(fd, buffer, &cur_token, &att);
+      r = fetch_data_xgmlabels_parse(fd, buffer, parser_ctx, &cur_token, &att);
       if (r != MAILIMAP_NO_ERROR)
         return r;
       

@@ -3387,6 +3387,7 @@ struct mailimap {
   void * imap_logger_context;
   
   int is_163_workaround_enabled;
+  int is_rambler_workaround_enabled;
 };
 
 
@@ -3566,6 +3567,23 @@ enum {
   MAILIMAP_ERROR_CUSTOM_COMMAND
 };
 
+/* information about parser context */
+
+struct mailimap_parser_context {
+  int is_rambler_workaround_enabled;
+};
+
+LIBETPAN_EXPORT
+struct mailimap_parser_context *
+mailimap_parser_context_new(mailimap * session);
+
+LIBETPAN_EXPORT
+void
+mailimap_parser_context_free(struct mailimap_parser_context * ctx);
+
+LIBETPAN_EXPORT
+int
+mailimap_parser_context_is_rambler_workaround_enabled(struct mailimap_parser_context * parser_ctx);
 
 #ifdef __cplusplus
 }

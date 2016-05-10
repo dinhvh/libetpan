@@ -44,7 +44,7 @@ enum {
 
 static int
 mailimap_enable_extension_parse(int calling_parser, mailstream * fd,
-                               MMAPString * buffer, size_t * indx,
+                               MMAPString * buffer, struct mailimap_parser_context * parser_ctx, size_t * indx,
                                struct mailimap_extension_data ** result,
                                size_t progr_rate, progress_function * progr_fun);
 
@@ -213,7 +213,7 @@ mailimap_enable_extension_data_free(struct mailimap_extension_data * ext_data)
   free(ext_data);
 }
 
-static int mailimap_enable_parse(mailstream * fd, MMAPString * buffer,
+static int mailimap_enable_parse(mailstream * fd, MMAPString * buffer, struct mailimap_parser_context * parser_ctx,
 	size_t * indx,
 	struct mailimap_capability_data ** result,
 	size_t progr_rate,
@@ -233,7 +233,7 @@ static int mailimap_enable_parse(mailstream * fd, MMAPString * buffer,
     goto err;
   }
   
-  r = mailimap_capability_list_parse(fd, buffer, &cur_token,
+  r = mailimap_capability_list_parse(fd, buffer, parser_ctx, &cur_token,
                                      &cap_list,
                                      progr_rate, progr_fun);
   if (r == MAILIMAP_ERROR_PARSE) {
@@ -271,7 +271,7 @@ err:
 
 static int
 mailimap_enable_extension_parse(int calling_parser, mailstream * fd,
-                                MMAPString * buffer, size_t * indx,
+                                MMAPString * buffer, struct mailimap_parser_context * parser_ctx, size_t * indx,
                                 struct mailimap_extension_data ** result,
                                 size_t progr_rate, progress_function * progr_fun)
 {
@@ -287,7 +287,7 @@ mailimap_enable_extension_parse(int calling_parser, mailstream * fd,
   switch (calling_parser)
   {
     case MAILIMAP_EXTENDED_PARSER_RESPONSE_DATA:
-			r = mailimap_enable_parse(fd, buffer, &cur_token,
+			r = mailimap_enable_parse(fd, buffer, parser_ctx, &cur_token,
 		    &capabilities, progr_rate, progr_fun);
       if (r == MAILIMAP_NO_ERROR) {
         type = MAILIMAP_ENABLE_TYPE_ENABLE;

@@ -48,7 +48,7 @@ enum {
 
 static int
 mailimap_xgmthrid_extension_parse(int calling_parser, mailstream * fd,
-                                   MMAPString * buffer, size_t * indx,
+                                   MMAPString * buffer, struct mailimap_parser_context * parser_ctx, size_t * indx,
                                    struct mailimap_extension_data ** result,
                                    size_t progr_rate, progress_function * progr_fun);
 
@@ -82,7 +82,7 @@ static int fetch_data_xgmthrid_parse(mailstream * fd,
     if (r != MAILIMAP_NO_ERROR)
         return r;
     
-    r = mailimap_uint64_parse(fd, buffer, &cur_token, &thrid);
+    r = mailimap_uint64_parse(fd, buffer, NULL, &cur_token, &thrid);
     if (r != MAILIMAP_NO_ERROR)
         return r;
     
@@ -94,7 +94,7 @@ static int fetch_data_xgmthrid_parse(mailstream * fd,
 
 static int
 mailimap_xgmthrid_extension_parse(int calling_parser, mailstream * fd,
-                                   MMAPString * buffer, size_t * indx,
+                                   MMAPString * buffer, struct mailimap_parser_context * parser_ctx, size_t * indx,
                                    struct mailimap_extension_data ** result,
                                    size_t progr_rate, progress_function * progr_fun)
 {

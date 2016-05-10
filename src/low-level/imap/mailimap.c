@@ -616,7 +616,7 @@ int mailimap_append(mailimap * session, const char * mailbox,
   indx = 0;
 
   r = mailimap_continue_req_parse(session->imap_stream,
-      session->imap_stream_buffer,
+      session->imap_stream_buffer, NULL,
       &indx, &cont_req,
       session->imap_progr_rate, session->imap_progr_fun);
   if (r == MAILIMAP_NO_ERROR)
@@ -1815,7 +1815,7 @@ int mailimap_authenticate(mailimap * session, const char * auth_type,
     indx = 0;
     
     r = mailimap_continue_req_parse(session->imap_stream,
-        session->imap_stream_buffer,
+        session->imap_stream_buffer, NULL,
         &indx, &cont_req,
         session->imap_progr_rate, session->imap_progr_fun);
     if (r != MAILIMAP_NO_ERROR)
@@ -2467,6 +2467,7 @@ int mailimap_parse_response(mailimap * session,
 {
   size_t indx;
   struct mailimap_response * response;
+  struct mailimap_parser_context * parser_ctx;
   char tag_str[15];
   int r;
   
@@ -2482,10 +2483,15 @@ int mailimap_parse_response(mailimap * session,
 		session->imap_stream_buffer = buffer;
   }
 
+  parser_ctx = mailimap_parser_context_new(session);
+  if (parser_ctx == NULL)
+    return MAILIMAP_ERROR_MEMORY;
+
   if ((session->imap_body_progress_fun != NULL) ||
       (session->imap_items_progress_fun != NULL)) {
     r = mailimap_response_parse_with_context(session->imap_stream,
                                              session->imap_stream_buffer,
+                                             parser_ctx,
                                              &indx, &response,
                                              session->imap_body_progress_fun,
                                              session->imap_items_progress_fun,
@@ -2496,9 +2502,13 @@ int mailimap_parse_response(mailimap * session,
   else {
     r = mailimap_response_parse(session->imap_stream,
                                 session->imap_stream_buffer,
+                                parser_ctx,
                                 &indx, &response,
                                 session->imap_progr_rate, session->imap_progr_fun);
   }
+
+  mailimap_parser_context_free(parser_ctx);
+
   if (r != MAILIMAP_NO_ERROR)
     return r;
 
@@ -2558,7 +2568,7 @@ static int parse_greeting(mailimap * session,
   session->imap_response = NULL;
 
   r = mailimap_greeting_parse(session->imap_stream,
-      session->imap_stream_buffer,
+      session->imap_stream_buffer, NULL,
       &indx, &greeting, session->imap_progr_rate,
       session->imap_progr_fun);
   if (r != MAILIMAP_NO_ERROR)
@@ -2647,6 +2657,7 @@ mailimap * mailimap_new(size_t imap_progr_rate,
   f->imap_logger = NULL;
   f->imap_logger_context = NULL;
   f->is_163_workaround_enabled = 0;
+  f->is_rambler_workaround_enabled = 0;
   return f;
   
  free_stream_buffer:
@@ -2743,4 +2754,15 @@ void mailimap_set_163_workaround_enabled(mailimap * session, int enabled) {
 LIBETPAN_EXPORT
 int mailimap_is_163_workaround_enabled(mailimap * session) {
 	return session->is_163_workaround_enabled;
+}
+
+LIBETPAN_EXPORT
+void mailimap_set_rambler_workaround_enabled(mailimap * session, int enabled) {
+  if (session)
+    session->is_rambler_workaround_enabled = enabled;
+}
+
+LIBETPAN_EXPORT
+int mailimap_is_rambler_workaround_enabled(mailimap * session) {
+  return session->is_rambler_workaround_enabled;
 }
