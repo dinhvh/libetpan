@@ -155,7 +155,7 @@ static int wait_connect(int s, int r, time_t timeout_seconds)
   pfd.revents = 0;
   
   r = poll(&pfd, 1, timeout.tv_sec * 1000 + timeout.tv_usec / 1000);
-  if (r < 0) {
+  if (r <= 0) {
     return -1;
   }
   

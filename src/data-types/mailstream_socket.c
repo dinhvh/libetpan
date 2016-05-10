@@ -267,7 +267,7 @@ static ssize_t mailstream_low_socket_read(mailstream_low * s,
     pfd[1].revents = 0;
 
     r = poll(&pfd[0], 2, timeout.tv_sec * 1000 + timeout.tv_usec / 1000);
-    if (r < 0)
+    if (r <= 0)
         return -1;
 
     cancelled = pfd[1].revents & POLLHUP;
@@ -370,7 +370,7 @@ static ssize_t mailstream_low_socket_write(mailstream_low * s,
     pfd[1].revents = 0;
 
     r = poll(&pfd[0], 2, timeout.tv_sec * 1000 + timeout.tv_usec / 1000);
-    if (r < 0)
+    if (r <= 0)
       return -1;
 
     cancelled = pfd[1].revents & POLLHUP;

@@ -357,7 +357,7 @@ static int wait_SSL_connect(int s, int want_read, time_t timeout_seconds)
     pfd.events = POLLOUT;
   }
   r = poll(&pfd, 1, timeout.tv_sec * 1000 + timeout.tv_usec / 1000);
-  if (r < 0) {
+  if (r <= 0) {
     return -1;
   }
 
@@ -848,7 +848,7 @@ static int wait_read(mailstream_low * s)
   pfd[1].revents = 0;
 
   r = poll(&pfd[0], 2, timeout.tv_sec * 1000 + timeout.tv_usec / 1000);
-  if (r < 0)
+  if (r <= 0)
     return -1;
   
   cancelled = pfd[1].revents & POLLHUP;
@@ -1008,7 +1008,7 @@ static int wait_write(mailstream_low * s)
   pfd[1].revents = 0;
 
   r = poll(&pfd[0], 2, timeout.tv_sec * 1000 + timeout.tv_usec / 1000);
-  if (r < 0)
+  if (r <= 0)
     return -1;
  
   cancelled = pfd[1].revents & POLLHUP;
