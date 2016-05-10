@@ -1020,7 +1020,7 @@ static int wait_write(mailstream_low * s)
   
   max_fd = fd > ssl_data->fd ? fd : ssl_data->fd;
   r = select(max_fd + 1, &fds_read, &fds_write, NULL, &timeout);
-  if (r < 0)
+  if (r <= 0)
     return -1;
 
   cancelled = FD_ISSET(fd, &fds_read);
