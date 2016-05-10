@@ -270,8 +270,8 @@ static ssize_t mailstream_low_socket_read(mailstream_low * s,
     if (r <= 0)
         return -1;
 
-    cancelled = pfd[1].revents & POLLHUP;
-    got_data = pfd[0].revents & (POLLIN);
+    cancelled = pfd[1].revents & POLLIN;
+    got_data = pfd[0].revents & POLLIN;
 #else
     FD_ZERO(&fds_read);
     FD_SET(fd, &fds_read);
@@ -373,8 +373,8 @@ static ssize_t mailstream_low_socket_write(mailstream_low * s,
     if (r <= 0)
       return -1;
 
-    cancelled = pfd[1].revents & POLLHUP;
-    write_enabled = pfd[0].revents & (POLLOUT);
+    cancelled = pfd[1].revents & POLLIN;
+    write_enabled = pfd[0].revents & POLLOUT;
 #else
     FD_ZERO(&fds_read);
     FD_SET(fd, &fds_read);

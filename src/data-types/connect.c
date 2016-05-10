@@ -159,7 +159,7 @@ static int wait_connect(int s, int r, time_t timeout_seconds)
     return -1;
   }
   
-  if (pfd.revents & POLLHUP) {
+  if (pfd.revents & POLLOUT) {
     return -1;
   }
 #endif

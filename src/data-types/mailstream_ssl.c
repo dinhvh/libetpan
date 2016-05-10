@@ -361,7 +361,7 @@ static int wait_SSL_connect(int s, int want_read, time_t timeout_seconds)
     return -1;
   }
 
-  if (pfd.revents & POLLHUP) {
+  if (pfd.revents & pfd.events) {
     return -1;
   }
 #endif
@@ -851,7 +851,7 @@ static int wait_read(mailstream_low * s)
   if (r <= 0)
     return -1;
   
-  cancelled = pfd[1].revents & POLLHUP;
+  cancelled = pfd[1].revents & POLLIN;
 #else
   FD_ZERO(&fds_read);
   FD_SET(fd, &fds_read);
@@ -860,6 +860,7 @@ static int wait_read(mailstream_low * s)
   r = select(max_fd + 1, &fds_read, NULL, NULL, &timeout);
   if (r <= 0)
       return -1;
+  canceled = FD_IFSET(fd, &fds_read);
 #endif
   if (cancelled) {
     /* cancelled */
@@ -1011,8 +1012,8 @@ static int wait_write(mailstream_low * s)
   if (r <= 0)
     return -1;
  
-  cancelled = pfd[1].revents & POLLHUP;
-  write_enabled = pfd[0].revents & (POLLOUT | POLLWRNORM);
+  cancelled = pfd[1].revents & POLLIN;
+  write_enabled = pfd[0].revents & POLLOUT;
 #else
   FD_ZERO(&fds_read);
   FD_ZERO(&fds_write);
