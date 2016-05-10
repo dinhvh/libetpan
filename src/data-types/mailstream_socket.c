@@ -366,7 +366,7 @@ static ssize_t mailstream_low_socket_write(mailstream_low * s,
     pfd[0].revents = 0;
 
     pfd[1].fd = fd;
-    pfd[1].events = POLLOUT;
+    pfd[1].events = POLLIN;
     pfd[1].revents = 0;
 
     r = poll(&pfd[0], 2, timeout.tv_sec * 1000 + timeout.tv_usec / 1000);
