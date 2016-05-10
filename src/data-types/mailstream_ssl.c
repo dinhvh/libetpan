@@ -860,7 +860,7 @@ static int wait_read(mailstream_low * s)
   r = select(max_fd + 1, &fds_read, NULL, NULL, &timeout);
   if (r <= 0)
       return -1;
-  cancelled = FD_IFSET(fd, &fds_read);
+  cancelled = FD_ISSET(fd, &fds_read);
 #endif
   if (cancelled) {
     /* cancelled */
