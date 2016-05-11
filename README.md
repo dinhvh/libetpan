@@ -28,6 +28,8 @@ They can be installed using [brew](http://brew.sh/).
     $ ./autogen.sh
     $ make
 
+You can use flag --with-poll for using poll() instead of select() for checking connection status
+
 ### How to link with it
 
     $ gcc -c -o sample.o sample.c `libetpan-config --cflags`
