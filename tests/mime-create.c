@@ -272,7 +272,7 @@ static char * generate_boundary(const char * boundary_prefix)
     if (boundary_prefix == NULL)
         boundary_prefix = "";
     
-    snprintf(id, MAX_MESSAGE_ID, "%s%lx_%lx_%x", boundary_prefix, now, value, getpid());
+    snprintf(id, MAX_MESSAGE_ID, "%s%llx_%lx_%x", boundary_prefix, (long long)now, value, getpid());
     
     return strdup(id);
 }

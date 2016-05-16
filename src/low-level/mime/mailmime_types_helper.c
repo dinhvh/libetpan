@@ -518,7 +518,7 @@ char * mailmime_generate_boundary(void)
   value = random();
 
   gethostname(name, MAX_MESSAGE_ID);
-  snprintf(id, MAX_MESSAGE_ID, "%lx_%lx_%x", now, value, getpid());
+  snprintf(id, MAX_MESSAGE_ID, "%llx_%lx_%x", (long long)now, value, getpid());
 
   return strdup(id);
 }
