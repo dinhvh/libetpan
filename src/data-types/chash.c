@@ -393,12 +393,12 @@ int chash_resize(chash * hash, unsigned int size)
 
 #ifdef NO_MACROS
 LIBETPAN_EXPORT
-int chash_count(chash * hash) {
+unsigned int chash_count(chash * hash) {
   return hash->count;
 }
 
 LIBETPAN_EXPORT
-int chash_size(chash * hash) {
+unsigned int chash_size(chash * hash) {
   return hash->size;
 }
 
