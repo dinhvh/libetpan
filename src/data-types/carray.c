@@ -103,7 +103,7 @@ int carray_set_size(carray * array, unsigned int new_size)
 }
 
 LIBETPAN_EXPORT
-int carray_delete_fast(carray * array, unsigned int indx) {
+int carray_delete_fast(const carray * array, unsigned int indx) {
   if (indx >= array->len)
     return -1;
 
@@ -135,17 +135,17 @@ int carray_delete_slow(carray * array, unsigned int indx) {
 
 #ifdef NO_MACROS
 LIBETPAN_EXPORT
-void ** carray_data(carray * array) {
+void ** carray_data(const carray * array) {
   return array->array;
 }
 
 LIBETPAN_EXPORT
-unsigned int carray_count(carray * array) {
+unsigned int carray_count(const carray * array) {
   return array->len;
 }
 
 LIBETPAN_EXPORT
-void * carray_get(carray * array, unsigned int indx) {
+void * carray_get(const carray * array, unsigned int indx) {
   return array->array[indx];
 }
 
