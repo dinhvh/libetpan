@@ -59,6 +59,10 @@
 #include <sys/select.h>
 #endif
 
+#if USE_POLL && defined(HAVE_SYS_POLL_H)
+#include <sys/poll.h>
+#endif
+
 #include "mailstream_cfstream.h"
 #include "mailstream_compress.h"
 #include "mailstream_cancel.h"
@@ -425,10 +429,16 @@ int mailstream_low_wait_idle(mailstream_low * low, struct mailstream_cancel * id
   int fd;
   int idle_fd;
   int cancel_fd;
-  int maxfd;
-  fd_set readfds;
   struct timeval delay;
   int r;
+#if defined(WIN32)
+  fd_set readfds;
+#elif USE_POLL
+  struct pollfd pfd[3];
+#else
+  int maxfd;
+  fd_set readfds;
+#endif
   
   if (low->driver == mailstream_cfstream_driver) {
     return mailstream_low_cfstream_wait_idle(low, max_idle_delay);
@@ -447,8 +457,8 @@ int mailstream_low_wait_idle(mailstream_low * low, struct mailstream_cancel * id
   idle_fd = mailstream_cancel_get_fd(idle);
   cancel_fd = mailstream_cancel_get_fd(mailstream_low_get_cancel(low));
   
+#if defined(WIN32)
   FD_ZERO(&readfds);
-#ifdef WIN32
   HANDLE event = CreateEvent(NULL, TRUE, FALSE, NULL);
   WSAEventSelect(fd, event, FD_READ | FD_CLOSE);
   FD_SET(event, &readfds);
@@ -471,7 +481,48 @@ int mailstream_low_wait_idle(mailstream_low * low, struct mailstream_cancel * id
   }
   DWORD i = GetLastError();
   return MAILSTREAM_IDLE_ERROR;
+#elif USE_POLL
+  pfd[0].fd = fd;
+  pfd[0].events = POLLIN;
+  pfd[0].revents = 0;
+
+  pfd[1].fd = idle_fd;
+  pfd[1].events = POLLIN;
+  pfd[1].revents = 0;
+
+  pfd[2].fd = cancel_fd;
+  pfd[2].events = POLLIN;
+  pfd[2].revents = 0;
+
+  r = poll(&pfd[0], 3, max_idle_delay * 1000);
+
+  if (r == 0){
+    // timeout
+    return MAILSTREAM_IDLE_TIMEOUT;
+  }
+  else if (r == -1) {
+    // do nothing
+    return MAILSTREAM_IDLE_ERROR;
+  }
+  else {
+    if (pfd[0].revents & POLLIN) {
+      // has something on socket
+      return MAILSTREAM_IDLE_HASDATA;
+    }
+    if (pfd[1].revents & POLLIN) {
+      // idle interrupted
+      mailstream_cancel_ack(idle);
+      return MAILSTREAM_IDLE_INTERRUPTED;
+    }
+    if (pfd[2].revents & POLLIN) {
+      // idle cancelled
+      mailstream_cancel_ack(mailstream_low_get_cancel(low));
+      return MAILSTREAM_IDLE_CANCELLED;
+    }
+    return MAILSTREAM_IDLE_ERROR;
+  }
 #else
+  FD_ZERO(&readfds);
   FD_SET(fd, &readfds);
   FD_SET(idle_fd, &readfds);
   FD_SET(cancel_fd, &readfds);

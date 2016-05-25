@@ -156,6 +156,16 @@ AC_CHECK_HEADERS(netdb.h netinet/in.h sys/socket.h)
 AC_CHECK_HEADERS(sys/param.h sys/select.h inttypes.h)
 AC_CHECK_HEADERS(arpa/inet.h winsock2.h)
 
+
+AC_ARG_WITH([poll], use poll intead of select, use_poll=yes, use_poll=no)
+
+if test "x$use_poll" = "xyes"; then
+  AC_CHECK_HEADERS(sys/poll.h, [AC_DEFINE([USE_POLL], 1, [use poll instead of select])])
+else
+  echo "poll using is off"
+fi
+
+
 # Checks for typedefs, structures, and compiler characteristics.
 
 # Checks for library functions.

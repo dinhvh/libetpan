@@ -62,9 +62,15 @@
 #else
 #	include <sys/time.h>
 #	include <sys/types.h>
-#	ifdef HAVE_SYS_SELECT_H
-#		include <sys/select.h>
-#	endif
+#   if USE_POLL
+#       ifdef HAVE_SYS_POLL_H
+#           include <sys/poll.h>
+#       endif
+#   else
+#       ifdef HAVE_SYS_SELECT_H
+#           include <sys/select.h>
+#       endif
+#   endif
 #endif
 
 #include "mailstream_cancel.h"
@@ -208,15 +214,18 @@ static ssize_t mailstream_low_socket_read(mailstream_low * s,
   
   /* timeout */
   {
-    fd_set fds_read;
     struct timeval timeout;
     int r;
     int fd;
     int cancelled;
     int got_data;
-#ifdef WIN32
+#if defined(WIN32)
+    fd_set fds_read;
     HANDLE event;
+#elif USE_POLL
+    struct pollfd pfd[2];
 #else
+    fd_set fds_read;
     int max_fd;
 #endif
     
@@ -224,34 +233,50 @@ static ssize_t mailstream_low_socket_read(mailstream_low * s,
       timeout = mailstream_network_delay;
     }
     else {
-			timeout.tv_sec = s->timeout;
+      timeout.tv_sec = s->timeout;
       timeout.tv_usec = 0;
     }
     
-    FD_ZERO(&fds_read);
     fd = mailstream_cancel_get_fd(socket_data->cancel);
-    FD_SET(fd, &fds_read);
     
-#ifdef WIN32
+#if defined(WIN32)
+    FD_ZERO(&fds_read);
+    FD_SET(fd, &fds_read);
+
     event = CreateEvent(NULL, TRUE, FALSE, NULL);
     WSAEventSelect(socket_data->fd, event, FD_READ | FD_CLOSE);
     FD_SET(event, &fds_read);
     r = WaitForMultipleObjects(fds_read.fd_count, fds_read.fd_array, FALSE, timeout.tv_sec * 1000 + timeout.tv_usec / 1000);
     if (WAIT_TIMEOUT == r) {
-			WSAEventSelect(socket_data->fd, event, 0);
-			CloseHandle(event);
+      WSAEventSelect(socket_data->fd, event, 0);
+      CloseHandle(event);
       return -1;
-		}
+    }
     
     cancelled = (fds_read.fd_array[r - WAIT_OBJECT_0] == fd);
     got_data = (fds_read.fd_array[r - WAIT_OBJECT_0] == event);
-		WSAEventSelect(socket_data->fd, event, 0);
-		CloseHandle(event);
+    WSAEventSelect(socket_data->fd, event, 0);
+    CloseHandle(event);
+#elif USE_POLL
+    pfd[0].fd = socket_data->fd;
+    pfd[0].events = POLLIN;
+    pfd[0].revents = 0;
+
+    pfd[1].fd = fd;
+    pfd[1].events = POLLIN;
+    pfd[1].revents = 0;
+
+    r = poll(&pfd[0], 2, timeout.tv_sec * 1000 + timeout.tv_usec / 1000);
+    if (r <= 0)
+        return -1;
+
+    cancelled = pfd[1].revents & POLLIN;
+    got_data = pfd[0].revents & POLLIN;
 #else
+    FD_ZERO(&fds_read);
+    FD_SET(fd, &fds_read);
     FD_SET(socket_data->fd, &fds_read);
-    max_fd = socket_data->fd;
-    if (fd > max_fd)
-      max_fd = fd;
+    max_fd = fd > socket_data->fd ? fd : socket_data->fd;
     r = select(max_fd + 1, &fds_read, NULL,/* &fds_excp*/ NULL, &timeout);
     if (r <= 0)
       return -1;
@@ -290,53 +315,75 @@ static ssize_t mailstream_low_socket_write(mailstream_low * s,
   
   /* timeout */
   {
-    fd_set fds_read;
-    fd_set fds_write;
     struct timeval timeout;
     int r;
     int fd;
-    int max_fd;
     int cancelled;
     int write_enabled;
-#ifdef WIN32
+#if defined(WIN32)
+    fd_set fds_read;
+    fd_set fds_write;
     HANDLE event;
+#elif USE_POLL
+    struct pollfd pfd[2];
+#else
+    fd_set fds_read;
+    fd_set fds_write;
+    int max_fd;
 #endif
     
     if (s->timeout == 0) {
       timeout = mailstream_network_delay;
     }
     else {
-			timeout.tv_sec = s->timeout;
+      timeout.tv_sec = s->timeout;
       timeout.tv_usec = 0;
     }
     
-    FD_ZERO(&fds_read);
     fd = mailstream_cancel_get_fd(socket_data->cancel);
+#if defined(WIN32)
+    FD_ZERO(&fds_read);
     FD_SET(fd, &fds_read);
     FD_ZERO(&fds_write);
-#ifdef WIN32
+
     event = CreateEvent(NULL, TRUE, FALSE, NULL);
     WSAEventSelect(socket_data->fd, event, FD_WRITE | FD_CLOSE);
     FD_SET(event, &fds_read);
     r = WaitForMultipleObjects(fds_read.fd_count, fds_read.fd_array, FALSE, timeout.tv_sec * 1000 + timeout.tv_usec / 1000);
     if (r < 0) {
-			WSAEventSelect(socket_data->fd, event, 0);
-			CloseHandle(event);
+      WSAEventSelect(socket_data->fd, event, 0);
+      CloseHandle(event);
       return -1;
-		}
+    }
     
     cancelled = (fds_read.fd_array[r - WAIT_OBJECT_0] == fd);
     write_enabled = (fds_read.fd_array[r - WAIT_OBJECT_0] == event);
-		WSAEventSelect(socket_data->fd, event, 0);
-		CloseHandle(event);
-#else
-    FD_SET(socket_data->fd, &fds_write);
-    max_fd = socket_data->fd;
-    if (fd > max_fd)
-      max_fd = fd;
-    r = select(max_fd + 1, &fds_read, &fds_write, /*&fds_excp */ NULL, &timeout);
+    WSAEventSelect(socket_data->fd, event, 0);
+    CloseHandle(event);
+#elif USE_POLL
+    pfd[0].fd = socket_data->fd;
+    pfd[0].events = POLLOUT;
+    pfd[0].revents = 0;
+
+    pfd[1].fd = fd;
+    pfd[1].events = POLLIN;
+    pfd[1].revents = 0;
+
+    r = poll(&pfd[0], 2, timeout.tv_sec * 1000 + timeout.tv_usec / 1000);
     if (r <= 0)
       return -1;
+
+    cancelled = pfd[1].revents & POLLIN;
+    write_enabled = pfd[0].revents & POLLOUT;
+#else
+    FD_ZERO(&fds_read);
+    FD_SET(fd, &fds_read);
+    FD_ZERO(&fds_write);
+    FD_SET(socket_data->fd, &fds_write);
+    max_fd = fd > socket_data->fd ? fd : socket_data->fd;
+    r = select(max_fd + 1, &fds_read, &fds_write, /*&fds_excp */ NULL, &timeout);
+    if (r <= 0)
+        return -1;
 
     cancelled = FD_ISSET(fd, &fds_read);
     write_enabled = FD_ISSET(socket_data->fd, &fds_write);
