@@ -609,7 +609,7 @@ mailimf_struct_multiple_parse(const char * message, size_t length,
 static int
 mailimf_struct_list_parse(const char * message, size_t length,
 			  size_t * indx, clist ** result,
-			  char symbol,
+			  char* symbols,
 			  mailimf_struct_parser * parser,
 			  mailimf_struct_destructor * destructor)
 {
@@ -619,9 +619,10 @@ mailimf_struct_list_parse(const char * message, size_t length,
   size_t final_token;
   int r;
   int res;
-
+  size_t symbols_length;
   cur_token = * indx;
-
+  symbols_length = strlen(symbols);
+  
   r = parser(message, length, &cur_token, &value);
   if (r != MAILIMF_NO_ERROR) {
     res = r;
@@ -643,25 +644,32 @@ mailimf_struct_list_parse(const char * message, size_t length,
   }
 
   final_token = cur_token;
-
   while (1) {
-    r = mailimf_unstrict_char_parse(message, length, &cur_token, symbol);
-    if (r != MAILIMF_NO_ERROR) {
-      if (r == MAILIMF_ERROR_PARSE)
-	break;
-      else {
-	res = r;
-	goto free;
+    int index = 0;
+    for (index=0;index<symbols_length;index++){
+      r = mailimf_unstrict_char_parse(message, length, &cur_token, symbols[index]);
+      if (r != MAILIMF_NO_ERROR) {
+        if (r != MAILIMF_ERROR_PARSE) {
+          res = r;
+          goto free;
+        }
+      } else {
+        break;
       }
     }
-
+    if (r != MAILIMF_NO_ERROR) {
+      if (r != MAILIMF_ERROR_PARSE) {
+        res = r;
+        goto free;
+      }
+    }
     r = parser(message, length, &cur_token, &value);
     if (r != MAILIMF_NO_ERROR) {
       if (r == MAILIMF_ERROR_PARSE)
-	break;
+        break;
       else {
-	res = r;
-	goto free;
+        res = r;
+        goto free;
       }
     }
 
@@ -3172,7 +3180,7 @@ mailimf_mailbox_list_parse(const char * message, size_t length,
   cur_token = * indx;
 
   r = mailimf_struct_list_parse(message, length, 
-				&cur_token, &list, ',',
+				&cur_token, &list, ",",
 				(mailimf_struct_parser *)
 				mailimf_mailbox_parse,
 				(mailimf_struct_destructor *)
@@ -3220,14 +3228,16 @@ mailimf_address_list_parse(const char * message, size_t length,
   cur_token = * indx;
 
   r = mailimf_struct_list_parse(message, length,
-				&cur_token, &list, ',',
+				&cur_token, &list, ",;",    //Some email provider use semicolon(;) to seperate addresses such outlook calendar
 				(mailimf_struct_parser *)
 				mailimf_address_parse,
 				(mailimf_struct_destructor *)
 				mailimf_address_free);
   if (r != MAILIMF_NO_ERROR) {
-    res = r;
-    goto err;
+    if (r != MAILIMF_NO_ERROR) {
+      res = r;
+      goto err;
+    }
   }
 
   address_list = mailimf_address_list_new(list);
@@ -3237,6 +3247,10 @@ mailimf_address_list_parse(const char * message, size_t length,
   }
 
   * result = address_list;
+  //Some email address list end with a ',' or ';'
+  while ((message[cur_token] == ',' || message[cur_token] == ';') && cur_token < length) {
+    cur_token++;
+  }
   * indx = cur_token;
 
   return MAILIMF_NO_ERROR;
@@ -6116,7 +6130,7 @@ static int mailimf_keywords_parse(const char * message, size_t length,
   }
   
   r = mailimf_struct_list_parse(message, length, &cur_token,
-				&list, ',',
+				&list, ",",
 				(mailimf_struct_parser *)
 				mailimf_phrase_parse,
 				(mailimf_struct_destructor *)

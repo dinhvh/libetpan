@@ -166,7 +166,7 @@ static int mailimap_id_params_list_parse(mailstream * fd,
       clist_free(items);
       return MAILIMAP_ERROR_MEMORY;
     }
-    
+    mailimap_id_params_list_free(params_list);
     * indx = cur_token;
     * result = NULL;
     return MAILIMAP_NO_ERROR;

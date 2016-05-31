@@ -45,19 +45,6 @@
 #if 1
 #define LIBETPAN_REENTRANT 1
 #endif
-
-#ifndef LIBETPAN_API_CURRENT
-#define LIBETPAN_API_CURRENT 18
-#endif
-
-#ifndef LIBETPAN_API_REVISION
-#define LIBETPAN_API_REVISION 0
-#endif
-
-#ifndef LIBETPAN_API_COMPATIBILITY
-#define LIBETPAN_API_COMPATIBILITY 17
-#endif
-
 #endif
 
 int libetpan_get_version_major(void);
