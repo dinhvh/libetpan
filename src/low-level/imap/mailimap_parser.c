@@ -5965,13 +5965,15 @@ static int mailimap_literal_parse_progress(mailstream * fd, MMAPString * buffer,
   size_t cur_token;
   uint32_t number;
   MMAPString * literal;
-  char * literal_p;
   uint32_t left;
   int r;
   int res;
   size_t number_token;
+  bool use_msg_body_handler;
   
   cur_token = * indx;
+  use_msg_body_handler = (parser_ctx->msg_body_handler != NULL
+                          && parser_ctx->msg_body_parse_in_progress);
   
   r = mailimap_oaccolade_parse(fd, buffer, parser_ctx, &cur_token);
   if (r != MAILIMAP_NO_ERROR) {
@@ -6018,7 +6020,12 @@ static int mailimap_literal_parse_progress(mailstream * fd, MMAPString * buffer,
     goto err;
   }
   
-  literal = mmap_string_sized_new(number);
+  if (use_msg_body_handler) {
+    literal = mmap_string_new("");
+  }
+  else {
+    literal = mmap_string_sized_new(number);
+  }
   if (literal == NULL) {
     res = MAILIMAP_ERROR_MEMORY;
     goto err;
@@ -6027,12 +6034,23 @@ static int mailimap_literal_parse_progress(mailstream * fd, MMAPString * buffer,
   left = (uint32_t) (buffer->len - cur_token);
   
   if (left >= number) {
-    if (number > 0)
-      if (mmap_string_append_len(literal, buffer->str + cur_token,
-                                 number) == NULL) {
-        res = MAILIMAP_ERROR_MEMORY;
-        goto free_literal;
+    if (number > 0) {
+      if (use_msg_body_handler) {
+        if (!parser_ctx->msg_body_handler(parser_ctx->msg_body_att_type, parser_ctx->msg_body_section,
+                                          buffer->str + cur_token, number,
+                                          parser_ctx->msg_body_handler_context)) {
+          res = MAILIMAP_ERROR_MEMORY;
+          goto free_literal;
+        }
       }
+      else {
+        if (mmap_string_append_len(literal, buffer->str + cur_token,
+                                   number) == NULL) {
+          res = MAILIMAP_ERROR_MEMORY;
+          goto free_literal;
+        }
+      }
+    }
     if (progr_rate != 0) {
       if (progr_fun != NULL) {
         progr_fun(number, number);
@@ -6049,9 +6067,23 @@ static int mailimap_literal_parse_progress(mailstream * fd, MMAPString * buffer,
     uint32_t last_prog = 0;
     
     needed = number - left;
-    memcpy(literal->str, buffer->str + cur_token, left);
-    literal->len += left;
-    literal_p = literal->str + left;
+    if (left > 0) {
+      if (use_msg_body_handler) {
+        if (!parser_ctx->msg_body_handler(parser_ctx->msg_body_att_type, parser_ctx->msg_body_section,
+                                          buffer->str + cur_token, left,
+                                          parser_ctx->msg_body_handler_context)) {
+          res = MAILIMAP_ERROR_MEMORY;
+          goto free_literal;
+        }
+      }
+      else {
+        if (mmap_string_append_len(literal, buffer->str + cur_token,
+                                   left) == NULL) {
+          res = MAILIMAP_ERROR_MEMORY;
+          goto free_literal;
+        }
+      }
+    }
     current_prog = left;
     
     while (needed > 0) {
@@ -6066,32 +6098,51 @@ static int mailimap_literal_parse_progress(mailstream * fd, MMAPString * buffer,
         res = MAILIMAP_ERROR_NEEDS_MORE_DATA;
         goto free_literal;
       }
-      read_bytes = mailstream_read(fd, literal_p, bytes_to_read);
+
+      char read_buffer[MAX_READ_PROGRESS];
+      if (use_msg_body_handler) {
+        read_bytes = mailstream_read(fd, read_buffer, bytes_to_read);
+        if (read_bytes > 0) {
+          if (!parser_ctx->msg_body_handler(parser_ctx->msg_body_att_type, parser_ctx->msg_body_section,
+                                            read_buffer, read_bytes,
+                                            parser_ctx->msg_body_handler_context)) {
+            res = MAILIMAP_ERROR_MEMORY;
+            goto free_literal;
+          }
+        }
+      }
+      else {
+        read_bytes = mailstream_read(fd, literal->str + literal->len, bytes_to_read);
+        if (read_bytes > 0) {
+          literal->len += read_bytes;
+        }
+      }
+
       if (read_bytes == -1) {
         res = MAILIMAP_ERROR_STREAM;
         goto free_literal;
       }
-      literal->len += read_bytes;
       needed -= read_bytes;
-      literal_p += read_bytes;
 
       if (needed > 0 && mailimap_parser_context_is_rambler_workaround_enabled(parser_ctx)) {
         /* workaround issue with Rambler IMAP server */
-        char const *literal_end = literal_p;
+        char const * search_beg = use_msg_body_handler ? read_buffer : literal->str;
+        char const * search_end = use_msg_body_handler ? read_buffer + read_bytes : literal->str + literal->len;
         char tag_response_end[] = " OK completed\r\n";
         size_t tag_response_end_len = sizeof(tag_response_end) - 1;
         /* Looking backward for pattern " UID \d+)\r\n\d+ OK completed\r\n$" */
-        if (literal->len >= tag_response_end_len && memcmp(literal_end - tag_response_end_len, tag_response_end, tag_response_end_len) == 0) {
-          literal_end -= tag_response_end_len;
+        if (search_end - search_beg >= tag_response_end_len &&
+            memcmp(search_end - tag_response_end_len, tag_response_end, tag_response_end_len) == 0) {
+          search_end -= tag_response_end_len;
           /* match tag */
-          while (literal_end > literal->str && is_digit(*(literal_end - 1))) literal_end--;
+          while (search_end > search_beg && is_digit(*(search_end - 1))) search_end--;
           /* match closing parenthesis and CRLF */
-          if (literal_end > literal->str + 3) literal_end -= 3;
-          if (memcmp(literal_end, ")\r\n", 3) == 0) {
+          if (search_end > search_beg + 3) search_end -= 3;
+          if (memcmp(search_end, ")\r\n", 3) == 0) {
             /* match uid */
-            while (literal_end > literal->str && is_digit(*(literal_end - 1))) literal_end--;
-            if (literal_end > literal->str + 5) literal_end -= 5;
-            if (memcmp(literal_end, " UID ", 5) == 0) {
+            while (search_end > search_beg && is_digit(*(search_end - 1))) search_end--;
+            if (search_end > search_beg + 5) search_end -= 5;
+            if (memcmp(search_end, " UID ", 5) == 0) {
               /* got invalid server response, no more data will received */
               res = MAILIMAP_ERROR_PARSE;
               goto free_literal;
@@ -6112,7 +6163,9 @@ static int mailimap_literal_parse_progress(mailstream * fd, MMAPString * buffer,
       }
     }
     
-    literal->str[number] = 0;
+    if (!use_msg_body_handler) {
+      literal->str[number] = 0;
+    }
     
     if (mmap_string_truncate(buffer, number_token) == NULL) {
       res = MAILIMAP_ERROR_MEMORY;
@@ -7885,9 +7938,16 @@ mailimap_msg_att_rfc822_parse_progress(mailstream * fd, MMAPString * buffer, str
   r = mailimap_space_parse(fd, buffer, &cur_token);
   if (r != MAILIMAP_NO_ERROR)
     return r;
-  
+
+  parser_ctx->msg_body_parse_in_progress = true;
+  parser_ctx->msg_body_att_type = MAILIMAP_MSG_ATT_RFC822;
+
   r = mailimap_nstring_parse_progress(fd, buffer, parser_ctx, &cur_token, &rfc822_message, &length,
          progr_rate, progr_fun, body_progr_fun, items_progr_fun, context, msg_att_handler, msg_att_context);
+
+  parser_ctx->msg_body_parse_in_progress = false;
+  parser_ctx->msg_body_att_type = 0;
+
   if (r != MAILIMAP_NO_ERROR)
     return r;
 
@@ -7981,8 +8041,15 @@ mailimap_msg_att_rfc822_text_parse_progress(mailstream * fd, MMAPString * buffer
   if (r != MAILIMAP_NO_ERROR)
     return r;
 
+  parser_ctx->msg_body_parse_in_progress = true;
+  parser_ctx->msg_body_att_type = MAILIMAP_MSG_ATT_RFC822_TEXT;
+
   r = mailimap_nstring_parse_progress(fd, buffer, parser_ctx, &cur_token, &rfc822_text, &length,
                                       progr_rate, progr_fun, body_progr_fun, items_progr_fun, context, msg_att_handler, msg_att_context);
+
+  parser_ctx->msg_body_parse_in_progress = false;
+  parser_ctx->msg_body_att_type = 0;
+
   if (r != MAILIMAP_NO_ERROR)
     return r;
 
@@ -8182,27 +8249,40 @@ mailimap_msg_att_body_section_parse_progress(mailstream * fd, MMAPString * buffe
     goto free_section;
   }
 
-  r = mailimap_nstring_parse_progress(fd, buffer, parser_ctx, &cur_token, &body_part, &length,
-                                      progr_rate, progr_fun, body_progr_fun, items_progr_fun, context, msg_att_handler, msg_att_context);
-  if (r != MAILIMAP_NO_ERROR) {
-    res = r;
+  msg_att_body_section =
+    mailimap_msg_att_body_section_new(section, number, NULL, 0);
+  if (msg_att_body_section == NULL) {
+    res = MAILIMAP_ERROR_MEMORY;
     goto free_section;
   }
 
-  msg_att_body_section =
-    mailimap_msg_att_body_section_new(section, number, body_part, length);
-  if (msg_att_body_section == NULL) {
-    res = MAILIMAP_ERROR_MEMORY;
-    goto free_string;
+  parser_ctx->msg_body_parse_in_progress = true;
+  parser_ctx->msg_body_att_type = MAILIMAP_MSG_ATT_BODY_SECTION;
+  parser_ctx->msg_body_section = msg_att_body_section;
+
+  r = mailimap_nstring_parse_progress(fd, buffer, parser_ctx, &cur_token, &body_part, &length,
+                                      progr_rate, progr_fun, body_progr_fun, items_progr_fun, context, msg_att_handler, msg_att_context);
+
+  parser_ctx->msg_body_parse_in_progress = false;
+  parser_ctx->msg_body_att_type = 0;
+  parser_ctx->msg_body_section = NULL;
+
+  if (r != MAILIMAP_NO_ERROR) {
+    res = r;
+    goto free_att_body_section;
   }
+
+  msg_att_body_section->sec_body_part = body_part;
+  msg_att_body_section->sec_length = length;
 
   * result = msg_att_body_section;
   * indx = cur_token;
 
   return MAILIMAP_NO_ERROR;
 
- free_string:
-  mailimap_nstring_free(body_part);
+ free_att_body_section:
+  msg_att_body_section->sec_section = NULL;
+  mailimap_msg_att_body_section_free(msg_att_body_section);
  free_section:
   if (section != NULL)
     mailimap_section_free(section);
@@ -8609,8 +8689,12 @@ mailimap_quoted_parse(mailstream * fd, MMAPString * buffer, struct mailimap_pars
   MMAPString * gstr_quoted;
   int r;
   int res;
-  
+  bool use_msg_body_handler;
+
   cur_token = * indx;
+
+  use_msg_body_handler = (parser_ctx->msg_body_handler != NULL
+                          && parser_ctx->msg_body_parse_in_progress);
 
 #ifdef UNSTRICT_SYNTAX
   r = mailimap_space_parse(fd, buffer, &cur_token);
@@ -8648,9 +8732,19 @@ mailimap_quoted_parse(mailstream * fd, MMAPString * buffer, struct mailimap_pars
     if (r == MAILIMAP_ERROR_PARSE)
       break;
     else if (r == MAILIMAP_NO_ERROR) {
-      if (mmap_string_append_c(gstr_quoted, ch) == NULL) {
-	res = MAILIMAP_ERROR_MEMORY;
-	goto free;
+      if (use_msg_body_handler) {
+        if (!parser_ctx->msg_body_handler(parser_ctx->msg_body_att_type, parser_ctx->msg_body_section,
+                                          &ch, 1,
+                                          parser_ctx->msg_body_handler_context)) {
+          res = MAILIMAP_ERROR_MEMORY;
+          goto free;
+        }
+      }
+      else {
+        if (mmap_string_append_c(gstr_quoted, ch) == NULL) {
+          res = MAILIMAP_ERROR_MEMORY;
+          goto free;
+        }
       }
     }
     else {

@@ -2651,7 +2651,10 @@ mailimap * mailimap_new(size_t imap_progr_rate,
     
   f->imap_msg_att_handler = NULL;
   f->imap_msg_att_handler_context = NULL;
-  
+
+  f->imap_msg_body_handler = NULL;
+  f->imap_msg_body_handler_context = NULL;
+
 	f->imap_timeout = 0;
 
   f->imap_logger = NULL;
@@ -2724,6 +2727,15 @@ void mailimap_set_msg_att_handler(mailimap * session,
 {
   session->imap_msg_att_handler = handler;
   session->imap_msg_att_handler_context = context;
+}
+
+LIBETPAN_EXPORT
+void mailimap_set_msg_body_handler(mailimap * session,
+                                   mailimap_msg_body_handler * handler,
+                                   void * context)
+{
+  session->imap_msg_body_handler = handler;
+  session->imap_msg_body_handler_context = context;
 }
 
 static inline void imap_logger(mailstream * s, int log_type,
