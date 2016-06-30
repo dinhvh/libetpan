@@ -3341,6 +3341,9 @@ enum {
 
 typedef void mailimap_msg_att_handler(struct mailimap_msg_att * msg_att, void * context);
 
+typedef bool mailimap_msg_body_handler(int msg_att_type, struct mailimap_msg_att_body_section * section,
+                                       const char * bytes, size_t length, void * context);
+
 typedef struct mailimap mailimap;
 
 struct mailimap {
@@ -3380,6 +3383,8 @@ struct mailimap {
   void * imap_progress_context;
   mailimap_msg_att_handler * imap_msg_att_handler;
   void * imap_msg_att_handler_context;
+  mailimap_msg_body_handler * imap_msg_body_handler;
+  void * imap_msg_body_handler_context;
 
   time_t imap_timeout;
   
@@ -3571,6 +3576,12 @@ enum {
 
 struct mailimap_parser_context {
   int is_rambler_workaround_enabled;
+
+  mailimap_msg_body_handler * msg_body_handler;
+  void * msg_body_handler_context;
+  struct mailimap_msg_att_body_section * msg_body_section;
+  int msg_body_att_type;
+  bool msg_body_parse_in_progress;
 };
 
 LIBETPAN_EXPORT

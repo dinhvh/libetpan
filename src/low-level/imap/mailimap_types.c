@@ -3257,6 +3257,12 @@ mailimap_parser_context_new(mailimap * session)
 
   ctx->is_rambler_workaround_enabled = mailimap_is_rambler_workaround_enabled(session);
 
+  ctx->msg_body_handler = session->imap_msg_body_handler;
+  ctx->msg_body_handler_context = session->imap_msg_body_handler_context;
+  ctx->msg_body_parse_in_progress = false;
+  ctx->msg_body_section = NULL;
+  ctx->msg_body_att_type = 0;
+
   return ctx;
 
 err:

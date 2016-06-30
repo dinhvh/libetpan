@@ -819,6 +819,24 @@ void mailimap_set_msg_att_handler(mailimap * session,
                                   void * context);
 
 /*
+    mailimap_set_msg_body_handler() set a callback when a message body is
+      downloaded using FETCH.
+
+    @param session    IMAP session
+    @param handler    set a callback function. This function will be called
+      during the download of the response to process the message body
+      as data become available from the network.
+      This can be used, for example, for downloading big messages (or it attachments)
+      to the file without keeping it in memory.
+    @param context    parameter that's passed to the callback function.
+*/
+
+LIBETPAN_EXPORT
+void mailimap_set_msg_body_handler(mailimap * session,
+                                   mailimap_msg_body_handler * handler,
+                                   void * context);
+
+/*
     mailimap_set_timeout() set the network timeout of the IMAP session.
 
     @param session    IMAP session
