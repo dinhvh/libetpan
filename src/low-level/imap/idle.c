@@ -75,6 +75,7 @@ int mailimap_idle(mailimap * session)
   struct mailimap_continue_req * cont_req;
   struct mailimap_response * response;
   clist * resp_data_list;
+  struct mailimap_parser_context * parser_ctx;
   
   session->imap_selection_info->sel_has_exists = 0;
   session->imap_selection_info->sel_has_recent = 0;
@@ -100,8 +101,12 @@ int mailimap_idle(mailimap * session)
   
   indx = 0;
 
+  parser_ctx = mailimap_parser_context_new(session);
+  if (parser_ctx == NULL)
+    return MAILIMAP_ERROR_MEMORY;
+
   r = mailimap_struct_multiple_parse(session->imap_stream,
-					session->imap_stream_buffer, NULL,
+					session->imap_stream_buffer, parser_ctx,
 					&indx,
 					&resp_data_list,
 					(mailimap_struct_parser *)
@@ -109,6 +114,7 @@ int mailimap_idle(mailimap * session)
 					(mailimap_struct_destructor *)
 					mailimap_response_data_free,
 					session->imap_progr_rate, session->imap_progr_fun);
+  mailimap_parser_context_free(parser_ctx);
   if ((r != MAILIMAP_NO_ERROR) && (r != MAILIMAP_ERROR_PARSE))
     return r;
   if (r == MAILIMAP_NO_ERROR) {
