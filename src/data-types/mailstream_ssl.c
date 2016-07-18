@@ -361,7 +361,7 @@ static int wait_SSL_connect(int s, int want_read, time_t timeout_seconds)
     return -1;
   }
 
-  if (pfd.revents & pfd.events) {
+  if (pfd.revents & pfd.events != pfd.events) {
     return -1;
   }
 #endif
