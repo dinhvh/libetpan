@@ -7713,6 +7713,20 @@ mailimap_msg_att_parse_progress(mailstream * fd, MMAPString * buffer, struct mai
                                                  body_progr_fun, items_progr_fun,
                                                  context, msg_att_handler, msg_att_context);
   if (r != MAILIMAP_NO_ERROR) {
+    if (mailimap_parser_context_is_qip_workaround_enabled(parser_ctx)) {
+      r = mailimap_cparenth_parse(fd, buffer, parser_ctx, &cur_token);
+      if (r == MAILIMAP_NO_ERROR) {
+        // QIP returns "* num FETCH ()" response for storeFlags operations.
+
+        list = clist_new();
+        if (list == NULL) {
+          res = MAILIMAP_ERROR_MEMORY;
+          goto free;
+        }
+        goto ok;
+      }
+    }
+
     res = r;
     goto err;
   }
@@ -7722,7 +7736,8 @@ mailimap_msg_att_parse_progress(mailstream * fd, MMAPString * buffer, struct mai
     res = r;
     goto free;
   }
-  
+
+ ok:
   msg_att = mailimap_msg_att_new(list);
   if (msg_att == NULL) {
     res = MAILIMAP_ERROR_MEMORY;
