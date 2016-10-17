@@ -3,6 +3,7 @@
 
 m4_define([maj_version], [1])
 m4_define([min_version], [7])
+m4_define([mic_version], [2])
 m4_define([api_current], [20])
 m4_define([api_revision], [0])
 m4_define([api_compatibility], [20])
@@ -23,7 +24,7 @@ dnl    interface.
 dnl age = api_current - api_compatiblity
 
 AC_PREREQ(2.61)
-AC_INIT([libetpan],[maj_version.min_version],[libetpan-devel@lists.sourceforge.net])
+AC_INIT([libetpan],[maj_version.min_version.mic_version],[libetpan-devel@lists.sourceforge.net])
 AC_CONFIG_SRCDIR([src/main/libetpan_version.h.in])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_HEADER([config.h])
@@ -31,9 +32,10 @@ AM_INIT_AUTOMAKE
 AM_MAINTAINER_MODE
 AC_CANONICAL_HOST
 
-dnl Version major and minor
+dnl Version major, minor and micro
 VERSION_MAJOR=maj_version
 VERSION_MINOR=min_version
+VERSION_MICRO=mic_version
 
 dnl required version of libcurl
 libcurl_major_required=0
@@ -70,7 +72,7 @@ AC_SUBST(BUILD_REVISION)
 BUILD_TIMESTAMP=`date +'%Y-%m-%dT%H:%M%z'`
 AC_SUBST(BUILD_TIMESTAMP)
 changequote(,)dnl 
-BUILD_FILEVERSION=`echo "${VERSION_MAJOR}.${VERSION_MINOR}.0" | sed 's/\([0-9.]*\).*/\1./;s/\./,/g'`
+BUILD_FILEVERSION=`echo "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_MICRO}" | sed 's/\([0-9.]*\).*/\1./;s/\./,/g'`
 changequote([,])dnl
 BUILD_FILEVERSION="${BUILD_FILEVERSION}${BUILD_REVISION}"
 AC_SUBST(BUILD_FILEVERSION)
@@ -517,8 +519,11 @@ AC_DEFINE_UNQUOTED(LIBETPAN_VERSION_MAJOR, $VERSION_MAJOR,
   [Define this to the major version of libEtPan])
 AC_DEFINE_UNQUOTED(LIBETPAN_VERSION_MINOR, $VERSION_MINOR,
   [Define this to the minor version of libEtPan])
+AC_DEFINE_UNQUOTED(LIBETPAN_VERSION_MICRO, $VERSION_MICRO,
+  [Define this to the micro version of libEtPan])
 AC_SUBST(VERSION_MAJOR)
 AC_SUBST(VERSION_MINOR)
+AC_SUBST(VERSION_MICRO)
 
 dnl Cyrus SASL
 AC_ARG_WITH(sasl, [AC_HELP_STRING([--with-sasl[=DIR]], [include SASL support (default=auto)])],
@@ -728,7 +733,7 @@ AS_IF([test "$with_zlib" != no], [
 AM_CONDITIONAL([HAVE_ZLIB], [test $HAVE_ZLIB = 1])
 
 dnl Version
-VERSION="$VERSION_MAJOR.$VERSION_MINOR"
+VERSION="$VERSION_MAJOR.$VERSION_MINOR.$VERSION_MICRO"
 test -d .git && VERSION="$VERSION-dev-"`date +'%Y%m%d'`
 AC_DEFINE_UNQUOTED(LIBETPAN_VERSION, "$VERSION",
   [Define this to the version of libEtPan])
