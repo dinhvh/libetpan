@@ -1,8 +1,8 @@
 #!/bin/sh
 
-build_version=5
+build_version=6
 openssl_build_version=3
-cyrus_sasl_build_version=3
+cyrus_sasl_build_version=4
 package_name=libetpan-android
 
 current_dir="`pwd`"

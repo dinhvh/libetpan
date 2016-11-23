@@ -1,7 +1,7 @@
 #!/bin/sh
 
-version=2.1.25
-build_version=3
+version=2.1.26
+build_version=4
 ARCHIVE=cyrus-sasl-$version
 openssl_build_version=3
 package_name=cyrus-sasl-android
