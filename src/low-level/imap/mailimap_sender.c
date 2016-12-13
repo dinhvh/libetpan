@@ -2654,7 +2654,7 @@ static int search_key_send(mailstream * fd,
       r = mailimap_space_send(fd);
       if (r != MAILIMAP_NO_ERROR)
         return r;
-      r = mailimap_quoted_send(fd, key->sk_data.sk_xgmraw);
+      r = mailimap_astring_literalplus_send(fd, key->sk_data.sk_xgmraw, literalplus_enabled);
       if (r != MAILIMAP_NO_ERROR)
         return r;
       return MAILIMAP_NO_ERROR;
