@@ -17,13 +17,13 @@ enum {
 int parse_options(int argc, char ** argv,
     int * driver,
     char ** server, int * port, int * connection_type,
-    char ** user, char ** password, int * auth_type,
+    char ** user, char ** password, int * auth_type, bool * xoauth2,
     char ** path, char ** cache_directory,
     char ** flags_directory);
 
 int init_storage(struct mailstorage * storage,
     int driver, const char * server, int port,
-    int connection_type, const char * user, const char * password, int auth_type,
+    int connection_type, const char * user, const char * password, int auth_type, bool xoauth2,
     const char * path, const char * cache_directory, const char * flags_directory);
 
 #endif
