@@ -73,6 +73,7 @@ int main(int argc, char ** argv)
   char * user;
   char * password;
   int auth_type;
+  bool xoauth2;
   char * path;
   char * cache_directory;
   char * flags_directory;
@@ -83,7 +84,7 @@ int main(int argc, char ** argv)
 
   r = parse_options(argc, argv,
       &driver, &server, &port, &connection_type,
-      &user, &password, &auth_type,
+      &user, &password, &auth_type, &xoauth2,
       &path, &cache_directory, &flags_directory);
 
   /* build the storage structure */
@@ -95,7 +96,7 @@ int main(int argc, char ** argv)
   }
 
   r = init_storage(storage, driver, server, port, connection_type,
-      user, password, auth_type, path, cache_directory, flags_directory);
+      user, password, auth_type, xoauth2, path, cache_directory, flags_directory);
   if (r != MAIL_NO_ERROR) {
     printf("error initializing storage\n");
     goto free_opt;
