@@ -448,6 +448,33 @@ int mailsmtp_data_message(mailsmtp * session,
   }
 }
 
+/* lmtp data command
+ * on end of data transaction lmtp return a status for
+ * every recipient it delivered. the status is stored in
+ * a carray retcodes. the array must have the size of recips */
+int maillmtp_data_message(mailsmtp * session,
+               carray * retcodes,
+			   const char * message,
+			   size_t size)
+{
+  int r;
+  unsigned int i = 0;
+
+  if ((!retcodes) || (0 == carray_count(retcodes)))
+     return MAILSMTP_ERROR_IN_PROCESSING;
+
+  r = send_data(session, message, size);
+
+  if (r == -1)
+    return MAILSMTP_ERROR_STREAM;
+
+  while (i < carray_count(retcodes)){
+      r = read_response(session);
+      carray_set(retcodes, i++, &r);
+  }
+  return MAILSMTP_NO_ERROR;
+}
+
 int mailsmtp_data_message_quit(mailsmtp * session,
                                const char * message,
                                size_t size)
@@ -659,6 +686,39 @@ int mailesmtp_ehlo_with_ip(mailsmtp * session, int useip)
   case 250:
     return mailesmtp_parse_ehlo(session);
     
+  case 504:
+    return MAILSMTP_ERROR_NOT_IMPLEMENTED;
+
+  case 550:
+    return MAILSMTP_ERROR_ACTION_NOT_TAKEN;
+
+  case 0:
+    return MAILSMTP_ERROR_STREAM;
+
+  default:
+    return MAILSMTP_ERROR_UNEXPECTED_CODE;
+  }
+}
+
+/* lmtp processing */
+int mailesmtp_lhlo(mailsmtp * session , const char *hostname)
+{
+  int r;
+  char command[SMTP_STRING_SIZE];
+
+  if (!hostname)
+      hostname = "localhost";
+
+  snprintf(command, SMTP_STRING_SIZE, "LHLO %s\r\n", hostname);
+  r = send_command(session, command);
+  if (r == -1)
+    return MAILSMTP_ERROR_STREAM;
+  r = read_response(session);
+
+  switch (r) {
+  case 250:
+    return mailesmtp_parse_ehlo(session);
+
   case 504:
     return MAILSMTP_ERROR_NOT_IMPLEMENTED;
 
