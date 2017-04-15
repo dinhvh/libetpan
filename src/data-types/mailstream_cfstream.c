@@ -58,6 +58,14 @@ int mailstream_cfstream_enabled = CFSTREAM_ENABLED_DEFAULT;
 LIBETPAN_EXPORT
 int mailstream_cfstream_voip_enabled = 0;
 
+/*
+ * You cannot use the runloop here from more than one thread at a time.  If you do, you will crash inside wait_runloop.
+ * This mistake is easy to make though, and very hard to debug because the race window inside wait_runloop is small.
+ * This #define adds a reference count to make it easier to catch this problem.  It doesn't make the race window any
+ * wider, but if you hit it you get a hard failure instead of dereferencing an invalid pointer.
+ */
+#define DEBUG_REFCOUNT_RUNLOOP DEBUG
+
 enum {
   STATE_NONE,
   STATE_WAIT_OPEN,
@@ -114,6 +122,10 @@ struct mailstream_cfstream_data {
   int ssl_is_server;
   char * ssl_peer_name;
   int ssl_certificate_verification_mask;
+
+#if DEBUG_REFCOUNT_RUNLOOP
+  int refcountRunloop;
+#endif
 };
 #endif
 
@@ -632,6 +644,11 @@ static void setup_runloop(mailstream_low * s)
   
   pthread_mutex_lock(&cfstream_data->runloop_lock);
   
+#if DEBUG_REFCOUNT_RUNLOOP
+  assert(cfstream_data->refcountRunloop == 0);
+  cfstream_data->refcountRunloop++;
+#endif
+
   cfstream_data->runloop = (CFRunLoopRef) CFRetain(CFRunLoopGetCurrent());
   if (cfstream_data->cancelSource != NULL) {
     CFRunLoopAddSource(cfstream_data->runloop, cfstream_data->cancelSource, kCFRunLoopDefaultMode);
@@ -664,6 +681,10 @@ static void unsetup_runloop(mailstream_low * s)
     cfstream_data->runloop = NULL;
   }
   
+#if DEBUG_REFCOUNT_RUNLOOP
+  assert(cfstream_data->refcountRunloop == 1);
+  cfstream_data->refcountRunloop--;
+#endif
   
   pthread_mutex_unlock(&cfstream_data->runloop_lock);
 }
