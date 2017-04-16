@@ -89,7 +89,7 @@ int mailmessage_init(mailmessage * msg_info,
 LIBETPAN_EXPORT
 int mailmessage_flush(mailmessage * msg_info)
 {
-  if (msg_info->msg_driver->msg_flush == NULL)
+  if (msg_info == NULL || msg_info->msg_driver == NULL || msg_info->msg_driver->msg_flush == NULL)
     return MAIL_ERROR_NOT_IMPLEMENTED;
 
   msg_info->msg_driver->msg_flush(msg_info);
