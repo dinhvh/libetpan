@@ -448,31 +448,63 @@ int mailsmtp_data_message(mailsmtp * session,
   }
 }
 
-/* lmtp data command
- * on end of data transaction lmtp return a status for
- * every recipient it delivered. the status is stored in
- * a carray retcodes. the array must have the size of recips */
-int maillmtp_data_message(mailsmtp * session,
-               carray * retcodes,
-			   const char * message,
-			   size_t size)
+int mailsmtp_status(int smtpstatus)
 {
-  int r;
-  unsigned int i = 0;
+  switch(smtpstatus) {
+  case 250:
+    return MAILSMTP_NO_ERROR;
 
-  if ((!retcodes) || (0 == carray_count(retcodes)))
-     return MAILSMTP_ERROR_IN_PROCESSING;
+  case 552:
+    return MAILSMTP_ERROR_EXCEED_STORAGE_ALLOCATION;
+
+  case 554:
+    return MAILSMTP_ERROR_TRANSACTION_FAILED;
+
+  case 451:
+    return MAILSMTP_ERROR_IN_PROCESSING;
+
+  case 452:
+    return MAILSMTP_ERROR_INSUFFICIENT_SYSTEM_STORAGE;
+
+  case 0:
+    return MAILSMTP_ERROR_STREAM;
+
+  default:
+    return MAILSMTP_ERROR_UNEXPECTED_CODE;
+  }
+
+}
+
+/* lmtp data command
+ * on the end of data transaction lmtp returns a status for
+ * every recipient it delivered.
+ * recipient_list holds the rcpts from smtp_rcpt()
+ * the last error is returned to the caller
+ * if retcodes is not NULL, the individual rcpt-stati are stored there
+ *  */
+int maillmtp_data_message(mailsmtp * session,
+			   const char * message,
+			   size_t size,
+               clist * recipient_list,
+               clist * retcodes)
+{
+  int r, ret = MAILSMTP_NO_ERROR;
+  unsigned int i = 0;
+  clistiter *iter;
 
   r = send_data(session, message, size);
 
   if (r == -1)
     return MAILSMTP_ERROR_STREAM;
 
-  while (i < carray_count(retcodes)){
-      r = read_response(session);
-      carray_set(retcodes, i++, &r);
+  for (iter = clist_begin(recipient_list); iter; iter = clist_next(iter)) {
+    r = read_response(session);
+    if (MAILSMTP_NO_ERROR != mailsmtp_status(r))
+        ret = mailsmtp_status(r);
+    if (retcodes)
+        clist_append(retcodes, r);
   }
-  return MAILSMTP_NO_ERROR;
+  return ret;
 }
 
 int mailsmtp_data_message_quit(mailsmtp * session,

@@ -107,10 +107,10 @@ int mailsmtp_data_message(mailsmtp * session,
 
 LIBETPAN_EXPORT
 int maillmtp_data_message(mailsmtp * session,
-               carray *ret,
-			   const char * message,
-			   size_t size);
-
+            const char * message,
+            size_t size,
+            clist * recipient_list,
+            clist * retcodes);
 
 LIBETPAN_EXPORT
 int mailsmtp_data_message_quit(mailsmtp * session,
