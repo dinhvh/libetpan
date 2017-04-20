@@ -483,10 +483,10 @@ int mailsmtp_status(int smtpstatus)
  * if retcodes is not NULL, the individual rcpt-stati are stored there
  *  */
 int maillmtp_data_message(mailsmtp * session,
-			   const char * message,
-			   size_t size,
-               clist * recipient_list,
-               clist * retcodes)
+                          const char * message,
+                          size_t size,
+                          clist * recipient_list,
+                          int * retcodes)
 {
   int r, ret = MAILSMTP_NO_ERROR;
   unsigned int i = 0;
@@ -500,9 +500,9 @@ int maillmtp_data_message(mailsmtp * session,
   for (iter = clist_begin(recipient_list); iter; iter = clist_next(iter)) {
     r = read_response(session);
     if (MAILSMTP_NO_ERROR != mailsmtp_status(r))
-        ret = mailsmtp_status(r);
+      ret = mailsmtp_status(r);
     if (retcodes)
-        clist_append(retcodes, r);
+      retcodes[i++] = r;
   }
   return ret;
 }

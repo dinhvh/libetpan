@@ -150,7 +150,7 @@ int send_message(char *data, size_t len, char**rcpts) {
   char **r;
   int esmtp = 0;
   mailsmtp *smtp = NULL;
-  clist *retcodes = NULL;
+  int *retcodes = NULL;
   clist *recipients = clist_new();
 
   if ((smtp = mailsmtp_new(0, NULL)) == NULL) {
@@ -245,13 +245,13 @@ int send_message(char *data, size_t len, char**rcpts) {
     goto error;
   }
   if (smtp_lmtp){
-      retcodes = clist_new();
+      retcodes = malloc((clist_count(recipients) * sizeof(int)) + 1);
     if ((ret = maillmtp_data_message(smtp, data, len, recipients, retcodes)) != MAILSMTP_NO_ERROR) {
         fprintf(stderr, "maillmtp_data: %s (%d)\n", mailsmtp_strerror(ret), ret);
         goto error;
     }
-    for (i = 0; i < clist_count(retcodes); i++)
-      fprintf(stderr, "recipient %s returned: %d\n", clist_nth_data(recipients, i), clist_nth_data(retcodes, i));
+    for (i = 0; i < clist_count(recipients); i++)
+      fprintf(stderr, "recipient %s returned: %d\n", (char *)clist_nth_data(recipients, i), retcodes[i]);
   } else if ((ret = mailsmtp_data_message(smtp, data, len)) != MAILSMTP_NO_ERROR) {
         fprintf(stderr, "mailsmtp_data_message: %s\n", mailsmtp_strerror(ret));
         goto error;
@@ -262,8 +262,7 @@ int send_message(char *data, size_t len, char**rcpts) {
  error:
   if (smtp != NULL)
     mailsmtp_free(smtp);
-  if (retcodes != NULL)
-      clist_free(retcodes);
+  free(retcodes);
   clist_free(recipients);
   if (s >= 0)
     close(s);
