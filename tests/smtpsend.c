@@ -43,6 +43,7 @@ char *smtp_from;
 int smtp_tls = 0;
 int smtp_esmtp = 1;
 int smtp_ssl = 0;
+int smtp_lmtp = 0;
 
 struct mem_message {
   char *data;
@@ -145,10 +146,12 @@ void release(struct mem_message *message) {
 
 int send_message(char *data, size_t len, char**rcpts) {
   int s = -1;
-  int ret;
+  int ret, i;
   char **r;
   int esmtp = 0;
   mailsmtp *smtp = NULL;
+  int *retcodes = NULL;
+  clist *recipients = clist_new();
 
   if ((smtp = mailsmtp_new(0, NULL)) == NULL) {
     perror("mailsmtp_new");
@@ -175,7 +178,9 @@ int send_message(char *data, size_t len, char**rcpts) {
   }
   
   /* then introduce ourselves */
-  if (smtp_esmtp && (ret = mailesmtp_ehlo(smtp)) == MAILSMTP_NO_ERROR)
+  if (smtp_lmtp)
+    ret = mailesmtp_lhlo(smtp, "lmtp-test");
+  else if (smtp_esmtp && (ret = mailesmtp_ehlo(smtp)) == MAILSMTP_NO_ERROR)
     esmtp = 1;
   else if (!smtp_esmtp || ret == MAILSMTP_ERROR_NOT_IMPLEMENTED)
     ret = mailsmtp_helo(smtp);
@@ -192,7 +197,9 @@ int send_message(char *data, size_t len, char**rcpts) {
   
   if (esmtp && smtp_tls) {
     /* introduce ourselves again */
-    if (smtp_esmtp && (ret = mailesmtp_ehlo(smtp)) == MAILSMTP_NO_ERROR)
+    if (smtp_lmtp)
+      ret = mailesmtp_lhlo(smtp, "lmtp-test");
+    else if (smtp_esmtp && (ret = mailesmtp_ehlo(smtp)) == MAILSMTP_NO_ERROR)
       esmtp = 1;
     else if (!smtp_esmtp || ret == MAILSMTP_ERROR_NOT_IMPLEMENTED)
       ret = mailsmtp_helo(smtp);
@@ -227,17 +234,27 @@ int send_message(char *data, size_t len, char**rcpts) {
 		mailsmtp_rcpt(smtp, *r))) != MAILSMTP_NO_ERROR) {
       fprintf(stderr, "mailsmtp_rcpt: %s: %s\n", *r, mailsmtp_strerror(ret));
       goto error;
+    }else{
+        clist_append(recipients, *r);
     }
   }
-  
+
   /* message */
   if ((ret = mailsmtp_data(smtp)) != MAILSMTP_NO_ERROR) {
     fprintf(stderr, "mailsmtp_data: %s\n", mailsmtp_strerror(ret));
     goto error;
   }
-  if ((ret = mailsmtp_data_message(smtp, data, len)) != MAILSMTP_NO_ERROR) {
-    fprintf(stderr, "mailsmtp_data_message: %s\n", mailsmtp_strerror(ret));
-    goto error;
+  if (smtp_lmtp){
+      retcodes = malloc((clist_count(recipients) * sizeof(int)));
+    if ((ret = maillmtp_data_message(smtp, data, len, recipients, retcodes)) != MAILSMTP_NO_ERROR) {
+        fprintf(stderr, "maillmtp_data: %s (%d)\n", mailsmtp_strerror(ret), ret);
+        goto error;
+    }
+    for (i = 0; i < clist_count(recipients); i++)
+      fprintf(stderr, "recipient %s returned: %d\n", (char *)clist_nth_data(recipients, i), retcodes[i]);
+  } else if ((ret = mailsmtp_data_message(smtp, data, len)) != MAILSMTP_NO_ERROR) {
+        fprintf(stderr, "mailsmtp_data_message: %s\n", mailsmtp_strerror(ret));
+        goto error;
   }
   mailsmtp_free(smtp);
   return 0;
@@ -245,6 +262,8 @@ int send_message(char *data, size_t len, char**rcpts) {
  error:
   if (smtp != NULL)
     mailsmtp_free(smtp);
+  free(retcodes);
+  clist_free(recipients);
   if (s >= 0)
     close(s);
   return -1;
@@ -266,14 +285,15 @@ int main(int argc, char **argv) {
     {"tls",      0, 0, 'S'},
     {"no-esmtp", 0, 0, 'E'},
     {"ssl",      0, 0, 'L'},
+    {"lmtp",     0, 0, 'T'},
   };
 #endif
 
   while(1) {
 #if HAVE_GETOPT_LONG
-	r = getopt_long(argc, argv, "s:p:u:v:f:SEL", long_options, &indx);
+	r = getopt_long(argc, argv, "s:p:u:v:f:SELT", long_options, &indx);
 #else
-	r = getopt(argc, argv, "s:p:u:v:f:SEL");
+	r = getopt(argc, argv, "s:p:u:v:f:SELT");
 #endif
     if (r < 0)
       break;
@@ -310,6 +330,9 @@ int main(int argc, char **argv) {
     case 'L':
       smtp_ssl = 1;
       break;
+    case 'T':
+      smtp_lmtp = 1;
+      break;
     }
   }
 
@@ -317,7 +340,7 @@ int main(int argc, char **argv) {
   argv += optind;
 
   if (argc < 1) {
-    fprintf(stderr, "usage: smtpsend [-f from] [-u user] [-v password] [-s server] [-p port] [-S] [-L] <rcpts>...\n");
+    fprintf(stderr, "usage: smtpsend [-f from] [-u user] [-v password] [-s server] [-p port] [-S] [-L] [-T] <rcpts>...\n");
     return EXIT_FAILURE;
   }
 

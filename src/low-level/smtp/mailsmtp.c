@@ -448,6 +448,65 @@ int mailsmtp_data_message(mailsmtp * session,
   }
 }
 
+int mailsmtp_status(int smtpstatus)
+{
+  switch(smtpstatus) {
+  case 250:
+    return MAILSMTP_NO_ERROR;
+
+  case 552:
+    return MAILSMTP_ERROR_EXCEED_STORAGE_ALLOCATION;
+
+  case 554:
+    return MAILSMTP_ERROR_TRANSACTION_FAILED;
+
+  case 451:
+    return MAILSMTP_ERROR_IN_PROCESSING;
+
+  case 452:
+    return MAILSMTP_ERROR_INSUFFICIENT_SYSTEM_STORAGE;
+
+  case 0:
+    return MAILSMTP_ERROR_STREAM;
+
+  default:
+    return MAILSMTP_ERROR_UNEXPECTED_CODE;
+  }
+
+}
+
+/* lmtp data command
+ * on the end of data transaction lmtp returns a status for
+ * every recipient it delivered.
+ * recipient_list holds the rcpts from smtp_rcpt()
+ * the last error is returned to the caller
+ * if retcodes is not NULL, the individual rcpt-stati are stored there
+ *  */
+int maillmtp_data_message(mailsmtp * session,
+                          const char * message,
+                          size_t size,
+                          clist * recipient_list,
+                          int * retcodes)
+{
+  int r, ret = MAILSMTP_NO_ERROR;
+  unsigned int i = 0;
+  clistiter *iter;
+
+  r = send_data(session, message, size);
+
+  if (r == -1)
+    return MAILSMTP_ERROR_STREAM;
+
+  for (iter = clist_begin(recipient_list); iter; iter = clist_next(iter)) {
+    r = read_response(session);
+    if (MAILSMTP_NO_ERROR != mailsmtp_status(r))
+      ret = mailsmtp_status(r);
+    if (retcodes)
+      retcodes[i++] = r;
+  }
+  return ret;
+}
+
 int mailsmtp_data_message_quit(mailsmtp * session,
                                const char * message,
                                size_t size)
@@ -659,6 +718,39 @@ int mailesmtp_ehlo_with_ip(mailsmtp * session, int useip)
   case 250:
     return mailesmtp_parse_ehlo(session);
     
+  case 504:
+    return MAILSMTP_ERROR_NOT_IMPLEMENTED;
+
+  case 550:
+    return MAILSMTP_ERROR_ACTION_NOT_TAKEN;
+
+  case 0:
+    return MAILSMTP_ERROR_STREAM;
+
+  default:
+    return MAILSMTP_ERROR_UNEXPECTED_CODE;
+  }
+}
+
+/* lmtp processing */
+int mailesmtp_lhlo(mailsmtp * session , const char *hostname)
+{
+  int r;
+  char command[SMTP_STRING_SIZE];
+
+  if (!hostname)
+      hostname = "localhost";
+
+  snprintf(command, SMTP_STRING_SIZE, "LHLO %s\r\n", hostname);
+  r = send_command(session, command);
+  if (r == -1)
+    return MAILSMTP_ERROR_STREAM;
+  r = read_response(session);
+
+  switch (r) {
+  case 250:
+    return mailesmtp_parse_ehlo(session);
+
   case 504:
     return MAILSMTP_ERROR_NOT_IMPLEMENTED;
 
