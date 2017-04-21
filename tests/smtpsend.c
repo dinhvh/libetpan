@@ -245,7 +245,7 @@ int send_message(char *data, size_t len, char**rcpts) {
     goto error;
   }
   if (smtp_lmtp){
-      retcodes = malloc((clist_count(recipients) * sizeof(int)) + 1);
+      retcodes = malloc((clist_count(recipients) * sizeof(int)));
     if ((ret = maillmtp_data_message(smtp, data, len, recipients, retcodes)) != MAILSMTP_NO_ERROR) {
         fprintf(stderr, "maillmtp_data: %s (%d)\n", mailsmtp_strerror(ret), ret);
         goto error;
