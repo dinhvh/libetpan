@@ -137,6 +137,8 @@ mailsmtp * mailsmtp_new(size_t progr_rate,
   session->smtp_max_msg_size = 0;
   session->smtp_progress_fun = NULL;
   session->smtp_progress_context = NULL;
+  session->smtp_should_cancel_fun = NULL;
+  session->smtp_should_cancel_context = NULL;
 
 	session->smtp_timeout = 0;
 
@@ -1128,6 +1130,12 @@ static int read_response(mailsmtp * session)
   mmap_string_assign(session->response_buffer, "");
 
   do {
+    if (session->smtp_should_cancel_fun != NULL) {
+      if ((* session->smtp_should_cancel_fun)(session->smtp_should_cancel_context)) {
+        code = 0;
+        break;
+      }
+    }
     line = read_line(session);
 
     if (line != NULL) {
@@ -1172,13 +1180,15 @@ static int send_command_private(mailsmtp * f, char * command, int can_be_publish
 static int send_data(mailsmtp * session, const char * message, size_t size)
 {
   if (session->smtp_progress_fun != NULL) {
-    if (mailstream_send_data_with_context(session->stream, message, size,
-                             session->smtp_progress_fun, session->smtp_progress_context) == -1)
+    if (mailstream_send_data_with_cancel_and_context(session->stream, message, size,
+                             session->smtp_progress_fun, session->smtp_progress_context,
+                             session->smtp_should_cancel_fun, session->smtp_should_cancel_context) == -1)
       return -1;
   }
   else {
-    if (mailstream_send_data(session->stream, message, size,
-                             session->progr_rate, session->progr_fun) == -1)
+    if (mailstream_send_data_with_cancel(session->stream, message, size,
+                             session->progr_rate, session->progr_fun,
+                             session->smtp_should_cancel_fun, session->smtp_should_cancel_context) == -1)
       return -1;
   }
 
@@ -1561,6 +1571,14 @@ void mailsmtp_set_progress_callback(mailsmtp * session,
 {
   session->smtp_progress_fun = progr_fun;
   session->smtp_progress_context = context;
+}
+
+void mailsmtp_set_should_cancel_callback(mailsmtp * session,
+                                         should_cancel_function * cancel_fun,
+                                         void * context)
+{
+  session->smtp_should_cancel_fun = cancel_fun;
+  session->smtp_should_cancel_context = context;
 }
 
 void mailsmtp_set_timeout(mailsmtp * session, time_t timeout)

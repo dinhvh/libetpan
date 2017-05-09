@@ -129,6 +129,8 @@ struct mailsmtp {
 
   mailprogress_function * smtp_progress_fun;
   void * smtp_progress_context;
+  should_cancel_function * smtp_should_cancel_fun;
+  void * smtp_should_cancel_context;
     
 	int response_code;
 	

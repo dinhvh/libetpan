@@ -357,7 +357,9 @@ static inline int send_data_crlf_progress(mailstream * s, const char * message,
                                           size_t progr_rate,
                                           progress_function * progr_fun,
                                           mailprogress_function * progr_context_fun,
-                                          void * context)
+                                          void * progr_context,
+                                          should_cancel_function * cancel_fun,
+                                          void * cancel_context)
 {
   const char * current;
   size_t count;
@@ -372,6 +374,12 @@ static inline int send_data_crlf_progress(mailstream * s, const char * message,
 
   while (remaining > 0) {
     ssize_t length;
+    
+    if (cancel_fun != NULL) {
+      if ((* cancel_fun)(cancel_context)) {
+        goto err;
+      }
+    }
     
     if (quoted) {
       if (current[0] == '.')
@@ -392,7 +400,7 @@ static inline int send_data_crlf_progress(mailstream * s, const char * message,
           (* progr_fun)(count, size);
         }
         if (progr_context_fun != NULL) {
-          (* progr_context_fun)(count, size, context);
+          (* progr_context_fun)(count, size, progr_context);
         }
         last = count;
       }
@@ -415,7 +423,7 @@ static inline int send_data_crlf(mailstream * s, const char * message,
 {
   return send_data_crlf_progress(s, message, size, quoted,
                                  progr_rate, progr_fun,
-                                 NULL, NULL);
+                                 NULL, NULL, NULL, NULL);
 }
 
 static inline int send_data_crlf_with_context(mailstream * s, const char * message,
@@ -426,7 +434,7 @@ static inline int send_data_crlf_with_context(mailstream * s, const char * messa
 {
   return send_data_crlf_progress(s, message, size, quoted,
                                  4096, NULL,
-                                 progr_fun, context);
+                                 progr_fun, context, NULL, NULL);
 }
 
 int mailstream_send_data_crlf(mailstream * s, const char * message,
@@ -450,10 +458,12 @@ static inline int mailstream_send_data_progress(mailstream * s, const char * mes
                                                 size_t progr_rate,
                                                 progress_function * progr_fun,
                                                 mailprogress_function * progr_ctx_fun,
-                                                void * context)
+                                                void * progr_ctx,
+                                                should_cancel_function * cancel_fun,
+                                                void * cancel_ctx)
 {
   if (send_data_crlf_progress(s, message, size, 1, progr_rate, progr_fun,
-                              progr_ctx_fun, context) == -1)
+                              progr_ctx_fun, progr_ctx, cancel_fun, cancel_ctx) == -1)
     goto err;
   
   if (mailstream_write(s, "\r\n.\r\n", 5) == -1)
@@ -473,10 +483,24 @@ int mailstream_send_data(mailstream * s, const char * message,
 			 size_t progr_rate,
 			 progress_function * progr_fun)
 {
+  return mailstream_send_data_with_cancel(s, message,
+                                          size,
+                                          progr_rate,
+                                          progr_fun, NULL, NULL);
+  
+}
+
+int mailstream_send_data_with_cancel(mailstream * s, const char * message,
+                                     size_t size,
+                                     size_t progr_rate,
+                                     progress_function * progr_fun,
+                                     should_cancel_function * cancel_fun,
+                                     void * context)
+{
   return mailstream_send_data_progress(s, message,
                                        size,
                                        progr_rate, progr_fun,
-                                       NULL, NULL);
+                                       NULL, NULL, cancel_fun, context);
 }
 
 int mailstream_send_data_with_context(mailstream * s, const char * message,
@@ -484,10 +508,23 @@ int mailstream_send_data_with_context(mailstream * s, const char * message,
                                       mailprogress_function * progr_fun,
                                       void * context)
 {
+  return mailstream_send_data_with_cancel_and_context(s, message,
+                                                      size, progr_fun,
+                                                      context, NULL, NULL);
+}
+
+int mailstream_send_data_with_cancel_and_context(mailstream * s, const char * message,
+                                                 size_t size,
+                                                 mailprogress_function * progr_fun,
+                                                 void * progr_context,
+                                                 should_cancel_function * cancel_fun,
+                                                 void * cancel_context)
+{
   return mailstream_send_data_progress(s, message,
                                        size,
                                        4096, NULL,
-                                       progr_fun, context);
+                                       progr_fun, progr_context,
+                                       cancel_fun, cancel_context);
 }
 
 static inline ssize_t get_data_size(const char * line, size_t length,

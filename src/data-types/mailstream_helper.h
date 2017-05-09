@@ -73,11 +73,25 @@ int mailstream_send_data(mailstream * s, const char * message,
 			  size_t size,
 			  size_t progr_rate,
 			  progress_function * progr_fun);
+  
+int mailstream_send_data_with_cancel(mailstream * s, const char * message,
+                                     size_t size,
+                                     size_t progr_rate,
+                                     progress_function * progr_fun,
+                                     should_cancel_function * cancel_fun,
+                                     void * context);
 
 int mailstream_send_data_with_context(mailstream * s, const char * message,
                                       size_t size,
                                       mailprogress_function * progr_fun,
                                       void * context);
+
+int mailstream_send_data_with_cancel_and_context(mailstream * s, const char * message,
+                                                 size_t size,
+                                                 mailprogress_function * progr_fun,
+                                                 void * progr_context,
+                                                 should_cancel_function * cancel_fun,
+                                                 void * cancel_context);
 
 size_t mailstream_get_data_crlf_size(const char * message, size_t size);
 

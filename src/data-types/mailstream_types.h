@@ -46,6 +46,7 @@ extern "C" {
 #  include <libetpan/libetpan-config.h>
 #endif
 #include <libetpan/carray.h>
+#include <stdbool.h>
 
 struct _mailstream;
 
@@ -121,6 +122,8 @@ struct _mailstream_low {
 typedef void progress_function(size_t current, size_t maximum);
 
 typedef void mailprogress_function(size_t current, size_t maximum, void * context);
+
+typedef bool should_cancel_function(void * context);
 
 enum {
   MAILSTREAM_IDLE_ERROR,
