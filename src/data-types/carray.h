@@ -79,7 +79,7 @@ int       carray_delete_slow(carray * array, unsigned int indx);
 
 /* remove without decreasing the size of the array */
 LIBETPAN_EXPORT
-int carray_delete_fast(carray * array, unsigned int indx);
+int carray_delete_fast(const carray * array, unsigned int indx);
 
 /* Some of the following routines can be implemented as macros to
    be faster. If you don't want it, define NO_MACROS */
@@ -87,15 +87,15 @@ int carray_delete_fast(carray * array, unsigned int indx);
 
 /* Returns the array itself */
 LIBETPAN_EXPORT
-void **   carray_data(carray *);
+void **   carray_data(const carray *);
 
 /* Returns the number of elements in the array */
 LIBETPAN_EXPORT
-unsigned int carray_count(carray *);
+unsigned int carray_count(const carray *);
 
 /* Returns the contents of one cell */
 LIBETPAN_EXPORT
-void *    carray_get(carray * array, unsigned int indx);
+void *    carray_get(const carray * array, unsigned int indx);
 
 /* Sets the contents of one cell */
 LIBETPAN_EXPORT
@@ -118,17 +118,17 @@ void      carray_set(carray * array, unsigned int indx, void * value);
 #endif
 #endif
 
-static INLINE void ** carray_data(carray * array)
+static INLINE void ** carray_data(const carray * array)
 {
   return array->array;
 }
 
-static INLINE unsigned int carray_count(carray * array)
+static INLINE unsigned int carray_count(const carray * array)
 {
   return array->len;
 }
 
-static INLINE void * carray_get(carray * array, unsigned int indx)
+static INLINE void * carray_get(const carray * array, unsigned int indx)
 {
   return array->array[indx];
 }
