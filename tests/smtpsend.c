@@ -286,6 +286,7 @@ int main(int argc, char **argv) {
     {"no-esmtp", 0, 0, 'E'},
     {"ssl",      0, 0, 'L'},
     {"lmtp",     0, 0, 'T'},
+    {NULL,       0, 0, 0},
   };
 #endif
 

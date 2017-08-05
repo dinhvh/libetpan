@@ -97,6 +97,7 @@ int parse_options(int argc, char ** argv,
     {"cache",    1, 0, 'c'},
     {"flags",    1, 0, 'f'},
 	{"debug-stream", 0, 0, 'D'},
+    {NULL,       0, 0, 0},
   };
 #endif
   int r;
