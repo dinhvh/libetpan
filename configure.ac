@@ -2,9 +2,9 @@
 # Process this file with autoconf to produce a configure script.
 
 m4_define([maj_version], [1])
-m4_define([min_version], [7])
-m4_define([mic_version], [2])
-m4_define([api_current], [20])
+m4_define([min_version], [8])
+m4_define([mic_version], [0])
+m4_define([api_current], [21])
 m4_define([api_revision], [0])
 m4_define([api_compatibility], [20])
 dnl API version
