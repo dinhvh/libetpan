@@ -6,21 +6,21 @@ LOCAL_MODULE := iconv
 LOCAL_CFLAGS := \
   -Wno-multichar \
   -DANDROID \
-  -DLIBDIR="c" \
+  -DLIBDIR=\"\" \
   -DBUILDING_LIBICONV \
   -DIN_LIBRARY
 
 LOCAL_SRC_FILES := \
-  ../libiconv-1.14/libcharset/lib/localcharset.c \
-  ../libiconv-1.14/lib/iconv.c \
-  ../libiconv-1.14/lib/relocatable.c
+  ../libiconv/libcharset/lib/localcharset.c \
+  ../libiconv/lib/iconv.c \
+  ../libiconv/lib/relocatable.c
 
 LOCAL_C_INCLUDES += \
-  $(LOCAL_PATH)/../libiconv-1.14/include \
-  $(LOCAL_PATH)/../libiconv-1.14/libcharset \
-  $(LOCAL_PATH)/../libiconv-1.14/lib \
-  $(LOCAL_PATH)/../libiconv-1.14/libcharset/include \
-  $(LOCAL_PATH)/../libiconv-1.14/srclib
+  $(LOCAL_PATH)/../libiconv/include \
+  $(LOCAL_PATH)/../libiconv/libcharset \
+  $(LOCAL_PATH)/../libiconv/lib \
+  $(LOCAL_PATH)/../libiconv/libcharset/include \
+  $(LOCAL_PATH)/../libiconv/srclib
  
-LOCAL_EXPORT_C_INCLUDES       := $(LOCAL_PATH)/../libiconv-1.14/include
+LOCAL_EXPORT_C_INCLUDES       := $(LOCAL_PATH)/../libiconv/include
 include $(BUILD_STATIC_LIBRARY)
