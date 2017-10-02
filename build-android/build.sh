@@ -1,6 +1,6 @@
 #!/bin/sh
 
-build_version=6
+build_version=6.1
 openssl_build_version=3
 cyrus_sasl_build_version=4
 iconv_build_version=1
