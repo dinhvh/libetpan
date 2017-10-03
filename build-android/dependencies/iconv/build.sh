@@ -23,21 +23,24 @@ if test ! -f $current_dir/$package_name-$build_version.zip; then
     curl -O http://ftp.gnu.org/gnu/libiconv/libiconv-$version.tar.gz
     cd ..
   fi
+  
+  #rm -rf "$current_dir/build-android/libiconv"
+  if test ! -d $current_dir/build-android/libiconv; then
+    cd "$current_dir/build-android"
+  	tar xzf "$current_dir/build-android/libiconv-$version.tar.gz"
+  	mv -v "$current_dir/build-android/libiconv-$version" "$current_dir/build-android/libiconv"
+
+  	cd "$current_dir/build-android/libiconv"
+  	./configure
+
+  	# Disable HAVE_LANGINFO_CODESET
+  	cd "$current_dir/build-android/libiconv/libcharset"
+  	sed -i '.original' 's/HAVE_LANGINFO_CODESET 1/HAVE_LANGINFO_CODESET 0/g' config.h
+
+  	cd "$current_dir"
+  fi  
+
   rm -rf "$current_dir/build-android/obj"
-  rm -rf "$current_dir/build-android/libiconv"
-  cd "$current_dir/build-android"
-  tar xzf "$current_dir/build-android/libiconv-$version.tar.gz"
-  mv -v "$current_dir/build-android/libiconv-$version" "$current_dir/build-android/libiconv"
-
-  cd "$current_dir/build-android/libiconv"
-  ./configure
-
-  # Disable HAVE_LANGINFO_CODESET
-  cd "$current_dir/build-android/libiconv/libcharset"
-  sed -i '.original' 's/HAVE_LANGINFO_CODESET 1/HAVE_LANGINFO_CODESET 0/g' config.h
-
-  cd "$current_dir"
-
   mkdir -p "$current_dir/$package_name-$build_version/libs/$arch_dir_name"
   cp -r "$current_dir/build-android/libiconv/include" "$current_dir/$package_name-$build_version"
 
