@@ -345,8 +345,10 @@ int mailimap_acl_myrights(mailimap * session,
         ext_data->ext_extension->ext_id == MAILIMAP_EXTENSION_ACL &&
         ext_data->ext_type == MAILIMAP_ACL_TYPE_MYRIGHTS_DATA) {
           * result = (struct mailimap_acl_myrights_data *)ext_data->ext_data;
+          ext_data->ext_data = NULL;
           /* remove the element from rsp_extension_list */
           clist_delete(session->imap_response_info->rsp_extension_list, cur);
+          mailimap_extension_data_free(ext_data);
 
           break;
       }
