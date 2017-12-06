@@ -408,7 +408,7 @@ static void mailstream_ssl_context_free(struct mailstream_ssl_context * ssl_ctx)
 
 static int mailstream_openssl_client_cert_cb(SSL *ssl, X509 **x509, EVP_PKEY **pkey)
 {
-	struct mailstream_ssl_context * ssl_context = (struct mailstream_ssl_context *)SSL_CTX_get_app_data(ssl->ctx);
+	struct mailstream_ssl_context * ssl_context = (struct mailstream_ssl_context *)SSL_CTX_get_app_data(SSL_get_SSL_CTX(ssl));
 	
 	if (x509 == NULL || pkey == NULL) {
 		return 0;

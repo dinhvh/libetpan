@@ -212,7 +212,7 @@ if test "x$with_openssl" != "xno"; then
   AC_CHECK_HEADER(openssl/ssl.h, [
    AC_CHECK_LIB(rsaref, main, [SSLLIBS="-lrsaref"])
    AC_CHECK_LIB(crypto, main, [SSLLIBS="-lcrypto $SSLLIBS"], [], [$SSLLIBS])
-   AC_CHECK_LIB(ssl, SSL_library_init, with_openssl=yes, [], [$SSLLIBS])])
+   AC_CHECK_LIB(ssl, SSL_CTX_new, with_openssl=yes, [], [$SSLLIBS])])
   if test "x$with_openssl" != "xyes"; then
     CPPFLAGS="$OCPPFLAGS"
     LDFLAGS="$OLDFLAGS"
