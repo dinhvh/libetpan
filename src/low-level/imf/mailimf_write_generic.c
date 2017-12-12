@@ -1449,8 +1449,6 @@ static int is_atext(const char * s)
     if (isdigit((unsigned char) * p))
       continue;
     switch (*p) {
-    case ' ':
-    case '\t':
     case '!':
     case '#':
     case '$':
