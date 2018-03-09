@@ -5,4 +5,5 @@ dependencies/openssl/packages
 include/libetpan
 third-parties
 obj
+libetpan-android-*.zip
 

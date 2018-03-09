@@ -11,7 +11,7 @@ endif
 
 
 ifeq ($(ICONV_PATH),)
-$(error CYRUS_SASL_PATH must be set)
+$(error ICONV_PATH must be set)
 endif
 
 src_files = \
