@@ -166,7 +166,8 @@ mailimap_extension_data_free(struct
   if (data == NULL)
     return;
 
-  if (data->ext_extension != NULL)
+  if (data->ext_extension != NULL && data->ext_data != NULL)
+    /* ext_free() includes free(data) */
     data->ext_extension->ext_free(data);
   else
     free(data);
