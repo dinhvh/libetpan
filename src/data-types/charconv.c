@@ -163,7 +163,6 @@ int charconv(const char * tocode, const char * fromcode,
 
   fromcode = get_valid_charset(fromcode);
   
-#ifndef __ANDROID__
 	if (extended_charconv != NULL) {
 		size_t		result_length;
 		result_length = length * 6;
@@ -185,7 +184,6 @@ int charconv(const char * tocode, const char * fromcode,
 			return res;
 		/* else, let's try with iconv, if available */
 	}
-#endif
 
 #ifndef HAVE_ICONV
   return MAIL_CHARCONV_ERROR_UNKNOWN_CHARSET;
@@ -224,6 +222,7 @@ int charconv(const char * tocode, const char * fromcode,
     out = pout;
 
   * result = out;
+
   return MAIL_CHARCONV_NO_ERROR;
 
  free:
@@ -255,7 +254,6 @@ int charconv_buffer(const char * tocode, const char * fromcode,
 
   fromcode = get_valid_charset(fromcode);
   
-#ifndef __ANDROID__
 	if (extended_charconv != NULL) {
 		size_t		result_length;
 		result_length = length * 6;
@@ -288,7 +286,6 @@ int charconv_buffer(const char * tocode, const char * fromcode,
 		}
 		/* else, let's try with iconv, if available */
 	}
-#endif
 
 #ifndef HAVE_ICONV
   return MAIL_CHARCONV_ERROR_UNKNOWN_CHARSET;
