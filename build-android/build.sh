@@ -53,8 +53,8 @@ unzip -qo "$current_dir/dependencies/iconv/iconv-android-$iconv_build_version.zi
 
 cd "$current_dir/.."
 tar xzf "$current_dir/../build-mac/autogen-result.tar.gz"
-./autogen.sh
-make
+./configure
+make prepare
 
 # Copy public headers to include
 cp -r include/libetpan "$current_dir/include"
