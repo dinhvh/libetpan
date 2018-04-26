@@ -1,0 +1,4 @@
+build-android/libiconv/*
+build-android/obj/*
+*.tar.gz
+*.tar
