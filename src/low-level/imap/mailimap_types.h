@@ -509,7 +509,8 @@ extern "C" {
 #include <libetpan/libetpan-config.h>
 #include <libetpan/mailstream.h>
 #include <libetpan/clist.h>
-#include <stdbool.h>
+
+typedef enum { false, true } bool;
 
 
 /*
