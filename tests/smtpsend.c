@@ -54,12 +54,12 @@ struct mem_message {
 #define BLOCKSIZE 4096
 
 int collect(struct mem_message *message) {
-  struct stat sb;
   int len;
 
   memset(message, 0, sizeof(struct mem_message));
 
 #ifndef MMAP_UNAVAILABLE
+  struct stat sb;
   /* if stdin is a file whose size is known, try to mmap it */
   if (!fstat(0, &sb) && S_ISREG(sb.st_mode) && sb.st_size >= 0) {
     message->len = sb.st_size;

@@ -821,7 +821,9 @@ free_decoded:
   mailmime_decoded_part_free(decoded);
 free_body:
   free(body);
+#if 0
 free_encoded_text:
+#endif
   mailmime_encoded_text_free(text);
 free_charset:
   mailmime_charset_free(charset);
