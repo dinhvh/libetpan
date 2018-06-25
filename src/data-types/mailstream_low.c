@@ -429,7 +429,6 @@ int mailstream_low_wait_idle(mailstream_low * low, struct mailstream_cancel * id
   int fd;
   int idle_fd;
   int cancel_fd;
-  struct timeval delay;
   int r;
 #if defined(WIN32)
   fd_set readfds;
@@ -533,6 +532,7 @@ int mailstream_low_wait_idle(mailstream_low * low, struct mailstream_cancel * id
   if (cancel_fd > maxfd) {
     maxfd = cancel_fd;
   }
+  struct timeval delay;
   delay.tv_sec = max_idle_delay;
   delay.tv_usec = 0;
   
