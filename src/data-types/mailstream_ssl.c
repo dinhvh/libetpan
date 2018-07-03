@@ -262,6 +262,7 @@ void mailstream_gnutls_init_not_required(void)
 void mailstream_openssl_init_not_required(void)
 {
 #ifdef USE_SSL
+  mailstream_ssl_init_lock();
   MUTEX_LOCK(&ssl_lock);
   openssl_init_done = 1;
   MUTEX_UNLOCK(&ssl_lock);
