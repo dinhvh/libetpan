@@ -33,6 +33,7 @@
 #define MAILIMAP_EXTENSION_TYPES_H
 
 #include <libetpan/mailstream.h>
+#include <libetpan/mailimap_types.h>
 
 struct mailimap_extension_data;
 
