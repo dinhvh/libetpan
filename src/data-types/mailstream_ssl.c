@@ -262,6 +262,7 @@ void mailstream_gnutls_init_not_required(void)
 void mailstream_openssl_init_not_required(void)
 {
 #ifdef USE_SSL
+  mailstream_ssl_init_lock();
   MUTEX_LOCK(&ssl_lock);
   openssl_init_done = 1;
   MUTEX_UNLOCK(&ssl_lock);
@@ -408,7 +409,7 @@ static void mailstream_ssl_context_free(struct mailstream_ssl_context * ssl_ctx)
 
 static int mailstream_openssl_client_cert_cb(SSL *ssl, X509 **x509, EVP_PKEY **pkey)
 {
-	struct mailstream_ssl_context * ssl_context = (struct mailstream_ssl_context *)SSL_CTX_get_app_data(ssl->ctx);
+	struct mailstream_ssl_context * ssl_context = (struct mailstream_ssl_context *)SSL_CTX_get_app_data(SSL_get_SSL_CTX(ssl));
 	
 	if (x509 == NULL || pkey == NULL) {
 		return 0;
@@ -1454,8 +1455,8 @@ carray * mailstream_low_ssl_get_certificate_chain(mailstream_low * s)
   }
   
   result = carray_new(4);
-  for(skpos = 0 ; skpos < sk_num(skx) ; skpos ++) {
-    X509 * x = (X509 *) sk_value(skx, skpos);
+  for(skpos = 0 ; skpos < sk_num((_STACK *) skx) ; skpos ++) {
+    X509 * x = (X509 *) sk_value((_STACK *) skx, skpos);
     unsigned char * p;
     MMAPString * str;
     int length = i2d_X509(x, NULL);

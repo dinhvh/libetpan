@@ -194,7 +194,7 @@ int mail_unix_connect_socket(const char *path)
     return -1;
  }
 
- if (!(memcpy(sa.sun_path, path, sizeof(sa.sun_path)))) {
+ if (!(memcpy(sa.sun_path, path, strlen(path)+1))) {
     return -1;
  }
  sa.sun_family = AF_UNIX;

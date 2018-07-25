@@ -1173,7 +1173,6 @@ int mailimf_atom_parse(const char * message, size_t length,
   return res;
 }
 
-LIBETPAN_EXPORT
 static int mailimf_fws_atom_for_word_parse(const char * message, size_t length,
                                            size_t * indx, char ** result, int * p_missing_closing_quote)
 {

@@ -1201,8 +1201,10 @@ mailimap_flag_list_new(clist * fl_list)
 LIBETPAN_EXPORT
 void mailimap_flag_list_free(struct mailimap_flag_list * flag_list)
 {
-  clist_foreach(flag_list->fl_list, (clist_func) mailimap_flag_free, NULL);
-  clist_free(flag_list->fl_list);
+  if (flag_list->fl_list) {
+    clist_foreach(flag_list->fl_list, (clist_func) mailimap_flag_free, NULL);
+    clist_free(flag_list->fl_list);
+  }
   free(flag_list);
 }
 
