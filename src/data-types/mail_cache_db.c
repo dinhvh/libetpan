@@ -52,8 +52,32 @@
 #if DBVERS >= 1
 #include <db.h>
 #endif
+// REMOVE ME!!!!!
+#define LMDB 1
 
-#if DBVERS >= 1
+#if LMDB > 0
+#include <lmdb.h>
+#endif
+
+#if LMDB > 0
+static struct mail_cache_db * mail_cache_lmdb_new(MDB_env *env)
+{
+  struct mail_cache_db * cache_db;
+
+  cache_db = malloc(sizeof(* cache_db));
+  if (cache_db == NULL)
+    return NULL;
+  cache_db->internal_database = env;
+
+  return cache_db;
+}
+
+static void mail_cache_db_free(struct mail_cache_db * cache_db)
+{
+  free(cache_db);
+}
+
+#elif DBVERS >= 1
 static struct mail_cache_db * mail_cache_db_new(DB * db)
 {
   struct mail_cache_db * cache_db;
@@ -133,7 +157,13 @@ int mail_cache_db_open(const char * filename,
 
 void mail_cache_db_close(struct mail_cache_db * cache_db)
 {
-#if DBVERS >= 1
+#if LMDB > 0
+  MDB_env *env;
+
+  env = cache_db->internal_database;
+  mdb_env_close(env);
+  mail_cache_db_free(cache_db);
+#elif DBVERS >= 1
   DB * dbp;
 
   dbp = cache_db->internal_database;
@@ -148,6 +178,37 @@ void mail_cache_db_close(struct mail_cache_db * cache_db)
 #endif
 }
 
+#if LMDB > 0
+int mail_cache_lmdb_open(const char * filename,
+    struct mail_cache_db ** pcache_db)
+{
+  int r;
+  struct mail_cache_db * cache_db;
+  MDB_env *env;
+
+  r = mdb_env_create(&env);
+  if (r != 0)
+    return -1;
+
+  r = mdb_env_open(env, filename, MDB_CREATE|MDB_NOSUBDIR, 0660);
+  if (r != 0)
+    goto close_db;
+
+  cache_db = mail_cache_lmdb_new(env);
+  if (cache_db == NULL)
+    goto close_db;
+
+  * pcache_db = cache_db;
+
+  return 0;
+
+  close_db:
+    mdb_env_close(env);
+    return -1;
+
+}
+#endif
+
 int mail_cache_db_open_lock(const char * filename,
     struct mail_cache_db ** pcache_db)
 {
@@ -157,8 +218,11 @@ int mail_cache_db_open_lock(const char * filename,
   r = maillock_write_lock(filename, -1);
   if (r < 0)
     goto err;
-
+#if LMDB > 0
+  r = mail_cache_lmdb_open(filename, &cache_db);
+#else
   r = mail_cache_db_open(filename, &cache_db);
+#endif
   if (r < 0)
     goto unlock;
   
@@ -183,7 +247,39 @@ void mail_cache_db_close_unlock(const char * filename,
 int mail_cache_db_put(struct mail_cache_db * cache_db,
     const void * key, size_t key_len, const void * value, size_t value_len)
 {
-#if DBVERS >= 1
+#if LMDB > 0
+  int r;
+  MDB_env *env;
+  MDB_txn *txn;
+  MDB_dbi dbi;
+  MDB_val mdb_key;
+  MDB_val mdb_val;
+
+  env = cache_db->internal_database;
+
+  mdb_key.mv_size = key_len;
+  mdb_key.mv_data = (void *) key;
+  mdb_val.mv_size = value_len;
+  mdb_val.mv_data = (void *) value;
+
+  r = mdb_txn_begin(env, NULL, 0, &txn);
+  if (r != 0)
+    return -1;
+  r = mdb_dbi_open(txn, NULL, 0, &dbi);
+  if (r != 0)
+    goto error;
+
+  r = mdb_put(txn, dbi, &mdb_key, &mdb_val, 0);
+  if (r != 0)
+    goto error;
+
+  mdb_txn_commit(txn);
+  return 0;
+
+  error:
+    mdb_txn_abort(txn);
+    return -1;
+#elif DBVERS >= 1
   int r;
   DBT db_key;
   DBT db_data;
@@ -217,7 +313,39 @@ int mail_cache_db_put(struct mail_cache_db * cache_db,
 int mail_cache_db_get(struct mail_cache_db * cache_db,
     const void * key, size_t key_len, void ** pvalue, size_t * pvalue_len)
 {
-#if DBVERS >= 1
+#if LMDB > 0
+  int r;
+  MDB_env *env;
+  MDB_txn *txn;
+  MDB_dbi dbi;
+  MDB_val mdb_key;
+  MDB_val mdb_val;
+
+  env = cache_db->internal_database;
+
+  mdb_key.mv_size = key_len;
+  mdb_key.mv_data = (void *) key;
+
+  r = mdb_txn_begin(env, NULL, 0, &txn);
+  if (r != 0)
+    return -1;
+  r = mdb_dbi_open(txn, NULL, 0, &dbi);
+  if (r != 0)
+    goto error;
+
+  r = mdb_get(txn, dbi, &mdb_key, &mdb_val);
+  if (r != 0)
+    goto error;
+
+  * pvalue = mdb_val.mv_data;
+  * pvalue_len = mdb_val.mv_size;
+  mdb_txn_commit(txn);
+  return 0;
+
+  error:
+    mdb_txn_abort(txn);
+    return -1;
+#elif DBVERS >= 1
   int r;
   DBT db_key;
   DBT db_data;
@@ -253,7 +381,35 @@ int mail_cache_db_get(struct mail_cache_db * cache_db,
 int mail_cache_db_del(struct mail_cache_db * cache_db,
     const void * key, size_t key_len)
 {
-#if DBVERS >= 1
+#if LMDB > 0
+  int r;
+  MDB_env *env;
+  MDB_txn *txn;
+  MDB_dbi dbi;
+  MDB_val mdb_key;
+
+  env = cache_db->internal_database;
+
+  mdb_key.mv_size = key_len;
+  mdb_key.mv_data = (void *) key;
+
+  r = mdb_txn_begin(env, NULL, 0, &txn);
+  if (r != 0)
+    return -1;
+  r = mdb_dbi_open(txn, NULL, 0, &dbi);
+  if (r != 0)
+    goto error;
+
+  r = mdb_del(txn, dbi, &mdb_key, NULL);
+  if (r != 0)
+    goto error;
+
+  return 0;
+
+  error:
+    mdb_txn_abort(txn);
+    return -1;
+#elif DBVERS >= 1
   int r;
   DBT db_key;
   DB * dbp;
@@ -280,7 +436,60 @@ int mail_cache_db_del(struct mail_cache_db * cache_db,
 #endif
 }
 
-#if DBVERS > 1  
+#if LMDB > 0
+int mail_cache_db_clean_up(struct mail_cache_db * cache_db,
+    chash * exist)
+{
+  int r;
+  MDB_env *env;
+  MDB_txn *txn;
+  MDB_dbi dbi;
+  MDB_cursor *cursor;
+  MDB_val mdb_key;
+  MDB_val mdb_val;
+
+  env = cache_db->internal_database;
+
+  r = mdb_txn_begin(env, NULL, 0, &txn);
+  if (r != 0)
+    return -1;
+  r = mdb_dbi_open(txn, NULL, 0, &dbi);
+  if (r != 0)
+    goto error;
+
+  r = mdb_cursor_open(txn, dbi, &cursor);
+  if (r != 0)
+    goto error;
+
+  r = mdb_cursor_get(cursor, &mdb_key, &mdb_val, MDB_FIRST);
+  if (r != 0)
+    goto cursor_error;
+
+  while (r == 0) {
+    chashdatum hash_key;
+    chashdatum hash_data;
+
+    hash_key.data = mdb_key.mv_data;
+    hash_key.len = (unsigned int) mdb_key.mv_size;
+
+    r = chash_get(exist, &hash_key, &hash_data);
+    if (r < 0) {
+      r = mdb_cursor_del(cursor, 0);
+      if (r != 0)
+        goto cursor_error;
+    }
+    r = mdb_cursor_get(cursor, &mdb_key, &mdb_val, MDB_NEXT);
+  }
+
+  mdb_txn_commit(txn);
+  return 0;
+  cursor_error:
+    mdb_cursor_close(cursor);
+  error:
+    mdb_txn_abort(txn);
+  return -1;
+}
+#elif DBVERS > 1
 int mail_cache_db_clean_up(struct mail_cache_db * cache_db,
     chash * exist)
 {
@@ -375,7 +584,39 @@ int mail_cache_db_clean_up(struct mail_cache_db * cache_db,
 int mail_cache_db_get_size(struct mail_cache_db * cache_db,
     const void * key, size_t key_len, size_t * pvalue_len)
 {
-#if DBVERS >= 1
+#if LMDB > 0
+  int r;
+  MDB_env *env;
+  MDB_txn *txn;
+  MDB_dbi dbi;
+  MDB_val mdb_key;
+  MDB_val mdb_val;
+
+  env = cache_db->internal_database;
+
+  mdb_key.mv_size = key_len;
+  mdb_key.mv_data = (void *) key;
+
+  r = mdb_txn_begin(env, NULL, 0, &txn);
+  if (r != 0)
+    return -1;
+  r = mdb_dbi_open(txn, NULL, 0, &dbi);
+  if (r != 0)
+    goto error;
+
+  r = mdb_get(txn, dbi, &mdb_key, &mdb_val);
+  if (r != 0)
+    goto error;
+
+  * pvalue_len = mdb_val.mv_size;
+  mdb_txn_commit(txn);
+  return 0;
+
+  error:
+    mdb_txn_abort(txn);
+    return -1;
+
+#elif DBVERS >= 1
   int r;
   DBT db_key;
   DBT db_data;
@@ -402,9 +643,9 @@ int mail_cache_db_get_size(struct mail_cache_db * cache_db,
   
   if (r != 0)
     return -1;
-  
+
   * pvalue_len = db_data.size;
-  
+
   return 0;
 #else
   return -1;
@@ -490,6 +731,59 @@ int mail_cache_db_get_keys(struct mail_cache_db * cache_db,
   }
   
   return 0;
+}
+#elif LMDB > 0
+int mail_cache_db_get_keys(struct mail_cache_db * cache_db,
+    chash * keys)
+{
+  int r;
+  MDB_env *env;
+  MDB_txn *txn;
+  MDB_dbi dbi;
+  MDB_cursor *cursor;
+  MDB_val mdb_key;
+  MDB_val mdb_val;
+
+  env = cache_db->internal_database;
+
+  r = mdb_txn_begin(env, NULL, 0, &txn);
+  if (r != 0)
+    return -1;
+  r = mdb_dbi_open(txn, NULL, 0, &dbi);
+  if (r != 0)
+    goto error;
+
+  r = mdb_cursor_open(txn, dbi, &cursor);
+  if (r != 0)
+    goto error;
+
+  r = mdb_cursor_get(cursor, &mdb_key, &mdb_val, MDB_FIRST);
+  if (r != 0)
+    goto cursor_error;
+
+  while (r == 0) {
+    chashdatum hash_key;
+    chashdatum hash_data;
+
+    hash_key.data = mdb_key.mv_data;
+    hash_key.len = (unsigned int) mdb_key.mv_size;
+    hash_data.data = NULL;
+    hash_data.len = 0;
+
+    r = chash_set(keys, &hash_key, &hash_data, NULL);
+    if (r != 0)
+      goto cursor_error;
+    r = mdb_cursor_get(cursor, &mdb_key, &mdb_val, MDB_NEXT);
+  }
+
+  mdb_txn_commit(txn);
+  return 0;
+
+  cursor_error:
+    mdb_cursor_close(cursor);
+  error:
+    mdb_txn_abort(txn);
+  return -1;
 }
 #else
 int mail_cache_db_get_keys(struct mail_cache_db * cache_db,

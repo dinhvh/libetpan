@@ -355,9 +355,14 @@ DBLINKED=0
 DBLIB=""
 
 AC_ARG_ENABLE(db, [AC_HELP_STRING([--disable-db], [disable Berkeley DB (default=try to detect DB)])],[enable_db=$enableval],[enable_db=yes])
+AC_ARG_ENABLE(lmdb, [AC_HELP_STRING([--enable-lmdb], [enable lmdb as cache DB (default=try to detect DB. disbables BerkeleyDB)])],[enable_lmdb=$enableval],[enable_lmdb=yes])
 
+if test "x$enable_lmdb" = "xyes"; then
+   LMDB=1
+   DBLIB=-llmdb
+   AC_CHECK_HEADER(lmdb.h, [LMDB=1], [LMDB=0])
 dnl Check for a presence of Berkeley DB header
-if test "x$enable_db" != "xyes"; then
+elif test "x$enable_db" != "xyes"; then
    AC_MSG_WARN(cache support disabled)
 else
    AC_CHECK_HEADER(db.h, [DB_HEADER=1], [DB_HEADER=0])
