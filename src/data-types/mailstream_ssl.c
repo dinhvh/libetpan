@@ -428,7 +428,7 @@ static int mailstream_openssl_client_cert_cb(SSL *ssl, X509 **x509, EVP_PKEY **p
 }
 
 static struct mailstream_ssl_data * ssl_data_new_full(int fd, time_t timeout,
-	SSL_METHOD * method, void (* callback)(struct mailstream_ssl_context * ssl_context, void * cb_data),
+	const SSL_METHOD * method, void (* callback)(struct mailstream_ssl_context * ssl_context, void * cb_data),
 	void * cb_data)
 {
   struct mailstream_ssl_data * ssl_data;
