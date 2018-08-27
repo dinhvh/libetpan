@@ -568,7 +568,8 @@ static int mailstream_gnutls_client_cert_cb(gnutls_session session,
 #if GNUTLS_VERSION_NUMBER <= 0x020c00
 		st->type = type;
 #else
-		st->key_type = type;
+		st->cert_type = type;
+		st->key_type = GNUTLS_PRIVKEY_X509;
 #endif
 		st->cert.x509 = &(ssl_context->client_x509);
 		st->key.x509 = ssl_context->client_pkey;
