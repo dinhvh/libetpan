@@ -59,7 +59,7 @@ static void simple_print_mail_info(mailmessage * msg)
 
   strip_crlf(dsp_subject);
 
-  snprintf(output, MAX_OUTPUT, "%3i: %-21.21s %-53.53s\n",
+  snprintf(output, MAX_OUTPUT, "%3i: %-21.21s %-52.52s\n",
       msg->msg_index % 1000, dsp_from, dsp_subject);
   
   printf("%s\n", output);
