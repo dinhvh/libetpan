@@ -16,12 +16,12 @@ if test "x`uname`" = xLinux ; then
   make imap-sample
 else
   echo Building library for iPhoneOS
-  xctool -project build-mac/libetpan.xcodeproj -sdk iphoneos$IOSSDK -scheme "libetpan ios" build ARCHS="armv7 armv7s arm64"
+  xcodebuild -project build-mac/libetpan.xcodeproj -sdk iphoneos$IOSSDK -scheme "libetpan ios" build ARCHS="armv7 armv7s arm64" > /dev/null
   echo Building library for iPhoneSimulator
-  xctool -project build-mac/libetpan.xcodeproj -sdk iphonesimulator$IOSSDK -scheme "libetpan ios" build ARCHS="i386 x86_64"
+  xcodebuild -project build-mac/libetpan.xcodeproj -sdk iphonesimulator$IOSSDK -scheme "libetpan ios" build ARCHS="i386 x86_64" > /dev/null
 
   echo Building library for Mac
-  xctool -project build-mac/libetpan.xcodeproj -sdk macosx$OSXSDK -scheme "static libetpan" build
+  xcodebuild -project build-mac/libetpan.xcodeproj -sdk macosx$OSXSDK -scheme "static libetpan" build > /dev/null
   echo Building framework for Mac
-  xctool -project build-mac/libetpan.xcodeproj -sdk macosx$OSXSDK -scheme "libetpan" build
+  xcodebuild -project build-mac/libetpan.xcodeproj -sdk macosx$OSXSDK -scheme "libetpan" build > /dev/null
 fi

@@ -4,4 +4,3 @@ os:
 language: c
 before_script: travis/before-script.sh
 script: travis/script.sh
-osx_image: xcode7
