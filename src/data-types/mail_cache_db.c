@@ -190,7 +190,11 @@ int mail_cache_lmdb_open(const char * filename,
   if (r != 0)
     return -1;
 
-  r = mdb_env_open(env, filename, MDB_CREATE|MDB_NOSUBDIR, 0660);
+  r = mdb_env_set_mapsize(env, 512*1024*1024 /*max mmap and file size*/);
+  if (r != 0)
+    return -1;
+
+  r = mdb_env_open(env, filename, MDB_NOSUBDIR, 0660);
   if (r != 0)
     goto close_db;
 
