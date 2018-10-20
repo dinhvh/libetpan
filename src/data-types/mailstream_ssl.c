@@ -1376,7 +1376,12 @@ int mailstream_ssl_set_server_name(struct mailstream_ssl_context * ssl_context,
 
 #ifdef USE_SSL
 # ifdef USE_GNUTLS
-  r = gnutls_server_name_set(ssl_context->session, GNUTLS_NAME_DNS, hostname, strlen(hostname));
+  if (hostname != NULL) {
+    r = gnutls_server_name_set(ssl_context->session, GNUTLS_NAME_DNS, hostname, strlen(hostname));
+  }
+  else {
+    r = gnutls_server_name_set(ssl_context->session, GNUTLS_NAME_DNS, "", 0U);
+  }
 # else /* !USE_GNUTLS */
 #  if (OPENSSL_VERSION_NUMBER >= 0x10000000L)
   if (hostname != NULL) {
