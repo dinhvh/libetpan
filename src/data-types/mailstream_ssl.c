@@ -1388,7 +1388,10 @@ int mailstream_ssl_set_server_name(struct mailstream_ssl_context * ssl_context,
     ssl_context->server_name = strdup(hostname);
   }
   else {
-    ssl_context->server_name[0] = '\0';
+    if (ssl_context->server_name != NULL) {
+      free(ssl_context->server_name);
+    }
+    ssl_context->server_name = NULL;
   }
   r = 0;
 #  endif /* (OPENSSL_VERSION_NUMBER >= 0x10000000L) */
