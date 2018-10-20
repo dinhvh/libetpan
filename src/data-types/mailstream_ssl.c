@@ -1385,6 +1385,14 @@ int mailstream_ssl_set_server_name(struct mailstream_ssl_context * ssl_context,
 # else /* !USE_GNUTLS */
 #  if (OPENSSL_VERSION_NUMBER >= 0x10000000L)
   if (hostname != NULL) {
+    /* Unfortunately we can't set this in the openssl session yet since it
+     * hasn't been created yet; we only have the openssl context at this point.
+     * We will set it in the openssl session when we create it, soon after the
+     * client callback that we expect to be calling us (since it is the way the
+     * client gets our mailstream_ssl_context) returns (see
+     * ssl_data_new_full()) but we cannot rely on the client persisting it. We
+     * must therefore take a temporary copy here, which we free once we've set
+     * it in the openssl session. */
     ssl_context->server_name = strdup(hostname);
   }
   else {
