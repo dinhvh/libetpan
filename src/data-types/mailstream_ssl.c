@@ -1361,6 +1361,27 @@ int mailstream_ssl_set_server_certicate(struct mailstream_ssl_context * ssl_cont
 #endif /* USE_SSL */
 }
 
+LIBETPAN_EXPORT
+int mailstream_ssl_set_server_name(struct mailstream_ssl_context * ssl_context,
+    char * hostname)
+{
+  int r = -1;
+
+#ifdef USE_SSL
+# ifdef USE_GNUTLS
+  r = gnutls_server_name_set(ssl_context->session, GNUTLS_NAME_DNS, hostname, strlen(hostname));
+# else /* !USE_GNUTLS */
+#  if (OPENSSL_VERSION_NUMBER >= 0x10000000L)
+  if (SSL_set_tlsext_host_name(ssl_context->openssl_ssl_ctx, hostname)) {
+    r = 0;
+  }
+#  endif /* (OPENSSL_VERSION_NUMBER >= 0x10000000L) */
+# endif /* !USE_GNUTLS */
+#endif /* USE_SSL */
+
+  return r;
+}
+
 #ifdef USE_SSL
 #ifndef USE_GNUTLS
 static struct mailstream_ssl_context * mailstream_ssl_context_new(SSL_CTX * open_ssl_ctx, int fd)
