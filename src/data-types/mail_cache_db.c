@@ -37,6 +37,8 @@
 #	include <config.h>
 #endif
 
+#ifndef LMDB
+
 #include "mail_cache_db.h"
 
 #include <sys/types.h>
@@ -497,4 +499,6 @@ int mail_cache_db_get_keys(struct mail_cache_db * cache_db,
 {
   return -1;
 }
+#endif
+
 #endif
