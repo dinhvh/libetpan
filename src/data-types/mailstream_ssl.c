@@ -468,7 +468,7 @@ static struct mailstream_ssl_data * ssl_data_new_full(int fd, time_t timeout,
     goto free_ctx;
 
 #if (OPENSSL_VERSION_NUMBER >= 0x10000000L)
-  if (ssl_context->server_name != NULL) {
+  if (ssl_context != NULL && ssl_context->server_name != NULL) {
     SSL_set_tlsext_host_name(ssl_conn, ssl_context->server_name);
     free(ssl_context->server_name);
     ssl_context->server_name = NULL;
