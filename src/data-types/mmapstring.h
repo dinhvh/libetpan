@@ -147,7 +147,10 @@ MMAPString * mmap_string_erase(MMAPString * string,
 LIBETPAN_EXPORT
 void mmap_string_set_ceil(size_t ceil);
 
+LIBETPAN_EXPORT
 int mmap_string_ref(MMAPString * string);
+
+LIBETPAN_EXPORT
 int mmap_string_unref(char * str);
 
 #ifdef __cplusplus

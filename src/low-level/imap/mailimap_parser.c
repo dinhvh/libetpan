@@ -49,6 +49,12 @@
 #include "mail.h"
 #include "timeutils.h"
 
+#ifdef _WIN32
+#   ifdef _MSC_VER
+#   include "win_etpan.h"
+#   endif
+#endif
+
 #ifndef UNSTRICT_SYNTAX
 #define UNSTRICT_SYNTAX
 #endif
