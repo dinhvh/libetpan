@@ -73,9 +73,9 @@ cd "$srcdir/$ARCHIVE"
 patch -p1 < $current_dir/$patchfile
 # patch source files
 cd "$srcdir/$ARCHIVE/include"
-sed -E 's/\.\/makemd5 /.\/makemd5i386 /' < Makefile.am > Makefile.am.new
+sed -E 's/\.\/\$< /.\/\$<i386 /' < Makefile.am > Makefile.am.new
 mv Makefile.am.new Makefile.am
-sed -E 's/\.\/makemd5 /.\/makemd5i386 /' < Makefile.in > Makefile.in.new
+sed -E 's/\.\/\$< /.\/\$<i386 /' < Makefile.in > Makefile.in.new
 mv Makefile.in.new Makefile.in
 cd "$srcdir/$ARCHIVE/lib"
 sed -E 's/\$\(AR\) cru \.libs\/\$@ \$\(SASL_STATIC_OBJS\)/&; \$\(RANLIB\) .libs\/\$@/' < Makefile.in > Makefile.in.new
