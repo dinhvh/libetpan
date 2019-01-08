@@ -150,6 +150,11 @@ int mailesmtp_rcpt(mailsmtp * session,
 		    const char * orcpt);
 
 LIBETPAN_EXPORT
+int mailesmtp_clientid(mailsmtp * session,
+            const char * type,
+            const char * clientid);
+
+LIBETPAN_EXPORT
 int mailesmtp_starttls(mailsmtp * session);
 
 LIBETPAN_EXPORT

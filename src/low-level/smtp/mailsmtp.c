@@ -610,6 +610,9 @@ int mailesmtp_parse_ehlo(mailsmtp * session)
       }
       /* TODO: grab optionnal max size */
     }
+    else if (!strncasecmp(response, "CLIENTID", 8) && isdelim(response[8])) {
+      session->esmtp |= MAILSMTP_ESMTP_CLIENTID;
+    }
     else if (!strncasecmp(response, "PIPELINING", 10) && isdelim(response[10])) {
       session->esmtp |= MAILSMTP_ESMTP_PIPELINING;
     }
@@ -1065,6 +1068,32 @@ int mailsmtp_auth(mailsmtp * session, const char * user, const char * pass)
   }
 }
 
+int mailesmtp_clientid(mailsmtp * session,
+    const char * type, const char * clientid) {
+  char command[SMTP_STRING_SIZE];
+  int r;
+
+  if (!(session->esmtp & MAILSMTP_ESMTP_CLIENTID))
+    return MAILSMTP_ERROR_CLIENTID_NOT_SUPPORTED;
+
+  snprintf(command, SMTP_STRING_SIZE, "CLIENTID %s %s\r\n",
+          type, clientid);
+
+  r = send_command(session, command);
+  if (r == -1)
+    return MAILSMTP_ERROR_STREAM;
+  r = read_response(session);
+
+  switch (r) {
+  case 250:
+    return MAILSMTP_NO_ERROR;
+  case 501: // syntax error
+  case 503: // duplicate clientid or not permitted because of policy
+  default:
+    return MAILSMTP_ERROR_UNEXPECTED_CODE;
+  }
+}
+
 /* TODO: add mailesmtp_etrn, mailssmtp_expn */
 
 int mailesmtp_starttls(mailsmtp * session)
@@ -1234,6 +1263,8 @@ const char * mailsmtp_strerror(int errnum)
     return "TLS not supported by server";
   case MAILSMTP_ERROR_AUTH_LOGIN:
     return "Login failed";
+  case MAILSMTP_ERROR_CLIENTID_NOT_SUPPORTED:
+    return "ClientID not supported by server";
   default:
     return "Unknown error code";
   }
