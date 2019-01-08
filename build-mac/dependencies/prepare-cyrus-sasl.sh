@@ -2,12 +2,13 @@
 
 export PATH=/usr/bin:/bin:/usr/sbin:/sbin
 
-version=2.1.26
+version=2.1.27
 ARCHIVE=cyrus-sasl-$version
 ARCHIVE_NAME=$ARCHIVE.tar.gz
 ARCHIVE_PATCH=$ARCHIVE.patch
 #url=ftp://ftp.andrew.cmu.edu/pub/cyrus-mail/$ARCHIVE_NAME
-url=ftp://ftp.cyrusimap.org/cyrus-sasl/$ARCHIVE_NAME
+#url=ftp://ftp.cyrusimap.org/cyrus-sasl/$ARCHIVE_NAME
+url=https://www.cyrusimap.org/releases/$ARCHIVE_NAME
 patchfile=cyrus-2.1.25-libetpan.patch
 
 scriptdir="`pwd`"
