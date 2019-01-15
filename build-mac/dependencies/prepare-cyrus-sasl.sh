@@ -8,7 +8,8 @@ ARCHIVE_NAME=$ARCHIVE.tar.gz
 ARCHIVE_PATCH=$ARCHIVE.patch
 #url=ftp://ftp.andrew.cmu.edu/pub/cyrus-mail/$ARCHIVE_NAME
 #url=ftp://ftp.cyrusimap.org/cyrus-sasl/$ARCHIVE_NAME
-url=https://www.cyrusimap.org/releases/$ARCHIVE_NAME
+#url=https://www.cyrusimap.org/releases/$ARCHIVE_NAME
+url=https://github.com/cyrusimap/cyrus-sasl/releases/download/$ARCHIVE/$ARCHIVE_NAME
 patchfile=cyrus-2.1.25-libetpan.patch
 
 scriptdir="`pwd`"
@@ -41,10 +42,10 @@ if test -f "$current_dir/packages/$ARCHIVE_NAME" ; then
 	:
 else
 	echo "download source package - $url"
-	
+
 	mkdir -p "$current_dir/packages"
   cd "$current_dir/packages"
-	curl -O "$url"
+	curl -L -O "$url"
 	if test x$? != x0 ; then
 		echo fetch of $ARCHIVE_NAME failed
 		exit 1
@@ -128,7 +129,7 @@ for TARGET in $TARGETS; do
     SYSROOT="$(xcodebuild -version -sdk "$SDK_ID" 2>/dev/null | egrep '^Path: ' | cut -d ' ' -f 2)"
 
     case $TARGET in
-        (iPhoneOS) 
+        (iPhoneOS)
             ARCH=arm
             MARCHS="armv7 armv7s arm64"
             EXTRA_FLAGS="$BITCODE_FLAGS -miphoneos-version-min=$SDK_IOS_MIN_VERSION"
@@ -139,11 +140,11 @@ for TARGET in $TARGETS; do
             EXTRA_FLAGS="-miphoneos-version-min=$SDK_IOS_MIN_VERSION"
             ;;
     esac
-    
+
     for MARCH in $MARCHS; do
 				echo "building for $TARGET - $MARCH"
 				echo "*** building for $TARGET - $MARCH ***" >> "$logfile" 2>&1
-			
+
         PREFIX=${BUILD_DIR}/${LIB_NAME}/${TARGET}${SDK_IOS_VERSION}${MARCH}
         rm -rf $PREFIX
 
