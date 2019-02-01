@@ -4860,6 +4860,7 @@ static int mailimap_envelope_parse_workaround_qq_mail(mailstream * fd, MMAPStrin
   message_id = NULL;
   first_string = NULL;
   second_string = NULL;
+  res = MAILIMAP_ERROR_PARSE;
 
   cur_token = * indx;
 

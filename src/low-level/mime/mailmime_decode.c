@@ -407,6 +407,7 @@ int mailmime_encoded_word_parse(const char * message, size_t length,
 
   cur_token = * indx;
 
+  text = NULL;
   lookfwd_charset = NULL;
   missing_closing_quote = 0;
   has_fwd = 0;
