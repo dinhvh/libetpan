@@ -33,6 +33,8 @@
 #	include <config.h>
 #endif
 
+#include <stdlib.h>
+
 #include "mailimap_sender.h"
 #include "clientid_sender.h"
 #include "clientid.h"
