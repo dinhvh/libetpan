@@ -34,8 +34,8 @@ You can use flag --with-poll for using poll() instead of select() for checking c
 
 ### How to link with it
 
-    $ gcc -c -o sample.o sample.c `libetpan-config --cflags`
-    $ gcc -o sample sample.o `libetpan-config --libs`
+    $ gcc -c -o sample.o sample.c `pkg-config libetpan --cflags`
+    $ gcc -o sample sample.o `pkg-config libetpan --libs`
 
 ### Mac / iOS
 

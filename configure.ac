@@ -77,6 +77,9 @@ changequote([,])dnl
 BUILD_FILEVERSION="${BUILD_FILEVERSION}${BUILD_REVISION}"
 AC_SUBST(BUILD_FILEVERSION)
 
+dnl Require pkg-config
+m4_ifndef([PKG_PROG_PKG_CONFIG], [m4_fatal(["Missing pkg-config macros"])])
+PKG_PROG_PKG_CONFIG
 
 # Architecture specific.
 have_w32_system=no
@@ -755,8 +758,7 @@ AC_SUBST(VERSION)
 
 # Further checks.
 
-AC_CONFIG_FILES(libetpan-config
-		Makefile
+AC_CONFIG_FILES(Makefile
 		build-windows/Makefile
                 include/Makefile
                 src/Makefile
@@ -794,7 +796,8 @@ AC_CONFIG_FILES(libetpan-config
 		src/engine/Makefile
 		src/versioninfo.rc
 		doc/Makefile
-		tests/Makefile)
+		tests/Makefile
+		libetpan.pc)
 
 # We collect all files which could potentially install public header
 # files via HEADERS.  Updating any of these files will trigger
