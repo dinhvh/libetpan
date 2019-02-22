@@ -749,7 +749,13 @@ int mailimap_logout(mailimap * session)
   }
 
   r = mailimap_parse_response(session, &response);
-  if (r != MAILIMAP_NO_ERROR) {
+  if (r == MAILIMAP_ERROR_STREAM) {
+    // the response is expected to be MAILIMAP_ERROR_STREAM
+    // because the server responds with BYE so the stream
+    // is immediately closed
+    res = MAILIMAP_NO_ERROR;
+    goto close;
+  } else if (r != MAILIMAP_NO_ERROR) {
     res = r;
     goto close;
   }
