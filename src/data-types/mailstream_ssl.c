@@ -636,7 +636,7 @@ static struct mailstream_ssl_data * ssl_data_new(int fd, time_t timeout,
 		timeout_value = mailstream_network_delay.tv_sec * 1000 + mailstream_network_delay.tv_usec / 1000;
   }
   else {
-		timeout_value = timeout;
+		timeout_value = timeout * 1000;
   }
 #if GNUTLS_VERSION_NUMBER >= 0x030100
 	gnutls_handshake_set_timeout(session, timeout_value);
