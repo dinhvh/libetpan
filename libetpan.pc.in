@@ -6,5 +6,5 @@ libdir=@libdir@
 Name: libetpan
 Description: Libetpan C library.
 Version: @VERSION@
-Libs: -L${libdir} -letpan@LIBSUFFIX@ @LDFLAGS@ @SSLLIBS@ @GNUTLSLIB@ @LIBICONV@ @DBLIB@ @LIBS@ @SASLLIBS@
+Libs: -L${libdir} -letpan@LIBSUFFIX@ @SSLLIBS@ @GNUTLSLIB@ @LIBICONV@ @DBLIB@ @LIBS@ @SASLLIBS@
 Cflags: -I${includedir}
