@@ -449,3 +449,8 @@ mailimap_sort_extension_data_free(struct mailimap_extension_data * ext_data)
   free(ext_data);
 }
 
+LIBETPAN_EXPORT
+int mailimap_has_sort(mailimap * session)
+{
+  return mailimap_has_extension(session, "SORT");
+}
