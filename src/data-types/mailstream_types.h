@@ -87,6 +87,10 @@ struct _mailstream {
   void (* logger)(mailstream * s, int log_type,
       const char * str, size_t size, void * logger_context);
   void * logger_context;
+
+  void* client_cert;
+  size_t client_cert_length;
+  char * client_cert_password;
 };
 
 struct mailstream_low_driver {

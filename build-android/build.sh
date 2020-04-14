@@ -8,6 +8,9 @@ package_name=libetpan-android
 
 current_dir="`pwd`"
 
+# find ../src -name *.h | xargs -0 cp --target-directory=./include/libetpan
+find ../src -name "*.h" -type file -exec cp {} ./include/libetpan \;
+
 if test "x$ANDROID_NDK" = x ; then
   echo should set ANDROID_NDK before running this script.
   exit 1
@@ -62,14 +65,14 @@ mkdir -p "$current_dir/$package_name-$build_version/include"
 cp -r include/libetpan "$current_dir/$package_name-$build_version/include"
 
 # Start building.
-ANDROID_PLATFORM=android-16
-archs="armeabi armeabi-v7a x86"
-for arch in $archs ; do
-  TARGET_ARCH_ABI=$arch
-  build
-done
-ANDROID_PLATFORM=android-21
-archs="arm64-v8a"
+#ANDROID_PLATFORM=android-16
+#archs="armeabi armeabi-v7a x86"
+#for arch in $archs ; do
+  #TARGET_ARCH_ABI=$arch
+  #build
+#done
+ANDROID_PLATFORM=android-23
+archs="arm64-v8a armeabi-v7a x86 x86_64"
 for arch in $archs ; do
   TARGET_ARCH_ABI=$arch
   build

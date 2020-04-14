@@ -49,7 +49,7 @@ extern "C" {
 
 LIBETPAN_EXPORT
 int mailimap_ssl_connect(mailimap * f, const char * server, uint16_t port);
-
+  
 LIBETPAN_EXPORT
 int mailimap_ssl_connect_voip(mailimap * f, const char * server, uint16_t port, int voip_enabled);
 

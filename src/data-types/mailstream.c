@@ -84,6 +84,10 @@ mailstream * mailstream_new(mailstream_low * low, size_t buffer_size)
   s->logger = NULL;
   s->logger_context = NULL;
   
+  s->client_cert_length = 0;
+  s->client_cert = NULL;
+  s->client_cert_password = NULL;
+  
   mailstream_set_low(s, low);
   
   return s;
@@ -128,6 +132,22 @@ static ssize_t write_direct(mailstream * s, const void * buf, size_t count)
   }
   
   return count;
+}
+
+LIBETPAN_EXPORT
+void mailstream_set_client_cert(mailstream * s, const void * buf, size_t count, const char* password)
+{
+  free(s->client_cert);
+  s->client_cert_length = count;
+  s->client_cert = malloc(count);
+  if(s->client_cert)
+    memcpy(s->client_cert, buf, count);
+  
+  size_t len = strlen(password);
+  free(s->client_cert_password);
+  s->client_cert_password = malloc(len + 1);
+  if(s->client_cert_password)
+    strcpy(s->client_cert_password, password);
 }
 
 LIBETPAN_EXPORT
@@ -287,6 +307,9 @@ int mailstream_close(mailstream * s)
   free(s->read_buffer);
   free(s->write_buffer);
   
+  free(s->client_cert);
+  free(s->client_cert_password);
+
   free(s);
 
   return 0;

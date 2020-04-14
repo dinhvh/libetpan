@@ -9,7 +9,7 @@
 @if WIN32
 @	define MMAP_UNAVAILABLE
 @endif
-@if defined(_MSC_VER) && !defined(__cplusplus)
+@ifdef _MSC_VER
 @	define inline __inline
 @endif
 #ifdef HAVE_LIMITS_H

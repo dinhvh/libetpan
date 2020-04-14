@@ -111,8 +111,26 @@ int mailimap_ssl_connect(mailimap * f, const char * server, uint16_t port)
   return mailimap_ssl_connect_voip(f, server, port, mailstream_cfstream_voip_enabled);
 }
 
+void mailimap_ssl_connect_callback_ccert(struct mailstream_ssl_context * ssl_context, void * data)
+{
+  mailimap * f = (mailimap*)data;
+  
+  if(f->client_cert && f->client_cert_length && f->client_cert_password)
+  {
+    mailstream_ssl_set_client_certicate_data(ssl_context, f->client_cert, f->client_cert_length, f->client_cert_password);
+  }
+}
+
 int mailimap_ssl_connect_voip(mailimap * f, const char * server, uint16_t port, int voip_enabled)
 {
+#if defined(ANDROID) || defined(__ANDROID__)
+  if(f->client_cert && f->client_cert_password)
+  {
+    return mailimap_ssl_connect_voip_with_callback(f, server, port, voip_enabled,
+      mailimap_ssl_connect_callback_ccert, f);   
+  }
+#endif
+
   return mailimap_ssl_connect_voip_with_callback(f, server, port, voip_enabled,
       NULL, NULL);
 }
@@ -127,6 +145,10 @@ static int mailimap_cfssl_connect_voip_ssl_level(mailimap * f, const char * serv
   if (stream == NULL) {
     return MAILIMAP_ERROR_CONNECTION_REFUSED;
   }
+  
+  if(f->client_cert_length && f->client_cert_password)
+    mailstream_set_client_cert(stream, f->client_cert, f->client_cert_length, f->client_cert_password);
+  
   mailstream_cfstream_set_ssl_level(stream, ssl_level);
   mailstream_cfstream_set_ssl_verification_mask(stream, MAILSTREAM_CFSTREAM_SSL_NO_VERIFICATION);
   r = mailstream_cfstream_set_ssl_enabled(stream, 1);

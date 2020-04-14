@@ -183,7 +183,10 @@ void mailsmtp_set_progress_callback(mailsmtp * session,
 LIBETPAN_EXPORT
 void mailsmtp_set_logger(mailsmtp * session, void (* logger)(mailsmtp * session, int log_type,
     const char * str, size_t size, void * context), void * logger_context);
-   
+  
+LIBETPAN_EXPORT
+void mailsmtp_set_client_cert(mailsmtp * session, unsigned char* data, size_t length, const char* password);
+
 #ifdef __cplusplus
 }
 #endif

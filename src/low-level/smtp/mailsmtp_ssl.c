@@ -56,14 +56,41 @@
 #define SERVICE_NAME_SMTPS "smtps"
 #define SERVICE_TYPE_TCP "tcp"
 
+#if defined(ANDROID) || defined(__ANDROID__)
+#include <dirent.h>
+#include "../../android_log.h"
+#endif
+
 #if HAVE_CFNETWORK
 static int mailsmtp_cfssl_connect(mailsmtp * session,
                                   const char * server, uint16_t port);
 #endif
 
+#if defined(ANDROID) || defined(__ANDROID__)
+void mailsmtp_ssl_connect_callback_ccert(struct mailstream_ssl_context * ssl_context, void * data)
+{
+  mailsmtp * f = (mailsmtp*)data;
+  
+  if(f->client_cert && f->client_cert_length && f->client_cert_password)
+  {
+  __android_log_print(ANDROID_LOG_INFO, "NATIVE", "setting smtp client cert");
+    mailstream_ssl_set_client_certicate_data(ssl_context, f->client_cert, f->client_cert_length, f->client_cert_password);
+  }
+}
+#endif
+
+
 int mailsmtp_ssl_connect(mailsmtp * session,
     const char * server, uint16_t port)
 {
+  #if defined(ANDROID) || defined(__ANDROID__)
+  if(session->client_cert_length && session->client_cert_password)
+  {
+  __android_log_print(ANDROID_LOG_INFO, "NATIVE", "mailsmtp_ssl_connect has cc");
+    return mailsmtp_ssl_connect_with_callback(session, server, port, mailsmtp_ssl_connect_callback_ccert, session);   
+  }
+#endif
+
   return mailsmtp_ssl_connect_with_callback(session, server, port,
       NULL, NULL);
 }
@@ -75,6 +102,8 @@ int mailsmtp_ssl_connect_with_callback(mailsmtp * session,
   int s;
   mailstream * stream;
 
+__android_log_print(ANDROID_LOG_INFO, "NATIVE", "mailsmtp_ssl_connect_with_callback");
+  
 #if HAVE_CFNETWORK
   if (mailstream_cfstream_enabled) {
     if (callback == NULL) {
@@ -119,6 +148,10 @@ static int mailsmtp_cfssl_connect_ssl_level(mailsmtp * session,
   if (stream == NULL) {
     return MAILSMTP_ERROR_CONNECTION_REFUSED;
   }
+  
+  if(session->client_cert_length && session->client_cert_password)
+    mailstream_set_client_cert(stream, session->client_cert, session->client_cert_length, session->client_cert_password);
+
   mailstream_cfstream_set_ssl_level(stream, ssl_level);
   mailstream_cfstream_set_ssl_verification_mask(stream, MAILSTREAM_CFSTREAM_SSL_NO_VERIFICATION);
   r = mailstream_cfstream_set_ssl_enabled(stream, 1);

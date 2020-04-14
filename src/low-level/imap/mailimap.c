@@ -970,6 +970,10 @@ int mailimap_close(mailimap * session)
   struct mailimap_response * response;
   int r;
   int error_code;
+  
+  free(session->client_cert);
+  session->client_cert_length = 0;
+  free(session->client_cert_password);
 
   if (session->imap_state != MAILIMAP_STATE_SELECTED)
     return MAILIMAP_ERROR_BAD_STATE;
@@ -2621,6 +2625,10 @@ mailimap * mailimap_new(size_t imap_progr_rate,
   f = malloc(sizeof(* f));
   if (f == NULL)
     goto err;
+  
+  f->client_cert = NULL;
+  f->client_cert_length = 0;
+  f->client_cert_password = NULL;
 
   f->imap_response = NULL;
   
@@ -2796,4 +2804,20 @@ void mailimap_set_qip_workaround_enabled(mailimap * session, int enabled) {
 LIBETPAN_EXPORT
 int mailimap_is_qip_workaround_enabled(mailimap * session) {
   return session->is_qip_workaround_enabled;
+}
+
+LIBETPAN_EXPORT
+void mailimap_set_client_cert(mailimap * s, unsigned char* data, size_t count, const char* password)
+{
+  free(s->client_cert);
+  s->client_cert_length = count;
+  s->client_cert = malloc(count);
+  if(s->client_cert)
+    memcpy(s->client_cert, data, count);
+  
+  size_t len = strlen(password);
+  free(s->client_cert_password);
+  s->client_cert_password = malloc(len + 1);
+  if(s->client_cert_password)
+    strcpy(s->client_cert_password, password);
 }

@@ -344,7 +344,7 @@ mailimap_fetch(mailimap * session, struct mailimap_set * set,
 	       struct mailimap_fetch_type * fetch_type, clist ** result);
 
 /*
-  mailimap_uid_fetch()
+  mailimap_fetch()
 
   This function will retrieve data associated with the given message
   numbers.
@@ -865,6 +865,10 @@ time_t mailimap_get_timeout(mailimap * session);
     @param logger_context  parameter that is passed to the logger function.
     @return the value of the timeout in seconds.
 */
+
+
+LIBETPAN_EXPORT
+void mailimap_set_client_cert(mailimap * session, unsigned char* data, size_t length, const char* password);
 
 LIBETPAN_EXPORT
 void mailimap_set_logger(mailimap * session, void (* logger)(mailimap * session, int log_type,
