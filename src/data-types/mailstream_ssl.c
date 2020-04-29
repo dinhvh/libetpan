@@ -458,14 +458,13 @@ static struct mailstream_ssl_data * ssl_data_new_full(int fd, time_t timeout,
   SSL_CTX_set_app_data(tmp_ctx, ssl_context);
   SSL_CTX_set_client_cert_cb(tmp_ctx, mailstream_openssl_client_cert_cb);
   ssl_conn = (SSL *) SSL_new(tmp_ctx);
+  if (ssl_conn == NULL)
+    goto free_ctx;
   
 #if SSL_MODE_RELEASE_BUFFERS
   mode = SSL_get_mode(ssl_conn);
   SSL_set_mode(ssl_conn, mode | SSL_MODE_RELEASE_BUFFERS);
-#endif
-  
-  if (ssl_conn == NULL)
-    goto free_ctx;
+#endif  
 
 #if (OPENSSL_VERSION_NUMBER >= 0x10000000L)
   if (ssl_context != NULL && ssl_context->server_name != NULL) {
