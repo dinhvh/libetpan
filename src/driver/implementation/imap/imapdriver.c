@@ -955,7 +955,6 @@ imapdriver_get_envelopes_list(mailsession * session,
       res = MAIL_ERROR_MEMORY;
       mailimap_fetch_type_free(fetch_type);
       mailimap_set_free(set);
-      res = MAIL_ERROR_MEMORY;
       goto err;
     }
     
