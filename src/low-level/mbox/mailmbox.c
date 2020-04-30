@@ -681,15 +681,15 @@ mailmbox_append_message_list_no_lock(struct mailmbox_folder * folder,
 
   r = ftruncate(folder->mb_fd, extra_size + old_size);
   if (r < 0) {
-    mailmbox_map(folder);
     res = MAILMBOX_ERROR_FILE;
     goto err;
   }
 
   r = mailmbox_map(folder);
-  if (r < 0) {
+  if (r != MAILMBOX_NO_ERROR) {
     r = ftruncate(folder->mb_fd, old_size);
-    return MAILMBOX_ERROR_FILE;
+    if (r < 0) {
+      return MAILMBOX_ERROR_FILE;
   }
 
   str = folder->mb_mapping + old_size;
@@ -1225,10 +1225,10 @@ static int mailmbox_expunge_to_file_no_lock(char * dest_filename, int dest_fd,
 	  cur_offset += strlen(UID_HEADER " ");
 #ifdef CRLF_BADNESS
 	  numlen = snprintf(dest + cur_offset, size - cur_offset,
-			    "%i\r\n", info->msg_uid);
+			    "%lu\r\n", info->msg_uid);
 #else
 	  numlen = snprintf(dest + cur_offset, size - cur_offset,
-			    "%i\n", info->msg_uid);
+			    "%lu\n", info->msg_uid);
 #endif
 	  cur_offset += numlen;
 	}
