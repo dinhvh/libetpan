@@ -566,7 +566,6 @@ mailmime_new_empty(struct mailmime_content * content,
     char * attr_value;
     struct mailmime_parameter * param;
     clist * parameters;
-    char * boundary;
 
     list = clist_new();
     if (list == NULL)
@@ -576,9 +575,8 @@ mailmime_new_empty(struct mailmime_content * content,
     if (attr_name == NULL)
       goto free_list;
 
-    boundary = mailmime_generate_boundary();
-    attr_value = boundary;
-    if (attr_name == NULL) {
+    attr_value = mailmime_generate_boundary();
+    if (attr_value == NULL) {
       free(attr_name);
       goto free_list;
     }
