@@ -41,13 +41,13 @@
 /*
 YYYYMMDDThhmmss
 YYYYMMDDThhmmssZ
-YYYYMMDDThhmmss±hhmm
-YYYYMMDDThhmmss±hh
+YYYYMMDDThhmmssÂ±hhmm
+YYYYMMDDThhmmssÂ±hh
 
 YYYY-MM-DDThh:mm:ss
 YYYY-MM-DDThh:mm:ssZ
-YYYY-MM-DDThh:mm:ss±hh:mm
-YYYY-MM-DDThh:mm:ss±hh
+YYYY-MM-DDThh:mm:ssÂ±hh:mm
+YYYY-MM-DDThh:mm:ssÂ±hh
 */
 
 
@@ -56,8 +56,8 @@ basic_format_parse()
 
 YYYYMMDDThhmmss
 YYYYMMDDThhmmssZ
-YYYYMMDDThhmmss±hhmm
-YYYYMMDDThhmmss±hh
+YYYYMMDDThhmmssÂ±hhmm
+YYYYMMDDThhmmssÂ±hh
 */
 
 static time_t basic_format_parse(const char * str)
@@ -110,7 +110,6 @@ static time_t basic_format_parse(const char * str)
   r = mailimf_char_parse(str, len, &current_index, 'Z');
   if (r == MAILIMF_NO_ERROR) {
     /* utc */
-    offset = 0;
     apply_offset = 1;
   }
   
@@ -197,8 +196,8 @@ extended_format_parse()
 
 YYYY-MM-DDThh:mm:ss
 YYYY-MM-DDThh:mm:ssZ
-YYYY-MM-DDThh:mm:ss±hh:mm
-YYYY-MM-DDThh:mm:ss±hh
+YYYY-MM-DDThh:mm:ssÂ±hh:mm
+YYYY-MM-DDThh:mm:ssÂ±hh
 */
 
 static time_t extended_format_parse(const char * str)
@@ -283,7 +282,6 @@ static time_t extended_format_parse(const char * str)
   r = mailimf_char_parse(str, len, &current_index, 'Z');
   if (r == MAILIMF_NO_ERROR) {
     /* utc */
-    offset = 0;
     apply_offset = 1;
   }
   
