@@ -1180,6 +1180,9 @@ mailimap_status_att_list_add(struct mailimap_status_att_list * sa_list,
   int r;
 
   pstatus_att = malloc(sizeof(* pstatus_att));
+  if (pstatus_att == NULL)
+    return MAILIMAP_ERROR_MEMORY;
+
   * pstatus_att = status_att;
 
   r = clist_append(sa_list->att_list, pstatus_att);
