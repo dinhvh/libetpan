@@ -69,6 +69,7 @@ mailsession * mailsession_new(mailsession_driver * sess_driver)
 
  free:
   free(session);
+ err:
   return NULL;
 }
 
