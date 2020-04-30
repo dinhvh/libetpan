@@ -6018,14 +6018,15 @@ static int mailimap_literal_parse_progress(mailstream * fd, MMAPString * buffer,
   
   r = mailimap_crlf_parse(fd, buffer, parser_ctx, &cur_token);
   if (r != MAILIMAP_NO_ERROR) {
-      if (r == MAILIMAP_ERROR_PARSE) {
-	  /* workaround for Lotus Domino IMAP server */
-	  mailimap_space_parse(fd, buffer, &cur_token);
-	  mailimap_space_parse(fd, buffer, &cur_token);
-      } else {
-          res = r;
-          goto err;
-      }
+    if (r == MAILIMAP_ERROR_PARSE) {
+      /* workaround for Lotus Domino IMAP server */
+      mailimap_space_parse(fd, buffer, &cur_token);
+      mailimap_space_parse(fd, buffer, &cur_token);
+    } 
+    else {
+      res = r;
+      goto err;
+    }
   }
   
   if (use_msg_body_handler) {
