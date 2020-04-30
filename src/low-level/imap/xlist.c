@@ -241,14 +241,11 @@ mailimap_xlist_extension_parse(int calling_parser, mailstream * fd,
     case MAILIMAP_EXTENDED_PARSER_RESPONSE_DATA:
       r = mailimap_mailbox_data_xlist_parse(fd, buffer, parser_ctx, &cur_token,
                                             &xlist_data, progr_rate, progr_fun);
-      if (r == MAILIMAP_NO_ERROR) {
-        type = MAILIMAP_XLIST_TYPE_XLIST;
-        data = xlist_data;
-      }
-      
-      if (r != MAILIMAP_NO_ERROR) {
+      if (r != MAILIMAP_NO_ERROR)
         return r;
-      }
+
+      type = MAILIMAP_XLIST_TYPE_XLIST;
+      data = xlist_data;
       
       ext_data = mailimap_extension_data_new(&mailimap_extension_xlist,
                                              type, data);
