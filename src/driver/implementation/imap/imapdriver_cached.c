@@ -1018,7 +1018,6 @@ static int imapdriver_cached_get_messages_list(mailsession * session,
   }
   
   /* get UID max */
-  uid_max = 0;
   for(i = 0 ; i < carray_count(data->imap_uid_list) ; i ++) {
     struct uid_cache_item * cache_item;
     
@@ -1210,7 +1209,6 @@ static int get_flags_list(mailsession * session,
       res = MAIL_ERROR_MEMORY;
       mailimap_fetch_type_free(fetch_type);
       mailimap_set_free(set);
-      res = MAIL_ERROR_MEMORY;
       goto err;
     }
     
