@@ -52,7 +52,9 @@ mailsession * mailsession_new(mailsession_driver * sess_driver)
   int r;
   
   session = malloc(sizeof(* session));
-  
+  if (session == NULL)
+    return NULL;
+
   session->sess_data = NULL;
   
   if (sess_driver->sess_initialize != NULL) {
