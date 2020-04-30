@@ -320,7 +320,7 @@ void mailstorage_disconnect(struct mailstorage * storage)
 {
   clistiter * cur;
 
-  while ((cur = clist_begin(storage->sto_shared_folders)) != NULL) {
+  for (cur = clist_begin(storage->sto_shared_folders); cur != NULL; cur = clist_next(cur)) {
     struct mailfolder * folder;
 
     folder = cur->data;
