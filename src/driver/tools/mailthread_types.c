@@ -54,6 +54,11 @@ mailmessage_tree_new(char * node_msgid, time_t node_date,
     return NULL;
 
   tree = malloc(sizeof(* tree));
+  if (tree == NULL) {
+    carray_free(array);
+    return NULL;
+  }
+
   tree->node_parent = NULL;
   tree->node_date = node_date;
   tree->node_msgid = node_msgid;
