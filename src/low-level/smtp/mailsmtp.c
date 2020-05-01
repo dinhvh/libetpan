@@ -530,7 +530,7 @@ int mailsmtp_data_message_quit_no_disconnect(mailsmtp * session,
     return MAILSMTP_ERROR_STREAM;
   
   r = send_quit(session);
-  if (r == -1)
+  if (r != MAILSMTP_NO_ERROR)
     return MAILSMTP_ERROR_STREAM;
 
   r = read_response(session);
