@@ -1273,9 +1273,7 @@ int mailmime_base64_write_driver(int (* do_write)(void *, const char *, size_t),
     p += count;
   }
 
-  r = mailimf_string_write_driver(do_write, data, col, "\r\n", 2);
-
-  return MAILIMF_NO_ERROR;
+  return mailimf_string_write_driver(do_write, data, col, "\r\n", 2);
 }
 
 #if 0
