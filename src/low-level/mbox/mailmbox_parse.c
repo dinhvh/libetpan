@@ -501,14 +501,13 @@ mailmbox_parse_additionnal(struct mailmbox_folder * folder,
 			      &headers, &headers_len,
 			      &body, &body_len,
 			      &size, &padding, &uid);
-    if (r == MAILMBOX_NO_ERROR) {
-      /* do nothing */
-    }
-    else if (r == MAILMBOX_ERROR_PARSE)
-      break;
-    else {
-      res = r;
-      goto err;
+    if (r != MAILMBOX_NO_ERROR) {
+      if (r == MAILMBOX_ERROR_PARSE)
+        break;
+      else {
+        res = r;
+        goto err;
+      }
     }
     
     key.data = &uid;
