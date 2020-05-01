@@ -975,6 +975,15 @@ int mailstream_cfstream_set_ssl_enabled(mailstream * s, int ssl_enabled)
       case MAILSTREAM_CFSTREAM_SSL_LEVEL_NEGOCIATED_SSL:
         CFDictionarySetValue(settings, kCFStreamSSLLevel, kCFStreamSocketSecurityLevelNegotiatedSSL);
         break;
+      case MAILSTREAM_CFSTREAM_SSL_LEVEL_TLSv1_1:
+        CFDictionarySetValue(settings, kCFStreamSSLLevel, kCFStreamSocketSecurityLevelTLSv1_1);
+        break;
+      case MAILSTREAM_CFSTREAM_SSL_LEVEL_TLSv1_2:
+        CFDictionarySetValue(settings, kCFStreamSSLLevel, kCFStreamSocketSecurityLevelTLSv1_2);
+        break;
+      case MAILSTREAM_CFSTREAM_SSL_LEVEL_TLSv1_3:
+        CFDictionarySetValue(settings, kCFStreamSSLLevel, kCFStreamSocketSecurityLevelTLSv1_3);
+        break;
     }
     
     if ((cfstream_data->ssl_certificate_verification_mask & MAILSTREAM_CFSTREAM_SSL_ALLOWS_EXPIRED_CERTIFICATES) != 0) {
