@@ -894,9 +894,7 @@ int mailmh_folder_move_message(struct mailmh_folder * dest_folder,
 
   close(fd);
 
-  r = mailmh_folder_remove_message(src_folder, indx);
-
-  return MAILMH_NO_ERROR;
+  return mailmh_folder_remove_message(src_folder, indx);
 }
 
 unsigned int mailmh_folder_get_message_number(struct mailmh_folder * folder)
