@@ -663,6 +663,8 @@ static int mboxdriver_cached_logout(mailsession * session)
   int r;
 
   r = write_max_uid_value(session);
+  if (r != MAIL_NO_ERROR)
+    return r;
 
   cached_data = get_cached_data(session);
 
@@ -761,9 +763,7 @@ static int mboxdriver_cached_expunge_folder(mailsession * session)
   mmap_string_free(mmapstr);
   mail_cache_db_close_unlock(filename_flags, cache_db_flags);
   
-  r = mailmbox_expunge(folder);
-
-  return MAIL_NO_ERROR;
+  return mailmbox_expunge(folder);
 
  close_db_flags:
   mail_cache_db_close_unlock(filename_flags, cache_db_flags);
