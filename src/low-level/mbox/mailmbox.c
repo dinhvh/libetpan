@@ -1225,10 +1225,10 @@ static int mailmbox_expunge_to_file_no_lock(char * dest_filename, int dest_fd,
 	  cur_offset += strlen(UID_HEADER " ");
 #ifdef CRLF_BADNESS
 	  numlen = snprintf(dest + cur_offset, size - cur_offset,
-			    "%i\r\n", info->msg_uid);
+			    "%lu\r\n", (unsigned long) info->msg_uid);
 #else
 	  numlen = snprintf(dest + cur_offset, size - cur_offset,
-			    "%i\n", info->msg_uid);
+			    "%lu\n", (unsigned long) info->msg_uid);
 #endif
 	  cur_offset += numlen;
 	}
