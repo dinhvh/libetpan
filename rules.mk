@@ -127,20 +127,20 @@ prepare-am: prepare-local
 	@if test "$(etpaninclude_HEADERS)" != ""; then \
           echo "$(mkinstalldirs) $(top_builddir)/include/libetpan/"; \
           $(mkinstalldirs) $(top_builddir)/include/libetpan/;\
-	  echo "cd $(top_builddir)/include/libetpan/"; \
-	  cd $(top_builddir)/include/libetpan/ \
-	  && for hdr in $(etpaninclude_HEADERS) list_end; do \
+          echo "cd $(top_builddir)/include/libetpan/"; \
+          cd $(top_builddir)/include/libetpan/ \
+          && for hdr in $(etpaninclude_HEADERS) list_end; do \
            if test $${hdr} != list_end; then \
-	         if test -e ../../$(subdir)/$${hdr}; then \
-	           echo "$(LN_S) -f ../../$(subdir)/$${hdr} ."; \
-	           $(LN_S) -f ../../$(subdir)/$${hdr} .; \
+             if test -e $(abs_srcdir)/$${hdr}; then \
+                   echo "$(LN_S) -f $(abs_srcdir)/$${hdr} ."; \
+                   $(LN_S) -f $(abs_srcdir)/$${hdr} .; \
              else \
-	           echo "$(LN_S) -f ../../$(subdir)/$(srcdir)/$${hdr} ."; \
-	           $(LN_S) -f ../../$(subdir)/$(srcdir)/$${hdr} .; \
+                   echo "$(LN_S) -f $(abs_builddir)/$${hdr} ."; \
+                   $(LN_S) -f $(abs_builddir)/$${hdr} .; \
              fi; \
            fi; \
-	     done; \
-	fi
+          done; \
+        fi
 
 # Use this target to extend the prepare rules in a single Makefile.am.
 prepare-local:

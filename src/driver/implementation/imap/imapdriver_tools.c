@@ -1716,7 +1716,7 @@ static int imap_mailbox_list_to_group(clist * imap_mb_list, clistiter ** iter,
   imap_mailbox_listiter = * iter;
 
   imap_addr = clist_content(imap_mailbox_listiter);
-  if (imap_addr->ad_mailbox_name == NULL) {
+  if (imap_addr == NULL || imap_addr->ad_mailbox_name == NULL) {
     res = MAIL_ERROR_INVAL;
     goto err;
   }

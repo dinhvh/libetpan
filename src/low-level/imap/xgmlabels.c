@@ -98,7 +98,6 @@ struct mailimap_msg_att_xgmlabels * mailimap_msg_att_xgmlabels_new_empty(void)
   att = mailimap_msg_att_xgmlabels_new(list);
   if (att == NULL) {
     clist_free(list);
-    free(att);
     return NULL;
   }
   

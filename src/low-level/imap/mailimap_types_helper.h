@@ -133,7 +133,7 @@ LIBETPAN_EXPORT
 struct mailimap_section * mailimap_section_new_header(void);
 
 /*
-  this functions creates a mailimap_section structure to describe
+  this function creates a mailimap_section structure to describe
   a list of headers
 */
 
@@ -142,7 +142,7 @@ struct mailimap_section *
 mailimap_section_new_header_fields(struct mailimap_header_list * header_list);
 
 /*
-  this functions creates a mailimap_section structure to describe headers
+  this function creates a mailimap_section structure to describe headers
   other than those given
 */
 

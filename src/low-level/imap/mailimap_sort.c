@@ -135,7 +135,7 @@ mailimap_sort(mailimap * session, const char * charset,
   session->imap_response_info->rsp_extension_list = NULL;
   
   if (sort_result == NULL) {
-    return MAILIMAP_ERROR_EXTENSION;
+    sort_result = clist_new();
   }
   
   error_code = response->rsp_resp_done->rsp_data.rsp_tagged->rsp_cond_state->rsp_type;
@@ -213,7 +213,7 @@ mailimap_uid_sort(mailimap * session, const char * charset,
   session->imap_response_info->rsp_extension_list = NULL;
   
   if (sort_result == NULL) {
-    return MAILIMAP_ERROR_EXTENSION;
+    sort_result = clist_new();
   }
   
   error_code = response->rsp_resp_done->rsp_data.rsp_tagged->rsp_cond_state->rsp_type;
@@ -449,3 +449,8 @@ mailimap_sort_extension_data_free(struct mailimap_extension_data * ext_data)
   free(ext_data);
 }
 
+LIBETPAN_EXPORT
+int mailimap_has_sort(mailimap * session)
+{
+  return mailimap_has_extension(session, "SORT");
+}

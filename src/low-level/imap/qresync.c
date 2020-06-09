@@ -409,7 +409,7 @@ int mailimap_fetch_qresync_vanished(mailimap * session,
     * p_vanished = get_vanished(session);
   }
 
-  if (clist_count(* fetch_result) == 0) {
+  if (* fetch_result == NULL || clist_count(* fetch_result) == 0) {
     error_code = response->rsp_resp_done->rsp_data.rsp_tagged->rsp_cond_state->rsp_type;
   }
   else {
@@ -487,7 +487,7 @@ int mailimap_uid_fetch_qresync_vanished(mailimap * session,
     * p_vanished = get_vanished(session);
   }
 
-  if (clist_count(* fetch_result) == 0) {
+  if (* fetch_result == NULL || clist_count(* fetch_result) == 0) {
     error_code = response->rsp_resp_done->rsp_data.rsp_tagged->rsp_cond_state->rsp_type;
   }
   else {

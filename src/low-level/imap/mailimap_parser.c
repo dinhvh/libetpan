@@ -6022,11 +6022,11 @@ static int mailimap_literal_parse_progress(mailstream * fd, MMAPString * buffer,
 		mailimap_space_parse(fd, buffer, &cur_token);
 		mailimap_space_parse(fd, buffer, &cur_token);
 	}
-	else if (r != MAILIMAP_NO_ERROR) {
+  if (r != MAILIMAP_NO_ERROR) {
     res = r;
     goto err;
   }
-  
+
   if (use_msg_body_handler) {
     literal = mmap_string_new("");
   }

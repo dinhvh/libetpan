@@ -103,7 +103,7 @@ mailimap_quota_quota_resource_parse(mailstream * fd, MMAPString * buffer, struct
 }
 
 static int
-mailimap_quota_quota_list_nonempty_parse(mailstream * fd, MMAPString * buffer,
+mailimap_quota_quota_list_nonempty_parse(mailstream * fd, MMAPString * buffer, struct mailimap_parser_context * parser_ctx,
     size_t * indx, clist ** result,
     size_t progr_rate, progress_function * progr_fun)
 {
@@ -114,13 +114,13 @@ mailimap_quota_quota_list_nonempty_parse(mailstream * fd, MMAPString * buffer,
 
   cur_token = * indx;
 
-  r = mailimap_oparenth_parse(fd, buffer, NULL, &cur_token);
+  r = mailimap_oparenth_parse(fd, buffer, parser_ctx, &cur_token);
   if (r != MAILIMAP_NO_ERROR) {
     res = r;
     goto err;
   }
 
-  r = mailimap_struct_spaced_list_parse(fd, buffer, NULL,
+  r = mailimap_struct_spaced_list_parse(fd, buffer, parser_ctx,
       &cur_token, &quota_resource_list,
       &mailimap_quota_quota_resource_parse,
       (mailimap_struct_destructor *)
@@ -131,7 +131,7 @@ mailimap_quota_quota_list_nonempty_parse(mailstream * fd, MMAPString * buffer,
     goto err;
   }
 
-  r = mailimap_cparenth_parse(fd, buffer, NULL, &cur_token);
+  r = mailimap_cparenth_parse(fd, buffer, parser_ctx, &cur_token);
   if (r != MAILIMAP_NO_ERROR) {
     res = r;
     goto quota_list_free;
@@ -151,7 +151,7 @@ mailimap_quota_quota_list_nonempty_parse(mailstream * fd, MMAPString * buffer,
 }
 
 static int
-mailimap_quota_quota_list_empty_parse(mailstream * fd, MMAPString * buffer,
+mailimap_quota_quota_list_empty_parse(mailstream * fd, MMAPString * buffer, struct mailimap_parser_context * parser_ctx,
     size_t * indx, clist ** result,
     size_t progr_rate, progress_function * progr_fun)
 {
@@ -161,12 +161,12 @@ mailimap_quota_quota_list_empty_parse(mailstream * fd, MMAPString * buffer,
 
   cur_token = * indx;
 
-  r = mailimap_oparenth_parse(fd, buffer, NULL, &cur_token);
+  r = mailimap_oparenth_parse(fd, buffer, parser_ctx, &cur_token);
   if (r != MAILIMAP_NO_ERROR) {
     return r;
   }
 
-  r = mailimap_cparenth_parse(fd, buffer, NULL, &cur_token);
+  r = mailimap_cparenth_parse(fd, buffer, parser_ctx, &cur_token);
   if (r != MAILIMAP_NO_ERROR) {
     return r;
   }
@@ -183,24 +183,24 @@ mailimap_quota_quota_list_empty_parse(mailstream * fd, MMAPString * buffer,
 }
 
 static int
-mailimap_quota_quota_list_parse(mailstream * fd, MMAPString * buffer,
+mailimap_quota_quota_list_parse(mailstream * fd, MMAPString * buffer, struct mailimap_parser_context * parser_ctx,
     size_t * indx, clist ** result,
     size_t progr_rate, progress_function * progr_fun)
 {
   int r;
 
-  r = mailimap_quota_quota_list_empty_parse(fd, buffer, indx, result,
+  r = mailimap_quota_quota_list_empty_parse(fd, buffer, parser_ctx, indx, result,
       progr_rate, progr_fun);
   if (r == MAILIMAP_NO_ERROR) {
     return r;
   }
 
-  return mailimap_quota_quota_list_nonempty_parse(fd, buffer, indx, result,
+  return mailimap_quota_quota_list_nonempty_parse(fd, buffer, parser_ctx, indx, result,
       progr_rate, progr_fun);
 }
 
 static int
-mailimap_quota_quota_response_parse(mailstream * fd, MMAPString * buffer,
+mailimap_quota_quota_response_parse(mailstream * fd, MMAPString * buffer, struct mailimap_parser_context * parser_ctx,
     size_t * indx, struct mailimap_quota_quota_data ** result,
     size_t progr_rate, progress_function * progr_fun)
 {
@@ -226,7 +226,7 @@ mailimap_quota_quota_response_parse(mailstream * fd, MMAPString * buffer,
     goto err;
   }
 
-  r = mailimap_astring_parse(fd, buffer, NULL, &cur_token, &quotaroot,
+  r = mailimap_astring_parse(fd, buffer, parser_ctx, &cur_token, &quotaroot,
           progr_rate, progr_fun);
   if (r != MAILIMAP_NO_ERROR) {
     res = r;
@@ -239,7 +239,7 @@ mailimap_quota_quota_response_parse(mailstream * fd, MMAPString * buffer,
     goto quotaroot_free;
   }
 
-  r = mailimap_quota_quota_list_parse(fd, buffer, &cur_token,
+  r = mailimap_quota_quota_list_parse(fd, buffer, parser_ctx, &cur_token,
       &quota_list, progr_rate, progr_fun);
   if (r != MAILIMAP_NO_ERROR) {
     res = r;
@@ -268,7 +268,7 @@ mailimap_quota_quota_response_parse(mailstream * fd, MMAPString * buffer,
 }
 
 static int
-mailimap_quota_quotaroot_response_parse(mailstream * fd, MMAPString * buffer,
+mailimap_quota_quotaroot_response_parse(mailstream * fd, MMAPString * buffer, struct mailimap_parser_context * parser_ctx,
     size_t * indx, struct mailimap_quota_quotaroot_data ** result,
     size_t progr_rate, progress_function * progr_fun)
 {
@@ -295,7 +295,7 @@ mailimap_quota_quotaroot_response_parse(mailstream * fd, MMAPString * buffer,
     goto err;
   }
 
-  r = mailimap_mailbox_parse(fd, buffer, NULL, &cur_token, &mailbox,
+  r = mailimap_mailbox_parse(fd, buffer, parser_ctx, &cur_token, &mailbox,
           progr_rate, progr_fun);
   if (r != MAILIMAP_NO_ERROR) {
     res = r;
@@ -317,7 +317,7 @@ mailimap_quota_quotaroot_response_parse(mailstream * fd, MMAPString * buffer,
       goto quotaroot_list_free;
     }
 
-    r = mailimap_astring_parse(fd, buffer, NULL, &cur_token, &quotaroot,
+    r = mailimap_astring_parse(fd, buffer, parser_ctx, &cur_token, &quotaroot,
         progr_rate, progr_fun);
     if (r != MAILIMAP_NO_ERROR) {
       res = r;
@@ -386,7 +386,7 @@ int mailimap_quota_parse(int calling_parser, mailstream * fd,
   switch (calling_parser)
   {
     case MAILIMAP_EXTENDED_PARSER_MAILBOX_DATA:
-      r = mailimap_quota_quota_response_parse(fd, buffer, indx,
+      r = mailimap_quota_quota_response_parse(fd, buffer, parser_ctx, indx,
         &quota_data, progr_rate, progr_fun);
       if (r == MAILIMAP_NO_ERROR) {
 	type = MAILIMAP_QUOTA_TYPE_QUOTA_DATA;
@@ -394,7 +394,7 @@ int mailimap_quota_parse(int calling_parser, mailstream * fd,
       }
 
       if (r == MAILIMAP_ERROR_PARSE) {
-	r = mailimap_quota_quotaroot_response_parse(fd, buffer, indx,
+	r = mailimap_quota_quotaroot_response_parse(fd, buffer, parser_ctx, indx,
           &quotaroot_data, progr_rate, progr_fun);
         if (r == MAILIMAP_NO_ERROR) {
           type = MAILIMAP_QUOTA_TYPE_QUOTAROOT_DATA;

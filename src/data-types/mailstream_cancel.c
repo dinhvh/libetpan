@@ -103,9 +103,7 @@ struct mailstream_cancel * mailstream_cancel_new(void)
   if (ms_internal == NULL)
     goto free;
   cancel->ms_internal = ms_internal;
-  if (cancel->ms_internal == NULL)
-    goto free_internal;
-  
+
 #ifndef WIN32  
   r = pipe(cancel->ms_fds);
   if (r < 0)

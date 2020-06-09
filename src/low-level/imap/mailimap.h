@@ -344,7 +344,7 @@ mailimap_fetch(mailimap * session, struct mailimap_set * set,
 	       struct mailimap_fetch_type * fetch_type, clist ** result);
 
 /*
-  mailimap_fetch()
+  mailimap_uid_fetch()
 
   This function will retrieve data associated with the given message
   numbers.
