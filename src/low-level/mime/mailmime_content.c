@@ -908,7 +908,11 @@ mailmime_multipart_body_parse(const char * message, size_t length,
       preamble_end --;
     }
   }
-  preamble_length = preamble_end - preamble_begin;
+  if (preamble_end > preamble_begin) {
+    preamble_length = preamble_end - preamble_begin;
+  } else {
+    preamble_length = 0;
+  }
   
   part_begin = cur_token;
   while (1) {
