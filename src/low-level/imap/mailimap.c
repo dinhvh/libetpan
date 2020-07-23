@@ -2428,6 +2428,13 @@ int mailimap_starttls(mailimap * session)
 
   mailimap_response_free(response);
 
+  // Detect if the server send extra data after the STARTTLS response.
+  // This *may* be a "response injection attack".
+  if (session->imap_stream->read_buffer_len != 0) {
+      // Since it is also an IMAP protocol violation, exit.
+      return MAILIMAP_ERROR_STARTTLS;
+  }
+
   switch (error_code) {
   case MAILIMAP_RESP_COND_STATE_OK:
     return MAILIMAP_NO_ERROR;
