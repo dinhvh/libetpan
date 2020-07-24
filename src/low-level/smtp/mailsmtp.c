@@ -1111,6 +1111,14 @@ int mailesmtp_starttls(mailsmtp * session)
     return MAILSMTP_ERROR_STREAM;
   r = read_response(session);
 
+  // Detect if the server send extra data after the STARTTLS response.
+  // This *may* be a "response injection attack".
+  if (session->stream->read_buffer_len != 0) {
+    // Since it is also protocol violation, exit.
+    // There is no general error type for STARTTLS errors in SMTP
+    return MAILSMTP_ERROR_SSL;
+  }
+
   switch (r) {
   case 220:
     return MAILSMTP_NO_ERROR;
