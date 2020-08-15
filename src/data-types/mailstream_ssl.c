@@ -113,6 +113,9 @@ struct mailstream_ssl_context
   SSL_CTX * openssl_ssl_ctx;
   X509* client_x509;
   EVP_PKEY *client_pkey;
+# if (OPENSSL_VERSION_NUMBER >= 0x10000000L)
+  char * server_name;
+# endif /* (OPENSSL_VERSION_NUMBER >= 0x10000000L) */
 #else
   gnutls_session session;
   gnutls_x509_crt client_x509;
@@ -262,6 +265,7 @@ void mailstream_gnutls_init_not_required(void)
 void mailstream_openssl_init_not_required(void)
 {
 #ifdef USE_SSL
+  mailstream_ssl_init_lock();
   MUTEX_LOCK(&ssl_lock);
   openssl_init_done = 1;
   MUTEX_UNLOCK(&ssl_lock);
@@ -408,7 +412,7 @@ static void mailstream_ssl_context_free(struct mailstream_ssl_context * ssl_ctx)
 
 static int mailstream_openssl_client_cert_cb(SSL *ssl, X509 **x509, EVP_PKEY **pkey)
 {
-	struct mailstream_ssl_context * ssl_context = (struct mailstream_ssl_context *)SSL_CTX_get_app_data(ssl->ctx);
+	struct mailstream_ssl_context * ssl_context = (struct mailstream_ssl_context *)SSL_CTX_get_app_data(SSL_get_SSL_CTX(ssl));
 	
 	if (x509 == NULL || pkey == NULL) {
 		return 0;
@@ -427,7 +431,7 @@ static int mailstream_openssl_client_cert_cb(SSL *ssl, X509 **x509, EVP_PKEY **p
 }
 
 static struct mailstream_ssl_data * ssl_data_new_full(int fd, time_t timeout,
-	SSL_METHOD * method, void (* callback)(struct mailstream_ssl_context * ssl_context, void * cb_data),
+	const SSL_METHOD * method, void (* callback)(struct mailstream_ssl_context * ssl_context, void * cb_data),
 	void * cb_data)
 {
   struct mailstream_ssl_data * ssl_data;
@@ -436,7 +440,7 @@ static struct mailstream_ssl_data * ssl_data_new_full(int fd, time_t timeout,
   SSL_CTX * tmp_ctx;
   struct mailstream_cancel * cancel;
   struct mailstream_ssl_context * ssl_context = NULL;
-#ifdef SSL_MODE_RELEASE_BUFFERS
+#if SSL_MODE_RELEASE_BUFFERS
   long mode = 0;
 #endif
   
@@ -454,15 +458,22 @@ static struct mailstream_ssl_data * ssl_data_new_full(int fd, time_t timeout,
   SSL_CTX_set_app_data(tmp_ctx, ssl_context);
   SSL_CTX_set_client_cert_cb(tmp_ctx, mailstream_openssl_client_cert_cb);
   ssl_conn = (SSL *) SSL_new(tmp_ctx);
-  
-#ifdef SSL_MODE_RELEASE_BUFFERS
-  mode = SSL_get_mode(ssl_conn);
-  SSL_set_mode(ssl_conn, mode | SSL_MODE_RELEASE_BUFFERS);
-#endif
-  
   if (ssl_conn == NULL)
     goto free_ctx;
   
+#if SSL_MODE_RELEASE_BUFFERS
+  mode = SSL_get_mode(ssl_conn);
+  SSL_set_mode(ssl_conn, mode | SSL_MODE_RELEASE_BUFFERS);
+#endif  
+
+#if (OPENSSL_VERSION_NUMBER >= 0x10000000L)
+  if (ssl_context != NULL && ssl_context->server_name != NULL) {
+    SSL_set_tlsext_host_name(ssl_conn, ssl_context->server_name);
+    free(ssl_context->server_name);
+    ssl_context->server_name = NULL;
+  }
+#endif /* (OPENSSL_VERSION_NUMBER >= 0x10000000L) */
+
   if (SSL_set_fd(ssl_conn, fd) == 0)
     goto free_ssl_conn;
   
@@ -567,7 +578,8 @@ static int mailstream_gnutls_client_cert_cb(gnutls_session session,
 #if GNUTLS_VERSION_NUMBER <= 0x020c00
 		st->type = type;
 #else
-		st->key_type = type;
+		st->cert_type = type;
+		st->key_type = GNUTLS_PRIVKEY_X509;
 #endif
 		st->cert.x509 = &(ssl_context->client_x509);
 		st->key.x509 = ssl_context->client_pkey;
@@ -623,7 +635,7 @@ static struct mailstream_ssl_data * ssl_data_new(int fd, time_t timeout,
 		timeout_value = mailstream_network_delay.tv_sec * 1000 + mailstream_network_delay.tv_usec / 1000;
   }
   else {
-		timeout_value = timeout;
+		timeout_value = timeout * 1000;
   }
 #if GNUTLS_VERSION_NUMBER >= 0x030100
 	gnutls_handshake_set_timeout(session, timeout_value);
@@ -1359,6 +1371,47 @@ int mailstream_ssl_set_server_certicate(struct mailstream_ssl_context * ssl_cont
 #endif /* USE_SSL */
 }
 
+LIBETPAN_EXPORT
+int mailstream_ssl_set_server_name(struct mailstream_ssl_context * ssl_context,
+    char * hostname)
+{
+  int r = -1;
+
+#ifdef USE_SSL
+# ifdef USE_GNUTLS
+  if (hostname != NULL) {
+    r = gnutls_server_name_set(ssl_context->session, GNUTLS_NAME_DNS, hostname, strlen(hostname));
+  }
+  else {
+    r = gnutls_server_name_set(ssl_context->session, GNUTLS_NAME_DNS, "", 0U);
+  }
+# else /* !USE_GNUTLS */
+#  if (OPENSSL_VERSION_NUMBER >= 0x10000000L)
+  if (hostname != NULL) {
+    /* Unfortunately we can't set this in the openssl session yet since it
+     * hasn't been created yet; we only have the openssl context at this point.
+     * We will set it in the openssl session when we create it, soon after the
+     * client callback that we expect to be calling us (since it is the way the
+     * client gets our mailstream_ssl_context) returns (see
+     * ssl_data_new_full()) but we cannot rely on the client persisting it. We
+     * must therefore take a temporary copy here, which we free once we've set
+     * it in the openssl session. */
+    ssl_context->server_name = strdup(hostname);
+  }
+  else {
+    if (ssl_context->server_name != NULL) {
+      free(ssl_context->server_name);
+    }
+    ssl_context->server_name = NULL;
+  }
+  r = 0;
+#  endif /* (OPENSSL_VERSION_NUMBER >= 0x10000000L) */
+# endif /* !USE_GNUTLS */
+#endif /* USE_SSL */
+
+  return r;
+}
+
 #ifdef USE_SSL
 #ifndef USE_GNUTLS
 static struct mailstream_ssl_context * mailstream_ssl_context_new(SSL_CTX * open_ssl_ctx, int fd)
@@ -1372,6 +1425,9 @@ static struct mailstream_ssl_context * mailstream_ssl_context_new(SSL_CTX * open
   ssl_ctx->openssl_ssl_ctx = open_ssl_ctx;
   ssl_ctx->client_x509 = NULL;
   ssl_ctx->client_pkey = NULL;
+#if (OPENSSL_VERSION_NUMBER >= 0x10000000L)
+  ssl_ctx->server_name = NULL;
+#endif /* (OPENSSL_VERSION_NUMBER >= 0x10000000L) */
   ssl_ctx->fd = fd;
   
   return ssl_ctx;
@@ -1379,8 +1435,14 @@ static struct mailstream_ssl_context * mailstream_ssl_context_new(SSL_CTX * open
 
 static void mailstream_ssl_context_free(struct mailstream_ssl_context * ssl_ctx)
 {
-  if (ssl_ctx)
+  if (ssl_ctx != NULL) {
+#if (OPENSSL_VERSION_NUMBER >= 0x10000000L)
+    if (ssl_ctx->server_name != NULL) {
+      free(ssl_ctx->server_name);
+    }
+#endif /* (OPENSSL_VERSION_NUMBER >= 0x10000000L) */
     free(ssl_ctx);
+  }
 }
 #else
 static struct mailstream_ssl_context * mailstream_ssl_context_new(gnutls_session session, int fd)
@@ -1454,8 +1516,8 @@ carray * mailstream_low_ssl_get_certificate_chain(mailstream_low * s)
   }
   
   result = carray_new(4);
-  for(skpos = 0 ; skpos < sk_num(skx) ; skpos ++) {
-    X509 * x = (X509 *) sk_value(skx, skpos);
+  for(skpos = 0 ; skpos < sk_num((_STACK *) skx) ; skpos ++) {
+    X509 * x = (X509 *) sk_value((_STACK *) skx, skpos);
     unsigned char * p;
     MMAPString * str;
     int length = i2d_X509(x, NULL);

@@ -31,21 +31,22 @@ include $(top_srcdir)/rules.mk
 
 ACLOCAL_AMFLAGS = -I m4
 
-EXTRA_DIST = libetpan-config.in libetpan-config.h.in COPYRIGHT
-
-bin_SCRIPTS = libetpan-config
+EXTRA_DIST = libetpan.pc.in libetpan-config.h.in COPYRIGHT
 
 # The file stamp-prepare is generated in the top build directory by
 # rules defined in rules.mk.
 CLEANFILES = stamp-prepare libetpan-config.h 
 
-DISTCLEANFILES = libetpan-config
+DISTCLEANFILES = libetpan.pc
 
 SUBDIRS = build-windows include src tests doc
 
 BUILT_SOURCES += libetpan-config.h
 
 etpaninclude_HEADERS = libetpan-config.h
+
+pkgconfigdir = $(libdir)/pkgconfig
+pkgconfig_DATA = libetpan.pc
 
 # We need to build the header file before the link farm for VPATH
 # builds.

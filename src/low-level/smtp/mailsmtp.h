@@ -106,6 +106,13 @@ int mailsmtp_data_message(mailsmtp * session,
 			   size_t size);
 
 LIBETPAN_EXPORT
+int maillmtp_data_message(mailsmtp * session,
+                          const char * message,
+                          size_t size,
+                          clist * recipient_list,
+                          int * retcodes);
+
+LIBETPAN_EXPORT
 int mailsmtp_data_message_quit(mailsmtp * session,
                                const char * message,
                                size_t size);
@@ -114,6 +121,9 @@ LIBETPAN_EXPORT
 int mailsmtp_data_message_quit_no_disconnect(mailsmtp * session,
                                              const char * message,
                                              size_t size);
+
+LIBETPAN_EXPORT
+int mailesmtp_lhlo(mailsmtp * session, const char *hostname);
 
 LIBETPAN_EXPORT
 int mailesmtp_ehlo(mailsmtp * session);
@@ -138,6 +148,11 @@ int mailesmtp_rcpt(mailsmtp * session,
 		    const char * to,
 		    int notify,
 		    const char * orcpt);
+
+LIBETPAN_EXPORT
+int mailesmtp_clientid(mailsmtp * session,
+            const char * type,
+            const char * clientid);
 
 LIBETPAN_EXPORT
 int mailesmtp_starttls(mailsmtp * session);

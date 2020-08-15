@@ -749,7 +749,13 @@ int mailimap_logout(mailimap * session)
   }
 
   r = mailimap_parse_response(session, &response);
-  if (r != MAILIMAP_NO_ERROR) {
+  if (r == MAILIMAP_ERROR_STREAM) {
+    // the response is expected to be MAILIMAP_ERROR_STREAM
+    // because the server responds with BYE so the stream
+    // is immediately closed
+    res = MAILIMAP_NO_ERROR;
+    goto close;
+  } else if (r != MAILIMAP_NO_ERROR) {
     res = r;
     goto close;
   }
@@ -2024,7 +2030,7 @@ int mailimap_rename(mailimap * session,
   if (r != MAILIMAP_NO_ERROR)
 	return r;
 
-  if (!mailimap_crlf_send(session->imap_stream))
+  r = mailimap_crlf_send(session->imap_stream);
   if (r != MAILIMAP_NO_ERROR)
 	return r;
 
@@ -2421,6 +2427,13 @@ int mailimap_starttls(mailimap * session)
   error_code = response->rsp_resp_done->rsp_data.rsp_tagged->rsp_cond_state->rsp_type;
 
   mailimap_response_free(response);
+
+  // Detect if the server send extra data after the STARTTLS response.
+  // This *may* be a "response injection attack".
+  if (session->imap_stream->read_buffer_len != 0) {
+      // Since it is also an IMAP protocol violation, exit.
+      return MAILIMAP_ERROR_STARTTLS;
+  }
 
   switch (error_code) {
   case MAILIMAP_RESP_COND_STATE_OK:

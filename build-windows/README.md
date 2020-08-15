@@ -15,25 +15,36 @@ Also, you'll need all the dependencies, download the most recent binary builds i
 - [OpenSSL](http://d.etpan.org/mailcore2-deps/misc-win32/)
 - [SASL](http://d.etpan.org/mailcore2-deps/cyrus-sasl-win32/)
 
-### Build using Visual Studio 2013 ###
+### Build using Visual Studio ###
 
-You'll need all the dependencies, download the most recent binary builds in:
+1. You need a working installation of Visual Studio 2013, 2015 or 2017. A community
+edition is enough.
+
+2. Clone repository/or download the a .zip and unpack it. The direcory where
+the content of the repository lays in will from now on referenced as `libetpan`.
+This `README.md` should be at `libetpan/build-windows/README.md`.
+
+3. You'll need all the dependencies, download the most recent binary builds in:
 
 - [zlib](http://d.etpan.org/mailcore2-deps/zlib-win32/)
 - [OpenSSL](http://d.etpan.org/mailcore2-deps/misc-win32/)
 - [SASL](http://d.etpan.org/mailcore2-deps/cyrus-sasl-win32/)
 
-#### Instructions for zlib ####
+4. Create the `libetpan/third-party` folder.
 
-- copy `include`, `lib` and `lib64` folders to `libetpan/third-party`.
+5. Inside all the downloaded archives you should find `bin`, `bin64`, `include`,
+`lib`, `lib64` or `ssl` folders. Copy all of them to `libetpan/third-party`. If you're unsure just copy
+all of those folders to `libetpan/third-party`.
 
-#### openssl ####
+6. As a result, in `libetpan/third-party` folder, you should have the following folders:
+- `include`
+- `lib`
+- `lib64`
+- `bin`
+- `bin64`
+- `ssl`
 
-- copy `bin`, `bin64`, `include`, `lib` and `lib64` to `mailcore2/Externals`.
+7. In `libetpan/build-windows`, using Visual Studio, open `libetpan.sln`.
 
-As a result, in `Externals` folder, you should have the following folders: `include`, `lib`, `lib64`, `bin` and `bin64`.
+8. Build the solution
 
-In `libetpan/build-windows`, using Visual Studio 2013, open `libetpan.sln`.
-Then, build.
-
-Public headers will be located in `libetpan/build-windows/include`.

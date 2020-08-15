@@ -535,7 +535,9 @@ static int curl_error_convert(int curl_res)
   case CURLE_SSL_ENGINE_SETFAILED:
   case CURLE_SSL_CERTPROBLEM:
   case CURLE_SSL_CIPHER:
+#if LIBCURL_VERSION_NUM < 0x073e00
   case CURLE_SSL_CACERT:
+#endif
   case CURLE_FTP_SSL_FAILED:
   case CURLE_SSL_ENGINE_INITFAILED:
     return NEWSFEED_ERROR_SSL;

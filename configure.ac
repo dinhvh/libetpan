@@ -2,8 +2,9 @@
 # Process this file with autoconf to produce a configure script.
 
 m4_define([maj_version], [1])
-m4_define([min_version], [7])
-m4_define([api_current], [20])
+m4_define([min_version], [9])
+m4_define([mic_version], [4])
+m4_define([api_current], [25])
 m4_define([api_revision], [0])
 m4_define([api_compatibility], [20])
 dnl API version
@@ -22,8 +23,8 @@ dnl    reset to `0'. This release has a new, but backwards incompatible
 dnl    interface.
 dnl age = api_current - api_compatiblity
 
-AC_PREREQ(2.61)
-AC_INIT([libetpan],[maj_version.min_version],[libetpan-devel@lists.sourceforge.net])
+AC_PREREQ(2.69)
+AC_INIT([libetpan],[maj_version.min_version.mic_version],[libetpan-devel@lists.sourceforge.net])
 AC_CONFIG_SRCDIR([src/main/libetpan_version.h.in])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_HEADER([config.h])
@@ -31,9 +32,10 @@ AM_INIT_AUTOMAKE
 AM_MAINTAINER_MODE
 AC_CANONICAL_HOST
 
-dnl Version major and minor
+dnl Version major, minor and micro
 VERSION_MAJOR=maj_version
 VERSION_MINOR=min_version
+VERSION_MICRO=mic_version
 
 dnl required version of libcurl
 libcurl_major_required=0
@@ -70,11 +72,14 @@ AC_SUBST(BUILD_REVISION)
 BUILD_TIMESTAMP=`date +'%Y-%m-%dT%H:%M%z'`
 AC_SUBST(BUILD_TIMESTAMP)
 changequote(,)dnl 
-BUILD_FILEVERSION=`echo "${VERSION_MAJOR}.${VERSION_MINOR}.0" | sed 's/\([0-9.]*\).*/\1./;s/\./,/g'`
+BUILD_FILEVERSION=`echo "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_MICRO}" | sed 's/\([0-9.]*\).*/\1./;s/\./,/g'`
 changequote([,])dnl
 BUILD_FILEVERSION="${BUILD_FILEVERSION}${BUILD_REVISION}"
 AC_SUBST(BUILD_FILEVERSION)
 
+dnl Require pkg-config
+m4_ifndef([PKG_PROG_PKG_CONFIG], [m4_fatal(["Missing pkg-config macros"])])
+PKG_PROG_PKG_CONFIG
 
 # Architecture specific.
 have_w32_system=no
@@ -139,7 +144,7 @@ AH_VERBATIM([CONFIG_H_FIRST], [/* Check for Linux's /usr/include/features.h
 AC_C_INLINE
 
 # Checks for programs.
-AC_LIBTOOL_WIN32_DLL
+LT_INIT(win32-dll)
 LT_AC_PROG_RC
 AC_LIBTOOL_RC
 AC_PROG_LIBTOOL
@@ -210,7 +215,7 @@ if test "x$with_openssl" != "xno"; then
   AC_CHECK_HEADER(openssl/ssl.h, [
    AC_CHECK_LIB(rsaref, main, [SSLLIBS="-lrsaref"])
    AC_CHECK_LIB(crypto, main, [SSLLIBS="-lcrypto $SSLLIBS"], [], [$SSLLIBS])
-   AC_CHECK_LIB(ssl, SSL_library_init, with_openssl=yes, [], [$SSLLIBS])])
+   AC_CHECK_LIB(ssl, SSL_CTX_new, with_openssl=yes, [], [$SSLLIBS])])
   if test "x$with_openssl" != "xyes"; then
     CPPFLAGS="$OCPPFLAGS"
     LDFLAGS="$OLDFLAGS"
@@ -353,9 +358,23 @@ DBLINKED=0
 DBLIB=""
 
 AC_ARG_ENABLE(db, [AC_HELP_STRING([--disable-db], [disable Berkeley DB (default=try to detect DB)])],[enable_db=$enableval],[enable_db=yes])
+AC_ARG_ENABLE(lmdb, [AC_HELP_STRING([--enable-lmdb], [enable lmdb as cache DB instead of BerkeleyDB (default=disable)])],[enable_lmdb=$enableval],[enable_lmdb=no])
 
+if test "x$enable_lmdb" = "xyes"; then
+   AC_CHECK_HEADER(lmdb.h, [LMDB="yes"])
+   if test "x$LMDB" = "x"; then
+     AC_MSG_WARN(lmdb.h not found cache support disabled)
+   else
+     AC_CHECK_LIB(lmdb, mdb_env_create, [DBLIB="-llmdb"; DBLINKED=1], [])
+     if test "$DBLINKED" = 1; then
+       AC_DEFINE([LMDB], [1], [Enable support for lmdb cache])
+       enable_db="no"
+     else
+       AC_MSG_WARN(liblmdb not found cache support disabled)
+     fi
+   fi
 dnl Check for a presence of Berkeley DB header
-if test "x$enable_db" != "xyes"; then
+elif test "x$enable_db" != "xyes"; then
    AC_MSG_WARN(cache support disabled)
 else
    AC_CHECK_HEADER(db.h, [DB_HEADER=1], [DB_HEADER=0])
@@ -517,8 +536,11 @@ AC_DEFINE_UNQUOTED(LIBETPAN_VERSION_MAJOR, $VERSION_MAJOR,
   [Define this to the major version of libEtPan])
 AC_DEFINE_UNQUOTED(LIBETPAN_VERSION_MINOR, $VERSION_MINOR,
   [Define this to the minor version of libEtPan])
+AC_DEFINE_UNQUOTED(LIBETPAN_VERSION_MICRO, $VERSION_MICRO,
+  [Define this to the micro version of libEtPan])
 AC_SUBST(VERSION_MAJOR)
 AC_SUBST(VERSION_MINOR)
+AC_SUBST(VERSION_MICRO)
 
 dnl Cyrus SASL
 AC_ARG_WITH(sasl, [AC_HELP_STRING([--with-sasl[=DIR]], [include SASL support (default=auto)])],
@@ -728,7 +750,7 @@ AS_IF([test "$with_zlib" != no], [
 AM_CONDITIONAL([HAVE_ZLIB], [test $HAVE_ZLIB = 1])
 
 dnl Version
-VERSION="$VERSION_MAJOR.$VERSION_MINOR"
+VERSION="$VERSION_MAJOR.$VERSION_MINOR.$VERSION_MICRO"
 test -d .git && VERSION="$VERSION-dev-"`date +'%Y%m%d'`
 AC_DEFINE_UNQUOTED(LIBETPAN_VERSION, "$VERSION",
   [Define this to the version of libEtPan])
@@ -736,8 +758,7 @@ AC_SUBST(VERSION)
 
 # Further checks.
 
-AC_CONFIG_FILES(libetpan-config
-		Makefile
+AC_CONFIG_FILES(Makefile
 		build-windows/Makefile
                 include/Makefile
                 src/Makefile
@@ -775,7 +796,8 @@ AC_CONFIG_FILES(libetpan-config
 		src/engine/Makefile
 		src/versioninfo.rc
 		doc/Makefile
-		tests/Makefile)
+		tests/Makefile
+		libetpan.pc)
 
 # We collect all files which could potentially install public header
 # files via HEADERS.  Updating any of these files will trigger

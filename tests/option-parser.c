@@ -77,7 +77,7 @@ static int get_driver(char * name)
 int parse_options(int argc, char ** argv,
     int * driver,
     char ** server, int * port, int * connection_type,
-    char ** user, char ** password, int * auth_type,
+    char ** user, char ** password, int * auth_type, bool * xoauth2,
     char ** path, char ** cache_directory,
     char ** flags_directory)
 {
@@ -93,9 +93,11 @@ int parse_options(int argc, char ** argv,
     {"password", 1, 0, 'v'},
     {"path",     1, 0, 'l'},
     {"apop",     0, 0, 'a'},
+    {"oauth",    0, 0, 'o'},
     {"cache",    1, 0, 'c'},
     {"flags",    1, 0, 'f'},
 	{"debug-stream", 0, 0, 'D'},
+    {NULL,       0, 0, 0},
   };
 #endif
   int r;
@@ -123,9 +125,9 @@ int parse_options(int argc, char ** argv,
 
   while (1) {
 #if HAVE_GETOPT_LONG
-    r = getopt_long(argc, argv, "d:s:p:txu:v:l:ac:f:D", long_options, &indx);
+    r = getopt_long(argc, argv, "d:s:p:txu:v:l:aoc:f:D", long_options, &indx);
 #else
-    r = getopt(argc, argv, "d:s:p:txu:v:l:ac:f:D");
+    r = getopt(argc, argv, "d:s:p:txu:v:l:aoc:f:D");
 #endif
     
     if (r == -1)
@@ -167,6 +169,9 @@ int parse_options(int argc, char ** argv,
     case 'a':
       * auth_type = POP3_AUTH_TYPE_APOP;
       break;
+    case 'o':
+      * xoauth2 = true;
+      break;
     case 'c':
       if (* cache_directory != NULL)
         free(* cache_directory);
@@ -188,7 +193,7 @@ int parse_options(int argc, char ** argv,
 
 int init_storage(struct mailstorage * storage,
     int driver, const char * server, int port,
-    int connection_type, const char * user, const char * password, int auth_type,
+    int connection_type, const char * user, const char * password, int auth_type, bool xoauth2,
     const char * path, const char * cache_directory, const char * flags_directory)
 {
   int r;
@@ -208,8 +213,13 @@ int init_storage(struct mailstorage * storage,
     break;
 
   case IMAP_STORAGE:
-    r = imap_mailstorage_init(storage, server, port, NULL, connection_type,
-        IMAP_AUTH_TYPE_PLAIN, user, password, cached, cache_directory);
+    if (xoauth2) {
+      r = imap_mailstorage_init_sasl(storage, server, port, NULL, connection_type,
+          "xoauth2", NULL, NULL, NULL, NULL, user, password, NULL, cached, cache_directory);
+    } else {
+      r = imap_mailstorage_init(storage, server, port, NULL, connection_type,
+          IMAP_AUTH_TYPE_PLAIN, user, password, cached, cache_directory);
+    }
     if (r != MAIL_NO_ERROR) {
       printf("error initializing IMAP storage\n");
       goto err;

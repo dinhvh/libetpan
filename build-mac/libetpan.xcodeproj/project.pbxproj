@@ -542,12 +542,10 @@
 		C6F9ED2D105335BD0059C3BA /* mailsmtp_socket.c in Sources */ = {isa = PBXBuildFile; fileRef = C6F9EAB4105335BC0059C3BA /* mailsmtp_socket.c */; };
 		C6F9ED2F105335BD0059C3BA /* mailsmtp_ssl.c in Sources */ = {isa = PBXBuildFile; fileRef = C6F9EAB6105335BC0059C3BA /* mailsmtp_ssl.c */; };
 		C6F9ED39105335BD0059C3BA /* libetpan_version.c in Sources */ = {isa = PBXBuildFile; fileRef = C6F9EAC2105335BD0059C3BA /* libetpan_version.c */; };
-		C6F9ED9E105339200059C3BA /* libssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C6F9ED9D105339200059C3BA /* libssl.dylib */; };
 		C6F9EDA6105339380059C3BA /* libsasl2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C6F9EDA5105339380059C3BA /* libsasl2.dylib */; };
 		C6F9EDAB1053394C0059C3BA /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C6F9EDAA1053394C0059C3BA /* libiconv.dylib */; };
 		C6F9EDAD1053395A0059C3BA /* libexpat.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C6F9EDAC1053395A0059C3BA /* libexpat.dylib */; };
 		C6F9EDB2105339650059C3BA /* libcurl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C6F9EDB1105339650059C3BA /* libcurl.dylib */; };
-		C6F9EDBE105339EA0059C3BA /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C6F9EDBD105339EA0059C3BA /* libcrypto.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -985,12 +983,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				C69BA86017DF63CA00D601B7 /* libz.dylib in Frameworks */,
-				C6F9ED9E105339200059C3BA /* libssl.dylib in Frameworks */,
 				C6F9EDA6105339380059C3BA /* libsasl2.dylib in Frameworks */,
 				C6F9EDAB1053394C0059C3BA /* libiconv.dylib in Frameworks */,
 				C6F9EDAD1053395A0059C3BA /* libexpat.dylib in Frameworks */,
 				C6F9EDB2105339650059C3BA /* libcurl.dylib in Frameworks */,
-				C6F9EDBE105339EA0059C3BA /* libcrypto.dylib in Frameworks */,
 				C6EFB8AE1433F58500F805C0 /* CoreFoundation.framework in Frameworks */,
 				C6EFB8B41433F5A400F805C0 /* CoreServices.framework in Frameworks */,
 				C6ED6CF717A185FD00A4A14C /* Security.framework in Frameworks */,

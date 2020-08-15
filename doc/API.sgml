@@ -1213,6 +1213,22 @@ mailstream * mailstream_ssl_open(int fd);
           <command>mailstream_ssl_open()</command> will open a
           TLS/SSL socket.
         </para>
+
+        <programlisting role="C">
+int mailstream_ssl_set_server_name(struct mailstream_ssl_context * ssl_context,
+    char * hostname)
+        </programlisting>
+
+        <para>
+          <command>mailstream_ssl_set_server_name()</command> allows the client
+          to enable the use of the Server Name Indication TLS extension upon
+          opening a TLS stream, by providing the domain name to be indicated
+          to server as the desired destination. <command>ssl_context</command>
+          is the context pointer passed to the client-supplied callback
+          function by <command>mailstream_ssl_open_with_callback()</command>
+          etc. Note that <command>hostname</command> must be a domain name, not
+          a string representation of an IP address.
+        </para>
       </sect2>  
     </sect1>
 

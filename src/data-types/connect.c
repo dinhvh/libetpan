@@ -183,6 +183,38 @@ int mail_tcp_connect_with_local_address(const char * server, uint16_t port,
 	return mail_tcp_connect_with_local_address_timeout(server, port, local_address, local_port, 0);
 }
 
+#ifndef WIN32
+#include <sys/un.h>
+int mail_unix_connect_socket(const char *path)
+{
+ struct sockaddr_un sa;
+ int s;
+
+ if (sizeof(sa.sun_path) <= strlen(path)) {
+    return -1;
+ }
+
+ if (!(memcpy(sa.sun_path, path, strlen(path)+1))) {
+    return -1;
+ }
+ sa.sun_family = AF_UNIX;
+
+
+ if (0 > (s = socket(AF_UNIX, SOCK_STREAM, 0)))
+    return -1;
+
+ if (prepare_fd(s))
+    goto close_socket;
+ if (connect(s, (struct sockaddr *) &sa, sizeof(struct sockaddr_un)))
+    goto close_socket;
+ return s;
+
+close_socket:
+ close(s);
+ return -1;
+}
+#endif
+
 int mail_tcp_connect_with_local_address_timeout(const char * server, uint16_t port,
     const char * local_address, uint16_t local_port, time_t timeout)
 {
@@ -200,6 +232,9 @@ int mail_tcp_connect_with_local_address_timeout(const char * server, uint16_t po
 #else
   int s;
   int r;
+
+  if ('/' == server[0])
+    return mail_unix_connect_socket(server);
 #endif
 
 #ifndef HAVE_IPV6

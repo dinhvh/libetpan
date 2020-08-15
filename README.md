@@ -5,6 +5,8 @@ The purpose of this mail library is to provide a portable, efficient framework f
 It provides an API for C language.
 
 [![Build Status](https://travis-ci.org/dinhviethoa/libetpan.png?branch=master)](https://travis-ci.org/dinhviethoa/libetpan)
+[![Code Quality: Cpp](https://img.shields.io/lgtm/grade/cpp/g/dinhviethoa/libetpan.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/dinhviethoa/libetpan/context:cpp)
+[![Total Alerts](https://img.shields.io/lgtm/alerts/g/dinhviethoa/libetpan.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/dinhviethoa/libetpan/alerts)
 
 ## Features
 
@@ -32,8 +34,8 @@ You can use flag --with-poll for using poll() instead of select() for checking c
 
 ### How to link with it
 
-    $ gcc -c -o sample.o sample.c `libetpan-config --cflags`
-    $ gcc -o sample sample.o `libetpan-config --libs`
+    $ gcc -c -o sample.o sample.c `pkg-config libetpan --cflags`
+    $ gcc -o sample sample.o `pkg-config libetpan --libs`
 
 ### Mac / iOS
 

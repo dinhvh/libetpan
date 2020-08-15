@@ -959,6 +959,14 @@ int mailpop3_stls(mailpop3 * f)
 
   if (r != RESPONSE_OK)
     return MAILPOP3_ERROR_STLS_NOT_SUPPORTED;
+
+  // Detect if the server send extra data after the STLS response.
+  // This *may* be a "response injection attack".
+  if (f->pop3_stream->read_buffer_len != 0) {
+    // Since it is also protocol violation, exit.
+    // There is no error type for STARTTLS errors in POP3
+    return MAILPOP3_ERROR_SSL;
+  }
   
   return MAILPOP3_NO_ERROR;
 }

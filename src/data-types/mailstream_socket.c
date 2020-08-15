@@ -205,6 +205,7 @@ static int mailstream_low_socket_get_fd(mailstream_low * s)
 static ssize_t mailstream_low_socket_read(mailstream_low * s,
 					  void * buf, size_t count)
 {
+  int r;
   struct mailstream_socket_data * socket_data;
   
   socket_data = (struct mailstream_socket_data *) s->data;
@@ -215,7 +216,6 @@ static ssize_t mailstream_low_socket_read(mailstream_low * s,
   /* timeout */
   {
     struct timeval timeout;
-    int r;
     int cancellation_fd;
     int cancelled;
     int got_data;
@@ -296,16 +296,29 @@ static ssize_t mailstream_low_socket_read(mailstream_low * s,
   }
   
   if (socket_data->use_read) {
-    return read(socket_data->fd, buf, count);
+    r = read(socket_data->fd, buf, count);
   }
   else {
-    return recv(socket_data->fd, buf, count, 0);
+    r = recv(socket_data->fd, buf, count, 0);
+#ifdef WIN32
+    if (SOCKET_ERROR == r) {
+      if (WSAEWOULDBLOCK == WSAGetLastError()) {
+        r = 0;
+      }
+    } else if (r == 0 && count > 0) {
+      /* The socket is gracefully closed */
+      r = SOCKET_ERROR;
+    }
+#endif
   }
+
+  return r;
 }
 
 static ssize_t mailstream_low_socket_write(mailstream_low * s,
 					   const void * buf, size_t count)
 {
+  int r;
   struct mailstream_socket_data * socket_data;
 
   socket_data = (struct mailstream_socket_data *) s->data;
@@ -316,7 +329,6 @@ static ssize_t mailstream_low_socket_write(mailstream_low * s,
   /* timeout */
   {
     struct timeval timeout;
-    int r;
     int cancellation_fd;
     int cancelled;
     int write_enabled;
@@ -399,7 +411,17 @@ static ssize_t mailstream_low_socket_write(mailstream_low * s,
       return 0;
   }
   
-  return send(socket_data->fd, buf, count, 0);
+  r = send(socket_data->fd, buf, count, 0);
+
+#ifdef WIN32
+  if (SOCKET_ERROR == r) {
+    if (WSAEWOULDBLOCK == WSAGetLastError()) {
+      r = 0;
+    }
+  }
+#endif
+
+  return r;
 }
 
 

@@ -37,6 +37,10 @@
 #	include <config.h>
 #endif
 
+#if __APPLE__
+#include <TargetConditionals.h>
+#endif
+
 #include "mailprivacy_tools.h"
 #include "mailprivacy_tools_private.h"
 
@@ -1323,6 +1327,12 @@ int mailprivacy_spawn_and_wait(char * command, char * passphrase,
     char * stdoutfile, char * stderrfile,
     int * bad_passphrase)
 {
+#if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
+  //https://github.com/dinhviethoa/libetpan/issues/275
+  //mailprivacy_spawn_and_wait is not needed on iOS
+  return MAIL_ERROR_COMMAND;
+#endif
+
 #ifdef WIN32
   int res;
   SECURITY_ATTRIBUTES sec_attr;
@@ -1509,8 +1519,12 @@ int mailprivacy_spawn_and_wait(char * command, char * passphrase,
       dup2(fd_err, 2);
       close(fd_err);
       
+#if !TARGET_OS_IPHONE && !TARGET_IPHONE_SIMULATOR
+      //https://github.com/dinhviethoa/libetpan/issues/275
+      //system() is not supported on iOS 11.
       status = system(command);
-      
+#endif
+  
       exit(WEXITSTATUS(status));
     }
     break;

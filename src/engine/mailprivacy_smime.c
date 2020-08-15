@@ -37,6 +37,9 @@
 #	include <config.h>
 #endif
 
+#if __APPLE__
+#include <TargetConditionals.h>
+#endif
 #include "mailprivacy_smime.h"
 #include <string.h>
 #ifdef WIN32
@@ -1537,7 +1540,13 @@ static int get_cert_from_sig(struct mailprivacy * privacy,
   char quoted_store_cert_filename[PATH_MAX];
   int r;
   char command[PATH_MAX];
-
+  
+#if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
+  //https://github.com/dinhviethoa/libetpan/issues/275
+  //get_cert_from_sig is not needed on iOS
+  return MAIL_ERROR_COMMAND;
+#endif
+  
   if (* cert_dir == '\0')
     return MAIL_ERROR_INVAL;
 
@@ -1597,7 +1606,12 @@ static int get_cert_from_sig(struct mailprivacy * privacy,
       "openssl pkcs7 -inform DER -in '%s' -out '%s' -print_certs 2>/dev/null",
       quoted_signature_filename, quoted_store_cert_filename);
   
+#if !TARGET_OS_IPHONE && !TARGET_IPHONE_SIMULATOR
+  //https://github.com/dinhviethoa/libetpan/issues/275
+  //system() is not supported on iOS 11.
   r = system(command);
+#endif
+
   if (WEXITSTATUS(r) != 0) {
     res = MAIL_ERROR_COMMAND;
     goto unlink_signature;

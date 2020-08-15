@@ -47,7 +47,7 @@ libdata_types_la_SOURCES = connect.h connect.c base64.h hmac-md5.h	\
 	mailstream_low.c mailstream.c mailstream_socket.c		\
 	mailstream_ssl.c carray.c clist.c chash.c		        \
 	charconv.c maillock.c base64.c mail_cache_db_types.h		\
-	mail_cache_db.h mail_cache_db.c mailsem.c mailsasl.h		\
+	mail_cache_db.h mail_cache_db.c mail_cache_lmdb.c mailsem.c mailsasl.h		\
 	mailsasl.c mailstream_cancel_types.h mailstream_cancel.h	\
 	mailstream_cancel.c timeutils.h timeutils.c			\
 	mmapstring_private.h mailstream_ssl_private.h			\

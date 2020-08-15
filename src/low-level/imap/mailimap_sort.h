@@ -95,6 +95,9 @@ extern "C" {
   LIBETPAN_EXPORT
   void mailimap_sort_result_free(clist * search_result);
   
+  LIBETPAN_EXPORT
+  int mailimap_has_sort(mailimap * session);
+
 #ifdef __cplusplus
 }
 #endif

@@ -52,6 +52,9 @@ int mailimap_quota_getquotaroot(mailimap * session,
     const char * list_mb,
     struct mailimap_quota_complete_data ** result);
 
+LIBETPAN_EXPORT
+int mailimap_has_quota(mailimap * session);
+
 #ifdef __cplusplus
 }
 #endif
