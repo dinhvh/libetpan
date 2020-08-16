@@ -41,6 +41,10 @@
 #define LIBETPAN_VERSION_MINOR @VERSION_MINOR@
 #endif
 
+#ifndef LIBETPAN_VERSION_MICRO
+#define LIBETPAN_VERSION_MICRO @VERSION_MICRO@
+#endif
+
 #ifndef LIBETPAN_REENTRANT
 #if @REENTRANT@
 #define LIBETPAN_REENTRANT 1
@@ -62,5 +66,6 @@
 
 int libetpan_get_version_major(void);
 int libetpan_get_version_minor(void);
+int libetpan_get_version_micro(void);
 
 #endif
