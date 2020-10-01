@@ -2,7 +2,7 @@
 
 The purpose of this mail library is to provide a portable, efficient framework for different kinds of mail access: IMAP, SMTP, POP and NNTP.
 
-It provides an API for C language.
+<ins>It provides an API for C language</ins>.
 
 [![Build Status](https://travis-ci.org/dinhviethoa/libetpan.png?branch=master)](https://travis-ci.org/dinhviethoa/libetpan)
 [![Code Quality: Cpp](https://img.shields.io/lgtm/grade/cpp/g/dinhviethoa/libetpan.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/dinhviethoa/libetpan/context:cpp)
