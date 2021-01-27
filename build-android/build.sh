@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -x
 
 build_version=7
 openssl_build_version=3
@@ -7,7 +7,9 @@ iconv_build_version=1
 package_name=libetpan-android
 
 current_dir="`pwd`"
-# find ../src -name *.h | xargs -0 cp --target-directory=./include/libetpan
+#find ../src -name *.h | xargs -0 cp --target-directory=./include/libetpan
+
+mkdir -p ./include/libetpan
 find ../src -name "*.h" -type file -exec cp {} ./include/libetpan \;
 
 
@@ -36,7 +38,7 @@ fi
 
 function build {
   rm -rf "$current_dir/obj"
-  
+
   cd "$current_dir/jni"
   $ANDROID_NDK/ndk-build TARGET_PLATFORM=$ANDROID_PLATFORM TARGET_ARCH_ABI=$TARGET_ARCH_ABI \
     OPENSSL_PATH="$current_dir/third-party/openssl-android-$openssl_build_version" \
@@ -65,13 +67,7 @@ mkdir -p "$current_dir/$package_name-$build_version/include"
 cp -r include/libetpan "$current_dir/$package_name-$build_version/include"
 
 # Start building.
-#ANDROID_PLATFORM=android-16
-archs="armeabi armeabi-v7a x86"	#archs="armeabi armeabi-v7a x86"
-for arch in $archs ; do	#for arch in $archs ; do
-  TARGET_ARCH_ABI=$arch	  #TARGET_ARCH_ABI=$arch
-  build	  #build
-done	#done
-ANDROID_PLATFORM=android-21	ANDROID_PLATFORM=android-23
+ANDROID_PLATFORM=android-23
 archs="arm64-v8a"	archs="arm64-v8a armeabi-v7a x86 x86_64"
 for arch in $archs ; do
   TARGET_ARCH_ABI=$arch

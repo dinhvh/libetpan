@@ -60,13 +60,7 @@ function build {
 }
 
 # Start building.
-#ANDROID_PLATFORM=android-16
-archs="armeabi armeabi-v7a x86"	#archs="armeabi armeabi-v7a x86"
-for arch in $archs ; do	#for arch in $archs ; do
-  TARGET_ARCH_ABI=$arch	#  TARGET_ARCH_ABI=$arch
-  build	#  build
-done	#done
-ANDROID_PLATFORM=android-21	ANDROID_PLATFORM=android-23
+	ANDROID_PLATFORM=android-23
 archs="arm64-v8a"	archs="arm64-v8a armeabi-v7a x86 x86_64"
 for arch in $archs ; do
   TARGET_ARCH_ABI=$arch
