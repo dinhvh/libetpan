@@ -288,7 +288,7 @@ static void detach_free_common_fields(struct mailimf_orig_date * imf_date,
   }
   if (imf_cc != NULL) {
     imf_cc->cc_addr_list = NULL;
-    mailimf_to_free(imf_to);
+    mailimf_cc_free(imf_cc);
   }
   if (imf_bcc != NULL) {
     imf_bcc->bcc_addr_list = NULL;
