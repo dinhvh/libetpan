@@ -3,8 +3,8 @@
 
 m4_define([maj_version], [1])
 m4_define([min_version], [9])
-m4_define([mic_version], [4])
-m4_define([api_current], [25])
+m4_define([mic_version], [3])
+m4_define([api_current], [24])
 m4_define([api_revision], [0])
 m4_define([api_compatibility], [20])
 dnl API version
@@ -23,7 +23,7 @@ dnl    reset to `0'. This release has a new, but backwards incompatible
 dnl    interface.
 dnl age = api_current - api_compatiblity
 
-AC_PREREQ(2.69)
+AC_PREREQ(2.61)
 AC_INIT([libetpan],[maj_version.min_version.mic_version],[libetpan-devel@lists.sourceforge.net])
 AC_CONFIG_SRCDIR([src/main/libetpan_version.h.in])
 AC_CONFIG_MACRO_DIR([m4])
@@ -144,7 +144,7 @@ AH_VERBATIM([CONFIG_H_FIRST], [/* Check for Linux's /usr/include/features.h
 AC_C_INLINE
 
 # Checks for programs.
-LT_INIT(win32-dll)
+AC_LIBTOOL_WIN32_DLL
 LT_AC_PROG_RC
 AC_LIBTOOL_RC
 AC_PROG_LIBTOOL

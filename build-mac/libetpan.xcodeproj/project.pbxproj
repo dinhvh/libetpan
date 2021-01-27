@@ -548,30 +548,6 @@
 		C6F9EDB2105339650059C3BA /* libcurl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C6F9EDB1105339650059C3BA /* libcurl.dylib */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		C6635C4716E000310066276E /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = C6635C4316DFFE6E0066276E;
-			remoteInfo = "libetpan-prepare";
-		};
-		C6635C4916E000340066276E /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = C6635C4316DFFE6E0066276E;
-			remoteInfo = "libetpan-prepare";
-		};
-		C6635C5116E0027B0066276E /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = C6635C4D16E002340066276E;
-			remoteInfo = "libetpan-prepare-ios";
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXFileReference section */
 		2307A00A170AAA5500C43C59 /* mailstream_compress.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mailstream_compress.c; sourceTree = "<group>"; };
 		2307A00B170AAA5500C43C59 /* mailstream_compress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mailstream_compress.h; sourceTree = "<group>"; };
@@ -1705,37 +1681,6 @@
 		};
 /* End PBXGroup section */
 
-/* Begin PBXLegacyTarget section */
-		C6635C4316DFFE6E0066276E /* libetpan-prepare */ = {
-			isa = PBXLegacyTarget;
-			buildArgumentsString = "$(SRCROOT)/update.sh";
-			buildConfigurationList = C6635C4416DFFE6E0066276E /* Build configuration list for PBXLegacyTarget "libetpan-prepare" */;
-			buildPhases = (
-			);
-			buildToolPath = /bin/sh;
-			buildWorkingDirectory = "$(SRCROOT)";
-			dependencies = (
-			);
-			name = "libetpan-prepare";
-			passBuildSettingsInEnvironment = 1;
-			productName = "libetpan-prepare";
-		};
-		C6635C4D16E002340066276E /* libetpan-prepare-ios */ = {
-			isa = PBXLegacyTarget;
-			buildArgumentsString = "$(SRCROOT)/update.sh";
-			buildConfigurationList = C6635C4E16E002340066276E /* Build configuration list for PBXLegacyTarget "libetpan-prepare-ios" */;
-			buildPhases = (
-			);
-			buildToolPath = /bin/sh;
-			buildWorkingDirectory = "$(SRCROOT)";
-			dependencies = (
-			);
-			name = "libetpan-prepare-ios";
-			passBuildSettingsInEnvironment = 1;
-			productName = "libetpan-prepare";
-		};
-/* End PBXLegacyTarget section */
-
 /* Begin PBXNativeTarget section */
 		8DC2EF4F0486A6940098B216 /* libetpan */ = {
 			isa = PBXNativeTarget;
@@ -1749,7 +1694,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				C6635C4816E000310066276E /* PBXTargetDependency */,
 			);
 			name = libetpan;
 			productInstallPath = "$(HOME)/Library/Frameworks";
@@ -1769,7 +1713,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				C6635C5216E0027B0066276E /* PBXTargetDependency */,
 			);
 			name = "libetpan ios";
 			productName = "static libetpan";
@@ -1787,7 +1730,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				C6635C4A16E000340066276E /* PBXTargetDependency */,
 			);
 			name = "static libetpan";
 			productName = "static libetpan";
@@ -1820,8 +1762,6 @@
 				8DC2EF4F0486A6940098B216 /* libetpan */,
 				C69AB10910546FE500F32FBD /* static libetpan */,
 				C682E21815B315EF00BE9DA7 /* libetpan ios */,
-				C6635C4316DFFE6E0066276E /* libetpan-prepare */,
-				C6635C4D16E002340066276E /* libetpan-prepare-ios */,
 			);
 		};
 /* End PBXProject section */
@@ -1887,7 +1827,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cp \"$SRCROOT/libsasl-ios/lib/libsasl2.a\" \"$BUILT_PRODUCTS_DIR\"\n";
+			shellScript = "#cp \"$SRCROOT/libsasl-ios/lib/libsasl2.a\" \"$BUILT_PRODUCTS_DIR\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -2446,24 +2386,6 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
-/* Begin PBXTargetDependency section */
-		C6635C4816E000310066276E /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = C6635C4316DFFE6E0066276E /* libetpan-prepare */;
-			targetProxy = C6635C4716E000310066276E /* PBXContainerItemProxy */;
-		};
-		C6635C4A16E000340066276E /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = C6635C4316DFFE6E0066276E /* libetpan-prepare */;
-			targetProxy = C6635C4916E000340066276E /* PBXContainerItemProxy */;
-		};
-		C6635C5216E0027B0066276E /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = C6635C4D16E002340066276E /* libetpan-prepare-ios */;
-			targetProxy = C6635C5116E0027B0066276E /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
-
 /* Begin XCBuildConfiguration section */
 		1DEB91AE08733DA50010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -2477,11 +2399,16 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/..",
+					"$(SRCROOT)/include",
+				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				PRODUCT_NAME = libetpan;
 				SDKROOT = macosx;
+				SYSTEM_HEADER_SEARCH_PATHS = "";
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Debug;
@@ -2496,12 +2423,17 @@
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
 				GCC_MODEL_TUNING = G5;
+				HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/..",
+					"$(SRCROOT)/include",
+				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@loader_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				PRODUCT_NAME = libetpan;
 				SDKROOT = macosx;
 				STRIP_INSTALLED_PRODUCT = YES;
+				SYSTEM_HEADER_SEARCH_PATHS = "";
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Release;
@@ -2517,6 +2449,8 @@
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/..",
 					"$(SRCROOT)/include",
+					"$(SRCROOT)/../include",
+					"$(SRCROOT)/../include/libetpan",
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (
@@ -2537,42 +2471,14 @@
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/..",
 					"$(SRCROOT)/include",
+					"$(SRCROOT)/../include",
+					"$(SRCROOT)/../include/libetpan",
 				);
 				OTHER_CFLAGS = (
 					"-DHAVE_CFNETWORK=1",
 					"-DHAVE_CONFIG_H=1",
 					"-DLIBETPAN_IOS_DISABLE_SSL=1",
 				);
-			};
-			name = Release;
-		};
-		C6635C4516DFFE6E0066276E /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				SDKROOT = macosx;
-			};
-			name = Debug;
-		};
-		C6635C4616DFFE6E0066276E /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				SDKROOT = macosx;
-			};
-			name = Release;
-		};
-		C6635C4F16E002340066276E /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PLATFORM_NAME = iphoneos;
-				SDKROOT = iphoneos;
-			};
-			name = Debug;
-		};
-		C6635C5016E002340066276E /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PLATFORM_NAME = iphoneos;
-				SDKROOT = iphoneos;
 			};
 			name = Release;
 		};
@@ -2588,13 +2494,16 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/libsasl-ios/include",
+					"$(SRCROOT)/../../../libsasl-ios/include",
 				);
 				INSTALL_PATH = /usr/local/lib;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/libsasl-ios/lib";
+				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_NAME = "etpan-ios";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				VALID_ARCHS = "arm64 armv7 x86_64";
 			};
 			name = Debug;
 		};
@@ -2609,13 +2518,16 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/libsasl-ios/include",
+					"$(SRCROOT)/../../../libsasl-ios/include",
 				);
 				INSTALL_PATH = /usr/local/lib;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/libsasl-ios/lib";
+				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_NAME = "etpan-ios";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				VALID_ARCHS = "arm64 armv7 x86_64";
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -2671,24 +2583,6 @@
 			buildConfigurations = (
 				1DEB91B208733DA50010E9CD /* Debug */,
 				1DEB91B308733DA50010E9CD /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		C6635C4416DFFE6E0066276E /* Build configuration list for PBXLegacyTarget "libetpan-prepare" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				C6635C4516DFFE6E0066276E /* Debug */,
-				C6635C4616DFFE6E0066276E /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		C6635C4E16E002340066276E /* Build configuration list for PBXLegacyTarget "libetpan-prepare-ios" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				C6635C4F16E002340066276E /* Debug */,
-				C6635C5016E002340066276E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

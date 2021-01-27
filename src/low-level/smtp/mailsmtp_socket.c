@@ -100,8 +100,25 @@ int mailsmtp_socket_connect(mailsmtp * session,
 
 static int mailsmtp_cfsocket_starttls(mailsmtp * session);
 
+void mailsmtp_socket_starttls_cert(struct mailstream_ssl_context * ssl_context, void * data)
+{
+  mailsmtp * session = (mailsmtp*)data;
+
+  if(ssl_context, session->client_cert && session->client_cert_length && session->client_cert_password)
+  {
+    mailstream_ssl_set_client_certicate_data(ssl_context, session->client_cert, session->client_cert_length, session->client_cert_password);
+  }
+}
+
 int mailsmtp_socket_starttls(mailsmtp * session)
 {
+#if defined(ANDROID) || defined(__ANDROID__)
+  if(session->client_cert && session->client_cert_password)
+  {
+    return mailsmtp_socket_starttls_with_callback(session, mailsmtp_socket_starttls_cert, session);   
+  }
+#endif
+
   return mailsmtp_socket_starttls_with_callback(session, NULL, NULL);
 }
 
@@ -160,6 +177,9 @@ static int mailsmtp_cfsocket_starttls(mailsmtp * session)
   if (r != MAILSMTP_NO_ERROR)
     return r;
   
+  if(session->client_cert_length && session->client_cert_password)
+    mailstream_set_client_cert(session->stream, session->client_cert, session->client_cert_length, session->client_cert_password);
+
   mailstream_cfstream_set_ssl_verification_mask(session->stream, MAILSTREAM_CFSTREAM_SSL_NO_VERIFICATION);
   r = mailstream_cfstream_set_ssl_enabled(session->stream, 1);
   if (r < 0) {

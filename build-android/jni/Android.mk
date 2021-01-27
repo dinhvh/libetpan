@@ -9,7 +9,6 @@ ifeq ($(CYRUS_SASL_PATH),)
 $(error CYRUS_SASL_PATH must be set)
 endif
 
-
 ifeq ($(ICONV_PATH),)
 $(error ICONV_PATH must be set)
 endif
@@ -144,7 +143,9 @@ src/driver/implementation/data-message \
 src/driver/interface
 
 LOCAL_C_INCLUDES = $(addprefix ../../, $(c_includes)) \
-  $(LOCAL_PATH)/../include $(LOCAL_PATH)/../include/libetpan \
-  $(OPENSSL_PATH)/include $(CYRUS_SASL_PATH)/include $(ICONV_PATH)/include
+  libetpan-android-7/include \
+  libetpan-android-7/include/libetpan \
+  $(OPENSSL_PATH)/include \
+  $(LOCAL_PATH)/../include $(LOCAL_PATH)/../include/libetpan 
 
 include $(BUILD_STATIC_LIBRARY)

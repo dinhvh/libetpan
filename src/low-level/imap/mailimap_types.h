@@ -3394,6 +3394,10 @@ struct mailimap {
   int is_163_workaround_enabled;
   int is_rambler_workaround_enabled;
   int is_qip_workaround_enabled;
+  
+  unsigned char* client_cert;
+  size_t client_cert_length;
+  const char* client_cert_password;
 };
 
 

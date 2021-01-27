@@ -87,6 +87,7 @@
 #ifdef USE_SSL
 # ifndef USE_GNUTLS
 #  include <openssl/ssl.h>
+#  include <openssl/pkcs12.h>
 # else
 #  include <errno.h>
 #  include <gnutls/gnutls.h>
@@ -100,6 +101,7 @@
     void mailprivacy_smime_init_lock();
 #  endif
 #	endif
+
 #endif
 
 #include "mmapstring.h"
@@ -635,7 +637,7 @@ static struct mailstream_ssl_data * ssl_data_new(int fd, time_t timeout,
 		timeout_value = mailstream_network_delay.tv_sec * 1000 + mailstream_network_delay.tv_usec / 1000;
   }
   else {
-		timeout_value = timeout * 1000;
+		timeout_value = timeout;
   }
 #if GNUTLS_VERSION_NUMBER >= 0x030100
 	gnutls_handshake_set_timeout(session, timeout_value);
@@ -1266,6 +1268,48 @@ mailstream_low * mailstream_low_tls_open_with_callback_timeout(int fd, time_t ti
   return mailstream_low_ssl_open_full(fd, 1, timeout, callback, data);
 }
 
+int mailstream_ssl_set_client_certicate_data(struct mailstream_ssl_context * ssl_context,
+    unsigned char* data, size_t length, const char* password)
+{
+#ifdef USE_SSL
+#ifdef USE_GNUTLS
+  /* not implemented */
+    return -1;
+#else
+    PKCS12* pkcs12;
+    unsigned char* certData = (unsigned char*)data;
+    long certLen = (long)length;
+
+    EVP_PKEY *pkey_;
+    X509 *cert;
+    STACK_OF(X509) *ca = NULL;
+    const char* password_ = password;
+
+    if(password_ && *password_ == 0)
+        password_ = NULL;
+ 
+    pkcs12 = d2i_PKCS12(NULL,(const unsigned char**)&certData, certLen);
+    if(pkcs12)
+    {
+      if(PKCS12_parse(pkcs12, password_, &pkey_, &cert, &ca)) 
+      {
+
+        if(cert && pkey_)
+        {
+          ssl_context->client_x509 = cert;
+          ssl_context->client_pkey = pkey_;
+          return 0;
+        }
+      }
+    }
+
+    return -1;
+  #endif
+  #else
+    return -1;
+  #endif
+}
+
 int mailstream_ssl_set_client_certicate(struct mailstream_ssl_context * ssl_context,
     char * filename)
 {
@@ -1292,7 +1336,7 @@ int mailstream_ssl_set_client_certicate(struct mailstream_ssl_context * ssl_cont
 }
 
 LIBETPAN_EXPORT
-int mailstream_ssl_set_client_certificate_data(struct mailstream_ssl_context * ssl_context,
+int mailstream_ssl_set_client_cert_data(struct mailstream_ssl_context * ssl_context,
     unsigned char *x509_der, size_t len)
 {
 #ifdef USE_SSL

@@ -113,6 +113,10 @@ mailsmtp * mailsmtp_new(size_t progr_rate,
   if (session == NULL)
     goto err;
 
+  session->client_cert_length = 0;
+  session->client_cert = NULL;
+  session->client_cert_password = NULL;
+
   session->stream = NULL;
 
   session->progr_rate = progr_rate;
@@ -164,7 +168,7 @@ void mailsmtp_free(mailsmtp * session)
   
   if (session->stream)
     mailsmtp_quit(session);
-
+  
   mmap_string_free(session->line_buffer);
   mmap_string_free(session->response_buffer);
   free(session);
@@ -231,6 +235,12 @@ int mailsmtp_quit(mailsmtp * session)
   int r;
   int res;
   
+  free(session->client_cert);
+  session->client_cert = NULL;
+  session->client_cert_length = 0;
+  free(session->client_cert_password);
+  session->client_cert_password = NULL;
+
   if (session->stream == NULL)
     return MAILSMTP_NO_ERROR;
   
@@ -1635,6 +1645,22 @@ void mailsmtp_set_logger(mailsmtp * session, void (* logger)(mailsmtp * session,
 {
   session->smtp_logger = logger;
   session->smtp_logger_context = logger_context;
+}
+
+LIBETPAN_EXPORT
+void mailsmtp_set_client_cert(mailsmtp * s, unsigned char* data, size_t count, const char* password)
+{
+  free(s->client_cert);
+  s->client_cert_length = count;
+  s->client_cert = malloc(count);
+  if(s->client_cert)
+    memcpy(s->client_cert, data, count);
+  
+  size_t len = strlen(password);
+  free(s->client_cert_password);
+  s->client_cert_password = malloc(len + 1);
+  if(s->client_cert_password)
+    strcpy(s->client_cert_password, password);
 }
 
 int mailsmtp_send_command(mailsmtp * f, char * command)

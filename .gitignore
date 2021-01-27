@@ -14,7 +14,7 @@
 
 project.xcworkspace/
 xcuserdata/
-
+build-android/
 /build-mac/autogen-result.md5
 /build-mac/build
 /build-mac/include

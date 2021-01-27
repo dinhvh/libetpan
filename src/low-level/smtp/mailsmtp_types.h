@@ -138,6 +138,10 @@ struct mailsmtp {
   
   void (* smtp_logger)(mailsmtp * session, int log_type, const char * str, size_t size, void * context);
   void * smtp_logger_context;
+
+  unsigned char* client_cert;
+  size_t client_cert_length;
+  const char* client_cert_password;
 };
 
 #define MAILSMTP_DSN_NOTIFY_SUCCESS 1

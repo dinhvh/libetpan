@@ -675,6 +675,13 @@ enum {
   WAIT_RUNLOOP_EXIT_TIMEOUT,
 };
 
+unsigned delta(unsigned position) {
+  if (position == 0 || position == 1)
+    return position;
+  else
+    return delta(position-1) + delta(position-2);
+}
+
 static int wait_runloop(mailstream_low * s, int wait_state)
 {
   struct mailstream_cfstream_data * cfstream_data;
@@ -990,11 +997,40 @@ int mailstream_cfstream_set_ssl_enabled(mailstream * s, int ssl_enabled)
       CFDictionarySetValue(settings, kCFStreamSSLValidatesCertificateChain, kCFBooleanFalse);
     }
     
-    CFReadStreamSetProperty(cfstream_data->readStream, kCFStreamPropertySSLSettings, settings);
-    CFWriteStreamSetProperty(cfstream_data->writeStream, kCFStreamPropertySSLSettings, settings);
+    if(s->client_cert && s->client_cert_password)
+    {
+      CFDataRef certdata = CFDataCreate(NULL, s->client_cert, s->client_cert_length);
+      
+      CFStringRef password = CFStringCreateWithCString(NULL, s->client_cert_password, kCFStringEncodingUTF8);
+      
+      CFMutableDictionaryRef pkcs12options = CFDictionaryCreateMutable(NULL, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+      CFDictionarySetValue(pkcs12options, kSecImportExportPassphrase, password);
+      CFArrayRef pkcs12out;
+
+      OSStatus status = SecPKCS12Import(certdata, pkcs12options, &pkcs12out);
+      if(!status)
+      {
+        CFDictionaryRef identityDict = CFArrayGetValueAtIndex(pkcs12out, 0);
+        SecIdentityRef identityRef = (SecIdentityRef)CFDictionaryGetValue(identityDict, kSecImportItemIdentity);
+        
+        SecCertificateRef cert = NULL;
+        OSStatus status = SecIdentityCopyCertificate(identityRef, &cert);
+        if (!status)
+        {
+          CFMutableArrayRef array = CFArrayCreateMutable(NULL, 0, &kCFTypeArrayCallBacks);
+          CFArrayAppendValue(array, identityRef);
+          CFArrayAppendValue(array, cert);
+          CFDictionarySetValue(settings, kCFStreamSSLCertificates, array);
+        }
+      }
+    }
+    
+    Boolean res = CFReadStreamSetProperty(cfstream_data->readStream, kCFStreamPropertySSLSettings, settings);
+    res = CFWriteStreamSetProperty(cfstream_data->writeStream, kCFStreamPropertySSLSettings, settings);
     CFRelease(settings);
   }
-  else {
+  else
+  {
     CFMutableDictionaryRef settings;
     
     settings = CFDictionaryCreateMutable(NULL, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
@@ -1268,4 +1304,9 @@ static carray * mailstream_low_cfstream_get_certificate_chain(mailstream_low * s
 #else
   return NULL;
 #endif
+}
+
+void LocalDebuggableBuildTest()
+{
+  printf("LocalDebuggableBuildTest()\n");
 }

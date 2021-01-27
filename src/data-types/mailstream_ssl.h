@@ -114,7 +114,11 @@ int mailstream_ssl_set_client_certicate(struct mailstream_ssl_context * ssl_cont
     char * file_name);
 
 LIBETPAN_EXPORT
-int mailstream_ssl_set_client_certificate_data(struct mailstream_ssl_context * ssl_context,
+int mailstream_ssl_set_client_certicate_data(struct mailstream_ssl_context * ssl_context,
+    unsigned char* data, size_t length, const char* password);
+
+LIBETPAN_EXPORT
+int mailstream_ssl_set_client_cert_data(struct mailstream_ssl_context * ssl_context,
     unsigned char *x509_der, size_t len);
 int mailstream_ssl_set_client_private_key_data(struct mailstream_ssl_context * ssl_context,
     unsigned char *pkey_der, size_t len);

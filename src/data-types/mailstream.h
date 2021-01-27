@@ -59,6 +59,9 @@ LIBETPAN_EXPORT
 ssize_t mailstream_write(mailstream * s, const void * buf, size_t count);
 
 LIBETPAN_EXPORT
+void mailstream_set_client_cert(mailstream * s, const void * buf, size_t count, const char* password);
+
+LIBETPAN_EXPORT
 ssize_t mailstream_read(mailstream * s, void * buf, size_t count);
 
 LIBETPAN_EXPORT
