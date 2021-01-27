@@ -144,7 +144,9 @@ src/driver/implementation/data-message \
 src/driver/interface
 
 LOCAL_C_INCLUDES = $(addprefix ../../, $(c_includes)) \
-  $(LOCAL_PATH)/../include $(LOCAL_PATH)/../include/libetpan \
-  $(OPENSSL_PATH)/include $(CYRUS_SASL_PATH)/include $(ICONV_PATH)/include
+  libetpan-android-7/include \
+  $(OPENSSL_PATH)/include $(CYRUS_SASL_PATH)/include $(ICONV_PATH)/include	  libetpan-android-7/include/libetpan \
+  $(OPENSSL_PATH)/include \
+  $(LOCAL_PATH)/../include $(LOCAL_PATH)/../include/libetpan
 
 include $(BUILD_STATIC_LIBRARY)
