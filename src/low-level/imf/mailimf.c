@@ -716,7 +716,7 @@ int mailimf_crlf_parse(const char * message, size_t length, size_t * indx)
   cur_token = * indx;
 
   r = mailimf_char_parse(message, length, &cur_token, '\r');
-  if ((r != MAILIMF_NO_ERROR) && (r != MAILIMF_ERROR_PARSE))
+  if (r != MAILIMF_NO_ERROR)
     return r;
 
   r = mailimf_char_parse(message, length, &cur_token, '\n');
@@ -738,7 +738,7 @@ static int mailimf_unstrict_crlf_parse(const char * message,
   mailimf_cfws_parse(message, length, &cur_token);
 
   r = mailimf_char_parse(message, length, &cur_token, '\r');
-  if ((r != MAILIMF_NO_ERROR) && (r != MAILIMF_ERROR_PARSE))
+  if (r != MAILIMF_NO_ERROR)
     return r;
 
   r = mailimf_char_parse(message, length, &cur_token, '\n');
@@ -963,7 +963,7 @@ mailimf_comment_fws_ccontent_parse(const char * message, size_t length,
   cur_token = * indx;
 
   r = mailimf_fws_parse(message, length, &cur_token);
-  if ((r != MAILIMF_NO_ERROR) && (r != MAILIMF_ERROR_PARSE))
+  if (r != MAILIMF_NO_ERROR)
     return r;
 
   r = mailimf_ccontent_parse(message, length, &cur_token);
@@ -1002,7 +1002,7 @@ static inline int mailimf_comment_parse(const char * message, size_t length,
   }
 
   r = mailimf_fws_parse(message, length, &cur_token);
-  if ((r != MAILIMF_NO_ERROR) && (r != MAILIMF_ERROR_PARSE))
+  if (r != MAILIMF_NO_ERROR)
     return r;
 
   r = mailimf_cparenth_parse(message, length, &cur_token);
@@ -1027,7 +1027,7 @@ static inline int mailimf_cfws_fws_comment_parse(const char * message, size_t le
   cur_token = * indx;
 
   r = mailimf_fws_parse(message, length, &cur_token);
-  if ((r != MAILIMF_NO_ERROR) && (r != MAILIMF_ERROR_PARSE))
+  if (r != MAILIMF_NO_ERROR)
     return r;
 
   r = mailimf_comment_parse(message, length, &cur_token);
@@ -1133,7 +1133,7 @@ int mailimf_atom_parse(const char * message, size_t length,
   cur_token = * indx;
 
   r = mailimf_cfws_parse(message, length, &cur_token);
-  if ((r != MAILIMF_NO_ERROR) && (r != MAILIMF_ERROR_PARSE)) {
+  if (r != MAILIMF_NO_ERROR) {
     res = r;
     goto err;
   }
@@ -1189,7 +1189,7 @@ static int mailimf_fws_atom_for_word_parse(const char * message, size_t length,
   missing_closing_quote = 0;
   
   r = mailimf_fws_parse(message, length, &cur_token);
-  if ((r != MAILIMF_NO_ERROR) && (r != MAILIMF_ERROR_PARSE)) {
+  if (r != MAILIMF_NO_ERROR) {
     res = r;
     goto err;
   }
@@ -1197,7 +1197,7 @@ static int mailimf_fws_atom_for_word_parse(const char * message, size_t length,
   end = cur_token;
   
   r = mailmime_encoded_word_parse(message, length, &cur_token, &word, &has_fwd, &missing_closing_quote);
-  if ((r != MAILIMF_NO_ERROR) && (r != MAILIMF_ERROR_PARSE)) {
+  if (r != MAILIMF_NO_ERROR) {
     res = r;
     goto err;
   }
@@ -1239,7 +1239,7 @@ int mailimf_fws_atom_parse(const char * message, size_t length,
   cur_token = * indx;
 
   r = mailimf_fws_parse(message, length, &cur_token);
-  if ((r != MAILIMF_NO_ERROR) && (r != MAILIMF_ERROR_PARSE)) {
+  if (r != MAILIMF_NO_ERROR) {
     res = r;
     goto err;
   }
@@ -1387,7 +1387,7 @@ int mailimf_quoted_string_parse(const char * message, size_t length,
   cur_token = * indx;
 
   r = mailimf_cfws_parse(message, length, &cur_token);
-  if ((r != MAILIMF_NO_ERROR) && (r != MAILIMF_ERROR_PARSE)) {
+  if (r != MAILIMF_NO_ERROR) {
     res = r;
     goto err;
   }
@@ -1419,7 +1419,9 @@ int mailimf_quoted_string_parse(const char * message, size_t length,
 	goto free_gstr;
       }
     }
-    else if (r != MAILIMF_ERROR_PARSE) {
+    else if (r == MAILIMF_ERROR_PARSE) {
+      break;
+    else {
       res = r;
       goto free_gstr;
     }
@@ -1484,7 +1486,7 @@ int mailimf_fws_quoted_string_parse(const char * message, size_t length,
   cur_token = * indx;
 
   r = mailimf_fws_parse(message, length, &cur_token);
-  if ((r != MAILIMF_NO_ERROR) && (r != MAILIMF_ERROR_PARSE)) {
+  if (r != MAILIMF_NO_ERROR) {
     res = r;
     goto err;
   }
@@ -1516,7 +1518,9 @@ int mailimf_fws_quoted_string_parse(const char * message, size_t length,
 	goto free_gstr;
       }
     }
-    else if (r != MAILIMF_ERROR_PARSE) {
+    else if (r == MAILIMF_ERROR_PARSE) {
+      break;
+    else {
       res = r;
       goto free_gstr;
     }
@@ -2083,7 +2087,7 @@ int mailimf_date_time_parse(const char * message, size_t length,
   if (r == MAILIMF_ERROR_PARSE) {
     r = mailimf_broken_date_parse(message, length, &cur_token, &day, &month, &year);
   }
-  else if (r != MAILIMF_NO_ERROR) {
+  if (r != MAILIMF_NO_ERROR) {
     return r;
   }
 
@@ -2124,7 +2128,7 @@ static int mailimf_day_of_week_parse(const char * message, size_t length,
   cur_token = * indx;
 
   r = mailimf_cfws_parse(message, length, &cur_token);
-  if ((r != MAILIMF_NO_ERROR) && (r != MAILIMF_ERROR_PARSE))
+  if (r != MAILIMF_NO_ERROR)
     return r;
 
   r = mailimf_day_name_parse(message, length, &cur_token, &day_of_week);
@@ -3287,7 +3291,7 @@ static int mailimf_addr_spec_parse(const char * message, size_t length,
   cur_token = * indx;
   
   r = mailimf_cfws_parse(message, length, &cur_token);
-  if ((r != MAILIMF_NO_ERROR) && (r != MAILIMF_ERROR_PARSE)) {
+  if (r != MAILIMF_NO_ERROR) {
     res = r;
     goto err;
   }
@@ -3438,7 +3442,7 @@ static int mailimf_addr_spec_msg_id_parse(const char * message, size_t length,
     cur_token = * indx;
     
     r = mailimf_cfws_parse(message, length, &cur_token);
-    if ((r != MAILIMF_NO_ERROR) && (r != MAILIMF_ERROR_PARSE)) {
+    if (r != MAILIMF_NO_ERROR) {
         res = r;
         goto err;
     }
@@ -3739,7 +3743,7 @@ int mailimf_message_parse(const char * message, size_t length,
   }
 
   r = mailimf_crlf_parse(message, length, &cur_token);
-  if ((r != MAILIMF_NO_ERROR) && (r != MAILIMF_ERROR_PARSE)) {
+  if (r != MAILIMF_NO_ERROR) {
     res = r;
     goto err;
   }
@@ -5505,7 +5509,7 @@ int mailimf_msg_id_parse(const char * message, size_t length,
   cur_token = * indx;
 
   r = mailimf_cfws_parse(message, length, &cur_token);
-  if ((r != MAILIMF_NO_ERROR) && (r != MAILIMF_ERROR_PARSE))
+  if (r != MAILIMF_NO_ERROR)
     return r;
 
   r = mailimf_lower_parse(message, length, &cur_token);
@@ -5709,7 +5713,7 @@ static int mailimf_unstrict_msg_id_parse(const char * message, size_t length,
   cur_token = * indx;
 
   r = mailimf_cfws_parse(message, length, &cur_token);
-  if ((r != MAILIMF_NO_ERROR) && (r != MAILIMF_ERROR_PARSE))
+  if (r != MAILIMF_NO_ERROR)
     return r;
 
   r = mailimf_parse_unwanted_msg_id(message, length, &cur_token);
