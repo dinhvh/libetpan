@@ -895,8 +895,10 @@ int mailmh_folder_move_message(struct mailmh_folder * dest_folder,
   close(fd);
 
   r = mailmh_folder_remove_message(src_folder, indx);
+  if (r != MAILMH_NO_ERROR)
+      printf("Cannot remove message from %s at index %u", src_folder->fl_name, indx);
 
-  return MAILMH_NO_ERROR;
+  return r;
 }
 
 unsigned int mailmh_folder_get_message_number(struct mailmh_folder * folder)
