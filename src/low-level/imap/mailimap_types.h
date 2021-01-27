@@ -2150,7 +2150,7 @@ enum {
 
   - cont_req is a continuation request
 
-  - resp_data is a reponse data
+  - resp_data is a response data
 */
 
 struct mailimap_cont_req_or_resp_data {
@@ -2401,7 +2401,7 @@ enum {
 };
 
 /*
-  mailimap_resp_cond_state is a condition state reponse
+  mailimap_resp_cond_state is a condition state response
   
   - type is the type of the condition state response
 
@@ -3316,7 +3316,7 @@ enum {
 /*
   mailimap is an IMAP connection
 
-  - response is a human readable message returned with a reponse,
+  - response is a human readable message returned with a response,
     must be accessed read-only
 
   - stream is the connection with the IMAP server
