@@ -639,13 +639,15 @@ static int mhdriver_cached_select_folder(mailsession * session, const char * mb)
   }
 
   r = write_max_uid_value(session);
+  if (r != MAIL_NO_ERROR) {
+    res = r;
+    goto err;
+  }
 
   free_state(cached_data);
   cached_data->mh_quoted_mb = quoted_mb;
 
-  r = read_max_uid_value(session);
-
-  return MAIL_NO_ERROR;
+  return read_max_uid_value(session);
 
  free:
   free(quoted_mb);
