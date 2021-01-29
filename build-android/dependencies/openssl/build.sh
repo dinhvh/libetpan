@@ -3,8 +3,8 @@
 build_version=3
 version=1.1.1i
 package_name=openssl-android
-MIN_SDK_VERSION=23
-HOST_TAG=darwin-x86_64
+export MIN_SDK_VERSION=23
+export HOST_TAG=darwin-x86_64
 
 if test "x$ANDROID_NDK" = x ; then
   echo should set ANDROID_NDK before running this script.
@@ -25,18 +25,14 @@ cd "./src"
 tar xzf "../packages/openssl-$version.tar.gz"
 
 
-export TOOLCHAIN=$NDK/toolchains/llvm/prebuilt/$HOST_TAG
+export TOOLCHAIN=$ANDROID_NDK/toolchains/llvm/prebuilt/$HOST_TAG
 
 # openssl refers to the host specific toolchain as "ANDROID_NDK_HOME"
 export ANDROID_NDK_HOME=$TOOLCHAIN
 PATH=$TOOLCHAIN/bin:$PATH
 
-echo `pwd`
-
 mkdir -p build/openssl
 cd "./openssl-$version"
-
-echo `pwd`
 
 # arm64
 export TARGET_HOST=aarch64-linux-android
@@ -66,7 +62,6 @@ ln -sfn $TOOLCHAIN/bin/armv7a-linux-androideabi$MIN_SDK_VERSION-clang $TOOLCHAIN
  -D__ANDROID_API__=$MIN_SDK_VERSION \
  --prefix=$PWD/build/$ANDROID_ARCH
 
-echo `pwd`
 export arch_dir_name="arm64-v8a"
 mkdir -p "./../$package_name-$build_version"
 mkdir -p "./../$package_name-$build_version/libs"
