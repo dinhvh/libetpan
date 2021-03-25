@@ -550,6 +550,12 @@ struct sockaddr_storage {
 # define ss_family ss_sa.sa_family
 #endif /* !HAVE_STRUCT_SOCKADDR_STORAGE */
 
+#if defined __GNUC__ &&  __GNUC__ > 6
+#define GCC_FALLTHROUGH __attribute__((fallthrough));
+#else
+#define GCC_FALLTHROUGH /* fall through */
+#endif
+
 #ifndef AF_INET6
 /* Define it to something that should never appear */
 #define	AF_INET6	AF_MAX

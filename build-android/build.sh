@@ -68,13 +68,13 @@ cp -r include/libetpan "$current_dir/$package_name-$build_version/include"
 
 # Start building.
 ANDROID_PLATFORM=android-23
-archs="arm64-v8a"	archs="arm64-v8a armeabi-v7a x86 x86_64"
+archs="arm64-v8a armeabi-v7a x86 x86_64"
 for arch in $archs ; do
   TARGET_ARCH_ABI=$arch
   build
 done
 
-rm -rf "$current_dir/third-party"
+#rm -rf "$current_dir/third-party"
 cd "$current_dir"
 zip -qry "$package_name-$build_version.zip" "$package_name-$build_version"
 rm -rf "$package_name-$build_version"

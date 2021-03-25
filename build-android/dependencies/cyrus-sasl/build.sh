@@ -1,6 +1,6 @@
 #!/bin/sh
 
-version=2.1.26
+version=2.1.27
 build_version=4
 ARCHIVE=cyrus-sasl-$version
 openssl_build_version=3
@@ -14,7 +14,7 @@ fi
 ARCHIVE_NAME=$ARCHIVE.tar.gz
 ARCHIVE_PATCH=$ARCHIVE.patch
 current_dir="`pwd`"
-package_dir="$current_dir/../../../build-mac/dependencies/packages"
+package_dir="$current_dir/./packages"
 
 if [ ! -e "$package_dir/$ARCHIVE_NAME" ]; then
   echo "Missing archive $ARCHIVE"
@@ -28,11 +28,11 @@ if test ! -f "$current_dir/../openssl/openssl-android-$openssl_build_version.zip
 fi
 
 function build {
-  rm -rf "$current_dir/src"
-  
-  mkdir -p "$current_dir/src"
+#  rm -rf "$current_dir/src"
+#
+#  mkdir -p "$current_dir/src"
   cd "$current_dir/src"
-  tar xzf "$package_dir/$ARCHIVE_NAME"
+#  tar xzf "$package_dir/$ARCHIVE_NAME"
   if [ $? != 0 ]; then
     echo "Unable to decompress $ARCHIVE_NAME"
     exit 1
@@ -41,9 +41,16 @@ function build {
   if test ! -f "$current_dir/$package_name-$build_version/include/sasl/sasl.h" ; then
     mkdir -p "$current_dir/$package_name-$build_version"
     mkdir -p "$current_dir/$package_name-$build_version/include/sasl"
-    public_headers="hmac-md5.h md5.h md5global.h sasl.h saslplug.h saslutil.h prop.h"
+    echo "test"
+    public_headers="hmac-md5.h md5.h sasl.h md5global.h saslplug.h saslutil.h prop.h"
     cd "$current_dir/src/$ARCHIVE/include"
+    echo "current_dir $current_dir"
     cp -R $public_headers "$current_dir/$package_name-$build_version/include/sasl"
+    #saslauthd md5global.h
+#    echo "current_dir $current_dir"
+#    echo "cp openssl $current_dir/./md5global.h"
+#    cp "$current_dir/./md5global.h" "$current_dir/$package_name-$build_version/include/sasl"
+#    echo "Error - $ARCHIVE"
   fi
 
   cd "$current_dir/src"
@@ -56,12 +63,12 @@ function build {
 
   mkdir -p "$current_dir/$package_name-$build_version/libs/$TARGET_ARCH_ABI"
   cp "$current_dir/src/$ARCHIVE/build-android/obj/local/$TARGET_ARCH_ABI/libsasl2.a" "$current_dir/$package_name-$build_version/libs/$TARGET_ARCH_ABI"
-  rm -rf "$current_dir/src"
+#  rm -rf "$current_dir/src"
 }
 
 # Start building.
-	ANDROID_PLATFORM=android-23
-archs="arm64-v8a"	archs="arm64-v8a armeabi-v7a x86 x86_64"
+ANDROID_PLATFORM=android-23
+archs="arm64-v8a armeabi-v7a x86 x86_64"
 for arch in $archs ; do
   TARGET_ARCH_ABI=$arch
   build
@@ -69,4 +76,4 @@ done
 
 cd "$current_dir"
 zip -qry "$package_name-$build_version.zip" "$package_name-$build_version"
-rm -rf "$package_name-$build_version"
+#rm -rf "$package_name-$build_version"

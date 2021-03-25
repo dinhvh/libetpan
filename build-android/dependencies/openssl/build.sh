@@ -1,7 +1,7 @@
 #!/bin/sh
 
 build_version=3
-version=1.1.1i
+version=1.1.1j
 package_name=openssl-android
 export MIN_SDK_VERSION=23
 export HOST_TAG=darwin-x86_64

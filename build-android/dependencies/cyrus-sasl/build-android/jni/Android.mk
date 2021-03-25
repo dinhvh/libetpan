@@ -17,7 +17,6 @@ lib/server.c \
 lib/seterror.c \
 lib/snprintf.c \
 plugins/anonymous.c \
-plugins/anonymous_init.c \
 plugins/cram.c \
 plugins/crammd5_init.c \
 plugins/digestmd5.c \
@@ -32,11 +31,12 @@ plugins/passdss.c \
 plugins/passdss_init.c \
 plugins/plain.c \
 plugins/plain_init.c \
-plugins/plugin_common.c \
 plugins/scram.c \
 plugins/scram_init.c \
 plugins/srp.c \
-plugins/srp_init.c
+plugins/srp_init.c \
+common/plugin_common.c \
+common/crypto-compat.h
 
 src_dir := $(LOCAL_PATH)/../..
 
