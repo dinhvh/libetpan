@@ -2143,21 +2143,6 @@ mailimap_custom_command(mailimap * session, const char * command)
   }
 }
 
-// 自定义方法，传token用
-LIBETPAN_EXPORT
-void
-mailimap_send_custom_token(mailimap * session, const char * command)
-{
-  int r;
-  
-  r = mailimap_astring_send(session->imap_stream, command);
-  mailimap_crlf_send(session->imap_stream);
-  mailstream_flush(session->imap_stream);
-  
-  char *str = mailimap_read_line(session);
-  printf("mailimap_send_custom_token:%s", str);
-}
-
 LIBETPAN_EXPORT
 int
 mailimap_status(mailimap * session, const char * mb,

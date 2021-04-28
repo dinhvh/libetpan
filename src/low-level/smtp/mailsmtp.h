@@ -85,9 +85,6 @@ LIBETPAN_EXPORT
 int mailsmtp_auth_type(mailsmtp * session,
     const char * user, const char * pass, int type);
 
-// 自定方法，传递token
-void mailsmtp_send_custom_token(mailsmtp * f, const char * str);
-
 LIBETPAN_EXPORT
 int mailsmtp_helo(mailsmtp * session);
 

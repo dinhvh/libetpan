@@ -290,15 +290,6 @@ static int get_hostname(mailsmtp * session, int useip, char * buf, int len)
    return MAILSMTP_NO_ERROR;
 }
 
-// 自定方法，传递token
-void mailsmtp_send_custom_token(mailsmtp * f, const char * str)
-{
-  char command[SMTP_STRING_SIZE];
-  snprintf(command, SMTP_STRING_SIZE, "%s\r\n", str);
-
-  send_command(f, command);
-  read_response(f);
-}
 
 int mailsmtp_helo(mailsmtp * session)
 {
