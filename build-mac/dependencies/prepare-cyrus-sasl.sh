@@ -2,7 +2,7 @@
 
 export PATH=/usr/bin:/bin:/usr/sbin:/sbin
 
-version=2.1.26
+version=2.1.27
 ARCHIVE=cyrus-sasl-$version
 ARCHIVE_NAME=$ARCHIVE.tar.gz
 ARCHIVE_PATCH=$ARCHIVE.patch
