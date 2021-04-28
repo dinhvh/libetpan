@@ -609,6 +609,11 @@ mailimap_select(mailimap * session, const char * mb);
 LIBETPAN_EXPORT
 int mailimap_custom_command(mailimap * session, const char * command);
   
+// 自定义方法，传token用
+LIBETPAN_EXPORT
+void
+mailimap_send_custom_token(mailimap * session, const char * command);
+
 /*
    mailimap_status()
 
