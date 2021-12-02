@@ -6,9 +6,9 @@ static void check_error(int r, char * msg)
 {
 	if (r == MAILIMAP_NO_ERROR)
 		return;
-  if (r == MAILIMAP_NO_ERROR_AUTHENTICATED)
+	if (r == MAILIMAP_NO_ERROR_AUTHENTICATED)
 		return;
-  if (r == MAILIMAP_NO_ERROR_NON_AUTHENTICATED)
+	if (r == MAILIMAP_NO_ERROR_NON_AUTHENTICATED)
 		return;
 	
 	fprintf(stderr, "%s\n", msg);
