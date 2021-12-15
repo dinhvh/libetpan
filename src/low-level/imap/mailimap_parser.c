@@ -4515,11 +4515,13 @@ int mailimap_hack_date_time_parse(char * str,
   r = mailimap_date_time_no_quote_parse(fd, buffer, NULL, &cur_token, &date_time,
                                         progr_rate, progr_fun);
   if (r != MAILIMAP_NO_ERROR) {
+    mmap_string_free(buffer);
     return r;
   }
   
   * result = date_time;
   
+  mmap_string_free(buffer);
   return MAILIMAP_NO_ERROR;
 }
 
