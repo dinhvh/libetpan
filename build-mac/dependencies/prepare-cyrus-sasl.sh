@@ -2,15 +2,11 @@
 
 export PATH=/usr/bin:/bin:/usr/sbin:/sbin
 
-version=2.1.26
+version=2.1.28
 ARCHIVE=cyrus-sasl-$version
 ARCHIVE_NAME=$ARCHIVE.tar.gz
 ARCHIVE_PATCH=$ARCHIVE.patch
-#url=ftp://ftp.andrew.cmu.edu/pub/cyrus-mail/$ARCHIVE_NAME
-#url=ftp://ftp.cyrusimap.org/cyrus-sasl/$ARCHIVE_NAME
-#url=https://www.cyrusimap.org/releases/$ARCHIVE_NAME
 url=https://github.com/cyrusimap/cyrus-sasl/releases/download/$ARCHIVE/$ARCHIVE_NAME
-patchfile=cyrus-2.1.25-libetpan.patch
 
 scriptdir="`pwd`"
 
@@ -23,6 +19,8 @@ srcdir="$tempbuilddir/src"
 logdir="$tempbuilddir/log"
 resultdir="$builddir/builds"
 tmpdir="$tempbuilddir/tmp"
+
+BUILD="$(uname -m)"
 
 mkdir -p "$resultdir"
 mkdir -p "$logdir"
@@ -71,12 +69,13 @@ logfile="$srcdir/$ARCHIVE/build.log"
 echo "*** patching sources ***" > "$logfile" 2>&1
 
 cd "$srcdir/$ARCHIVE"
-patch -p1 < $current_dir/$patchfile
+
 # patch source files
+
 cd "$srcdir/$ARCHIVE/include"
-sed -E 's/\.\/\$< /.\/\$<i386 /' < Makefile.am > Makefile.am.new
+sed -E 's/\.\/\$< /.\/\$<'$BUILD' /' < Makefile.am > Makefile.am.new
 mv Makefile.am.new Makefile.am
-sed -E 's/\.\/\$< /.\/\$<i386 /' < Makefile.in > Makefile.in.new
+sed -E 's/\.\/\$< /.\/\$<'$BUILD' /' < Makefile.in > Makefile.in.new
 mv Makefile.in.new Makefile.in
 cd "$srcdir/$ARCHIVE/lib"
 sed -E 's/\$\(AR\) cru \.libs\/\$@ \$\(SASL_STATIC_OBJS\)/&; \$\(RANLIB\) .libs\/\$@/' < Makefile.in > Makefile.in.new
@@ -100,8 +99,8 @@ if [[ "$?" != "0" ]]; then
   exit 1
 fi
 cd ..
-echo generated makemd5i386 properly
-mv "$srcdir/$ARCHIVE/include/makemd5" "$srcdir/$ARCHIVE/include/makemd5i386"
+echo generated makemd5$BUILD properly
+mv "$srcdir/$ARCHIVE/include/makemd5" "$srcdir/$ARCHIVE/include/makemd5$BUILD"
 make clean >>"$logfile" 2>&1
 make distclean >>"$logfile" 2>&1
 find . -name config.cache -print0 | xargs -0 rm
