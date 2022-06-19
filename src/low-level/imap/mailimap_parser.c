@@ -6024,7 +6024,7 @@ static int mailimap_literal_parse_progress(mailstream * fd, MMAPString * buffer,
 		mailimap_space_parse(fd, buffer, &cur_token);
 		mailimap_space_parse(fd, buffer, &cur_token);
 	}
-  if (r != MAILIMAP_NO_ERROR) {
+  else if (r != MAILIMAP_NO_ERROR) {
     res = r;
     goto err;
   }

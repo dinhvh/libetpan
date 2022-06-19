@@ -411,9 +411,15 @@ static int mailimf_cache_field_write(MMAPString * mmapstr, size_t * indx,
     r = mailimf_cache_subject_write(mmapstr, indx,
         field->fld_data.fld_subject);
     break;
+  default:
+    r = MAIL_NO_ERROR;
+    break;
   }
 
-  return r;
+  if (r != MAIL_NO_ERROR)
+    return r;
+
+  return MAIL_NO_ERROR;
 }
 
 
