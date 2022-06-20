@@ -135,7 +135,7 @@ for TARGET in $TARGETS; do
             ;;
         (iPhoneSimulator)
             ARCH=i386
-            MARCHS="i386 x86_64"
+            MARCHS="i386 x86_64 arm64"
             EXTRA_FLAGS="-miphoneos-version-min=$SDK_IOS_MIN_VERSION"
             ;;
     esac
@@ -192,11 +192,16 @@ for lib in $ALL_LIBS; do
     if [[ "$dir" != "." ]]; then
         mkdir -p ${INSTALL_PATH}/lib/$dir
     fi
-    LIBS=
-    for TARGET in $TARGETS; do
-        LIBS="$LIBS ${BUILD_DIR}/${LIB_NAME}/${TARGET}${SDK_IOS_VERSION}*/lib/${lib}"
-    done
-    lipo -create ${LIBS} -output "${INSTALL_PATH}/lib/${lib}"
+
+    LIBS="${BUILD_DIR}/${LIB_NAME}/iPhoneOS${SDK_IOS_VERSION}*/lib/${lib}"
+    output="${INSTALL_PATH}/lib/iphoneos/${lib}"
+    mkdir -p "$(dirname "$output")"
+    lipo -create ${LIBS} -output "$output"
+
+    LIBS="${BUILD_DIR}/${LIB_NAME}/iPhoneSimulator${SDK_IOS_VERSION}*/lib/${lib}"
+    output="${INSTALL_PATH}/lib/iphonesimulator/${lib}"
+    mkdir -p "$(dirname "$output")"
+    lipo -create ${LIBS} -output "$output"
 done
 
 echo "*** creating built package ***" >> "$logfile" 2>&1
