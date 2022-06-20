@@ -1096,7 +1096,7 @@ mail_build_thread_references(char * default_from,
 	  if (env_tree->node_msg == NULL)
 	    replace = TRUE;
 	  else {
-	    if (!env_tree->node_is_reply)
+	    if (msg_in_table->node_is_reply && !env_tree->node_is_reply)
 	      replace = TRUE;
 	  }
 	}
