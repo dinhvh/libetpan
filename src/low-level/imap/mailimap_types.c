@@ -1389,9 +1389,11 @@ void
 mailimap_mailbox_data_status_free(struct mailimap_mailbox_data_status * info)
 {
   mailimap_mailbox_free(info->st_mailbox);
-  clist_foreach(info->st_info_list, (clist_func) mailimap_status_info_free,
-		 NULL);
-  clist_free(info->st_info_list);
+  if (info->st_info_list != NULL) {
+    clist_foreach(info->st_info_list, (clist_func) mailimap_status_info_free,
+      NULL);
+    clist_free(info->st_info_list);
+  }
   free(info);
 }
 
