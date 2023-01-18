@@ -482,7 +482,7 @@ elif test "x$enable_threads" = "xyes"; then
   checkpthread=yes
 
   AC_MSG_CHECKING([for pthread_create with libc])
-  AC_TRY_LINK([], [pthread_create();], 
+  AC_TRY_LINK([char pthread_create(void);], [pthread_create();],
                   [pthflag=yes; checkpthread=no], 
                   [pthflag=no])
   AC_MSG_RESULT($pthflag)
