@@ -338,6 +338,13 @@ static int wait_SSL_connect(int s, int want_read, time_t timeout_seconds)
     timeout.tv_usec = 0;
   }
 #if defined(WIN32) || !USE_POLL
+  if (s >= FD_SETSIZE) {
+#if defined(DEBUG)
+    /* too many opened connections? socket leaks? */
+    fprintf( stderr, "socket descriptor %d out of range\n", s);
+#endif
+    return -1;
+  }
   FD_ZERO(&fds);
   FD_SET(s, &fds);
   /* TODO: how to cancel this ? */
