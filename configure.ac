@@ -116,7 +116,7 @@ AC_PROG_CXX
 # Compiler flags.
 AC_ARG_ENABLE(debug, [AC_HELP_STRING([--enable-debug], [setup flags (gcc) for debugging (default=no)])],
 if test "x$enable_debug" = xyes; then
-  CFLAGS="$CFLAGS -O2 -g"
+  CFLAGS="$CFLAGS -O0 -g"
 fi
 CPPFLAGS="$CPPFLAGS -DDEBUG"
 LDFLAGS="$LDFLAGS",)
