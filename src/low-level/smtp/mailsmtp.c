@@ -277,12 +277,17 @@ static int get_hostname(mailsmtp * session, int useip, char * buf, int len)
       return MAILSMTP_ERROR_HOSTNAME;
 
 #if (defined __linux__ || defined WIN32 || defined __sun)
-    r = getnameinfo(&addr, sizeof(addr), hostname, HOSTNAME_SIZE, NULL, 0, NI_NUMERICHOST);
+    r = getnameinfo(&addr, addr_len, hostname, HOSTNAME_SIZE, NULL, 0, NI_NUMERICHOST);
 #else
     r = getnameinfo(&addr, addr.sa_len, hostname, HOSTNAME_SIZE, NULL, 0, NI_NUMERICHOST);
 #endif
     if (r != 0)
       return MAILSMTP_ERROR_HOSTNAME;
+
+    char* interface_suffix = strstr(hostname, "%");
+    if (interface_suffix != NULL) {
+      *interface_suffix = '\0';
+    }
 
     if (snprintf(buf, len, "[%s]", hostname) >= len)
       return MAILSMTP_ERROR_HOSTNAME;
