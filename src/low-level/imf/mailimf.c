@@ -830,6 +830,7 @@ int mailimf_fws_parse(const char * message, size_t length, size_t * indx)
   int fws_1;
   int fws_2;
   int fws_3;
+  int fws_4;
   int r;
   
   cur_token = * indx;
@@ -847,20 +848,24 @@ int mailimf_fws_parse(const char * message, size_t length, size_t * indx)
   }
   final_token = cur_token;
 
-  r = mailimf_crlf_parse(message, length, &cur_token);
-  switch (r) {
-  case MAILIMF_NO_ERROR:
-    fws_2 = TRUE;
-    break;
-  case MAILIMF_ERROR_PARSE:
-    fws_2 = FALSE;
-    break;
-  default:
-      return r;
-  }
-  
   fws_3 = FALSE;
-  if (fws_2) {
+  fws_4 = FALSE;
+  while (1) {
+    r = mailimf_crlf_parse(message, length, &cur_token);
+    switch (r) {
+    case MAILIMF_NO_ERROR:
+      fws_2 = TRUE;
+      break;
+    case MAILIMF_ERROR_PARSE:
+      fws_2 = FALSE;
+      break;
+    default:
+	return r;
+    }
+    if (!fws_2)
+      break;
+    
+    fws_4 = FALSE;
     while (1) {
       r = mailimf_wsp_parse(message, length, &cur_token);
       if (r != MAILIMF_NO_ERROR) {
@@ -869,14 +874,19 @@ int mailimf_fws_parse(const char * message, size_t length, size_t * indx)
 	else
 	  return r;
       }
+      final_token = cur_token;
       fws_3 = TRUE;
+      fws_4 = TRUE;
     }
+
+    if (!fws_4)
+      break;
   }
 
   if ((!fws_1) && (!fws_3))
     return MAILIMF_ERROR_PARSE;
 
-  if (!fws_3)
+  if (!fws_4)
     cur_token = final_token;
 
   * indx = cur_token;
