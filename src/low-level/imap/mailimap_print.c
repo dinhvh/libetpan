@@ -942,6 +942,9 @@ static void mailimap_status_att_print(int status_att)
   case MAILIMAP_STATUS_ATT_UNSEEN:
     printf("status att unseen");
     break;
+  case MAILIMAP_STATUS_ATT_SIZE:
+    printf("status att size");
+    break;
   }
 
   printf(" \n");
