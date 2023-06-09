@@ -339,6 +339,9 @@ static void mailbox_data_store(mailimap * session,
             case MAILIMAP_STATUS_ATT_UNSEEN:
               session->imap_selection_info->unseen = info->value;
               break;
+            case MAILIMAP_STATUS_ATT_SIZE:
+              session->imap_selection_info->size = info->value;
+              break;
           }
         }
       }

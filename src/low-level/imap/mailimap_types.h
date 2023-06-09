@@ -455,7 +455,7 @@
    status          = "STATUS" SP mailbox SP "(" status-att *(SP status-att) ")"
 
    status-att      = "MESSAGES" / "RECENT" / "UIDNEXT" / "UIDVALIDITY" /
-                     "UNSEEN"
+                     "UNSEEN" / "SIZE"
 
    store           = "STORE" SP set SP store-att-flags
 
@@ -1572,6 +1572,7 @@ enum {
   MAILIMAP_STATUS_ATT_HIGHESTMODSEQ, /* when requesting the highest
                                         mod-sequence value of all messages in
                                         the mailbox */
+  MAILIMAP_STATUS_ATT_SIZE,          /* when requesting the mailbox size */
   MAILIMAP_STATUS_ATT_EXTENSION
 };
 
@@ -1582,7 +1583,8 @@ enum {
   - att is the type of mailbox STATUS, the value can be 
     MAILIMAP_STATUS_ATT_MESSAGES, MAILIMAP_STATUS_ATT_RECENT,
     MAILIMAP_STATUS_ATT_UIDNEXT, MAILIMAP_STATUS_ATT_UIDVALIDITY,
-    MAILIMAP_STATUS_ATT_UNSEEN or MAILIMAP_STATUS_ATT_EXTENSION
+    MAILIMAP_STATUS_ATT_UNSEEN, MAILIMAP_STATUS_ATT_EXTENSION
+    or MAILIMAP_STATUS_ATT_SIZE
 
   - value is the value of the given information
   
@@ -3154,7 +3156,8 @@ void mailimap_search_key_free(struct mailimap_search_key * key);
   - list is a list of mailbox STATUS request type
     (value of elements in the list can be MAILIMAP_STATUS_ATT_MESSAGES,
     MAILIMAP_STATUS_ATT_RECENT, MAILIMAP_STATUS_ATT_UIDNEXT,
-    MAILIMAP_STATUS_ATT_UIDVALIDITY or MAILIMAP_STATUS_ATT_UNSEEN),
+    MAILIMAP_STATUS_ATT_UIDVALIDITY, MAILIMAP_STATUS_ATT_UNSEEN
+    or MAILIMAP_STATUS_ATT_SIZE),
     each element should be allocated with malloc()
 */
 
