@@ -183,6 +183,7 @@ static struct mailimap_token_value status_att_tab[] = {
   {MAILIMAP_STATUS_ATT_UIDVALIDITY,   "UIDVALIDITY"},
   {MAILIMAP_STATUS_ATT_UNSEEN,        "UNSEEN"},
   {MAILIMAP_STATUS_ATT_HIGHESTMODSEQ, "HIGHESTMODSEQ"},
+  {MAILIMAP_STATUS_ATT_SIZE,          "SIZE"},
 };
 
 int mailimap_status_att_get_token_value(mailstream * fd, MMAPString * buffer,
