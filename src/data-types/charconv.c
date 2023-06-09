@@ -173,6 +173,7 @@ int charconv(const char * tocode, const char * fromcode,
 			res = (*extended_charconv)( tocode, fromcode, str, length, *result, &result_length);
 			if (res != MAIL_CHARCONV_NO_ERROR) {
 				free( *result);
+				*result = NULL;
 			} else {
 				out = realloc( *result, result_length + 1);
 				if (out != NULL) *result = out;
