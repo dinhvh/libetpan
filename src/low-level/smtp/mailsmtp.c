@@ -959,8 +959,8 @@ int auth_map_errors(int err)
   }
 }
 
-#if 0
-static int mailsmtp_auth_login(mailsmtp * session,
+LIBETPAN_EXPORT
+int mailsmtp_auth_login(mailsmtp * session,
     const char * user, const char * pass)
 {
   int err;
@@ -1008,7 +1008,6 @@ static int mailsmtp_auth_login(mailsmtp * session,
   
   return err;
 }
-#endif
 
 int mailsmtp_auth_type(mailsmtp * session,
     const char * user, const char * pass, int type)
@@ -1634,16 +1633,19 @@ void mailsmtp_set_logger(mailsmtp * session, void (* logger)(mailsmtp * session,
   session->smtp_logger_context = logger_context;
 }
 
+LIBETPAN_EXPORT
 int mailsmtp_send_command(mailsmtp * f, char * command)
 {
   return send_command(f, command);
 }
 
+LIBETPAN_EXPORT
 int mailsmtp_send_command_private(mailsmtp * f, char * command)
 {
     return send_command_private(f, command, 0);
 }
 
+LIBETPAN_EXPORT
 int mailsmtp_read_response(mailsmtp * session)
 {
   return read_response(session);

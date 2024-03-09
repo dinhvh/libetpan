@@ -67,6 +67,7 @@ int mailsmtp_connect(mailsmtp * session, mailstream * s);
 LIBETPAN_EXPORT
 int mailsmtp_quit(mailsmtp * session);
 
+int mailsmtp_auth_login(mailsmtp * session, const char * user, const char * pass);
 
 /* This call is deprecated and mailesmtp_auth_sasl() should be used instead */
 /**
@@ -184,6 +185,15 @@ LIBETPAN_EXPORT
 void mailsmtp_set_logger(mailsmtp * session, void (* logger)(mailsmtp * session, int log_type,
     const char * str, size_t size, void * context), void * logger_context);
    
+LIBETPAN_EXPORT
+int mailsmtp_send_command(mailsmtp * f, char * command);
+
+LIBETPAN_EXPORT
+int mailsmtp_send_command_private(mailsmtp * f, char * command);
+
+LIBETPAN_EXPORT
+int mailsmtp_read_response(mailsmtp * session);
+
 #ifdef __cplusplus
 }
 #endif
