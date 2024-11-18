@@ -410,7 +410,6 @@ build_headers.bat
     <ClInclude Include="..\..\src\data-types\chash.h" />
     <ClInclude Include="..\..\src\data-types\clist.h" />
     <ClInclude Include="..\..\src\data-types\connect.h" />
-    <ClInclude Include="..\..\src\data-types\hmac-md5.h" />
     <ClInclude Include="..\..\src\data-types\mail.h" />
     <ClInclude Include="..\..\src\data-types\maillock.h" />
     <ClInclude Include="..\..\src\data-types\mailsasl.h" />
@@ -430,7 +429,6 @@ build_headers.bat
     <ClInclude Include="..\..\src\data-types\mail_cache_db.h" />
     <ClInclude Include="..\..\src\data-types\mail_cache_db_types.h" />
     <ClInclude Include="..\..\src\data-types\md5.h" />
-    <ClInclude Include="..\..\src\data-types\md5global.h" />
     <ClInclude Include="..\..\src\data-types\mmapstring.h" />
     <ClInclude Include="..\..\src\data-types\mmapstring_private.h" />
     <ClInclude Include="..\..\src\data-types\timeutils.h" />

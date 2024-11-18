@@ -482,7 +482,7 @@ int mailpop3_apop(mailpop3 * f,
 		  const char * user, const char * password)
 {
   char command[POP3_STRING_SIZE];
-  MD5_CTX md5context;
+  struct MD5Context md5context;
   unsigned char md5digest[16];
   char md5string[33];
   char * cmd_ptr;

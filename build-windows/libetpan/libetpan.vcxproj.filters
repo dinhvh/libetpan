@@ -656,9 +656,6 @@
     <ClInclude Include="..\..\src\data-types\connect.h">
       <Filter>Source Files\datatypes</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\data-types\hmac-md5.h">
-      <Filter>Source Files\datatypes</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\data-types\mail.h">
       <Filter>Source Files\datatypes</Filter>
     </ClInclude>
@@ -711,9 +708,6 @@
       <Filter>Source Files\datatypes</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\data-types\md5.h">
-      <Filter>Source Files\datatypes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\data-types\md5global.h">
       <Filter>Source Files\datatypes</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\data-types\mmapstring.h">
