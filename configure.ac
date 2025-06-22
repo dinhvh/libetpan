@@ -145,8 +145,8 @@ AC_C_INLINE
 
 # Checks for programs.
 LT_INIT(win32-dll)
-LT_AC_PROG_RC
-AC_LIBTOOL_RC
+LT_PROG_RC
+LT_LANG(Windows Resource)
 AC_PROG_LIBTOOL
 AC_PROG_MKDIR_P
 
