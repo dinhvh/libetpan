@@ -115,18 +115,22 @@ export LANG=en_US.US-ASCII
 LIB_NAME=$ARCHIVE
 TARGETS="iPhoneOS iPhoneSimulator"
 
-SDK_IOS_MIN_VERSION=7.0
+SDK_IOS_MIN_VERSION=15.0
 SDK_IOS_VERSION="`xcodebuild -showsdks 2>/dev/null | grep iphoneos | sed 's/.*iphoneos\(.*\)/\1/'`"
 BUILD_DIR="$tmpdir/build"
 INSTALL_PATH="${BUILD_DIR}/${LIB_NAME}/universal"
-BITCODE_FLAGS="-fembed-bitcode"
-if test "x$NOBITCODE" != x ; then
-   BITCODE_FLAGS=""
-fi
+BITCODE_FLAGS=""
 
 xcode_developer="$(xcode-select -p)"
 
 function build_target {
+  local TARGET="$1"
+  local MARCH="$2" 
+  local ARCH="$3"
+  local SYSROOT="$4"
+  local EXTRA_FLAGS="$5"
+  local TARGET_SUFFIX="$6"
+  
   local current_logfile="$srcdir/$ARCHIVE-$TARGET-$MARCH/build.log"
   echo "log to $current_logfile"
   cp -R "$srcdir/$ARCHIVE" "$srcdir/$ARCHIVE-$TARGET-$MARCH"
@@ -140,7 +144,7 @@ function build_target {
   
   local CURRENT_TARGET="$MARCH-apple-ios${SDK_IOS_MIN_VERSION}${TARGET_SUFFIX}"
   export CPPFLAGS="-isysroot ${SYSROOT} -target ${CURRENT_TARGET} -Os"
-  export CFLAGS="${CPPFLAGS} ${EXTRA_FLAGS}"
+  export CFLAGS="-isysroot ${SYSROOT} -target ${CURRENT_TARGET} -Os ${EXTRA_FLAGS}"
   export CC="$xcode_developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang"
   export CXX="$xcode_developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++"
   export LD="$xcode_developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld"
@@ -178,20 +182,24 @@ pids=""
 for TARGET in $TARGETS; do
 
     DEVELOPER="$(xcode-select --print-path)"
-    SDK_ID="$(echo "$TARGET$SDK_IOS_VERSION" | tr A-Z a-z)"
+    if [ "$TARGET" = "iPhoneOS" ]; then
+        SDK_ID="iphoneos$SDK_IOS_VERSION"
+    else
+        SDK_ID="iphonesimulator$SDK_IOS_VERSION"
+    fi
     SYSROOT="$(xcodebuild -version -sdk "$SDK_ID" 2>/dev/null | egrep '^Path: ' | cut -d ' ' -f 2)"
 
     case $TARGET in
         (iPhoneOS)
             ARCH=arm
-            MARCHS="armv7 armv7s arm64"
+            MARCHS="arm64"
             EXTRA_FLAGS="$BITCODE_FLAGS -miphoneos-version-min=$SDK_IOS_MIN_VERSION"
             TARGET_SUFFIX=""
             ;;
         (iPhoneSimulator)
-            ARCH=i386
-            MARCHS="i386 x86_64 arm64"
-            EXTRA_FLAGS="$BITCODE_FLAGS -miphoneos-version-min=$SDK_IOS_MIN_VERSION"
+            ARCH=x86_64
+            MARCHS="x86_64 arm64"
+            EXTRA_FLAGS="$BITCODE_FLAGS -miphonesimulator-version-min=$SDK_IOS_MIN_VERSION"
             TARGET_SUFFIX="-simulator"
             ;;
     esac
@@ -199,7 +207,7 @@ for TARGET in $TARGETS; do
     for MARCH in $MARCHS; do
 
         echo "building for $TARGET - $MARCH"
-        build_target &
+        build_target "$TARGET" "$MARCH" "$ARCH" "$SYSROOT" "$EXTRA_FLAGS" "$TARGET_SUFFIX" &
         pid="$!"
         pids="$pids $pid"
         if test "x$parallel_mode" != x1 ; then
