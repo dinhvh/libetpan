@@ -9989,8 +9989,10 @@ mailimap_resp_text_code_permanentflags_parse(mailstream * fd,
   return MAILIMAP_NO_ERROR;
 
  free:
-  clist_foreach(flaglist, (clist_func) mailimap_flag_perm_free, NULL);
-  clist_free(flaglist);
+  if (flaglist != NULL) {
+    clist_foreach(flaglist, (clist_func) mailimap_flag_perm_free, NULL);
+    clist_free(flaglist);
+  }
  err:
   return res;
 }
@@ -11237,4 +11239,3 @@ static int has_crlf(MMAPString * buffer, size_t index)
   }
   return 0;
 }
-
