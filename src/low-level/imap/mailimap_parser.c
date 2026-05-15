@@ -10372,7 +10372,7 @@ mailimap_section_parse(mailstream * fd, MMAPString * buffer, struct mailimap_par
   r = mailimap_cbracket_parse(fd, buffer, parser_ctx, &cur_token);
   if (r != MAILIMAP_NO_ERROR) {
     res = r;
-    goto err;
+    goto free;
   }
 
   if (section_spec == NULL)
