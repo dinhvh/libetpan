@@ -100,10 +100,15 @@ LIBETPAN_EXPORT
 void mailimap_annotatemore_entry_att_free(struct
         mailimap_annotatemore_entry_att * en_att)
 {
+  if (en_att == NULL)
+    return;
+
   mailimap_annotatemore_entry_free(en_att->entry);
-  clist_foreach(en_att->att_value_list,
-      (clist_func) mailimap_annotatemore_att_value_free, NULL);
-  clist_free(en_att->att_value_list);
+  if (en_att->att_value_list != NULL) {
+    clist_foreach(en_att->att_value_list,
+        (clist_func) mailimap_annotatemore_att_value_free, NULL);
+    clist_free(en_att->att_value_list);
+  }
   free(en_att);
 }
 
@@ -119,8 +124,10 @@ mailimap_annotatemore_entry_att_new_empty(char * entry)
     return NULL;
 
   entry_att = mailimap_annotatemore_entry_att_new(entry, list);
-  if (entry_att == NULL)
+  if (entry_att == NULL) {
+    clist_free(list);
     return NULL;
+  }
 
   return entry_att;
 }
