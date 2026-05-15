@@ -5959,6 +5959,7 @@ static int is_list_wildcards(char ch)
 */
 
 #define MAX_READ_PROGRESS 65536
+#define MAILIMAP_LITERAL_SIZE_MAX (64U * 1024U * 1024U)
 
 static int mailimap_literal_parse_progress(mailstream * fd, MMAPString * buffer, struct mailimap_parser_context * parser_ctx,
                                            size_t * indx, char ** result,
@@ -6026,6 +6027,11 @@ static int mailimap_literal_parse_progress(mailstream * fd, MMAPString * buffer,
 	}
   else if (r != MAILIMAP_NO_ERROR) {
     res = r;
+    goto err;
+  }
+
+  if (number > MAILIMAP_LITERAL_SIZE_MAX) {
+    res = MAILIMAP_ERROR_PARSE;
     goto err;
   }
 
