@@ -140,6 +140,10 @@ mailimap_annotatemore_entry_list_parse(mailstream * fd, MMAPString * buffer, str
         progr_rate, progr_fun);
   if (r == MAILIMAP_NO_ERROR)
     type = MAILIMAP_ANNOTATEMORE_ENTRY_LIST_TYPE_ENTRY_ATT_LIST;
+  else if (r != MAILIMAP_ERROR_PARSE) {
+    res = r;
+    goto err;
+  }
 
   if (r == MAILIMAP_ERROR_PARSE) {
     r = mailimap_oparenth_parse(fd, buffer, parser_ctx, &cur_token);
@@ -458,4 +462,3 @@ int mailimap_annotatemore_parse(int calling_parser, mailstream * fd,
 
   return MAILIMAP_NO_ERROR;
 }
-
