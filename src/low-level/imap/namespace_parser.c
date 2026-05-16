@@ -151,7 +151,10 @@ static int mailimap_namespace_info_parse(mailstream * fd,
     if (r == MAILIMAP_ERROR_PARSE) {
       // could not parse, use delimiter as fallback
       // this is an issue on Courier-IMAP
-      delimiter = prefix[strlen(prefix) - 1];
+      if (prefix_len > 0)
+        delimiter = prefix[prefix_len - 1];
+      else
+        delimiter = 0;
     }
     
     r = mailimap_dquote_parse(fd, buffer, parser_ctx, &cur_token);
