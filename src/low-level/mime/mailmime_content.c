@@ -1463,11 +1463,13 @@ static int mailmime_parse_with_default(const char * message, size_t length,
       else if (r == MAILIMF_ERROR_PARSE) {
 	list = clist_new();
         if (list == NULL) {
+          free(boundary);
           res = MAILIMF_ERROR_MEMORY;
           goto free_content;
         }
       }
       else {
+	free(boundary);
 	res = r;
 	goto free_content;
       }
