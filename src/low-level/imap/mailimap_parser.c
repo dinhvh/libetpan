@@ -1276,15 +1276,31 @@ mailimap_custom_string_parse(mailstream * fd, MMAPString * buffer, struct mailim
     end ++;
 
   if (end != begin) {
-    gstr = malloc(end - begin + 1);
-    if (gstr == NULL)
+    MMAPString * mstr;
+
+    /* Allocate via MMAPString so the returned char* is registered in
+       mmapstring_hashtable and can be released by mailimap_string_free
+       (which calls mmap_string_unref).  A previous implementation used
+       plain malloc(), which is silently a no-op on free because
+       mmap_string_unref's hashtable lookup misses unregistered
+       pointers.  Mirrors the pattern used by mailimap_quoted_parse and
+       mailimap_literal_parse. */
+    mstr = mmap_string_new("");
+    if (mstr == NULL)
       return MAILIMAP_ERROR_MEMORY;
 
-    strncpy(gstr, buffer->str + begin, end - begin);
-    gstr[end - begin] = '\0';
-    
+    if (mmap_string_append_len(mstr, buffer->str + begin, end - begin) == NULL) {
+      mmap_string_free(mstr);
+      return MAILIMAP_ERROR_MEMORY;
+    }
+
+    if (mmap_string_ref(mstr) < 0) {
+      mmap_string_free(mstr);
+      return MAILIMAP_ERROR_MEMORY;
+    }
+
     * indx = end;
-    * result = gstr;
+    * result = mstr->str;
     return MAILIMAP_NO_ERROR;
   }
   else
@@ -3002,7 +3018,7 @@ mailimap_single_body_fld_param_parse(mailstream * fd, MMAPString * buffer, struc
   int workaround_used;
 
   cur_token = * indx;
-  
+
   name = NULL;
   value = NULL;
 
@@ -3016,7 +3032,7 @@ mailimap_single_body_fld_param_parse(mailstream * fd, MMAPString * buffer, struc
     res = r;
     goto err;
   }
-  
+
   r = mailimap_space_parse(fd, buffer, &cur_token);
   if (r != MAILIMAP_NO_ERROR) {
     res = r;
@@ -3026,14 +3042,27 @@ mailimap_single_body_fld_param_parse(mailstream * fd, MMAPString * buffer, struc
   workaround_used = 0;
   r = mailimap_token_case_insensitive_parse(fd, buffer, &cur_token, "\"3D\"Windows-1252\"\"");
   if (r == MAILIMAP_NO_ERROR) {
+    MMAPString * mstr;
+
     workaround_used = 1;
-    value = strdup("\"3D\"Windows-1252\"\"");
-    if (value == NULL) {
+    /* Allocate via MMAPString so 'value' is registered in
+       mmapstring_hashtable; mailimap_single_body_fld_param_free
+       (via mailimap_string_free → mmap_string_unref) can then
+       release it.  Previous strdup() produced an unregistered
+       pointer that mmap_string_unref silently failed to free. */
+    mstr = mmap_string_new("\"3D\"Windows-1252\"\"");
+    if (mstr == NULL) {
       res = MAILIMAP_ERROR_MEMORY;
       goto free_name;
     }
+    if (mmap_string_ref(mstr) < 0) {
+      mmap_string_free(mstr);
+      res = MAILIMAP_ERROR_MEMORY;
+      goto free_name;
+    }
+    value = mstr->str;
   }
-  
+
   if (!workaround_used) {
 	  // also parse NIL to workaround Exchange issue
     r = mailimap_nstring_parse(fd, buffer, parser_ctx, &cur_token, &value, NULL,
@@ -3042,16 +3071,25 @@ mailimap_single_body_fld_param_parse(mailstream * fd, MMAPString * buffer, struc
       res = r;
       goto free_name;
     }
-    
+
     if (value == NULL) {
-      value = strdup("");
-      if (value == NULL) {
+      MMAPString * mstr;
+
+      /* Same MMAPString-registered allocation as above. */
+      mstr = mmap_string_new("");
+      if (mstr == NULL) {
         res = MAILIMAP_ERROR_MEMORY;
         goto free_name;
       }
+      if (mmap_string_ref(mstr) < 0) {
+        mmap_string_free(mstr);
+        res = MAILIMAP_ERROR_MEMORY;
+        goto free_name;
+      }
+      value = mstr->str;
     }
   }
-  
+
   param = mailimap_single_body_fld_param_new(name, value);
   if (param == NULL) {
     res = MAILIMAP_ERROR_MEMORY;
@@ -7338,11 +7376,22 @@ mailimap_media_basic_parse(mailstream * fd, MMAPString * buffer, struct mailimap
     // workaround for mbox mail for mac
     r = mailimap_nil_parse(fd, buffer, parser_ctx, &cur_token);
     if (r == MAILIMAP_NO_ERROR) {
-      subtype = strdup("DATA"); // application data
-      if (subtype == NULL) {
+      MMAPString * mstr;
+
+      /* Allocate via MMAPString so 'subtype' is registered in
+         mmapstring_hashtable; mailimap_media_basic_free will later
+         release it via mailimap_string_free → mmap_string_unref. */
+      mstr = mmap_string_new("DATA"); // application data
+      if (mstr == NULL) {
         res = MAILIMAP_ERROR_MEMORY;
         goto free_basic_type;
       }
+      if (mmap_string_ref(mstr) < 0) {
+        mmap_string_free(mstr);
+        res = MAILIMAP_ERROR_MEMORY;
+        goto free_basic_type;
+      }
+      subtype = mstr->str;
     }
   }
   
