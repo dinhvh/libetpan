@@ -752,6 +752,11 @@ int maildriver_message_cache_clean_up(char * cache_dir,
   }
   
   d = opendir(cache_dir);
+  if (d == NULL) {
+    res = MAIL_ERROR_FILE;
+    goto free;
+  }
+
   while ((ent = readdir(d)) != NULL) {
     chashdatum key;
     chashdatum value;
