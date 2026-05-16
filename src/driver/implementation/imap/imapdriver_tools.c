@@ -773,6 +773,9 @@ imap_body_fields_to_mime_fields(struct mailimap_body_fields * body_fields,
   int r;
   int res;
 
+  if (pbody_size != NULL)
+    * pbody_size = 0;
+
   list = clist_new();
   if (list == NULL) {
     res = MAIL_ERROR_MEMORY;
