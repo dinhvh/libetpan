@@ -10226,8 +10226,11 @@ mailimap_resp_text_code_other_parse(mailstream * fd, MMAPString * buffer, struct
   return MAILIMAP_NO_ERROR;
 
  free_value:
+  /* value was produced by mailimap_custom_string_parse (MMAPString-registered);
+     mailimap_text_free routes through mmap_string_unref so the hashtable entry
+     is released. Plain free() would leak the MMAPString header + entry. */
   if (value != NULL)
-    free(value);
+    mailimap_text_free(value);
   mailimap_atom_free(atom);
  err:
   return res;

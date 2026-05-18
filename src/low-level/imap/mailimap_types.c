@@ -3199,8 +3199,11 @@ LIBETPAN_EXPORT
 void
 mailimap_response_info_free(struct mailimap_response_info * resp_info)
 {
-  free(resp_info->rsp_value);
-  free(resp_info->rsp_atom);
+  /* rsp_value and rsp_atom hold MMAPString-registered buffers (custom-string
+     and atom allocator respectively). Plain free() here would skip the
+     hashtable unref and leak the MMAPString header + the entry. */
+  mailimap_text_free(resp_info->rsp_value);
+  mailimap_atom_free(resp_info->rsp_atom);
   if (resp_info->rsp_alert != NULL)
     free(resp_info->rsp_alert);
   if (resp_info->rsp_parse != NULL)
