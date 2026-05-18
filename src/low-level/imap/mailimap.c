@@ -225,10 +225,13 @@ static void resp_text_store(mailimap * session,
       
     case MAILIMAP_RESP_TEXT_CODE_OTHER:
       if (session->imap_response_info) {
+        /* Previous values were transferred from the parser's atom/custom-string
+           allocators (MMAPString-registered). Use the matching free helpers
+           so the hashtable entry is released; plain free() leaks them. */
         if (session->imap_response_info->rsp_atom != NULL)
-          free(session->imap_response_info->rsp_atom);
+          mailimap_atom_free(session->imap_response_info->rsp_atom);
         if (session->imap_response_info->rsp_value != NULL)
-          free(session->imap_response_info->rsp_value);
+          mailimap_text_free(session->imap_response_info->rsp_value);
 	session->imap_response_info->rsp_atom =
           resp_text_code->rc_data.rc_atom.atom_name;
         resp_text_code->rc_data.rc_atom.atom_name = NULL;
