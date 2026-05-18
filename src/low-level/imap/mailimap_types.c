@@ -152,14 +152,16 @@ void mailimap_astring_free(char * astring)
 
 static void mailimap_custom_string_free(char * str)
 {
-  free(str);
+  if (mmap_string_unref(str) != 0)
+    free(str);
 }
 
 
 LIBETPAN_EXPORT
 void mailimap_atom_free(char * atom)
 {
-  free(atom);
+  if (mmap_string_unref(atom) != 0)
+    free(atom);
 }
 
 
@@ -779,10 +781,10 @@ void mailimap_capability_free(struct mailimap_capability * c)
 {
   switch (c->cap_type) {
   case MAILIMAP_CAPABILITY_AUTH_TYPE:
-    free(c->cap_data.cap_auth_type);
+    mailimap_auth_type_free(c->cap_data.cap_auth_type);
     break;
   case MAILIMAP_CAPABILITY_NAME:
-    free(c->cap_data.cap_name);
+    mailimap_atom_free(c->cap_data.cap_name);
     break;
   }
   free(c);
