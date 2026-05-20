@@ -485,6 +485,15 @@ mmap_string_insert_len (MMAPString     *string,
 			const char *val,
 			size_t       len)    
 {
+  if (pos > string->len)
+    return NULL;
+
+  if (string->len >= MY_MAXSIZE)
+    return NULL;
+
+  if (len > MY_MAXSIZE - string->len - 1)
+    return NULL;
+
   if (mmap_string_maybe_expand (string, len) == NULL)
     return NULL;
     
@@ -558,6 +567,12 @@ mmap_string_insert_c (MMAPString *string,
 		      size_t   pos,    
 		      char    c)
 {
+  if (pos > string->len)
+    return NULL;
+
+  if (string->len == MY_MAXSIZE)
+    return NULL;
+
   if (mmap_string_maybe_expand (string, 1) == NULL)
     return NULL;
   
@@ -579,6 +594,12 @@ mmap_string_erase (MMAPString *string,
 		   size_t    pos,    
 		   size_t    len)    
 {
+  if (pos > string->len)
+    return NULL;
+
+  if (len > string->len - pos)
+    return NULL;
+
   if ((pos + len) < string->len)
     memmove (string->str + pos, string->str + pos + len,
 	     string->len - (pos + len));
