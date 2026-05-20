@@ -6171,7 +6171,7 @@ static int mailimap_literal_parse_progress(mailstream * fd, MMAPString * buffer,
         }
       }
 
-      if (read_bytes == -1) {
+      if (read_bytes <= 0) {
         res = MAILIMAP_ERROR_STREAM;
         goto free_literal;
       }
