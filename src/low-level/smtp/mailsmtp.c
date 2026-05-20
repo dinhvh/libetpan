@@ -65,6 +65,9 @@
 #endif
 #include <string.h>
 #include <stdlib.h>
+#ifndef USE_SASL
+#	include <limits.h>
+#endif
 #ifdef HAVE_UNISTD_H
 #	include <unistd.h>
 #endif
@@ -964,46 +967,93 @@ int auth_map_errors(int err)
   }
 }
 
-#if 0
+#ifndef USE_SASL
+static int send_base64_line(mailsmtp * session, char * encoded)
+{
+  int r;
+  char * command;
+  size_t encoded_len;
+  
+  encoded_len = strlen(encoded);
+  command = malloc(encoded_len + 3);
+  if (command == NULL)
+    return MAILSMTP_ERROR_MEMORY;
+  
+  memcpy(command, encoded, encoded_len);
+  memcpy(command + encoded_len, "\r\n", 3);
+  
+  r = send_command_private(session, command, 0);
+  free(command);
+  
+  if (r == -1)
+    return MAILSMTP_ERROR_STREAM;
+  
+  return MAILSMTP_NO_ERROR;
+}
+
 static int mailsmtp_auth_login(mailsmtp * session,
     const char * user, const char * pass)
 {
   int err;
-  char command[SMTP_STRING_SIZE];
   char * user64, * pass64;
+  size_t user_len;
+  size_t pass_len;
   
   user64 = NULL;
   pass64 = NULL;
   
-  user64 = encode_base64(user, strlen(user));
-  if (user64 == NULL) {
-    err = MAILSMTP_ERROR_MEMORY;
-    goto err_free;
-  }
-  
-  pass64 = encode_base64(pass, strlen(pass));
-  if (pass64 == NULL) {
-    err = MAILSMTP_ERROR_MEMORY;
-    goto err_free;
-  }
-  
-  snprintf(command, SMTP_STRING_SIZE, "%s\r\n", user64);
-  err = send_command(session, command);
+  err = send_command_private(session, "AUTH LOGIN\r\n", 0);
   if (err == -1) {
     err = MAILSMTP_ERROR_STREAM;
     goto err_free;
   }
   err = read_response(session);
-  err = auth_map_errors(err);
+  if (err == 235) {
+    err = MAILSMTP_NO_ERROR;
+    goto err_free;
+  }
+  if (err != 334) {
+    err = auth_map_errors(err);
+    goto err_free;
+  }
+  
+  user_len = strlen(user);
+  pass_len = strlen(pass);
+  if ((user_len > INT_MAX) || (pass_len > INT_MAX)) {
+    err = MAILSMTP_ERROR_MEMORY;
+    goto err_free;
+  }
+  
+  user64 = encode_base64(user, (int) user_len);
+  if (user64 == NULL) {
+    err = MAILSMTP_ERROR_MEMORY;
+    goto err_free;
+  }
+  
+  pass64 = encode_base64(pass, (int) pass_len);
+  if (pass64 == NULL) {
+    err = MAILSMTP_ERROR_MEMORY;
+    goto err_free;
+  }
+  
+  err = send_base64_line(session, user64);
   if (err != MAILSMTP_NO_ERROR)
     goto err_free;
   
-  snprintf(command, SMTP_STRING_SIZE, "%s\r\n", pass64);
-  err = send_command(session, command);
-  if (err == -1) {
-    err = MAILSMTP_ERROR_STREAM;
+  err = read_response(session);
+  if (err == 235) {
+    err = MAILSMTP_NO_ERROR;
     goto err_free;
   }
+  if (err != 334) {
+    err = auth_map_errors(err);
+    goto err_free;
+  }
+  
+  err = send_base64_line(session, pass64);
+  if (err != MAILSMTP_NO_ERROR)
+    goto err_free;
+  
   err = read_response(session);
   err = auth_map_errors(err);
   
@@ -1013,11 +1063,80 @@ static int mailsmtp_auth_login(mailsmtp * session,
   
   return err;
 }
+
+static int mailsmtp_auth_plain(mailsmtp * session,
+    const char * user, const char * pass)
+{
+  int err;
+  char * auth_data;
+  char * encoded;
+  size_t user_len;
+  size_t pass_len;
+  size_t auth_data_len;
+  
+  auth_data = NULL;
+  encoded = NULL;
+  
+  user_len = strlen(user);
+  pass_len = strlen(pass);
+  auth_data_len = user_len + pass_len + 2;
+  if ((auth_data_len < user_len) || (auth_data_len > INT_MAX)) {
+    err = MAILSMTP_ERROR_MEMORY;
+    goto err_free;
+  }
+  
+  auth_data = malloc(auth_data_len);
+  if (auth_data == NULL) {
+    err = MAILSMTP_ERROR_MEMORY;
+    goto err_free;
+  }
+  
+  auth_data[0] = '\0';
+  memcpy(auth_data + 1, user, user_len);
+  auth_data[user_len + 1] = '\0';
+  memcpy(auth_data + user_len + 2, pass, pass_len);
+  
+  encoded = encode_base64(auth_data, (int) auth_data_len);
+  if (encoded == NULL) {
+    err = MAILSMTP_ERROR_MEMORY;
+    goto err_free;
+  }
+  
+  err = send_command_private(session, "AUTH PLAIN\r\n", 0);
+  if (err == -1) {
+    err = MAILSMTP_ERROR_STREAM;
+    goto err_free;
+  }
+  
+  err = read_response(session);
+  if (err == 235) {
+    err = MAILSMTP_NO_ERROR;
+    goto err_free;
+  }
+  if (err != 334) {
+    err = auth_map_errors(err);
+    goto err_free;
+  }
+  
+  err = send_base64_line(session, encoded);
+  if (err != MAILSMTP_NO_ERROR)
+    goto err_free;
+  
+  err = read_response(session);
+  err = auth_map_errors(err);
+  
+ err_free:
+  free(auth_data);
+  free(encoded);
+  
+  return err;
+}
 #endif
 
 int mailsmtp_auth_type(mailsmtp * session,
     const char * user, const char * pass, int type)
 {
+#ifdef USE_SASL
   int err;
   char hostname[SMTP_STRING_SIZE];
   
@@ -1025,6 +1144,7 @@ int mailsmtp_auth_type(mailsmtp * session,
   if (err < 0) {
     return MAILSMTP_ERROR_MEMORY;
   }
+#endif
   
   if (session->auth == MAILSMTP_AUTH_NOT_CHECKED) 
     return MAILSMTP_ERROR_BAD_SEQUENCE_OF_COMMAND;
@@ -1033,20 +1153,36 @@ int mailsmtp_auth_type(mailsmtp * session,
   
   switch (type) {
   case MAILSMTP_AUTH_LOGIN:
+#ifdef USE_SASL
     return mailesmtp_auth_sasl(session, "LOGIN",
         hostname, NULL, NULL, user, user, pass, NULL);
+#else
+    return mailsmtp_auth_login(session, user, pass);
+#endif
     
   case MAILSMTP_AUTH_PLAIN:
+#ifdef USE_SASL
     return mailesmtp_auth_sasl(session, "PLAIN",
         hostname, NULL, NULL, user, user, pass, NULL);
+#else
+    return mailsmtp_auth_plain(session, user, pass);
+#endif
     
   case MAILSMTP_AUTH_CRAM_MD5:
+#ifdef USE_SASL
     return mailesmtp_auth_sasl(session, "CRAM-MD5",
         hostname, NULL, NULL, user, user, pass, NULL);
+#else
+    return MAILSMTP_ERROR_NOT_IMPLEMENTED;
+#endif
     
   case MAILSMTP_AUTH_DIGEST_MD5:
+#ifdef USE_SASL
     return mailesmtp_auth_sasl(session, "DIGEST-MD5",
         hostname, NULL, NULL, user, user, pass, NULL);
+#else
+    return MAILSMTP_ERROR_NOT_IMPLEMENTED;
+#endif
     
   default:
     return MAILSMTP_ERROR_NOT_IMPLEMENTED;
@@ -1059,7 +1195,8 @@ int mailsmtp_auth(mailsmtp * session, const char * user, const char * pass)
 {
   if (session->auth == MAILSMTP_AUTH_NOT_CHECKED) 
     return MAILSMTP_ERROR_BAD_SEQUENCE_OF_COMMAND;
-    
+
+#ifdef USE_SASL
   if (session->auth & MAILSMTP_AUTH_DIGEST_MD5) {
     return mailsmtp_auth_type(session, user, pass, MAILSMTP_AUTH_DIGEST_MD5);
   } else if (session->auth & MAILSMTP_AUTH_CRAM_MD5) {
@@ -1071,6 +1208,15 @@ int mailsmtp_auth(mailsmtp * session, const char * user, const char * pass)
   } else {
     return MAILSMTP_ERROR_AUTH_NOT_SUPPORTED;
   }
+#else
+  if (session->auth & MAILSMTP_AUTH_PLAIN) {
+    return mailsmtp_auth_type(session, user, pass, MAILSMTP_AUTH_PLAIN);
+  } else if (session->auth & MAILSMTP_AUTH_LOGIN) {
+    return mailsmtp_auth_type(session, user, pass, MAILSMTP_AUTH_LOGIN);
+  } else {
+    return MAILSMTP_ERROR_AUTH_NOT_SUPPORTED;
+  }
+#endif
 }
 
 int mailesmtp_clientid(mailsmtp * session,
