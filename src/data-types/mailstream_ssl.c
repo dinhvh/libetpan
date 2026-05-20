@@ -1501,6 +1501,18 @@ static struct mailstream_cancel * mailstream_low_ssl_get_cancel(mailstream_low *
 #endif
 }
 
+static void mailstream_low_ssl_certificate_chain_free(carray * result)
+{
+  unsigned int i;
+
+  if (result == NULL)
+    return;
+
+  for(i = 0 ; i < carray_count(result) ; i ++)
+    mmap_string_free(carray_get(result, i));
+  carray_free(result);
+}
+
 carray * mailstream_low_ssl_get_certificate_chain(mailstream_low * s)
 {
 #ifdef USE_SSL
@@ -1516,19 +1528,39 @@ carray * mailstream_low_ssl_get_certificate_chain(mailstream_low * s)
   }
   
   result = carray_new(4);
+  if (result == NULL)
+    return NULL;
+
   for(skpos = 0 ; skpos < sk_num((_STACK *) skx) ; skpos ++) {
     X509 * x = (X509 *) sk_value((_STACK *) skx, skpos);
     unsigned char * p;
     MMAPString * str;
     int length = i2d_X509(x, NULL);
+    if (length <= 0)
+      goto err;
+
     str = mmap_string_sized_new(length);
+    if (str == NULL)
+      goto err;
+
     p = (unsigned char *) str->str;
     str->len = length;
-    i2d_X509(x, &p);
-    carray_add(result, str, NULL);
+    if (i2d_X509(x, &p) != length) {
+      mmap_string_free(str);
+      goto err;
+    }
+
+    if (carray_add(result, str, NULL) < 0) {
+      mmap_string_free(str);
+      goto err;
+    }
   }
   
   return result;
+
+ err:
+  mailstream_low_ssl_certificate_chain_free(result);
+  return NULL;
 #else
   gnutls_session session = NULL;
   const gnutls_datum *raw_cert_list;
@@ -1539,35 +1571,62 @@ carray * mailstream_low_ssl_get_certificate_chain(mailstream_low * s)
   session = ssl_data->session;
   raw_cert_list = gnutls_certificate_get_peers(session, &raw_cert_list_length);
 
-  if (raw_cert_list && gnutls_certificate_type_get(session) == GNUTLS_CRT_X509) {
-    result = carray_new(4);
-    for(skpos = 0 ; skpos < raw_cert_list_length ; skpos ++) {
-      gnutls_x509_crt cert = NULL;
-      if (gnutls_x509_crt_init(&cert) >= 0
-       && gnutls_x509_crt_import(cert, &raw_cert_list[skpos], GNUTLS_X509_FMT_DER) >= 0) {
-         size_t cert_size = 0;
-         MMAPString * str = NULL;
-         unsigned char * p;
+  if ((raw_cert_list == NULL) ||
+      (gnutls_certificate_type_get(session) != GNUTLS_CRT_X509))
+    return NULL;
 
-         if (gnutls_x509_crt_export(cert, GNUTLS_X509_FMT_DER, NULL, &cert_size)
-	     == GNUTLS_E_SHORT_MEMORY_BUFFER) {
-           str = mmap_string_sized_new(cert_size);
-           p = (unsigned char *) str->str;
-           str->len = cert_size;
-	 }
-	 if (str != NULL &&
-             gnutls_x509_crt_export(cert, GNUTLS_X509_FMT_DER, p, &cert_size) >= 0) {
-           carray_add(result, str, NULL);
-	 } else {
-	   return NULL;
-	 }
-         gnutls_x509_crt_deinit(cert);
-       }
+  result = carray_new(4);
+  if (result == NULL)
+    return NULL;
+
+  for(skpos = 0 ; skpos < raw_cert_list_length ; skpos ++) {
+    gnutls_x509_crt cert = NULL;
+    size_t cert_size = 0;
+    MMAPString * str = NULL;
+    unsigned char * p;
+    int r;
+
+    r = gnutls_x509_crt_init(&cert);
+    if (r < 0)
+      goto err;
+
+    r = gnutls_x509_crt_import(cert, &raw_cert_list[skpos], GNUTLS_X509_FMT_DER);
+    if (r < 0)
+      goto free_cert;
+
+    r = gnutls_x509_crt_export(cert, GNUTLS_X509_FMT_DER, NULL, &cert_size);
+    if (r != GNUTLS_E_SHORT_MEMORY_BUFFER)
+      goto free_cert;
+
+    str = mmap_string_sized_new(cert_size);
+    if (str == NULL)
+      goto free_cert;
+
+    p = (unsigned char *) str->str;
+    str->len = cert_size;
+    r = gnutls_x509_crt_export(cert, GNUTLS_X509_FMT_DER, p, &cert_size);
+    if (r < 0) {
+      mmap_string_free(str);
+      goto free_cert;
     }
+
+    if (carray_add(result, str, NULL) < 0) {
+      mmap_string_free(str);
+      goto free_cert;
+    }
+
+    gnutls_x509_crt_deinit(cert);
+    continue;
+
+   free_cert:
+    gnutls_x509_crt_deinit(cert);
+    goto err;
   }
 
   return result;
 
+ err:
+  mailstream_low_ssl_certificate_chain_free(result);
   return NULL;
 #endif
 #else

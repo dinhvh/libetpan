@@ -1203,6 +1203,18 @@ static int mailstream_low_cfstream_interrupt_idle(mailstream_low * s)
 #endif
 }
 
+static void mailstream_low_cfstream_certificate_chain_free(carray * result)
+{
+  unsigned int i;
+
+  if (result == NULL)
+    return;
+
+  for(i = 0 ; i < carray_count(result) ; i ++)
+    mmap_string_free(carray_get(result, i));
+  carray_free(result);
+}
+
 static carray * mailstream_low_cfstream_get_certificate_chain(mailstream_low * s)
 {
 #if HAVE_CFNETWORK
@@ -1216,23 +1228,46 @@ static carray * mailstream_low_cfstream_get_certificate_chain(mailstream_low * s
     
   SecTrustRef secTrust = (SecTrustRef)CFReadStreamCopyProperty(cfstream_data->readStream, kCFStreamPropertySSLPeerTrust);
   if (secTrust) {
+      SecTrustResultType trustResult;
       // SecTrustEvaluate() needs to be called before SecTrustGetCertificateCount() in Mac OS X <= 10.8
-      SecTrustEvaluate(secTrust, NULL);
+      SecTrustEvaluate(secTrust, &trustResult);
       count = SecTrustGetCertificateCount(secTrust);
       result = carray_new(4);
+      if (result == NULL) {
+        CFRelease(secTrust);
+        return NULL;
+      }
       for(i = 0 ; i < count ; i ++) {
           SecCertificateRef cert = (SecCertificateRef) SecTrustGetCertificateAtIndex(secTrust, i);
           CFDataRef data = SecCertificateCopyData(cert);
           if (data == NULL) {
-            carray_free(result);
+            mailstream_low_cfstream_certificate_chain_free(result);
             CFRelease(secTrust);
             return NULL;
           }
           CFIndex length = CFDataGetLength(data);
           const UInt8 * bytes = CFDataGetBytePtr(data);
           MMAPString * str = mmap_string_sized_new(length);
-          mmap_string_append_len(str, (char*) bytes, length);
-          carray_add(result, str, NULL);
+          if (str == NULL) {
+            CFRelease(data);
+            mailstream_low_cfstream_certificate_chain_free(result);
+            CFRelease(secTrust);
+            return NULL;
+          }
+          if (mmap_string_append_len(str, (char*) bytes, length) == NULL) {
+            mmap_string_free(str);
+            CFRelease(data);
+            mailstream_low_cfstream_certificate_chain_free(result);
+            CFRelease(secTrust);
+            return NULL;
+          }
+          if (carray_add(result, str, NULL) < 0) {
+            mmap_string_free(str);
+            CFRelease(data);
+            mailstream_low_cfstream_certificate_chain_free(result);
+            CFRelease(secTrust);
+            return NULL;
+          }
           CFRelease(data);
       }
       CFRelease(secTrust);
@@ -1242,19 +1277,41 @@ static carray * mailstream_low_cfstream_get_certificate_chain(mailstream_low * s
       if (certs) {
           count = CFArrayGetCount(certs);
           result = carray_new(4);
+          if (result == NULL) {
+            CFRelease(certs);
+            return NULL;
+          }
           for(i = 0 ; i < count ; i ++) {
               SecCertificateRef cert = (SecCertificateRef) CFArrayGetValueAtIndex(certs, i);
               CFDataRef data = SecCertificateCopyData(cert);
               if (data == NULL) {
-                carray_free(result);
+                mailstream_low_cfstream_certificate_chain_free(result);
                 CFRelease(certs);
                 return NULL;
               }
               CFIndex length = CFDataGetLength(data);
               const UInt8 * bytes = CFDataGetBytePtr(data);
               MMAPString * str = mmap_string_sized_new(length);
-              mmap_string_append_len(str, (char*) bytes, length);
-              carray_add(result, str, NULL);
+              if (str == NULL) {
+                CFRelease(data);
+                mailstream_low_cfstream_certificate_chain_free(result);
+                CFRelease(certs);
+                return NULL;
+              }
+              if (mmap_string_append_len(str, (char*) bytes, length) == NULL) {
+                mmap_string_free(str);
+                CFRelease(data);
+                mailstream_low_cfstream_certificate_chain_free(result);
+                CFRelease(certs);
+                return NULL;
+              }
+              if (carray_add(result, str, NULL) < 0) {
+                mmap_string_free(str);
+                CFRelease(data);
+                mailstream_low_cfstream_certificate_chain_free(result);
+                CFRelease(certs);
+                return NULL;
+              }
               CFRelease(data);
           }
           CFRelease(certs);
