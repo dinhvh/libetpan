@@ -1,0 +1,1 @@
+STORE * FLAGS (\Answered \Flagged \Deleted \Seen \Draft $Forwarded \\Foo)

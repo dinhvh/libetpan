@@ -1,0 +1,6 @@
+* FLAGS (\Answered \Flagged \Deleted \Seen \Draft)
+* LIST (\HasNoChildren) "/" "INBOX"
+* STATUS "INBOX" (MESSAGES 3 UIDNEXT 10 UIDVALIDITY 12345 UNSEEN 1)
+* 3 EXISTS
+* 2 FETCH (UID 10 FLAGS (\Seen) RFC822.SIZE 12)
+A005 OK [READ-WRITE] SELECT completed
