@@ -40,6 +40,7 @@
 #	include <config.h>
 #endif
 
+#include <limits.h>
 #include <stdlib.h>
 #include <string.h>
 #include "carray.h"
@@ -56,6 +57,11 @@ carray * carray_new(unsigned int initsize) {
   if (initsize < MIN_ARRAY_SIZE)
     initsize = MIN_ARRAY_SIZE;
   
+  if (((size_t) initsize) > ((size_t) -1) / sizeof(void *)) {
+    free(array);
+    return NULL;
+  }
+
   array->len = 0;
   array->max = initsize;
   array->array = (void **) malloc(sizeof(void *) * initsize);
@@ -70,6 +76,9 @@ LIBETPAN_EXPORT
 int carray_add(carray * array, void * data, unsigned int * indx) {
   int r;
   
+  if (array->len == UINT_MAX)
+    return -1;
+
   r = carray_set_size(array, array->len + 1);
   if (r < 0)
     return r;
@@ -85,11 +94,22 @@ LIBETPAN_EXPORT
 int carray_set_size(carray * array, unsigned int new_size)
 {
   if (new_size > array->max) {
-    unsigned int n = array->max * 2;
+    unsigned int n;
     void * new;
 
-    while (n <= new_size)
+    if (array->max > UINT_MAX / 2)
+      return -1;
+
+    n = array->max * 2;
+
+    while (n <= new_size) {
+      if (n > UINT_MAX / 2)
+        return -1;
       n *= 2;
+    }
+
+    if (((size_t) n) > ((size_t) -1) / sizeof(void *))
+      return -1;
 
     new = (void **) realloc(array->array, sizeof(void *) * n);
     if (!new)
