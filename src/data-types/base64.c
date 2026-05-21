@@ -124,18 +124,24 @@ char * decode_base64(const char * in, int len)
 
     in += 4;
     *output++ = (CHAR64(c1) << 2) | (CHAR64(c2) >> 4);
-    if (++out_len >= OUTPUT_SIZE)
+    if (++out_len >= OUTPUT_SIZE) {
+      free(out);
       return NULL;
+    }
 
     if (c3 != '=') {
       *output++ = ((CHAR64(c2) << 4) & 0xf0) | (CHAR64(c3) >> 2);
-      if (++out_len >= OUTPUT_SIZE)
+      if (++out_len >= OUTPUT_SIZE) {
+        free(out);
         return NULL;
+      }
       
       if (c4 != '=') {
         *output++ = ((CHAR64(c3) << 6) & 0xc0) | CHAR64(c4);  
-        if (++out_len >= OUTPUT_SIZE)
+        if (++out_len >= OUTPUT_SIZE) {
+          free(out);
           return NULL;
+        }
       }
     }
   }
@@ -144,5 +150,4 @@ char * decode_base64(const char * in, int len)
   
   return out;
 }
-
 
