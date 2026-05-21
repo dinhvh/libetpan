@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "command_sender_test.h"
+
 #include "clist.h"
 #include "imap_test_utils.h"
 #include "mailimap_sender.h"
@@ -347,7 +349,7 @@ static int send_uid_move(mailstream * stream, void * context)
   return send_crlf(stream, r);
 }
 
-int main(void)
+int imap_command_sender_test_run(void)
 {
   static const struct {
     const char * expected;

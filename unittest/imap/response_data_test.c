@@ -2,6 +2,8 @@
 #include <stdbool.h>
 #include <stdio.h>
 
+#include "response_data_test.h"
+
 #include "imap_test_utils.h"
 #include "mailimap_extension_types.h"
 #include "mailimap_types.h"
@@ -45,7 +47,7 @@ static void check_case(const struct response_data_case * test_case,
   mailimap_response_data_free(data);
 }
 
-int main(void)
+int imap_response_data_test_run(void)
 {
   static const struct response_data_case cases[] = {
     { "data/response-data/cond-state-ok.imap",

@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "command_parameter_sender_test.h"
+
 #include "clist.h"
 #include "imap_test_utils.h"
 #include "mailimap_sender.h"
@@ -509,7 +511,7 @@ static int send_search_all_flag_keys(mailstream * stream, void * context)
   return send_crlf(stream, r);
 }
 
-int main(void)
+int imap_command_parameter_sender_test_run(void)
 {
   static const struct {
     const char * expected;

@@ -2,6 +2,8 @@
 #include <stdbool.h>
 #include <stdio.h>
 
+#include "response_done_test.h"
+
 #include "clist.h"
 #include "imap_test_utils.h"
 #include "mailimap_types.h"
@@ -27,7 +29,7 @@ static void check_done(const char * path, bool compressed, int cond_type,
   mailimap_response_free(response);
 }
 
-int main(void)
+int imap_response_done_test_run(void)
 {
   static const struct {
     const char * path;

@@ -11,32 +11,27 @@ CPPFLAGS += \
 CFLAGS += -Wall -Wextra -Werror -g
 LDLIBS += $(TOP)/src/.libs/libetpan.a -lz -liconv -lsasl2 -lpthread
 
-TESTS = response_data_test response_done_test unsupported_response_test \
-	command_sender_test command_parameter_sender_test
-UTILS = imap_test_utils.c imap_test_utils.h
+IMAP_TEST = imap/imap_test
+IMAP_TEST_SRCS = \
+	imap/main.c \
+	imap/response_data_test.c \
+	imap/response_done_test.c \
+	imap/unsupported_response_test.c \
+	imap/command_sender_test.c \
+	imap/command_parameter_sender_test.c \
+	imap/imap_test_utils.c
+IMAP_TEST_DEPS = $(IMAP_TEST_SRCS) imap/*.h
 
 .PHONY: all check clean
 
-all: $(TESTS)
+all: $(IMAP_TEST)
 
 check: all
-	@for test in $(TESTS); do ./$$test || exit $$?; done
+	@cd imap && ./imap_test
 
-response_data_test: response_data_test.c $(UTILS)
-	$(CC) $(CPPFLAGS) $(CFLAGS) response_data_test.c imap_test_utils.c $(LDLIBS) -o $@
-
-response_done_test: response_done_test.c $(UTILS)
-	$(CC) $(CPPFLAGS) $(CFLAGS) response_done_test.c imap_test_utils.c $(LDLIBS) -o $@
-
-unsupported_response_test: unsupported_response_test.c $(UTILS)
-	$(CC) $(CPPFLAGS) $(CFLAGS) unsupported_response_test.c imap_test_utils.c $(LDLIBS) -o $@
-
-command_sender_test: command_sender_test.c $(UTILS)
-	$(CC) $(CPPFLAGS) $(CFLAGS) command_sender_test.c imap_test_utils.c $(LDLIBS) -o $@
-
-command_parameter_sender_test: command_parameter_sender_test.c $(UTILS)
-	$(CC) $(CPPFLAGS) $(CFLAGS) command_parameter_sender_test.c imap_test_utils.c $(LDLIBS) -o $@
+$(IMAP_TEST): $(IMAP_TEST_DEPS)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(IMAP_TEST_SRCS) $(LDLIBS) -o $@
 
 clean:
-	rm -f $(TESTS) imap_response_parser_test
-	rm -rf $(TESTS:=.dSYM) imap_response_parser_test.dSYM
+	rm -f $(IMAP_TEST)
+	rm -rf $(IMAP_TEST).dSYM

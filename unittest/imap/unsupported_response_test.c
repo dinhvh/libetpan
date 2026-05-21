@@ -2,6 +2,8 @@
 #include <stdbool.h>
 #include <stdio.h>
 
+#include "unsupported_response_test.h"
+
 #include "imap_test_utils.h"
 #include "mailimap_types.h"
 
@@ -25,7 +27,7 @@ static void check_response_rejected(const char * path, bool compressed)
   assert(response == NULL);
 }
 
-int main(void)
+int imap_unsupported_response_test_run(void)
 {
   static const char * response_data_gaps[] = {
     "data/unsupported/esearch.imap",
