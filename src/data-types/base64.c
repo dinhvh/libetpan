@@ -108,6 +108,12 @@ char * decode_base64(const char * in, int len)
   char * output, * out;
   int i, c1, c2, c3, c4, out_len;
 
+  if (len < 0)
+    return NULL;
+
+  if ((len > 0) && (in == NULL))
+    return NULL;
+
   out_len = 0;
   
   output = malloc(OUTPUT_SIZE);
@@ -115,7 +121,7 @@ char * decode_base64(const char * in, int len)
     return NULL;
   out = output;
 
-  if (in[0] == '+' && in[1] == ' ')
+  if (len >= 2 && in[0] == '+' && in[1] == ' ')
     in += 2;
   
   for (i = 0; i < (len / 4); i++) {
