@@ -1638,6 +1638,9 @@ static int mailmime_base64_body_parse_impl(
   chunk[3] = 0;
 
   cur_token = * indx;
+  if (cur_token > length)
+    return MAILIMF_ERROR_INVAL;
+
   last_full_token_end = * indx;
   chunk_index = 0;
   written = 0;
@@ -1792,6 +1795,8 @@ static int mailmime_quoted_printable_body_parse_impl(
 
   state = STATE_NORMAL;
   cur_token = * indx;
+  if (cur_token > length)
+    return MAILIMF_ERROR_INVAL;
 
   count = 0;
   start = message + cur_token;
@@ -2104,6 +2109,8 @@ int mailmime_binary_body_parse(const char * message, size_t length,
   int res;
 
   cur_token = * indx;
+  if (cur_token > length)
+    return MAILIMF_ERROR_INVAL;
 
 #if 0 /* preserve CR LF at the end of parts */
   if (length >= 1) {
