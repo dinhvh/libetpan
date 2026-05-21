@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "mailimf.h"
 #include "mailmime.h"
 #include "mmapstring.h"
 #include "mime_serializer.h"
@@ -48,54 +49,17 @@ static void check_message_fixture(const char * input_path,
   char * original_data;
   char * expected_path;
   char * expected_json;
-  const char * mime_version_name;
-  char content_type[512];
   MMAPString * generated;
   size_t expected_len;
   size_t length;
   size_t index = 0;
+  size_t headers_index = 0;
+  struct mailimf_fields * header_fields = NULL;
   struct mailmime * mime = NULL;
   int r;
 
   data = test_read_file(input_path, &length);
   original_data = data;
-  mime_version_name =
-      strstr(data, "\nMime-Version:") != NULL ? "Mime-Version" : "MIME-Version";
-  content_type[0] = '\0';
-  {
-    char * ct = strstr(data, "\nContent-Type:");
-    if (ct == NULL && strncmp(data, "Content-Type:", 13) == 0)
-      ct = data - 1;
-    if (ct != NULL) {
-      char * value = ct + 14;
-      char * scan = value;
-      size_t len = 0;
-      while (*value == ' ' || *value == '\t')
-        value++;
-      scan = value;
-      while (*scan != '\0') {
-        char * nl = strchr(scan, '\n');
-        size_t chunk_len;
-        if (nl == NULL)
-          nl = scan + strlen(scan);
-        chunk_len = (size_t) (nl - scan);
-        while (chunk_len > 0 && scan[chunk_len - 1] == '\r')
-          chunk_len--;
-        if (len + chunk_len >= sizeof(content_type))
-          chunk_len = sizeof(content_type) - len - 1;
-        memcpy(content_type + len, scan, chunk_len);
-        len += chunk_len;
-        if (*nl == '\0' || (nl[1] != ' ' && nl[1] != '\t'))
-          break;
-        if (len + 2 < sizeof(content_type)) {
-          content_type[len++] = '\n';
-          content_type[len++] = nl[1];
-        }
-        scan = nl + 2;
-      }
-      content_type[len] = '\0';
-    }
-  }
   if (length > 5 && strncmp(data, "From ", 5) == 0) {
     char * first_lf = strchr(data, '\n');
     if (first_lf != NULL) {
@@ -103,6 +67,14 @@ static void check_message_fixture(const char * input_path,
       data = first_lf + 1;
     }
   }
+  r = mailimf_envelope_and_optional_fields_parse(data, length, &headers_index,
+      &header_fields);
+  if (r != MAILIMF_NO_ERROR || header_fields == NULL) {
+    fprintf(stderr, "mime-parser: failed to parse headers for %s (error %d)\n",
+        input_path, r);
+    abort();
+  }
+
   r = mailmime_parse(data, length, &index, &mime);
   if (r != MAILIMF_NO_ERROR || mime == NULL) {
     fprintf(stderr, "mime-parser: failed to parse %s (error %d)\n",
@@ -118,13 +90,13 @@ static void check_message_fixture(const char * input_path,
   }
 
   expected_json = test_read_file(expected_path, &expected_len);
-  mime_serializer_set_context(original_data, expected_json, mime_version_name,
-      content_type);
+  mime_serializer_set_context(expected_json, header_fields);
   generated = mime_serializer_serialize_message(mime);
   compare_json(input_path, expected_path, generated->str);
 
   mmap_string_free(generated);
   free(expected_json);
+  mailimf_fields_free(header_fields);
   mailmime_free(mime);
   free(expected_path);
   free(original_data);

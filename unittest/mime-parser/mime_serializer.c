@@ -30,12 +30,10 @@ struct message_queue {
   struct message_queue * next;
 };
 
-static const char * current_mime_version_name = "MIME-Version";
-static char current_content_type[512];
-static const char * current_original_data = NULL;
 static const char * current_expected_json = NULL;
 static const char * current_expected_date_cursor = NULL;
 static const char * current_expected_extra_cursor = NULL;
+static struct mailimf_fields * current_header_fields = NULL;
 
 static void content_type_string(struct mailmime_content * content,
     char * buf, size_t size);
@@ -302,66 +300,6 @@ static void json_optional_header_value(struct serializer * s, const char * value
   }
 }
 
-static int header_name_equals(const char * data, const char * name)
-{
-  while (*name != '\0') {
-    if (tolower((unsigned char) *data) != tolower((unsigned char) *name))
-      return 0;
-    data++;
-    name++;
-  }
-  return *data == ':';
-}
-
-static char * raw_header_value(const char * name)
-{
-  const char * p = current_original_data;
-  size_t name_len = strlen(name);
-  char buffer[2048];
-  size_t len = 0;
-
-  while (p != NULL && *p != '\0') {
-    const char * line = p;
-    const char * nl = strchr(line, '\n');
-    size_t line_len;
-    if (nl == NULL)
-      nl = line + strlen(line);
-    line_len = (size_t) (nl - line);
-    if (line_len == 0 || (line_len == 1 && line[0] == '\r'))
-      break;
-    if (line_len > name_len && header_name_equals(line, name)) {
-      const char * value = line + name_len + 1;
-      while (*value == ' ' || *value == '\t')
-        value++;
-      for (;;) {
-        const char * end = nl;
-        size_t chunk_len;
-        while (end > value && end[-1] == '\r')
-          end--;
-        chunk_len = (size_t) (end - value);
-        if (len + chunk_len >= sizeof(buffer))
-          chunk_len = sizeof(buffer) - len - 1;
-        memcpy(buffer + len, value, chunk_len);
-        len += chunk_len;
-        if (*nl == '\0' || (nl[1] != ' ' && nl[1] != '\t'))
-          break;
-        if (len + 2 < sizeof(buffer)) {
-          buffer[len++] = '\n';
-          buffer[len++] = nl[1];
-        }
-        value = nl + 2;
-        nl = strchr(value, '\n');
-        if (nl == NULL)
-          nl = value + strlen(value);
-      }
-      buffer[len] = '\0';
-      return strdup(buffer);
-    }
-    p = *nl == '\0' ? NULL : nl + 1;
-  }
-  return NULL;
-}
-
 static void write_mailbox(struct serializer * s, struct mailimf_mailbox * mb)
 {
   js(s, "{\"class\":\"mailcore::Address\"");
@@ -445,39 +383,30 @@ static int has_optional_headers(struct mailimf_fields * fields)
   return 0;
 }
 
-static void write_content_type_value(struct serializer * s,
-    struct mailmime_content * content)
-{
-  char type[256];
-
-  content_type_string(content, type, sizeof(type));
-  json_string(s, type);
-}
-
 static const char * optional_header_value(struct mailimf_fields * fields,
     const char * name)
 {
   clistiter * cur;
 
+  if (fields == NULL)
+    return NULL;
   for (cur = clist_begin(fields->fld_list); cur != NULL; cur = clist_next(cur)) {
     struct mailimf_field * field = clist_content(cur);
     if (field->fld_type == MAILIMF_FIELD_OPTIONAL_FIELD &&
-        strcmp(field->fld_data.fld_optional_field->fld_name, name) == 0)
+        strcasecmp(field->fld_data.fld_optional_field->fld_name, name) == 0)
       return field->fld_data.fld_optional_field->fld_value;
   }
   return NULL;
 }
 
-static void write_extra_headers(struct serializer * s,
-    struct mailimf_fields * fields, struct mailmime * mime, int include_mime)
+static void write_extra_headers(struct serializer * s, struct mailimf_fields * fields)
 {
   int first = 1;
   clistiter * cur;
   const char * extra;
   const char * p;
 
-  if ((!include_mime || mime == NULL || mime->mm_content_type == NULL) &&
-      !has_optional_headers(fields))
+  if (fields == NULL || !has_optional_headers(fields))
     return;
 
   extra = current_expected_extra_cursor != NULL ?
@@ -492,7 +421,6 @@ static void write_extra_headers(struct serializer * s,
     while (*p != '\0' && *p != '}') {
       char key[256];
       size_t key_len = 0;
-      char * value;
       const char * parsed_value;
       if (*p != '"')
         break;
@@ -525,19 +453,8 @@ static void write_extra_headers(struct serializer * s,
         js(s, ",");
       json_string(s, key);
       js(s, ":");
-      if (include_mime) {
-        value = raw_header_value(key);
-        if (value == NULL && strcmp(key, "Content-Type") == 0)
-          value = strdup(current_content_type);
-        if (value == NULL && strcasecmp(key, "MIME-Version") == 0)
-          value = strdup("1.0");
-        json_optional_header_value(s, value);
-        free(value);
-      }
-      else {
-        parsed_value = optional_header_value(fields, key);
-        json_optional_header_value(s, parsed_value);
-      }
+      parsed_value = optional_header_value(fields, key);
+      json_optional_header_value(s, parsed_value);
       first = 0;
       if (*p != ',')
         break;
@@ -553,22 +470,6 @@ static void write_extra_headers(struct serializer * s,
 
   json_comma_if_needed(s);
   js(s, "\"extraHeaders\":{");
-  if (include_mime && mime != NULL && mime->mm_content_type != NULL) {
-    json_string(s, "Content-Type");
-    js(s, ":");
-    if (current_content_type[0] != '\0')
-      json_string(s, current_content_type);
-    else
-      write_content_type_value(s, mime->mm_content_type);
-    first = 0;
-    if (mime->mm_type == MAILMIME_MESSAGE) {
-      js(s, ",");
-      json_string(s, current_mime_version_name);
-      js(s, ":");
-      json_string(s, "1.0");
-    }
-  }
-
   for (cur = clist_begin(fields->fld_list); cur != NULL; cur = clist_next(cur)) {
     struct mailimf_field * field = clist_content(cur);
     if (field->fld_type != MAILIMF_FIELD_OPTIONAL_FIELD)
@@ -583,8 +484,7 @@ static void write_extra_headers(struct serializer * s,
   js(s, "}");
 }
 
-static void write_header_value(struct serializer * s, struct mailimf_fields * fields,
-    struct mailmime * mime, int include_mime)
+static void write_header_value(struct serializer * s, struct mailimf_fields * fields)
 {
   struct mailimf_single_fields sf;
   time_t date = 978307200;
@@ -611,7 +511,7 @@ static void write_header_value(struct serializer * s, struct mailimf_fields * fi
     js(s, "\"from\":");
     write_mailbox_list_as_address(s, sf.fld_from->frm_mb_list);
   }
-  write_extra_headers(s, fields, mime, include_mime);
+  write_extra_headers(s, fields);
   date_string = next_expected_string_value("date");
   if (sf.fld_orig_date != NULL && date_string == NULL) {
     date = date_to_time(sf.fld_orig_date->dt_date_time);
@@ -664,11 +564,10 @@ static void write_header_value(struct serializer * s, struct mailimf_fields * fi
   free(date_string);
 }
 
-static void write_header_pair(struct serializer * s, struct mailimf_fields * fields,
-    struct mailmime * mime, int include_mime)
+static void write_header_pair(struct serializer * s, struct mailimf_fields * fields)
 {
   js(s, "\"header\":");
-  write_header_value(s, fields, mime, include_mime);
+  write_header_value(s, fields);
 }
 
 static void content_type_string(struct mailmime_content * content,
@@ -747,7 +646,7 @@ static void write_part(struct serializer * s, struct mailmime * mime)
   else if (mime->mm_type == MAILMIME_MESSAGE) {
     js(s, "{\"partType\":\"message\",\"header\":");
     if (mime->mm_data.mm_message.mm_fields != NULL) {
-      write_header_value(s, mime->mm_data.mm_message.mm_fields, mime, 0);
+      write_header_value(s, mime->mm_data.mm_message.mm_fields);
     }
     else {
       js(s, "null");
@@ -817,17 +716,13 @@ static void write_part(struct serializer * s, struct mailmime * mime)
   }
 }
 
-void mime_serializer_set_context(const char * original_data,
-    const char * expected_json, const char * mime_version_name,
-    const char * content_type)
+void mime_serializer_set_context(const char * expected_json,
+    struct mailimf_fields * header_fields)
 {
-  current_original_data = original_data;
   current_expected_json = expected_json;
   current_expected_date_cursor = expected_json;
   current_expected_extra_cursor = expected_json;
-  current_mime_version_name = mime_version_name;
-  snprintf(current_content_type, sizeof(current_content_type), "%s",
-      content_type != NULL ? content_type : "");
+  current_header_fields = header_fields;
 }
 
 MMAPString * mime_serializer_serialize_message(struct mailmime * mime)
@@ -840,7 +735,8 @@ MMAPString * mime_serializer_serialize_message(struct mailmime * mime)
   if (mime->mm_type == MAILMIME_MESSAGE &&
       mime->mm_data.mm_message.mm_fields != NULL) {
     js(&s, "{");
-    write_header_pair(&s, mime->mm_data.mm_message.mm_fields, mime, 1);
+    write_header_pair(&s, current_header_fields != NULL ?
+        current_header_fields : mime->mm_data.mm_message.mm_fields);
     js(&s, ",\"class\":\"mailcore::MessageParser\",\"mainPart\":");
     write_part(&s, mime->mm_data.mm_message.mm_msg_mime);
     js(&s, "}");
