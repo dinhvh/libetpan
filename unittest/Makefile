@@ -58,6 +58,7 @@ PLAINTEXT_RENDERING_TEST_SRCS = \
 	plaintext-rendering/main.c \
 	plaintext-rendering/html_cleaner.c \
 	plaintext-rendering/html_flattener.c \
+	plaintext-rendering/html_renderer.c \
 	$(COMMON_TEST_SRCS)
 MIME_PARSER_SERIALIZATION_TEST_DEPS = \
 	$(MIME_PARSER_SERIALIZATION_TEST_SRCS) common/*.h
