@@ -116,7 +116,7 @@ static ssize_t write_direct(mailstream * s, const void * buf, size_t count)
   while (left > 0) {
     written = mailstream_low_write(s->low, cur_buf, left);
 
-    if (written < 0) {
+    if (written <= 0) {
       if (count == left)
 	return -1;
       else
@@ -165,7 +165,7 @@ int mailstream_flush(mailstream * s)
   while (left > 0) {
     written = mailstream_low_write(s->low, cur_buf, left);
 
-    if (written < 0)
+    if (written <= 0)
       goto move_buffer;
     cur_buf += written;
     left -=  written;
@@ -419,4 +419,3 @@ void mailstream_certificate_chain_free(carray * certificate_chain)
   }
   carray_free(certificate_chain);
 }
-
