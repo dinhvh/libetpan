@@ -488,6 +488,15 @@ char * charconv_encode_mutf7(const char * str)
   return NULL;
 }
 
+static int charconv_get_output_size(size_t length, size_t * result)
+{
+  if (length > (((size_t) -1) - 1) / 6)
+    return MAIL_CHARCONV_ERROR_MEMORY;
+
+  * result = length * 6;
+  return MAIL_CHARCONV_NO_ERROR;
+}
+
 #ifdef HAVE_ICONV
 static size_t mail_iconv (iconv_t cd, const char **inbuf, size_t *inbytesleft,
     char **outbuf, size_t *outbytesleft,
@@ -600,9 +609,13 @@ int charconv(const char * tocode, const char * fromcode,
   fromcode = get_valid_charset(fromcode);
   
 	if (extended_charconv != NULL) {
+		size_t		allocated_length;
 		size_t		result_length;
-		result_length = length * 6;
-		*result = malloc( length * 6 + 1);
+		res = charconv_get_output_size(length, &allocated_length);
+		if (res != MAIL_CHARCONV_NO_ERROR)
+			return res;
+		result_length = allocated_length;
+		*result = malloc(allocated_length + 1);
 		if (*result == NULL) {
 			res = MAIL_CHARCONV_ERROR_MEMORY;
 		} else {
@@ -611,6 +624,10 @@ int charconv(const char * tocode, const char * fromcode,
 				free( *result);
 				*result = NULL;
 			} else {
+				if (result_length > allocated_length) {
+					free(*result);
+					return MAIL_CHARCONV_ERROR_MEMORY;
+				}
 				out = realloc( *result, result_length + 1);
 				if (out != NULL) *result = out;
 				/* also a cstring, just in case */
@@ -632,7 +649,9 @@ int charconv(const char * tocode, const char * fromcode,
     goto err;
   }
 
-  out_size = 6 * length; /* UTF-8 can be encoded up to 6 bytes */
+  res = charconv_get_output_size(length, &out_size); /* UTF-8 can be encoded up to 6 bytes */
+  if (res != MAIL_CHARCONV_NO_ERROR)
+    goto close_iconv;
 
   out = malloc(out_size + 1);
   if (out == NULL) {
@@ -692,16 +711,25 @@ int charconv_buffer(const char * tocode, const char * fromcode,
   fromcode = get_valid_charset(fromcode);
   
 	if (extended_charconv != NULL) {
+		size_t		allocated_length;
 		size_t		result_length;
-		result_length = length * 6;
-		mmapstr = mmap_string_sized_new( result_length + 1);
+		res = charconv_get_output_size(length, &allocated_length);
+		if (res != MAIL_CHARCONV_NO_ERROR)
+			return res;
+		result_length = allocated_length;
+		mmapstr = mmap_string_sized_new( allocated_length + 1);
 		*result_len = 0;
 		if (mmapstr == NULL) {
-			res = MAIL_CHARCONV_ERROR_MEMORY;
+			return MAIL_CHARCONV_ERROR_MEMORY;
 		} else {
 			res = (*extended_charconv)( tocode, fromcode, str, length, mmapstr->str, &result_length);
 			if (res != MAIL_CHARCONV_ERROR_UNKNOWN_CHARSET) {
 				if (res == MAIL_CHARCONV_NO_ERROR) {
+					if (result_length > allocated_length) {
+						res = MAIL_CHARCONV_ERROR_MEMORY;
+						mmap_string_free(mmapstr);
+						return res;
+					}
 					*result = mmapstr->str;
 					res = mmap_string_ref(mmapstr);
 					if (res < 0) {
@@ -734,12 +762,14 @@ int charconv_buffer(const char * tocode, const char * fromcode,
     goto err;
   }
 
-  out_size = 6 * length; /* UTF-8 can be encoded up to 6 bytes */
+  res = charconv_get_output_size(length, &out_size); /* UTF-8 can be encoded up to 6 bytes */
+  if (res != MAIL_CHARCONV_NO_ERROR)
+    goto close_iconv;
 
   mmapstr = mmap_string_sized_new(out_size + 1);
   if (mmapstr == NULL) {
     res = MAIL_CHARCONV_ERROR_MEMORY;
-    goto err;
+    goto close_iconv;
   }
 
   out = mmapstr->str;
@@ -763,7 +793,8 @@ int charconv_buffer(const char * tocode, const char * fromcode,
   r = mmap_string_ref(mmapstr);
   if (r < 0) {
     res = MAIL_CHARCONV_ERROR_MEMORY;
-    goto free;
+    mmap_string_free(mmapstr);
+    goto err;
   }
 
   * result = out;
@@ -773,6 +804,8 @@ int charconv_buffer(const char * tocode, const char * fromcode,
 
  free:
   mmap_string_free(mmapstr);
+ close_iconv:
+  iconv_close(conv);
  err:
   return res;
 #endif
