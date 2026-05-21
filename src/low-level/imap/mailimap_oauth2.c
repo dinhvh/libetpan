@@ -30,6 +30,7 @@
  */
 #include "mailimap_oauth2.h"
 
+#include <limits.h>
 #include <string.h>
 #include <stdlib.h>
 
@@ -41,6 +42,20 @@
 static int mailimap_oauth2_authenticate_send(mailimap * session,
                                              const char * auth_user,
                                              const char * access_token);
+
+static int mailimap_oauth2_get_auth_string_len(size_t auth_user_len,
+    size_t access_token_len, size_t * result)
+{
+  const size_t fixed_len = 5 + 13 + 2;
+
+  if (auth_user_len > (size_t) INT_MAX - fixed_len)
+    return MAILIMAP_ERROR_MEMORY;
+  if (access_token_len > (size_t) INT_MAX - fixed_len - auth_user_len)
+    return MAILIMAP_ERROR_MEMORY;
+
+  * result = fixed_len + auth_user_len + access_token_len;
+  return MAILIMAP_NO_ERROR;
+}
 
 LIBETPAN_EXPORT
 int mailimap_oauth2_authenticate(mailimap * session, const char *auth_user, const char * access_token)
@@ -145,7 +160,12 @@ static int mailimap_oauth2_authenticate_send(mailimap * session,
   /* Build client response string */
   auth_user_len = strlen(auth_user);
   access_token_len = strlen(access_token);
-  full_auth_string_len = 5 + auth_user_len + 1 + 12 + access_token_len + 2;
+  r = mailimap_oauth2_get_auth_string_len(auth_user_len, access_token_len,
+      &full_auth_string_len);
+  if (r != MAILIMAP_NO_ERROR) {
+    res = r;
+    goto free;
+  }
   full_auth_string = malloc(full_auth_string_len + 1);
   if (full_auth_string == NULL) {
     res = MAILIMAP_ERROR_MEMORY;
@@ -156,7 +176,7 @@ static int mailimap_oauth2_authenticate_send(mailimap * session,
   ptr = memcpy(ptr + 5, auth_user, auth_user_len);
   ptr = memcpy(ptr + auth_user_len, "\1auth=Bearer ", 13);
   ptr = memcpy(ptr + 13, access_token, access_token_len);
-  ptr = memcpy(ptr + access_token_len, "\1\1\0", 3);
+  memcpy(ptr + access_token_len, "\1\1\0", 3);
   
   /* Convert to base64 */
   full_auth_string_b64 = encode_base64(full_auth_string, (int) full_auth_string_len);
