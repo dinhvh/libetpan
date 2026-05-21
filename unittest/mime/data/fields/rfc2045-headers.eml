@@ -1,0 +1,9 @@
+MIME-Version: 1.0
+Content-Type: multipart/mixed;
+ boundary="outer-boundary";
+ charset=us-ascii;
+ x-token=value
+Content-Transfer-Encoding: quoted-printable
+Content-ID: <part.1234@example.test>
+Content-Description: =?US-ASCII?Q?RFC_2045_description?=
+X-Not-Mime: ignored

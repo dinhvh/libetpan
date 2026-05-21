@@ -1,0 +1,34 @@
+From: Example Sender <sender@example.test>
+To: Example Recipient <recipient@example.test>
+Subject: =?ISO-8859-1?Q?Multipart_grammar?=
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="outer-boundary"
+
+This is a preamble that must be ignored by MIME readers.
+--outer-boundary   
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: quoted-printable
+Content-Description: plain text
+
+Hello=2C world!
+This line has a soft=
+ break.
+--outer-boundary
+Content-Type: message/rfc822
+Content-Description: nested message
+
+From: Nested Sender <nested@example.test>
+To: recipient@example.test
+Subject: Nested RFC 822 message
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+
+Nested body.
+--outer-boundary
+Content-Type: application/octet-stream; name="data.bin"
+Content-Transfer-Encoding: base64
+Content-ID: <binary@example.test>
+
+SGVsbG8sIGJhc2U2NCE=
+--outer-boundary-- 
+This is an epilogue that may be discarded.

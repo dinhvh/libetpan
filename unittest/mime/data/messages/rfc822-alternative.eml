@@ -1,0 +1,18 @@
+From: =?US-ASCII?Q?Keith_Moore?= <moore@example.test>
+To: =?ISO-8859-1?Q?Keld_J=F8rn_Simonsen?= <keld@example.test>
+Cc: =?ISO-8859-1?Q?Andr=E9?= Pirard <pirard@example.test>
+Subject: =?ISO-8859-1?B?SWYgeW91IGNhbiByZWFkIHRoaXMgeW8=?=
+ =?ISO-8859-2?B?dSB1bmRlcnN0YW5kIHRoZSBleGFtcGxlLg==?=
+MIME-Version: 1.0
+Content-Type: multipart/alternative; boundary=alt-boundary
+
+--alt-boundary
+Content-Type: text/plain; charset=us-ascii
+
+Plain body.
+--alt-boundary
+Content-Type: text/html; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+
+<html><body><p>Plain body.</p></body></html>
+--alt-boundary--
