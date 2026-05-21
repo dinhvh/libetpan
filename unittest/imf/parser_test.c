@@ -360,7 +360,7 @@ static void check_rfc822_style_messages(void)
   static const char * paths[] = {
     "data/messages/simple-rfc822.eml",
     "data/messages/folded-comments-rfc822.eml",
-    "data/messages/resent-trace-rfc822.eml"
+    "data/messages/resent-trace-rfc822.eml",
   };
   size_t i;
 

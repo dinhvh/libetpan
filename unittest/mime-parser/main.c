@@ -84,8 +84,12 @@ static void check_message_fixture(const char * input_path,
 
   expected_path = test_replace_prefix(input_path, input_root, output_root);
   if (!test_file_exists(expected_path)) {
-    fprintf(stderr, "mime-parser: missing expected fixture %s\n",
-        expected_path);
+    mime_serializer_set_context(NULL, header_fields);
+    generated = mime_serializer_serialize_message(mime);
+    fprintf(stderr, "mime-parser: missing expected fixture %s\n"
+        "generated JSON for %s:\n%s\n",
+        expected_path, input_path, generated->str);
+    mmap_string_free(generated);
     abort();
   }
 

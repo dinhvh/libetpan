@@ -1,0 +1,12 @@
+From: AAA <aaa@example.com>
+To: BBB <bbb@example.com>,
+	
+ CCC <ccc@example.com>
+References: <msg-id-aaa@example.com>
+	
+	
+	
+ <msg-id-bbb@example.com>
+Message-ID: <msg-id-ccc@example.com>
+
+A test mail
