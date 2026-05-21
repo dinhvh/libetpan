@@ -353,11 +353,14 @@ static int imapdriver_build_folder_name(mailsession * session, const char * mb,
   if (r != MAILIMAP_NO_ERROR)
     return r;
 
-  if (clist_begin(imap_list) == NULL)
+  if (clist_begin(imap_list) == NULL) {
+    mailimap_list_result_free(imap_list);
     return MAIL_ERROR_LIST;
+  }
 
   mb_list = clist_begin(imap_list)->data;
   delimiter[0] = mb_list->mb_delimiter;
+  mailimap_list_result_free(imap_list);
 
   folder_name = malloc(strlen(mb) + strlen(delimiter) + strlen(name) + 1);
   if (folder_name == NULL)
