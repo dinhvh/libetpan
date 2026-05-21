@@ -236,7 +236,7 @@ static ssize_t mailstream_low_compress_write(mailstream_low * s, const void * bu
   size_t remaining = CHUNK_SIZE - strm->avail_out;
   while (remaining > 0) {
     ssize_t wr = data->ms->driver->mailstream_write(data->ms, p, remaining);
-    if (wr < 0) {
+    if (wr <= 0) {
       return -1;
     }
     
