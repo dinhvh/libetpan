@@ -133,6 +133,9 @@ xcuserdata/
 /tests/mime-parse
 /tests/pop-sample
 
+/unittest/*/*_test
+*.dSYM/
+
 # Windows
 third-party
 /build-windows/_headers_depends
