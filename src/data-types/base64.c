@@ -59,13 +59,21 @@ char * encode_base64(const char * in, int len)
 {
   char * output, * tmp;
   unsigned char oval;
-  int out_len;
+  size_t input_len;
+  size_t out_len;
   const unsigned char * uin = (const unsigned char *) in;
 
-  out_len = ((len + 2) / 3 * 4) + 1;
+  if (len < 0)
+    return NULL;
 
   if ((len > 0) && (in == NULL))
     return NULL;
+
+  input_len = (size_t) len;
+  if (input_len > (((size_t) -1) - 1) / 4 * 3)
+    return NULL;
+
+  out_len = ((input_len + 2) / 3 * 4) + 1;
 
   output = malloc(out_len);
   if (!output)
@@ -150,4 +158,3 @@ char * decode_base64(const char * in, int len)
   
   return out;
 }
-
