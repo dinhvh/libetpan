@@ -45,6 +45,7 @@
 #include "condstore.h"
 #include "condstore_private.h"
 
+#include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -1643,6 +1644,33 @@ int mailimap_login(mailimap * session,
 }
 
 #ifdef USE_SASL
+static int mailimap_sasl_get_decode_size(const char * str,
+    unsigned int * input_len, unsigned int * output_len)
+{
+  size_t len;
+
+  len = strlen(str);
+  if (len > UINT_MAX)
+    return MAILIMAP_ERROR_MEMORY;
+
+  * input_len = (unsigned int) len;
+  * output_len = (unsigned int) (len * 3 / 4);
+  return MAILIMAP_NO_ERROR;
+}
+
+static int mailimap_sasl_get_encode_size(unsigned int input_len,
+    unsigned int * output_len)
+{
+  size_t len;
+
+  if ((size_t) input_len > (((size_t) UINT_MAX - 1) / 4) * 3)
+    return MAILIMAP_ERROR_MEMORY;
+
+  len = (((size_t) input_len + 2) / 3) * 4;
+  * output_len = (unsigned int) len;
+  return MAILIMAP_NO_ERROR;
+}
+
 static int sasl_getsimple(void * context, int id,
     const char ** result, unsigned * len)
 {
@@ -1850,8 +1878,12 @@ int mailimap_authenticate(mailimap * session, const char * auth_type,
       unsigned int decoded_len;
       unsigned int max_decoded;
       
-      response_len = (unsigned int) strlen(response_base64);
-      max_decoded = response_len * 3 / 4;
+      res = mailimap_sasl_get_decode_size(response_base64,
+          &response_len, &max_decoded);
+      if (res != MAILIMAP_NO_ERROR) {
+        mailimap_continue_req_free(cont_req);
+        goto free_sasl_conn;
+      }
       decoded = malloc(max_decoded + 1);
       if (decoded == NULL) {
         mailimap_continue_req_free(cont_req);
@@ -1884,7 +1916,9 @@ int mailimap_authenticate(mailimap * session, const char * auth_type,
       mailimap_continue_req_free(cont_req);
     }
     
-    max_encoded = ((sasl_out_len + 2) / 3) * 4;
+    res = mailimap_sasl_get_encode_size(sasl_out_len, &max_encoded);
+    if (res != MAILIMAP_NO_ERROR)
+      goto free_sasl_conn;
     encoded = malloc(max_encoded + 1);
     if (encoded == NULL) {
       res = MAILIMAP_ERROR_MEMORY;

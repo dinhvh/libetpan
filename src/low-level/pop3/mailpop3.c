@@ -47,6 +47,7 @@
 #endif
 
 #include "mailpop3.h"
+#include <limits.h>
 #include <stdio.h>
 #include <string.h>
 #include "md5.h"
@@ -1394,6 +1395,33 @@ static int send_command_private(mailpop3 * f, char * command, int can_be_publish
 
 
 #ifdef USE_SASL
+static int mailpop3_sasl_get_decode_size(const char * str,
+    unsigned int * input_len, unsigned int * output_len)
+{
+  size_t len;
+
+  len = strlen(str);
+  if (len > UINT_MAX)
+    return MAILPOP3_ERROR_MEMORY;
+
+  * input_len = (unsigned int) len;
+  * output_len = (unsigned int) (len * 3 / 4);
+  return MAILPOP3_NO_ERROR;
+}
+
+static int mailpop3_sasl_get_encode_size(unsigned int input_len,
+    unsigned int * output_len)
+{
+  size_t len;
+
+  if ((size_t) input_len > (((size_t) UINT_MAX - 1) / 4) * 3)
+    return MAILPOP3_ERROR_MEMORY;
+
+  len = (((size_t) input_len + 2) / 3) * 4;
+  * output_len = (unsigned int) len;
+  return MAILPOP3_NO_ERROR;
+}
+
 static int sasl_getsimple(void * context, int id,
     const char ** result, unsigned * len)
 {
@@ -1584,8 +1612,10 @@ int mailpop3_auth(mailpop3 * f, const char * auth_type,
           if (p != NULL) {
             * p = '\0';
           }
-          response_len = (unsigned int) strlen(f->pop3_response);
-          max_decoded = response_len * 3 / 4;
+          res = mailpop3_sasl_get_decode_size(f->pop3_response,
+              &response_len, &max_decoded);
+          if (res != MAILPOP3_NO_ERROR)
+            goto free_sasl_conn;
           decoded = malloc(max_decoded + 1);
           if (decoded == NULL) {
             res = MAILPOP3_ERROR_MEMORY;
@@ -1612,7 +1642,9 @@ int mailpop3_auth(mailpop3 * f, const char * auth_type,
           }
         }
         
-        max_encoded = ((sasl_out_len + 2) / 3) * 4;
+        res = mailpop3_sasl_get_encode_size(sasl_out_len, &max_encoded);
+        if (res != MAILPOP3_NO_ERROR)
+          goto free_sasl_conn;
         encoded = malloc(max_encoded + 1);
         if (encoded == NULL) {
           res = MAILPOP3_ERROR_MEMORY;
