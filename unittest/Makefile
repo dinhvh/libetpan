@@ -8,7 +8,8 @@ CPPFLAGS += \
 	-I$(TOP)/src/data-types \
 	-I$(TOP)/src/low-level/imf \
 	-I$(TOP)/src/low-level/imap \
-	-I$(TOP)/src/low-level/mime
+	-I$(TOP)/src/low-level/mime \
+	-Icommon
 
 CFLAGS += -Wall -Wextra -Werror -g
 LDLIBS += $(TOP)/src/.libs/libetpan.a -lz -liconv -lsasl2 -lpthread
@@ -16,6 +17,9 @@ LDLIBS += $(TOP)/src/.libs/libetpan.a -lz -liconv -lsasl2 -lpthread
 IMAP_TEST = imap/imap_test
 IMF_TEST = imf/imf_test
 MIME_TEST = mime/mime_test
+MIME_PARSER_SERIALIZATION_TEST = mime-parser/mime_parser_serialization_test
+COMMON_TEST_SRCS = \
+	common/test_utils.c
 IMAP_TEST_SRCS = \
 	imap/main.c \
 	imap/response_data_test.c \
@@ -42,15 +46,21 @@ MIME_TEST_FIXTURES = \
 	mime/data/messages/rfc822-alternative.eml \
 	mime/data/messages/rfc822-multipart.eml
 MIME_TEST_DEPS = $(MIME_TEST_SRCS) mime/*.h $(MIME_TEST_FIXTURES)
+MIME_PARSER_SERIALIZATION_TEST_SRCS = \
+	mime-parser/main.c \
+	$(COMMON_TEST_SRCS)
+MIME_PARSER_SERIALIZATION_TEST_DEPS = \
+	$(MIME_PARSER_SERIALIZATION_TEST_SRCS) common/*.h
 
 .PHONY: all check clean
 
-all: $(IMAP_TEST) $(IMF_TEST) $(MIME_TEST)
+all: $(IMAP_TEST) $(IMF_TEST) $(MIME_TEST) $(MIME_PARSER_SERIALIZATION_TEST)
 
 check: all
 	@cd imap && ./imap_test
 	@cd imf && ./imf_test
 	@cd mime && ./mime_test
+	@cd mime-parser && ./mime_parser_serialization_test
 
 $(IMAP_TEST): $(IMAP_TEST_DEPS)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(IMAP_TEST_SRCS) $(LDLIBS) -o $@
@@ -61,8 +71,13 @@ $(IMF_TEST): $(IMF_TEST_DEPS)
 $(MIME_TEST): $(MIME_TEST_DEPS)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(MIME_TEST_SRCS) $(LDLIBS) -o $@
 
+$(MIME_PARSER_SERIALIZATION_TEST): $(MIME_PARSER_SERIALIZATION_TEST_DEPS)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(MIME_PARSER_SERIALIZATION_TEST_SRCS) $(LDLIBS) -o $@
+
 clean:
 	rm -f $(IMAP_TEST) $(IMF_TEST) $(MIME_TEST)
+	rm -f $(MIME_PARSER_SERIALIZATION_TEST)
 	rm -rf $(IMAP_TEST).dSYM
 	rm -rf $(IMF_TEST).dSYM
 	rm -rf $(MIME_TEST).dSYM
+	rm -rf $(MIME_PARSER_SERIALIZATION_TEST).dSYM
