@@ -1,0 +1,23 @@
+Return-Path: <sender@example.org>
+Received: from x.example by y.example; Fri, 21 Nov 1997 09:55:06 -0600
+Resent-Date: Fri, 21 Nov 1997 10:00:00 -0600
+Resent-From: Resender <resender@example.org>
+Resent-Sender: Sender <sender@example.org>
+Resent-To: Recipient <recipient@example.net>
+Resent-Cc: copy@example.net
+Resent-Bcc: blind@example.net
+Resent-Message-ID: <resent.123@example.org>
+Date: Fri, 21 Nov 1997 09:55:06 -0600
+From: John Q. Public <john.q.public@example.com>
+Sender: Michael Jones <mjones@example.com>
+Reply-To: Mary Smith <mary@example.net>
+To: A Group:Ed Jones <c@a.test>,joe@where.test,John <jdoe@one.test>;
+Cc: "Giant; \"Big\" Box" <sysservices@example.net>
+Bcc:
+Message-ID: <5678.21-Nov-1997@example.com>
+In-Reply-To: <1234@local.machine.example>
+References: <1234@local.machine.example> <3456@example.net>
+Subject: Saying Hello
+Comments: This is a comment field
+Keywords: hello, test
+X-Trace: custom optional field

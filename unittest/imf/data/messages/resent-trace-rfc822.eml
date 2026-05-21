@@ -1,0 +1,12 @@
+Return-Path: <from@example.com>
+Received: from x.example by y.example; Fri, 21 Nov 1997 09:55:06 -0600
+Resent-Date: Fri, 21 Nov 1997 10:00:00 -0600
+Resent-From: Resender <resender@example.org>
+Resent-To: Recipient <recipient@example.net>
+Resent-Message-ID: <resent@example.org>
+Date: Fri, 21 Nov 1997 09:55:06 -0600
+From: Original <original@example.com>
+To: Final <final@example.net>
+Message-ID: <original@example.com>
+
+Forwarded content.
