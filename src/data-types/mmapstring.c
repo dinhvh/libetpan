@@ -313,6 +313,13 @@ static MMAPString *
 mmap_string_maybe_expand (MMAPString* string,
 			  size_t len) 
 {
+  size_t needed_size;
+
+  if (len > MY_MAXSIZE - string->len - 1)
+    return NULL;
+
+  needed_size = string->len + len + 1;
+
   if (string->len + len >= string->allocated_len)
     {
       size_t old_size;
@@ -320,7 +327,11 @@ mmap_string_maybe_expand (MMAPString* string,
 
       old_size = string->allocated_len;
 
-      string->allocated_len = nearest_power (1, string->len + len + 1);
+      string->allocated_len = nearest_power (1, needed_size);
+      if (string->allocated_len < needed_size) {
+        string->allocated_len = old_size;
+        return NULL;
+      }
       
 #ifndef MMAP_UNAVAILABLE
       if (string->allocated_len > mmap_string_ceil)
