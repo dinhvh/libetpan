@@ -52,6 +52,442 @@
 int (*extended_charconv)(const char * tocode, const char * fromcode, const char * str, size_t length,
     char * result, size_t* result_len) = NULL;
 
+static int mutf7_base64_value(char ch)
+{
+  if (ch >= 'A' && ch <= 'Z')
+    return ch - 'A';
+  if (ch >= 'a' && ch <= 'z')
+    return ch - 'a' + 26;
+  if (ch >= '0' && ch <= '9')
+    return ch - '0' + 52;
+  if (ch == '+')
+    return 62;
+  if (ch == ',')
+    return 63;
+  return -1;
+}
+
+static int mutf7_is_direct(unsigned int cp)
+{
+  return (cp >= 0x20) && (cp <= 0x7e) && (cp != '&');
+}
+
+static int mutf7_append_utf8(char * output, size_t * output_len,
+    unsigned int cp)
+{
+  if (cp <= 0x7f) {
+    output[(*output_len)++] = (char) cp;
+  }
+  else if (cp <= 0x7ff) {
+    output[(*output_len)++] = (char) (0xc0 | (cp >> 6));
+    output[(*output_len)++] = (char) (0x80 | (cp & 0x3f));
+  }
+  else if (cp <= 0xffff) {
+    if ((cp >= 0xd800) && (cp <= 0xdfff))
+      return -1;
+    output[(*output_len)++] = (char) (0xe0 | (cp >> 12));
+    output[(*output_len)++] = (char) (0x80 | ((cp >> 6) & 0x3f));
+    output[(*output_len)++] = (char) (0x80 | (cp & 0x3f));
+  }
+  else if (cp <= 0x10ffff) {
+    output[(*output_len)++] = (char) (0xf0 | (cp >> 18));
+    output[(*output_len)++] = (char) (0x80 | ((cp >> 12) & 0x3f));
+    output[(*output_len)++] = (char) (0x80 | ((cp >> 6) & 0x3f));
+    output[(*output_len)++] = (char) (0x80 | (cp & 0x3f));
+  }
+  else {
+    return -1;
+  }
+
+  return 0;
+}
+
+static int mutf7_decode_utf16be(const unsigned char * bytes,
+    size_t byte_count, char * output, size_t * output_len)
+{
+  size_t i;
+
+  if ((byte_count % 2) != 0)
+    return -1;
+
+  for (i = 0 ; i < byte_count ; i += 2) {
+    unsigned int cp;
+
+    cp = ((unsigned int) bytes[i] << 8) | bytes[i + 1];
+    if ((cp >= 0xd800) && (cp <= 0xdbff)) {
+      unsigned int low;
+
+      if (i + 3 >= byte_count)
+        return -1;
+      low = ((unsigned int) bytes[i + 2] << 8) | bytes[i + 3];
+      if ((low < 0xdc00) || (low > 0xdfff))
+        return -1;
+      cp = 0x10000 + (((cp - 0xd800) << 10) | (low - 0xdc00));
+      i += 2;
+    }
+    else if ((cp >= 0xdc00) && (cp <= 0xdfff)) {
+      return -1;
+    }
+
+    if (mutf7_append_utf8(output, output_len, cp) < 0)
+      return -1;
+  }
+
+  return 0;
+}
+
+LIBETPAN_EXPORT
+char * charconv_decode_mutf7(const char * str)
+{
+  size_t input_len;
+  char * output;
+  size_t output_len;
+  size_t i;
+
+  if (str == NULL)
+    return NULL;
+
+  input_len = strlen(str);
+  output = malloc(input_len * 4 + 1);
+  if (output == NULL)
+    return NULL;
+
+  output_len = 0;
+  i = 0;
+
+  while (i < input_len) {
+    if (str[i] != '&') {
+      output[output_len++] = str[i++];
+      continue;
+    }
+
+    i++;
+    if (i < input_len && str[i] == '-') {
+      output[output_len++] = '&';
+      i++;
+      continue;
+    }
+
+    {
+      unsigned int bits;
+      unsigned int bit_count;
+      unsigned char * bytes;
+      size_t bytes_size;
+      size_t byte_count;
+      int has_base64;
+
+      bits = 0;
+      bit_count = 0;
+      bytes_size = input_len;
+      bytes = malloc(bytes_size + 1);
+      if (bytes == NULL)
+        goto err;
+      byte_count = 0;
+      has_base64 = 0;
+
+      while (i < input_len) {
+        int value;
+
+        value = mutf7_base64_value(str[i]);
+        if (value < 0)
+          break;
+        has_base64 = 1;
+        i++;
+        bits = (bits << 6) | (unsigned int) value;
+        bit_count += 6;
+        while (bit_count >= 8) {
+          bit_count -= 8;
+          bytes[byte_count++] =
+            (unsigned char) ((bits >> bit_count) & 0xff);
+        }
+        if (bit_count != 0)
+          bits &= (1U << bit_count) - 1;
+        else
+          bits = 0;
+      }
+
+      if (!has_base64) {
+        free(bytes);
+        goto err;
+      }
+
+      if (bit_count != 0) {
+        unsigned int mask;
+
+        mask = (1U << bit_count) - 1;
+        if ((bits & mask) != 0) {
+          free(bytes);
+          goto err;
+        }
+      }
+
+      if (mutf7_decode_utf16be(bytes, byte_count, output, &output_len) < 0) {
+        free(bytes);
+        goto err;
+      }
+      free(bytes);
+
+      if (i < input_len && str[i] == '-')
+        i++;
+    }
+  }
+
+  output[output_len] = '\0';
+  return output;
+
+ err:
+  free(output);
+  return NULL;
+}
+
+static int mutf7_output_reserve(char ** output, size_t * output_size,
+    size_t output_len, size_t needed)
+{
+  char * new_output;
+  size_t new_size;
+
+  if (output_len + needed + 1 <= *output_size)
+    return 0;
+
+  new_size = *output_size;
+  while (output_len + needed + 1 > new_size)
+    new_size *= 2;
+
+  new_output = realloc(*output, new_size);
+  if (new_output == NULL)
+    return -1;
+
+  *output = new_output;
+  *output_size = new_size;
+  return 0;
+}
+
+static int mutf7_output_char(char ** output, size_t * output_size,
+    size_t * output_len, char ch)
+{
+  if (mutf7_output_reserve(output, output_size, *output_len, 1) < 0)
+    return -1;
+
+  (*output)[(*output_len)++] = ch;
+  return 0;
+}
+
+static int mutf7_decode_utf8_char(const char * str, size_t input_len,
+    size_t * index, unsigned int * cp)
+{
+  const unsigned char * s;
+  unsigned char ch;
+
+  s = (const unsigned char *) str;
+  ch = s[*index];
+
+  if (ch <= 0x7f) {
+    *cp = ch;
+    (*index)++;
+    return 0;
+  }
+
+  if ((ch >= 0xc2) && (ch <= 0xdf)) {
+    if (*index + 1 >= input_len)
+      return -1;
+    if ((s[*index + 1] & 0xc0) != 0x80)
+      return -1;
+    *cp = ((unsigned int) (ch & 0x1f) << 6) |
+      (unsigned int) (s[*index + 1] & 0x3f);
+    *index += 2;
+    return 0;
+  }
+
+  if ((ch >= 0xe0) && (ch <= 0xef)) {
+    if (*index + 2 >= input_len)
+      return -1;
+    if (((s[*index + 1] & 0xc0) != 0x80) ||
+        ((s[*index + 2] & 0xc0) != 0x80))
+      return -1;
+    if ((ch == 0xe0) && (s[*index + 1] < 0xa0))
+      return -1;
+    if ((ch == 0xed) && (s[*index + 1] >= 0xa0))
+      return -1;
+    *cp = ((unsigned int) (ch & 0x0f) << 12) |
+      ((unsigned int) (s[*index + 1] & 0x3f) << 6) |
+      (unsigned int) (s[*index + 2] & 0x3f);
+    *index += 3;
+    return 0;
+  }
+
+  if ((ch >= 0xf0) && (ch <= 0xf4)) {
+    if (*index + 3 >= input_len)
+      return -1;
+    if (((s[*index + 1] & 0xc0) != 0x80) ||
+        ((s[*index + 2] & 0xc0) != 0x80) ||
+        ((s[*index + 3] & 0xc0) != 0x80))
+      return -1;
+    if ((ch == 0xf0) && (s[*index + 1] < 0x90))
+      return -1;
+    if ((ch == 0xf4) && (s[*index + 1] >= 0x90))
+      return -1;
+    *cp = ((unsigned int) (ch & 0x07) << 18) |
+      ((unsigned int) (s[*index + 1] & 0x3f) << 12) |
+      ((unsigned int) (s[*index + 2] & 0x3f) << 6) |
+      (unsigned int) (s[*index + 3] & 0x3f);
+    *index += 4;
+    return 0;
+  }
+
+  return -1;
+}
+
+static int mutf7_encode_shift_byte(char ** output, size_t * output_size,
+    size_t * output_len, unsigned int * bits, unsigned int * bit_count,
+    unsigned char byte)
+{
+  static const char alphabet[] =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+,";
+
+  *bits = (*bits << 8) | byte;
+  *bit_count += 8;
+  while (*bit_count >= 6) {
+    *bit_count -= 6;
+    if (mutf7_output_char(output, output_size, output_len,
+          alphabet[(*bits >> *bit_count) & 0x3f]) < 0)
+      return -1;
+  }
+
+  if (*bit_count != 0)
+    *bits &= (1U << *bit_count) - 1;
+  else
+    *bits = 0;
+
+  return 0;
+}
+
+static int mutf7_encode_shift_codepoint(char ** output,
+    size_t * output_size, size_t * output_len, unsigned int * bits,
+    unsigned int * bit_count, unsigned int cp)
+{
+  if (cp <= 0xffff) {
+    if (mutf7_encode_shift_byte(output, output_size, output_len,
+          bits, bit_count, (unsigned char) (cp >> 8)) < 0)
+      return -1;
+    return mutf7_encode_shift_byte(output, output_size, output_len,
+        bits, bit_count, (unsigned char) (cp & 0xff));
+  }
+  else {
+    unsigned int value;
+    unsigned int high;
+    unsigned int low;
+
+    value = cp - 0x10000;
+    high = 0xd800 | (value >> 10);
+    low = 0xdc00 | (value & 0x3ff);
+
+    if (mutf7_encode_shift_codepoint(output, output_size, output_len,
+          bits, bit_count, high) < 0)
+      return -1;
+    return mutf7_encode_shift_codepoint(output, output_size, output_len,
+        bits, bit_count, low);
+  }
+}
+
+static int mutf7_flush_shift(char ** output, size_t * output_size,
+    size_t * output_len, unsigned int * bits, unsigned int * bit_count)
+{
+  static const char alphabet[] =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+,";
+
+  if (*bit_count != 0) {
+    if (mutf7_output_char(output, output_size, output_len,
+          alphabet[(*bits << (6 - *bit_count)) & 0x3f]) < 0)
+      return -1;
+  }
+
+  *bits = 0;
+  *bit_count = 0;
+  return mutf7_output_char(output, output_size, output_len, '-');
+}
+
+LIBETPAN_EXPORT
+char * charconv_encode_mutf7(const char * str)
+{
+  char * output;
+  size_t output_size;
+  size_t output_len;
+  size_t input_len;
+  size_t i;
+  int in_shift;
+  unsigned int bits;
+  unsigned int bit_count;
+
+  if (str == NULL)
+    return NULL;
+
+  input_len = strlen(str);
+  output_size = input_len * 2 + 16;
+  output = malloc(output_size);
+  if (output == NULL)
+    return NULL;
+
+  output_len = 0;
+  i = 0;
+  in_shift = 0;
+  bits = 0;
+  bit_count = 0;
+
+  while (i < input_len) {
+    unsigned int cp;
+
+    if (mutf7_decode_utf8_char(str, input_len, &i, &cp) < 0)
+      goto err;
+
+    if (mutf7_is_direct(cp)) {
+      if (in_shift) {
+        if (mutf7_flush_shift(&output, &output_size, &output_len,
+              &bits, &bit_count) < 0)
+          goto err;
+        in_shift = 0;
+      }
+      if (mutf7_output_char(&output, &output_size, &output_len,
+            (char) cp) < 0)
+        goto err;
+    }
+    else if (cp == '&') {
+      if (in_shift) {
+        if (mutf7_flush_shift(&output, &output_size, &output_len,
+              &bits, &bit_count) < 0)
+          goto err;
+        in_shift = 0;
+      }
+      if (mutf7_output_reserve(&output, &output_size, output_len, 2) < 0)
+        goto err;
+      output[output_len++] = '&';
+      output[output_len++] = '-';
+    }
+    else {
+      if (!in_shift) {
+        if (mutf7_output_char(&output, &output_size, &output_len, '&') < 0)
+          goto err;
+        in_shift = 1;
+      }
+      if (mutf7_encode_shift_codepoint(&output, &output_size, &output_len,
+            &bits, &bit_count, cp) < 0)
+        goto err;
+    }
+  }
+
+  if (in_shift) {
+    if (mutf7_flush_shift(&output, &output_size, &output_len,
+          &bits, &bit_count) < 0)
+      goto err;
+  }
+
+  output[output_len] = '\0';
+  return output;
+
+ err:
+  free(output);
+  return NULL;
+}
+
 #ifdef HAVE_ICONV
 static size_t mail_iconv (iconv_t cd, const char **inbuf, size_t *inbytesleft,
     char **outbuf, size_t *outbytesleft,

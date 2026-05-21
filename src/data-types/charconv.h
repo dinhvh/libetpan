@@ -77,6 +77,12 @@ int charconv_buffer(const char * tocode, const char * fromcode,
 LIBETPAN_EXPORT
 void charconv_buffer_free(char * str);
 
+LIBETPAN_EXPORT
+char * charconv_decode_mutf7(const char * str);
+
+LIBETPAN_EXPORT
+char * charconv_encode_mutf7(const char * str);
+
 #ifdef __cplusplus
 }
 #endif
