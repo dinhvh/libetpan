@@ -13,11 +13,16 @@ CPPFLAGS += \
 
 CFLAGS += -Wall -Wextra -Werror -g
 LDLIBS += $(TOP)/src/.libs/libetpan.a -lz -liconv -lsasl2 -lpthread
+XML2_CPPFLAGS := -I$(shell xcrun --show-sdk-path)/usr/include/libxml2
+XML2_LDLIBS := -lxml2
+TIDY_CPPFLAGS := $(shell pkg-config --cflags tidy 2>/dev/null || printf '%s' "-I$$(brew --prefix tidy-html5)/include")
+TIDY_LDLIBS := $(shell pkg-config --libs tidy 2>/dev/null || printf '%s' "-L$$(brew --prefix tidy-html5)/lib -ltidy")
 
 IMAP_TEST = imap/imap_test
 IMF_TEST = imf/imf_test
 MIME_TEST = mime/mime_test
 MIME_PARSER_SERIALIZATION_TEST = mime-parser/mime_parser_serialization_test
+PLAINTEXT_RENDERING_TEST = plaintext-rendering/plaintext_rendering_test
 COMMON_TEST_SRCS = \
 	common/test_utils.c
 IMAP_TEST_SRCS = \
@@ -49,18 +54,26 @@ MIME_TEST_DEPS = $(MIME_TEST_SRCS) mime/*.h $(MIME_TEST_FIXTURES)
 MIME_PARSER_SERIALIZATION_TEST_SRCS = \
 	mime-parser/main.c \
 	$(COMMON_TEST_SRCS)
+PLAINTEXT_RENDERING_TEST_SRCS = \
+	plaintext-rendering/main.c \
+	plaintext-rendering/html_cleaner.c \
+	plaintext-rendering/html_flattener.c \
+	$(COMMON_TEST_SRCS)
 MIME_PARSER_SERIALIZATION_TEST_DEPS = \
 	$(MIME_PARSER_SERIALIZATION_TEST_SRCS) common/*.h
+PLAINTEXT_RENDERING_TEST_DEPS = $(PLAINTEXT_RENDERING_TEST_SRCS) common/*.h
 
 .PHONY: all check clean
 
-all: $(IMAP_TEST) $(IMF_TEST) $(MIME_TEST) $(MIME_PARSER_SERIALIZATION_TEST)
+all: $(IMAP_TEST) $(IMF_TEST) $(MIME_TEST) $(MIME_PARSER_SERIALIZATION_TEST) \
+	$(PLAINTEXT_RENDERING_TEST)
 
 check: all
 	@cd imap && ./imap_test
 	@cd imf && ./imf_test
 	@cd mime && ./mime_test
 	@cd mime-parser && ./mime_parser_serialization_test
+	@cd plaintext-rendering && ./plaintext_rendering_test
 
 $(IMAP_TEST): $(IMAP_TEST_DEPS)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(IMAP_TEST_SRCS) $(LDLIBS) -o $@
@@ -74,10 +87,15 @@ $(MIME_TEST): $(MIME_TEST_DEPS)
 $(MIME_PARSER_SERIALIZATION_TEST): $(MIME_PARSER_SERIALIZATION_TEST_DEPS)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(MIME_PARSER_SERIALIZATION_TEST_SRCS) $(LDLIBS) -o $@
 
+$(PLAINTEXT_RENDERING_TEST): $(PLAINTEXT_RENDERING_TEST_DEPS)
+	$(CC) $(CPPFLAGS) $(XML2_CPPFLAGS) $(TIDY_CPPFLAGS) $(CFLAGS) $(PLAINTEXT_RENDERING_TEST_SRCS) $(LDLIBS) $(XML2_LDLIBS) $(TIDY_LDLIBS) -o $@
+
 clean:
 	rm -f $(IMAP_TEST) $(IMF_TEST) $(MIME_TEST)
 	rm -f $(MIME_PARSER_SERIALIZATION_TEST)
+	rm -f $(PLAINTEXT_RENDERING_TEST)
 	rm -rf $(IMAP_TEST).dSYM
 	rm -rf $(IMF_TEST).dSYM
 	rm -rf $(MIME_TEST).dSYM
 	rm -rf $(MIME_PARSER_SERIALIZATION_TEST).dSYM
+	rm -rf $(PLAINTEXT_RENDERING_TEST).dSYM
