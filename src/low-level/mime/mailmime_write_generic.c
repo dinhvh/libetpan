@@ -321,7 +321,7 @@ static int mailmime_location_write_driver(int (* do_write)(void *, const char *,
                                    char *location)
 {
   int r;
-  int len = strlen(location);
+  size_t len = strlen(location);
 
   r = mailimf_string_write_driver(do_write, data, col, "Content-Location: ", 18);
   if (r != MAILIMF_NO_ERROR)
