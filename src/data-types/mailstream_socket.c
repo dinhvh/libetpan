@@ -296,23 +296,27 @@ static ssize_t mailstream_low_socket_read(mailstream_low * s,
   }
   
   if (socket_data->use_read) {
-    r = read(socket_data->fd, buf, count);
+    ssize_t read_bytes;
+
+    read_bytes = read(socket_data->fd, buf, count);
+    return read_bytes;
   }
   else {
-    r = recv(socket_data->fd, buf, count, 0);
+    ssize_t read_bytes;
+
+    read_bytes = recv(socket_data->fd, buf, count, 0);
 #ifdef WIN32
-    if (SOCKET_ERROR == r) {
+    if (SOCKET_ERROR == read_bytes) {
       if (WSAEWOULDBLOCK == WSAGetLastError()) {
-        r = 0;
+        read_bytes = 0;
       }
-    } else if (r == 0 && count > 0) {
+    } else if (read_bytes == 0 && count > 0) {
       /* The socket is gracefully closed */
-      r = SOCKET_ERROR;
+      read_bytes = SOCKET_ERROR;
     }
 #endif
+    return read_bytes;
   }
-
-  return r;
 }
 
 static ssize_t mailstream_low_socket_write(mailstream_low * s,
@@ -411,17 +415,21 @@ static ssize_t mailstream_low_socket_write(mailstream_low * s,
       return 0;
   }
   
-  r = send(socket_data->fd, buf, count, 0);
+  {
+    ssize_t written;
+
+    written = send(socket_data->fd, buf, count, 0);
 
 #ifdef WIN32
-  if (SOCKET_ERROR == r) {
-    if (WSAEWOULDBLOCK == WSAGetLastError()) {
-      r = 0;
+    if (SOCKET_ERROR == written) {
+      if (WSAEWOULDBLOCK == WSAGetLastError()) {
+        written = 0;
+      }
     }
-  }
 #endif
 
-  return r;
+    return written;
+  }
 }
 
 
