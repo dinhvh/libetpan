@@ -122,6 +122,8 @@ struct mailstream_cfstream_data {
 #if HAVE_CFNETWORK
 static int low_open(mailstream_low * s);
 static void cfstream_data_close(struct mailstream_cfstream_data * socket_data);
+static int cfstream_evaluate_trust(SecTrustRef secTrust);
+static CFArrayRef cfstream_copy_trust_certificates(SecTrustRef secTrust);
 #endif
 
 /* mailstream_low, socket */
@@ -194,6 +196,30 @@ static void cfstream_data_close(struct mailstream_cfstream_data * cfstream_data)
     CFRelease(cfstream_data->readStream);
     cfstream_data->readStream = NULL;
   }
+}
+
+static int cfstream_evaluate_trust(SecTrustRef secTrust)
+{
+  if (__builtin_available(macOS 10.14, iOS 13.0, *)) {
+    CFErrorRef error = NULL;
+    Boolean trusted;
+
+    trusted = SecTrustEvaluateWithError(secTrust, &error);
+    if (error != NULL)
+      CFRelease(error);
+
+    return trusted ? 0 : -1;
+  }
+
+  return -1;
+}
+
+static CFArrayRef cfstream_copy_trust_certificates(SecTrustRef secTrust)
+{
+  if (__builtin_available(macOS 12.0, iOS 15.0, *))
+    return SecTrustCopyCertificateChain(secTrust);
+
+  return NULL;
 }
 #endif
 
@@ -964,10 +990,8 @@ int mailstream_cfstream_set_ssl_enabled(mailstream * s, int ssl_enabled)
         CFDictionarySetValue(settings, kCFStreamSSLLevel, kCFStreamSocketSecurityLevelNone);
         break;
       case MAILSTREAM_CFSTREAM_SSL_LEVEL_SSLv2:
-        CFDictionarySetValue(settings, kCFStreamSSLLevel, kCFStreamSocketSecurityLevelSSLv2);
-        break;
       case MAILSTREAM_CFSTREAM_SSL_LEVEL_SSLv3:
-        CFDictionarySetValue(settings, kCFStreamSSLLevel, kCFStreamSocketSecurityLevelSSLv3);
+        CFDictionarySetValue(settings, kCFStreamSSLLevel, kCFStreamSocketSecurityLevelNegotiatedSSL);
         break;
       case MAILSTREAM_CFSTREAM_SSL_LEVEL_TLSv1:
         CFDictionarySetValue(settings, kCFStreamSSLLevel, kCFStreamSocketSecurityLevelTLSv1);
@@ -977,16 +1001,7 @@ int mailstream_cfstream_set_ssl_enabled(mailstream * s, int ssl_enabled)
         break;
     }
     
-    if ((cfstream_data->ssl_certificate_verification_mask & MAILSTREAM_CFSTREAM_SSL_ALLOWS_EXPIRED_CERTIFICATES) != 0) {
-      CFDictionarySetValue(settings, kCFStreamSSLAllowsExpiredCertificates, kCFBooleanTrue);
-    }
-    if ((cfstream_data->ssl_certificate_verification_mask & MAILSTREAM_CFSTREAM_SSL_ALLOWS_EXPIRED_ROOTS) != 0) {
-      CFDictionarySetValue(settings, kCFStreamSSLAllowsExpiredRoots, kCFBooleanTrue);
-    }
-    if ((cfstream_data->ssl_certificate_verification_mask & MAILSTREAM_CFSTREAM_SSL_ALLOWS_ANY_ROOT) != 0) {
-      CFDictionarySetValue(settings, kCFStreamSSLAllowsAnyRoot, kCFBooleanTrue);
-    }
-    if ((cfstream_data->ssl_certificate_verification_mask & MAILSTREAM_CFSTREAM_SSL_DISABLE_VALIDATES_CERTIFICATE_CHAIN) != 0) {
+    if (cfstream_data->ssl_certificate_verification_mask != 0) {
       CFDictionarySetValue(settings, kCFStreamSSLValidatesCertificateChain, kCFBooleanFalse);
     }
     
@@ -1007,7 +1022,6 @@ int mailstream_cfstream_set_ssl_enabled(mailstream * s, int ssl_enabled)
   // We need to investigate more about how to establish a STARTTLS connection.
   // For now, wait until we get the certificate chain.
   
-  CFArrayRef certs;
   SecTrustRef secTrust;
   while (1) {
     r = wait_runloop(s->low, STATE_WAIT_SSL);
@@ -1021,21 +1035,22 @@ int mailstream_cfstream_set_ssl_enabled(mailstream * s, int ssl_enabled)
     
     secTrust = (SecTrustRef)CFReadStreamCopyProperty(cfstream_data->readStream, kCFStreamPropertySSLPeerTrust);
     if (secTrust) {
-        // SecTrustEvaluate() needs to be called before SecTrustGetCertificateCount() in Mac OS X <= 10.8
-        SecTrustEvaluate(secTrust, NULL);
-        count = SecTrustGetCertificateCount(secTrust);
-        CFRelease(secTrust);
-    }
-    else {
-        certs = CFReadStreamCopyProperty(cfstream_data->readStream, kCFStreamPropertySSLPeerCertificates);
+        CFArrayRef certs;
+
+        cfstream_evaluate_trust(secTrust);
+        certs = cfstream_copy_trust_certificates(secTrust);
         if (certs) {
             count = CFArrayGetCount(certs);
             CFRelease(certs);
         }
         else {
-            // No trust and no certs, wait more.
-            continue;
+            count = 0;
         }
+        CFRelease(secTrust);
+    }
+    else {
+        // No trust, wait more.
+        continue;
     }
       
     if (count == 0) {
@@ -1228,20 +1243,25 @@ static carray * mailstream_low_cfstream_get_certificate_chain(mailstream_low * s
     
   SecTrustRef secTrust = (SecTrustRef)CFReadStreamCopyProperty(cfstream_data->readStream, kCFStreamPropertySSLPeerTrust);
   if (secTrust) {
-      SecTrustResultType trustResult;
-      // SecTrustEvaluate() needs to be called before SecTrustGetCertificateCount() in Mac OS X <= 10.8
-      SecTrustEvaluate(secTrust, &trustResult);
-      count = SecTrustGetCertificateCount(secTrust);
+      cfstream_evaluate_trust(secTrust);
+      certs = cfstream_copy_trust_certificates(secTrust);
+      if (certs == NULL) {
+        CFRelease(secTrust);
+        return NULL;
+      }
+      count = CFArrayGetCount(certs);
       result = carray_new(4);
       if (result == NULL) {
+        CFRelease(certs);
         CFRelease(secTrust);
         return NULL;
       }
       for(i = 0 ; i < count ; i ++) {
-          SecCertificateRef cert = (SecCertificateRef) SecTrustGetCertificateAtIndex(secTrust, i);
+          SecCertificateRef cert = (SecCertificateRef) CFArrayGetValueAtIndex(certs, i);
           CFDataRef data = SecCertificateCopyData(cert);
           if (data == NULL) {
             mailstream_low_cfstream_certificate_chain_free(result);
+            CFRelease(certs);
             CFRelease(secTrust);
             return NULL;
           }
@@ -1251,6 +1271,7 @@ static carray * mailstream_low_cfstream_get_certificate_chain(mailstream_low * s
           if (str == NULL) {
             CFRelease(data);
             mailstream_low_cfstream_certificate_chain_free(result);
+            CFRelease(certs);
             CFRelease(secTrust);
             return NULL;
           }
@@ -1258,6 +1279,7 @@ static carray * mailstream_low_cfstream_get_certificate_chain(mailstream_low * s
             mmap_string_free(str);
             CFRelease(data);
             mailstream_low_cfstream_certificate_chain_free(result);
+            CFRelease(certs);
             CFRelease(secTrust);
             return NULL;
           }
@@ -1265,60 +1287,17 @@ static carray * mailstream_low_cfstream_get_certificate_chain(mailstream_low * s
             mmap_string_free(str);
             CFRelease(data);
             mailstream_low_cfstream_certificate_chain_free(result);
+            CFRelease(certs);
             CFRelease(secTrust);
             return NULL;
           }
           CFRelease(data);
       }
+      CFRelease(certs);
       CFRelease(secTrust);
   }
   else {
-      certs = CFReadStreamCopyProperty(cfstream_data->readStream, kCFStreamPropertySSLPeerCertificates);
-      if (certs) {
-          count = CFArrayGetCount(certs);
-          result = carray_new(4);
-          if (result == NULL) {
-            CFRelease(certs);
-            return NULL;
-          }
-          for(i = 0 ; i < count ; i ++) {
-              SecCertificateRef cert = (SecCertificateRef) CFArrayGetValueAtIndex(certs, i);
-              CFDataRef data = SecCertificateCopyData(cert);
-              if (data == NULL) {
-                mailstream_low_cfstream_certificate_chain_free(result);
-                CFRelease(certs);
-                return NULL;
-              }
-              CFIndex length = CFDataGetLength(data);
-              const UInt8 * bytes = CFDataGetBytePtr(data);
-              MMAPString * str = mmap_string_sized_new(length);
-              if (str == NULL) {
-                CFRelease(data);
-                mailstream_low_cfstream_certificate_chain_free(result);
-                CFRelease(certs);
-                return NULL;
-              }
-              if (mmap_string_append_len(str, (char*) bytes, length) == NULL) {
-                mmap_string_free(str);
-                CFRelease(data);
-                mailstream_low_cfstream_certificate_chain_free(result);
-                CFRelease(certs);
-                return NULL;
-              }
-              if (carray_add(result, str, NULL) < 0) {
-                mmap_string_free(str);
-                CFRelease(data);
-                mailstream_low_cfstream_certificate_chain_free(result);
-                CFRelease(certs);
-                return NULL;
-              }
-              CFRelease(data);
-          }
-          CFRelease(certs);
-      }
-      else {
-          return NULL;
-      }
+      return NULL;
   }
     
   return result;
