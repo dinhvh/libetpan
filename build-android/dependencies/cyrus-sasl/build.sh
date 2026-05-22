@@ -41,7 +41,7 @@ function build {
   if test ! -f "$current_dir/$package_name-$build_version/include/sasl/sasl.h" ; then
     mkdir -p "$current_dir/$package_name-$build_version"
     mkdir -p "$current_dir/$package_name-$build_version/include/sasl"
-    public_headers="hmac-md5.h md5.h md5global.h sasl.h saslplug.h saslutil.h prop.h"
+    public_headers="md5.h sasl.h saslplug.h saslutil.h prop.h"
     cd "$current_dir/src/$ARCHIVE/include"
     cp -R $public_headers "$current_dir/$package_name-$build_version/include/sasl"
   fi

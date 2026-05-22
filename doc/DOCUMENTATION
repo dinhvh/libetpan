@@ -335,9 +335,7 @@ cinthash.[ch]           -- a hash table which keys are integers
                              (should be removed and replaced with chash)
 clist.[ch]              -- a double-linked list
 connect.[ch]            -- easy interface to connect a TCP server
-hmac_md5.h
-md5.[ch]
-md5global.h             -- MD5 calculation
+md5.[ch]                -- MD5 calculation
 mail.h                  -- some constants
 maildb_helper.[ch]      -- wrappers to DB 2.x 3.x or 4.x
 maillock.[ch]           -- safely lock a given file

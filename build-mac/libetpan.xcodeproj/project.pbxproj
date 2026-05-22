@@ -653,7 +653,6 @@
 		C6F9E858105335BC0059C3BA /* clist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = clist.h; sourceTree = "<group>"; };
 		C6F9E859105335BC0059C3BA /* connect.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = connect.c; sourceTree = "<group>"; };
 		C6F9E85A105335BC0059C3BA /* connect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = connect.h; sourceTree = "<group>"; };
-		C6F9E85B105335BC0059C3BA /* hmac-md5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "hmac-md5.h"; sourceTree = "<group>"; };
 		C6F9E85C105335BC0059C3BA /* mail.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mail.h; sourceTree = "<group>"; };
 		C6F9E85D105335BC0059C3BA /* mail_cache_db.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mail_cache_db.c; sourceTree = "<group>"; };
 		C6F9E85E105335BC0059C3BA /* mail_cache_db.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mail_cache_db.h; sourceTree = "<group>"; };
@@ -681,7 +680,6 @@
 		C6F9E874105335BC0059C3BA /* mailstream_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mailstream_types.h; sourceTree = "<group>"; };
 		C6F9E878105335BC0059C3BA /* md5.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = md5.c; sourceTree = "<group>"; };
 		C6F9E879105335BC0059C3BA /* md5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = md5.h; sourceTree = "<group>"; };
-		C6F9E87A105335BC0059C3BA /* md5global.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = md5global.h; sourceTree = "<group>"; };
 		C6F9E87B105335BC0059C3BA /* mmapstring.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mmapstring.c; sourceTree = "<group>"; };
 		C6F9E87C105335BC0059C3BA /* mmapstring.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mmapstring.h; sourceTree = "<group>"; };
 		C6F9E87D105335BC0059C3BA /* mmapstring_private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mmapstring_private.h; sourceTree = "<group>"; };
@@ -1089,7 +1087,6 @@
 				C6F9E858105335BC0059C3BA /* clist.h */,
 				C6F9E859105335BC0059C3BA /* connect.c */,
 				C6F9E85A105335BC0059C3BA /* connect.h */,
-				C6F9E85B105335BC0059C3BA /* hmac-md5.h */,
 				C6F9E85C105335BC0059C3BA /* mail.h */,
 				C6F9E85D105335BC0059C3BA /* mail_cache_db.c */,
 				C6F9E85E105335BC0059C3BA /* mail_cache_db.h */,
@@ -1121,7 +1118,6 @@
 				C6F9E874105335BC0059C3BA /* mailstream_types.h */,
 				C6F9E878105335BC0059C3BA /* md5.c */,
 				C6F9E879105335BC0059C3BA /* md5.h */,
-				C6F9E87A105335BC0059C3BA /* md5global.h */,
 				BD5495471BEAC5EB00E7974E /* md5namespace.h */,
 				C6F9E87B105335BC0059C3BA /* mmapstring.c */,
 				C6F9E87C105335BC0059C3BA /* mmapstring.h */,
