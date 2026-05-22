@@ -1262,7 +1262,6 @@ mailimap_custom_string_parse(mailstream * fd, MMAPString * buffer, struct mailim
 {
   size_t begin;
   size_t end;
-  char * gstr;
 
   begin = * indx;
 
