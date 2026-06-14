@@ -11,11 +11,13 @@
 *.suo
 *.ncb
 *.user
+*~
 
 project.xcworkspace/
 xcuserdata/
 
 /build-mac/autogen-result.md5
+/.build/
 /build-mac/build
 /build-mac/include
 /build-mac/dependencies/build/
@@ -40,7 +42,6 @@ xcuserdata/
 /doc/Makefile.in
 /include/Makefile
 /include/Makefile.in
-/include/libetpan/
 /install-sh
 /libetpan-config
 /libetpan-config.h

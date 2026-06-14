@@ -813,6 +813,3 @@ done
 AC_SUBST(cfg_files)
 
 AC_OUTPUT
-
-cp -f ${crd}/src/main/libetpan_version.h ${crd}/build-windows
-cd build-windows ; ./gen-public-headers.sh > build_headers.list ; cd ..
