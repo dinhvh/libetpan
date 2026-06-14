@@ -4,9 +4,9 @@ set -eu
 
 script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 top_srcdir=$(CDPATH= cd -- "$script_dir/.." && pwd)
-public_include_dir="$top_srcdir/include/libetpan"
-tmp_list="$top_srcdir/include/.spm-public-headers.tmp"
-tmp_unsorted_list="$top_srcdir/include/.spm-public-headers.unsorted.tmp"
+public_include_dir="$top_srcdir/build-spm/include/libetpan"
+tmp_list="$top_srcdir/build-spm/include/.spm-public-headers.tmp"
+tmp_unsorted_list="$top_srcdir/build-spm/include/.spm-public-headers.unsorted.tmp"
 
 files=""
 
@@ -69,8 +69,8 @@ while IFS= read -r header ; do
 done < "$tmp_list"
 
 cat > "$public_include_dir/README.me" <<'EOF'
-This directory contains copies of libEtPan public headers for build systems
-that need a single public include directory, such as Swift Package Manager.
+This directory contains copies of libEtPan public headers for Swift Package
+Manager.
 
 Do not edit these headers in place. Edit the source headers under src/ or the
 generated headers at the repository root, then run:

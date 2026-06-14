@@ -35,7 +35,7 @@ checked-in release artifacts.
 
    - `build-windows/libetpan_version.h`
    - `build-windows/build_headers.list`
-   - `include/libetpan/` public headers for Swift Package Manager
+   - `build-spm/include/libetpan/` public headers for Swift Package Manager
 
 4. Review the generated changes.
 
