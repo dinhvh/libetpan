@@ -140,8 +140,7 @@ Rotation is separate from addition to prevent recomputation.
 /* MD5 initialization. Begins an MD5 operation, writing a new context.
 */
 
-void MD5Init (context)
-MD5_CTX *context; /* context */
+void MD5Init (MD5_CTX *context)
 {
        context->count[0] = context->count[1] = 0; 
 
@@ -158,10 +157,8 @@ MD5_CTX *context; /* context */
        operation, processing another message block, and updating the context. 
 */
 
-void MD5Update (context, input, inputLen)
-MD5_CTX *context; /* context */
-const unsigned char *input; /* input block */
-unsigned int inputLen; /* length of input block */
+void MD5Update (MD5_CTX *context, const unsigned char *input,
+    unsigned int inputLen)
 {
        unsigned int i, indx, partLen; 
 
@@ -204,9 +201,7 @@ unsigned int inputLen; /* length of input block */
 
         */
 
-void MD5Final (digest, context)
-unsigned char digest[16]; /* message digest */
-MD5_CTX *context; /* context */
+void MD5Final (unsigned char digest[16], MD5_CTX *context)
 {
        unsigned char bits[8]; 
        unsigned int indx, padLen; 
@@ -237,9 +232,7 @@ MD5_CTX *context; /* context */
 
         */
 
-static void MD5Transform (state, block)
-UINT4 state[4];
-const unsigned char block[64];
+static void MD5Transform (UINT4 state[4], const unsigned char block[64])
 {
        UINT4 a = state[0], b = state[1], c = state[2], d = state[3], x[16]; 
 
@@ -332,10 +325,7 @@ const unsigned char block[64];
 
         */
 
-static void Encode (output, input, len)
-unsigned char *output;
-UINT4 *input;
-unsigned int len;
+static void Encode (unsigned char *output, UINT4 *input, unsigned int len)
 {
        unsigned int i, j; 
 
@@ -352,10 +342,8 @@ unsigned int len;
 
         */
 
-static void Decode (output, input, len)
-UINT4 *output;
-const unsigned char *input;
-unsigned int len;
+static void Decode (UINT4 *output, const unsigned char *input,
+    unsigned int len)
 {
        unsigned int i, j; 
 
@@ -368,10 +356,7 @@ unsigned int len;
 
         */
 
-static void MD5_memcpy (output, input, len)
-POINTER output;
-CONST_POINTER input;
-unsigned int len;
+static void MD5_memcpy (POINTER output, CONST_POINTER input, unsigned int len)
 {
        unsigned int i; 
 
@@ -382,10 +367,7 @@ unsigned int len;
 /* Note: Replace "for loop" with standard memset if possible.
 */
 
-static void MD5_memset (output, value, len)
-POINTER output;
-int value;
-unsigned int len;
+static void MD5_memset (POINTER output, int value, unsigned int len)
 {
        unsigned int i; 
 
@@ -503,12 +485,8 @@ void hmac_md5_final(unsigned char digest[HMAC_MD5_SIZE],
 }
 
 
-void hmac_md5(text, text_len, key, key_len, digest)
-const unsigned char* text; /* pointer to data stream */
-int text_len; /* length of data stream */
-const unsigned char* key; /* pointer to authentication key */
-int key_len; /* length of authentication key */
-unsigned char *digest; /* caller digest to be filled in */
+void hmac_md5(const unsigned char *text, int text_len,
+    const unsigned char *key, int key_len, unsigned char *digest)
 {
   MD5_CTX context; 
 

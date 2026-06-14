@@ -26,6 +26,7 @@ MIME_PARSER_SERIALIZATION_TEST = mime-parser/mime_parser_serialization_test
 CHARSET_DETECTION_TEST = charset-detection/charset_detection_test
 PLAINTEXT_RENDERING_TEST = plaintext-rendering/plaintext_rendering_test
 IMAP_UTF7_TEST = imap-utf7/imap_utf7_test
+DATA_TYPES_TEST = data-types/data_types_test
 COMMON_TEST_SRCS = \
 	common/test_utils.c
 IMAP_TEST_SRCS = \
@@ -74,6 +75,9 @@ PLAINTEXT_RENDERING_TEST_SRCS = \
 	$(COMMON_TEST_SRCS)
 IMAP_UTF7_TEST_SRCS = \
 	imap-utf7/main.c
+DATA_TYPES_TEST_SRCS = \
+	data-types/md5_test.c \
+	$(TOP)/src/data-types/md5.c
 MIME_BUILDER_TEST_DEPS = $(MIME_BUILDER_TEST_SRCS) common/*.h \
 	mime-builder/data/input/photo.jpg \
 	mime-builder/data/input/photo2.jpg \
@@ -85,12 +89,16 @@ MIME_PARSER_SERIALIZATION_TEST_DEPS = \
 CHARSET_DETECTION_TEST_DEPS = $(CHARSET_DETECTION_TEST_SRCS) common/*.h
 PLAINTEXT_RENDERING_TEST_DEPS = $(PLAINTEXT_RENDERING_TEST_SRCS) common/*.h
 IMAP_UTF7_TEST_DEPS = $(IMAP_UTF7_TEST_SRCS)
+DATA_TYPES_TEST_DEPS = $(DATA_TYPES_TEST_SRCS) \
+	$(TOP)/src/data-types/md5.h \
+	$(TOP)/src/data-types/md5global.h \
+	$(TOP)/src/data-types/hmac-md5.h
 
 .PHONY: all check clean
 
 all: $(IMAP_TEST) $(IMF_TEST) $(MIME_TEST) $(MIME_BUILDER_TEST) \
 	$(MIME_PARSER_SERIALIZATION_TEST) $(CHARSET_DETECTION_TEST) \
-	$(PLAINTEXT_RENDERING_TEST) $(IMAP_UTF7_TEST)
+	$(PLAINTEXT_RENDERING_TEST) $(IMAP_UTF7_TEST) $(DATA_TYPES_TEST)
 
 libetpan:
 	cd .. && make
@@ -104,6 +112,7 @@ check: all
 	@cd charset-detection && ./charset_detection_test
 	@cd plaintext-rendering && ./plaintext_rendering_test
 	@cd imap-utf7 && ./imap_utf7_test
+	@cd data-types && ./data_types_test
 
 $(IMAP_TEST): $(IMAP_TEST_DEPS) libetpan
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(IMAP_TEST_SRCS) $(LDLIBS) -o $@
@@ -129,10 +138,14 @@ $(PLAINTEXT_RENDERING_TEST): $(PLAINTEXT_RENDERING_TEST_DEPS) libetpan
 $(IMAP_UTF7_TEST): $(IMAP_UTF7_TEST_DEPS) libetpan
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(IMAP_UTF7_TEST_SRCS) $(LDLIBS) -o $@
 
+$(DATA_TYPES_TEST): $(DATA_TYPES_TEST_DEPS)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(DATA_TYPES_TEST_SRCS) -o $@
+
 clean:
 	rm -f $(IMAP_TEST) $(IMF_TEST) $(MIME_TEST) $(MIME_BUILDER_TEST)
 	rm -f $(MIME_PARSER_SERIALIZATION_TEST) $(CHARSET_DETECTION_TEST)
 	rm -f $(PLAINTEXT_RENDERING_TEST) $(IMAP_UTF7_TEST)
+	rm -f $(DATA_TYPES_TEST)
 	rm -rf $(IMAP_TEST).dSYM
 	rm -rf $(IMF_TEST).dSYM
 	rm -rf $(MIME_TEST).dSYM
@@ -141,3 +154,4 @@ clean:
 	rm -rf $(CHARSET_DETECTION_TEST).dSYM
 	rm -rf $(PLAINTEXT_RENDERING_TEST).dSYM
 	rm -rf $(IMAP_UTF7_TEST).dSYM
+	rm -rf $(DATA_TYPES_TEST).dSYM
