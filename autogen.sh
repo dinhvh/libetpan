@@ -31,7 +31,7 @@ missing() {
 (autoconf --version) < /dev/null > /dev/null 2>&1 || missing autoconf
 
 grep "^AM_GNU_GETTEXT" $srcdir/configure.ac >/dev/null && gettext=1
-grep "^AC_PROG_LIBTOOL" $srcdir/configure.ac >/dev/null && libtool=1
+grep "^LT_INIT" $srcdir/configure.ac >/dev/null && libtool=1
 grep "^AM_INIT_AUTOMAKE" $srcdir/configure.ac >/dev/null && run_automake=1
 
 if test "$gettext" -eq 1; then

@@ -27,7 +27,7 @@ AC_PREREQ(2.69)
 AC_INIT([libetpan],[maj_version.min_version.mic_version],[libetpan-devel@lists.sourceforge.net])
 AC_CONFIG_SRCDIR([src/main/libetpan_version.h.in])
 AC_CONFIG_MACRO_DIR([m4])
-AC_CONFIG_HEADER([config.h])
+AC_CONFIG_HEADERS([config.h])
 AM_INIT_AUTOMAKE
 AM_MAINTAINER_MODE
 AC_CANONICAL_HOST
@@ -114,13 +114,13 @@ AC_PROG_CC
 AC_PROG_CXX
 
 # Compiler flags.
-AC_ARG_ENABLE(debug, [AC_HELP_STRING([--enable-debug], [setup flags (gcc) for debugging (default=no)])],
+AC_ARG_ENABLE(debug, [AS_HELP_STRING([--enable-debug], [setup flags (gcc) for debugging (default=no)])],
 if test "x$enable_debug" = xyes; then
   CFLAGS="$CFLAGS -O2 -g"
 fi
 CPPFLAGS="$CPPFLAGS -DDEBUG"
 LDFLAGS="$LDFLAGS",)
-AC_ARG_ENABLE(optim, [AC_HELP_STRING([--enable-optim], [setup flags (gcc) for optimizations (default=no)])],
+AC_ARG_ENABLE(optim, [AS_HELP_STRING([--enable-optim], [setup flags (gcc) for optimizations (default=no)])],
 if test "x$enable_debug" != "xyes" ; then
   if test "x$GCC" = xyes; then
     CFLAGS="$CFLAGS -O2 -ffast-math -funroll-loops -g0"
@@ -133,7 +133,7 @@ fi,)
 if test "x$GCC" = xyes; then
   CFLAGS="$CFLAGS -W -Wall"
 fi
-AC_ARG_ENABLE(syntax, [AC_HELP_STRING([--enable-unstrict-syntax], [be lazy on syntax checking for protocols (default=no)])], , [AC_DEFINE(UNSTRICT_SYNTAX, 1, [Define to be lazy on protocol syntax])])
+AC_ARG_ENABLE(syntax, [AS_HELP_STRING([--enable-unstrict-syntax], [be lazy on syntax checking for protocols (default=no)])], , [AC_DEFINE(UNSTRICT_SYNTAX, 1, [Define to be lazy on protocol syntax])])
 
 AH_VERBATIM([CONFIG_H_FIRST], [/* Check for Linux's /usr/include/features.h
  */
@@ -147,7 +147,6 @@ AC_C_INLINE
 LT_INIT(win32-dll)
 LT_PROG_RC
 LT_LANG(Windows Resource)
-AC_PROG_LIBTOOL
 AC_PROG_MKDIR_P
 
 dnl Can't use AC_PROG_INSTALL
@@ -155,7 +154,7 @@ INSTALL='$(SHELL) $(top_srcdir)/install-sh -c'
 AC_SUBST(INSTALL)
 
 # Checks for header files.
-AC_HEADER_STDC
+AC_CHECK_HEADERS([stddef.h stdio.h stdlib.h string.h strings.h wchar.h])
 AC_CHECK_HEADERS(fcntl.h unistd.h ctype.h sys/types.h sys/stat.h sys/mman.h limits.h)
 AC_CHECK_HEADERS(netdb.h netinet/in.h sys/socket.h)
 AC_CHECK_HEADERS(sys/param.h sys/select.h inttypes.h)
@@ -201,7 +200,7 @@ if test "x$has_getoptlong" = "xyes"; then
 fi
 
 dnl OpenSSL -- very primitive right now
-AC_ARG_WITH(openssl, [AC_HELP_STRING([--with-openssl[=DIR]], [include OpenSSL support (default=auto)])],
+AC_ARG_WITH(openssl, [AS_HELP_STRING([--with-openssl[=DIR]], [include OpenSSL support (default=auto)])],
             [], [with_openssl=yes])
 if test "x$with_openssl" != "xno"; then
   OCPPFLAGS="$CPPFLAGS"
@@ -232,7 +231,7 @@ fi
 AC_SUBST(SSLLIBS)
 
 dnl GNUTLS
-AC_ARG_WITH(gnutls, [AC_HELP_STRING([--with-gnutls[=DIR]], [include GnuTLS support (default=auto)])],
+AC_ARG_WITH(gnutls, [AS_HELP_STRING([--with-gnutls[=DIR]], [include GnuTLS support (default=auto)])],
             [], [with_gnutls=no])
 if test "x$with_gnutls" != "xno"; then
   OCPPFLAGS="$CPPFLAGS"
@@ -270,7 +269,7 @@ fi
 dnl iconv
 LIBICONV=""
 
-AC_ARG_ENABLE(iconv, [AC_HELP_STRING([--disable-iconv], [make a version not using iconv])],
+AC_ARG_ENABLE(iconv, [AS_HELP_STRING([--disable-iconv], [make a version not using iconv])],
 		enable_iconv=no, enable_iconv=yes)
 if test x$enable_iconv = xyes; then
    dnl get prototype
@@ -281,21 +280,19 @@ if test x$enable_iconv = xyes; then
    if test "x$ICONV_HEADER" = x1 ; then
      SAVED_CPPFLAGS="$CPPFLAGS"
      CPPFLAGS="-std=c99 $CPPFLAGS"
-     AC_TRY_COMPILE([#include <iconv.h>
+     AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <iconv.h>
        size_t iconv (iconv_t cd, char ** restrict inbuf,
                      size_t * restrict inbytesleft,
                      char ** restrict outbuf,
-                     size_t * restrict outbytesleft);],
-       [],
-       [ICONV_PROTO=noconst]
+                     size_t * restrict outbytesleft);]], [[]])],
+       [ICONV_PROTO=noconst],
        [])
-     AC_TRY_COMPILE([#include <iconv.h>
+     AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <iconv.h>
        size_t iconv (iconv_t cd, const char ** restrict inbuf,
                      size_t * restrict inbytesleft,
                      char ** restrict outbuf,
-                     size_t * restrict outbytesleft);],
-       [],
-       [ICONV_PROTO=const]
+                     size_t * restrict outbytesleft);]], [[]])],
+       [ICONV_PROTO=const],
        [])
      CPPFLAGS="$SAVED_CPPFLAGS"
    fi
@@ -308,22 +305,22 @@ if test x$enable_iconv = xyes; then
      AC_MSG_CHECKING([for iconv])
      
      ICONV_LINKED=0
-     AC_TRY_LINK([#include <stdlib.h>
-#include <iconv.h>],
-       [iconv_t cd = iconv_open("","");
+     AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <stdlib.h>
+#include <iconv.h>]],
+       [[iconv_t cd = iconv_open("","");
         iconv(cd,NULL,NULL,NULL,NULL);
-        iconv_close(cd);],
+        iconv_close(cd);]])],
        [ICONV_LINKED=1],
        [])
      saved_LIBS="$LIBS"
      for lib in iconv ; do
        if test "x$ICONV_LINKED" = "x0" ; then
 	 LIBS=-l$lib
-         AC_TRY_LINK([#include <stdlib.h>
-#include <iconv.h>],
-         [iconv_t cd = iconv_open("","");
+         AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <stdlib.h>
+#include <iconv.h>]],
+         [[iconv_t cd = iconv_open("","");
           iconv(cd,NULL,NULL,NULL,NULL);
-          iconv_close(cd);],
+          iconv_close(cd);]])],
          [LIBICONV="$LIBS" ; ICONV_LINKED=1],
          [])
        fi
@@ -357,8 +354,8 @@ DBVERS=0
 DBLINKED=0
 DBLIB=""
 
-AC_ARG_ENABLE(db, [AC_HELP_STRING([--disable-db], [disable Berkeley DB (default=try to detect DB)])],[enable_db=$enableval],[enable_db=yes])
-AC_ARG_ENABLE(lmdb, [AC_HELP_STRING([--enable-lmdb], [enable lmdb as cache DB instead of BerkeleyDB (default=disable)])],[enable_lmdb=$enableval],[enable_lmdb=no])
+AC_ARG_ENABLE(db, [AS_HELP_STRING([--disable-db], [disable Berkeley DB (default=try to detect DB)])],[enable_db=$enableval],[enable_db=yes])
+AC_ARG_ENABLE(lmdb, [AS_HELP_STRING([--enable-lmdb], [enable lmdb as cache DB instead of BerkeleyDB (default=disable)])],[enable_lmdb=$enableval],[enable_lmdb=no])
 
 if test "x$enable_lmdb" = "xyes"; then
    AC_CHECK_HEADER(lmdb.h, [LMDB="yes"])
@@ -385,21 +382,21 @@ dnl Check for version of Berkeley DB
   AC_MSG_CHECKING([version of Berkeley DB])
 
 dnl check for version 3 and above
-  AC_TRY_COMPILE(
-    [#include <db.h>],
-    [#if DB_VERSION_MAJOR < 3
+  AC_COMPILE_IFELSE(
+    [AC_LANG_PROGRAM([[#include <db.h>]],
+    [[#if DB_VERSION_MAJOR < 3
     #error DB version 3 or above needed
-    #endif],
-    [DBVERS=3]
+    #endif]])],
+    [DBVERS=3],
     [])
 
 dnl check for version 2
   if test "x$DBVERS" = "x0"; then
-     AC_TRY_COMPILE([#include <db.h>],
-       [#if DB_VERSION_MAJOR != 2
+     AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <db.h>]],
+       [[#if DB_VERSION_MAJOR != 2
        #error DB version 2 needed
-       #endif],
-       [DBVERS=2]
+       #endif]])],
+       [DBVERS=2],
        [])
   fi
 
@@ -421,9 +418,9 @@ dnl installations of libdb4 function names are defined in db.h
 dnl to other symbols
         AC_MSG_CHECKING([for db_create() in -l$lib])
 	LIBS=-l$lib
-	AC_TRY_LINK(
-	   [#include <db.h>],
-	   [db_create(0,0,0)],
+	AC_LINK_IFELSE(
+	   [AC_LANG_PROGRAM([[#include <db.h>]],
+	   [[db_create(0,0,0)]])],
 	   [DBLIB="-l$lib"; DBLINKED=1; AC_MSG_RESULT([found])],
 	   [AC_MSG_RESULT([not found])])
       fi
@@ -467,8 +464,8 @@ AC_DEFINE_UNQUOTED(DBVERS, $DBVERS,
 AC_SUBST(DBLIB)
 
 dnl Threading support, if enabled
-AC_ARG_ENABLE(threads, [AC_HELP_STRING([--disable-threads], [do not include multithreading support using pthread])],,[enable_threads=yes])
-AC_ARG_ENABLE(windows-threads, [AC_HELP_STRING([--enable-windows-threads], [include multithreading support using windows threads])],[enable_windows_threads=yes],)
+AC_ARG_ENABLE(threads, [AS_HELP_STRING([--disable-threads], [do not include multithreading support using pthread])],,[enable_threads=yes])
+AC_ARG_ENABLE(windows-threads, [AS_HELP_STRING([--enable-windows-threads], [include multithreading support using windows threads])],[enable_windows_threads=yes],)
 
 if test "x$enable_windows_threads" = "xyes"; then
   AC_CHECK_HEADERS(pthread.h, [], [])
@@ -482,7 +479,7 @@ elif test "x$enable_threads" = "xyes"; then
   checkpthread=yes
 
   AC_MSG_CHECKING([for pthread_create with libc])
-  AC_TRY_LINK([char pthread_create(void);], [pthread_create();],
+  AC_LINK_IFELSE([AC_LANG_PROGRAM([[char pthread_create(void);]], [[pthread_create();]])],
                   [pthflag=yes; checkpthread=no], 
                   [pthflag=no])
   AC_MSG_RESULT($pthflag)
@@ -492,7 +489,7 @@ elif test "x$enable_threads" = "xyes"; then
       AC_MSG_CHECKING([for pthread_create with -$flag])
       OLDLIBS="$LIBS"
       LIBS="$LIBS -$flag"
-      AC_TRY_LINK([], [pthread_create();], 
+      AC_LINK_IFELSE([AC_LANG_PROGRAM([[]], [[pthread_create();]])],
                       [pthflag=yes; checkpthread=no], 
                       [pthflag=no; LIBS="$OLDLIBS"])
       AC_MSG_RESULT($pthflag)
@@ -524,7 +521,7 @@ AC_SUBST(LIBSUFFIX)
 AC_SUBST(REENTRANT)
 
 dnl liblockfile on debian systems
-AC_ARG_ENABLE(lockfile, [AC_HELP_STRING([--disable-lockfile], [do not use liblockfile for locking mailboxes])])
+AC_ARG_ENABLE(lockfile, [AS_HELP_STRING([--disable-lockfile], [do not use liblockfile for locking mailboxes])])
 if test "x$enable_lockfile" != "xno"; then
   AC_CHECK_LIB(lockfile, lockfile_create,, [
     if test "x$enable_lockfile" = "xyes"; then
@@ -543,7 +540,7 @@ AC_SUBST(VERSION_MINOR)
 AC_SUBST(VERSION_MICRO)
 
 dnl Cyrus SASL
-AC_ARG_WITH(sasl, [AC_HELP_STRING([--with-sasl[=DIR]], [include SASL support (default=auto)])],
+AC_ARG_WITH(sasl, [AS_HELP_STRING([--with-sasl[=DIR]], [include SASL support (default=auto)])],
             [], [with_sasl=yes])
 if test "x$with_sasl" != "xno"; then
   OCPPFLAGS="$CPPFLAGS"
@@ -572,16 +569,16 @@ AC_SUBST(SASLLIBS)
 
 dnl IPv6 support
 enable_ipv6=maybe
-AC_ARG_ENABLE(ipv6, AC_HELP_STRING([--enable-ipv6], [enable IPv6 support]), enable_ipv6=$enableval)
+AC_ARG_ENABLE(ipv6, AS_HELP_STRING([--enable-ipv6], [enable IPv6 support]), enable_ipv6=$enableval)
 AC_MSG_CHECKING([whether to use IPv6])
 AC_MSG_RESULT($enable_ipv6)
 if test "x$enable_ipv6" != "xno"; then
   dnl check for IPv6 support
   AC_MSG_CHECKING([for IPv6 support])
-  AC_TRY_COMPILE([#define INET6
+  AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#define INET6
             #include <sys/types.h>
-            #include <netinet/in.h>],
-         [int x = IPPROTO_IPV6; struct in6_addr a;],
+            #include <netinet/in.h>]],
+         [[int x = IPPROTO_IPV6; struct in6_addr a;]])],
          ipv6_support=yes, ipv6_support=no)
   AC_MSG_RESULT($ipv6_support)
 
@@ -595,9 +592,9 @@ if test "x$enable_ipv6" != "xno"; then
     dnl check for getaddrinfo and freeaddrinfo function presence
     for func in "getaddrinfo" "freeaddrinfo"; do
       AC_MSG_CHECKING([for $func])
-      AC_TRY_LINK([#include <sys/socket.h>
-                   #include <netdb.h>],
-                      [(void)$func;],
+      AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <sys/socket.h>
+                   #include <netdb.h>]],
+                      [[(void)$func;]])],
                       [func_present=yes],
                       [func_present=no])
       AC_MSG_RESULT($func_present)
@@ -612,7 +609,7 @@ fi
 dnl libcurl
 
 libcurl=no
-AC_ARG_WITH(curl, [AC_HELP_STRING([--with-curl[=DIR]], [curl install directory (default=auto)])],
+AC_ARG_WITH(curl, [AS_HELP_STRING([--with-curl[=DIR]], [curl install directory (default=auto)])],
             [], [with_curl=auto])
 if test "x$with_curl" = "xno"; then
   :
@@ -626,7 +623,7 @@ elif test "x$with_curl" != "xauto"; then
   AC_CHECK_HEADER(curl/curl.h, [libcurl=yes])
   if test "x$libcurl" = "xyes"; then
       AC_MSG_CHECKING([whether with-curl compiles and links fine])
-      AC_TRY_LINK([], [curl_easy_init();], [libcurl=yes], [libcurl=no])
+      AC_LINK_IFELSE([AC_LANG_PROGRAM([[]], [[curl_easy_init();]])], [libcurl=yes], [libcurl=no])
       AC_MSG_RESULT([$libcurl])
   fi
    if test "x$libcurl" = "xno"; then
@@ -642,7 +639,7 @@ else
           AC_MSG_CHECKING([whether curl-config hints compiles and links fine])
           OLDFLAGS="$LDFLAGS"
           LDFLAGS="$LDFLAGS `$libcurlconfig --libs 2>/dev/null`"
-          AC_TRY_LINK([], [curl_easy_init();], [libcurl=yes], [libcurl=no])
+          AC_LINK_IFELSE([AC_LANG_PROGRAM([[]], [[curl_easy_init();]])], [libcurl=yes], [libcurl=no])
           AC_MSG_RESULT([$libcurl])
           if test "x$libcurl" = "xno"; then
               LDFLAGS="$OLDFLAGS"
@@ -670,7 +667,7 @@ fi
 
 dnl expat
 libexpat=no
-AC_ARG_WITH(expat, [AC_HELP_STRING([--with-expat[=DIR]], [expat install directory (default=auto)])],
+AC_ARG_WITH(expat, [AS_HELP_STRING([--with-expat[=DIR]], [expat install directory (default=auto)])],
             [], [with_expat=auto])
 if test "x$with_expat" = "xno"; then
 	:
@@ -684,7 +681,7 @@ elif test "x$with_expat" != "xauto"; then
   AC_CHECK_HEADER(expat.h, [libexpat=yes])
   if test "x$libexpat" = "xyes"; then
       AC_MSG_CHECKING([whether with-expat compiles and links fine])
-      AC_TRY_LINK([], [XML_SetElementHandler();], [libexpat=yes], [libexpat=no])
+      AC_LINK_IFELSE([AC_LANG_PROGRAM([[]], [[XML_SetElementHandler();]])], [libexpat=yes], [libexpat=no])
       AC_MSG_RESULT([$libexpat])
   fi
    if test "x$libexpat" = "xno"; then
@@ -697,7 +694,7 @@ else
     AC_MSG_CHECKING([whether libexpat compiles and links fine])
     OLDFLAGS="$LDFLAGS"
     LDFLAGS="$LDFLAGS -lexpat"
-    AC_TRY_LINK([], [XML_SetElementHandler();], [libexpat=yes], [libexpat=no])
+    AC_LINK_IFELSE([AC_LANG_PROGRAM([[]], [[XML_SetElementHandler();]])], [libexpat=yes], [libexpat=no])
     AC_MSG_RESULT([$libexpat])
     if test "x$libexpat" = "xno"; then
       LDFLAGS="$OLDFLAGS"
