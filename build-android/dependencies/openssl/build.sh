@@ -1,7 +1,9 @@
 #!/bin/sh
 
 build_version=3
-version=1.1.1i
+# 1.1.1w is the final 1.1.1 release (same API). The old 1.1.1i tarball was
+# removed from ftp.openssl.org, so fetch from www.openssl.org instead.
+version=1.1.1w
 package_name=openssl-android
 export MIN_SDK_VERSION=23
 export HOST_TAG=darwin-x86_64
@@ -14,7 +16,7 @@ fi
 if test ! -f packages/openssl-$version.tar.gz; then
   mkdir -p packages
   cd packages
-  curl -O https://ftp.openssl.org/source/openssl-$version.tar.gz
+  curl -L -O https://www.openssl.org/source/openssl-$version.tar.gz
   cd ..
 fi
 
@@ -30,6 +32,15 @@ export TOOLCHAIN=$ANDROID_NDK/toolchains/llvm/prebuilt/$HOST_TAG
 # openssl refers to the host specific toolchain as "ANDROID_NDK_HOME"
 export ANDROID_NDK_HOME=$TOOLCHAIN
 PATH=$TOOLCHAIN/bin:$PATH
+
+# NDK r23+ removed the GNU binutils-style per-target archiver tools
+# (<triple>-ar, <triple>-ranlib); they are now llvm-ar / llvm-ranlib. OpenSSL
+# 1.1.1 still invokes $(CROSS_COMPILE)ar, so provide the legacy names as
+# symlinks to the llvm tools for every target triple we build below.
+for triple in aarch64-linux-android arm-linux-androideabi i686-linux-android x86_64-linux-android ; do
+  ln -sfn "$TOOLCHAIN/bin/llvm-ar" "$TOOLCHAIN/bin/$triple-ar"
+  ln -sfn "$TOOLCHAIN/bin/llvm-ranlib" "$TOOLCHAIN/bin/$triple-ranlib"
+done
 
 mkdir -p build/openssl
 cd "./openssl-$version"

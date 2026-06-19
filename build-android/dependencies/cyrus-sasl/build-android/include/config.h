@@ -47,6 +47,13 @@
 #define CONFIG_H
 
 
+/* Fallthrough attribute (introduced in 2.1.28; copied from its config.h.in) */
+#if defined __GNUC__ &&  __GNUC__ > 6
+    #define GCC_FALLTHROUGH __attribute__((fallthrough));
+#else
+    #define GCC_FALLTHROUGH /* fall through */
+#endif
+
 /* Runtime config file location */
 #define CONFIGDIR "/usr/lib/sasl2:/etc/sasl2"
 

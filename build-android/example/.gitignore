@@ -1,0 +1,9 @@
+.gradle/
+build/
+.cxx/
+local.properties
+.prepare-tmp/
+app/src/main/cpp/prebuilt/
+*.iml
+.idea/
+kls_database.db
