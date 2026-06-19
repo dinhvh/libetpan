@@ -67,7 +67,7 @@ etpan  sasl2  ssl  crypto  iconv  z  log
 
 ## Demo app
 
-`demo-app/` is a Kotlin + Jetpack Compose app that uses the libraries above via a
+`example/` is a Kotlin + Jetpack Compose app that uses the libraries above via a
 small C JNI bridge:
 
 - **IMAP** — connect over implicit TLS (IMAPS:993), log in, list the newest
