@@ -32,7 +32,8 @@ plugins/passdss.c \
 plugins/passdss_init.c \
 plugins/plain.c \
 plugins/plain_init.c \
-plugins/plugin_common.c \
+common/plugin_common.c \
+common/crypto-compat.c \
 plugins/scram.c \
 plugins/scram_init.c \
 plugins/srp.c \
@@ -48,6 +49,7 @@ endif
 
 NDK_TOOLCHAIN_VERSION := clang
 LOCAL_C_INCLUDES += $(src_dir) $(src_dir)/include $(src_dir)/plugins \
+   $(src_dir)/common \
    $(src_dir)/build-android/include $(OPENSSL_PATH)/include
 LOCAL_SRC_FILES := $(addprefix $(src_dir)/, $(src_files))
 

@@ -38,34 +38,16 @@
 #endif
 
 #ifndef LIBETPAN_VERSION_MINOR
-#define LIBETPAN_VERSION_MINOR 10
-#endif
-
-#ifndef LIBETPAN_VERSION_MICRO
-#define LIBETPAN_VERSION_MICRO 1
+#define LIBETPAN_VERSION_MINOR 6
 #endif
 
 #ifndef LIBETPAN_REENTRANT
 #if 1
 #define LIBETPAN_REENTRANT 1
 #endif
-
-#ifndef LIBETPAN_API_CURRENT
-#define LIBETPAN_API_CURRENT 26
-#endif
-
-#ifndef LIBETPAN_API_REVISION
-#define LIBETPAN_API_REVISION 0
-#endif
-
-#ifndef LIBETPAN_API_COMPATIBILITY
-#define LIBETPAN_API_COMPATIBILITY 26
-#endif
-
 #endif
 
 int libetpan_get_version_major(void);
 int libetpan_get_version_minor(void);
-int libetpan_get_version_micro(void);
 
 #endif

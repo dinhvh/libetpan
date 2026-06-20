@@ -1,6 +1,10 @@
 #!/bin/sh
 
-version=2.1.26
+# 2.1.28 (vs the old 2.1.26) ships upstream support for the OpenSSL 1.1.x
+# opaque HMAC_CTX/EVP_MD_CTX/EVP_CIPHER_CTX API. 2.1.26 predates it and fails
+# to compile against the OpenSSL 1.1.1 we build below. This matches the version
+# already used by the iOS build.
+version=2.1.28
 build_version=4
 ARCHIVE=cyrus-sasl-$version
 openssl_build_version=3
@@ -15,6 +19,13 @@ ARCHIVE_NAME=$ARCHIVE.tar.gz
 ARCHIVE_PATCH=$ARCHIVE.patch
 current_dir="`pwd`"
 package_dir="$current_dir/../../../build-mac/dependencies/packages"
+
+if [ ! -e "$package_dir/$ARCHIVE_NAME" ]; then
+  echo "Downloading $ARCHIVE_NAME"
+  mkdir -p "$package_dir"
+  curl -L -o "$package_dir/$ARCHIVE_NAME" \
+    "https://github.com/cyrusimap/cyrus-sasl/releases/download/$ARCHIVE/$ARCHIVE_NAME"
+fi
 
 if [ ! -e "$package_dir/$ARCHIVE_NAME" ]; then
   echo "Missing archive $ARCHIVE"
@@ -37,11 +48,13 @@ function build {
     echo "Unable to decompress $ARCHIVE_NAME"
     exit 1
   fi
-  
+
   if test ! -f "$current_dir/$package_name-$build_version/include/sasl/sasl.h" ; then
     mkdir -p "$current_dir/$package_name-$build_version"
     mkdir -p "$current_dir/$package_name-$build_version/include/sasl"
-    public_headers="hmac-md5.h md5.h md5global.h sasl.h saslplug.h saslutil.h prop.h"
+    # 2.1.28 no longer ships md5.h / md5global.h under include/; libetpan only
+    # needs sasl.h and saslutil.h, so copy the headers that actually exist.
+    public_headers="hmac-md5.h sasl.h saslplug.h saslutil.h prop.h"
     cd "$current_dir/src/$ARCHIVE/include"
     cp -R $public_headers "$current_dir/$package_name-$build_version/include/sasl"
   fi
