@@ -12,11 +12,12 @@ CPPFLAGS += \
 	-Icommon
 
 CFLAGS += -Wall -Wextra -Werror -g
-LDLIBS += $(TOP)/src/.libs/libetpan.a -lz -liconv -lsasl2 -lpthread
+LDLIBS += $(TOP)/src/.libs/libetpan.a -lz -lsasl2 -lpthread
 XML2_CPPFLAGS := -I$(shell xcrun --show-sdk-path)/usr/include/libxml2
 XML2_LDLIBS := -lxml2
-TIDY_CPPFLAGS := $(shell pkg-config --cflags tidy 2>/dev/null || printf '%s' "-I$$(brew --prefix tidy-html5)/include")
+TIDY_CPPFLAGS := $(shell pkg-config --cflags tidy 2>/dev/null || printf '%s' "-I$$(brew --prefix tidy-html5)/include") -I /usr/include/tidy
 TIDY_LDLIBS := $(shell pkg-config --libs tidy 2>/dev/null || printf '%s' "-L$$(brew --prefix tidy-html5)/lib -ltidy")
+MATH_LDLIBS := -lm
 
 IMAP_TEST = imap/imap_test
 IMF_TEST = imf/imf_test
@@ -90,9 +91,10 @@ CHARSET_DETECTION_TEST_DEPS = $(CHARSET_DETECTION_TEST_SRCS) common/*.h
 PLAINTEXT_RENDERING_TEST_DEPS = $(PLAINTEXT_RENDERING_TEST_SRCS) common/*.h
 IMAP_UTF7_TEST_DEPS = $(IMAP_UTF7_TEST_SRCS)
 DATA_TYPES_TEST_DEPS = $(DATA_TYPES_TEST_SRCS) \
-	$(TOP)/src/data-types/md5.h \
-	$(TOP)/src/data-types/md5global.h \
-	$(TOP)/src/data-types/hmac-md5.h
+        $(TOP)/src/data-types/md5.h \
+        $(TOP)/src/data-types/md5global.h \
+        $(TOP)/src/data-types/hmac-md5.h
+
 
 .PHONY: all check clean
 
@@ -133,7 +135,7 @@ $(CHARSET_DETECTION_TEST): $(CHARSET_DETECTION_TEST_DEPS) libetpan
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(CHARSET_DETECTION_TEST_SRCS) $(LDLIBS) -o $@
 
 $(PLAINTEXT_RENDERING_TEST): $(PLAINTEXT_RENDERING_TEST_DEPS) libetpan
-	$(CC) $(CPPFLAGS) $(XML2_CPPFLAGS) $(TIDY_CPPFLAGS) $(CFLAGS) $(PLAINTEXT_RENDERING_TEST_SRCS) $(LDLIBS) $(XML2_LDLIBS) $(TIDY_LDLIBS) -o $@
+	$(CC) $(CPPFLAGS) $(XML2_CPPFLAGS) $(TIDY_CPPFLAGS) $(CFLAGS) $(PLAINTEXT_RENDERING_TEST_SRCS) $(LDLIBS) $(XML2_LDLIBS) $(TIDY_LDLIBS) $(MATH_LDLIBS) -o $@
 
 $(IMAP_UTF7_TEST): $(IMAP_UTF7_TEST_DEPS) libetpan
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(IMAP_UTF7_TEST_SRCS) $(LDLIBS) -o $@

@@ -366,7 +366,7 @@ static void comment_parsed(void * ctx, const xmlChar * value)
   (void) value;
 }
 
-static void structured_error(void * user_data, xmlErrorPtr error)
+static void structured_error(void * user_data, const xmlError * error)
 {
   (void) user_data;
   (void) error;
@@ -375,6 +375,8 @@ static void structured_error(void * user_data, xmlErrorPtr error)
 char * plaintext_rendering_flatten_html(const char * html)
 {
   xmlSAXHandler handler;
+  htmlParserCtxtPtr parser_context;
+  htmlDocPtr parsed_doc;
   struct flatten_state state;
   char * cleaned_html;
   unsigned int i;
@@ -391,9 +393,15 @@ char * plaintext_rendering_flatten_html(const char * html)
   state.show_blockquote = 1;
   state.show_link = 1;
   state.last_char_is_whitespace = 1;
-  xmlSetStructuredErrorFunc(xmlGenericErrorContext, structured_error);
+  parser_context = htmlNewSAXParserCtxt(&handler, &state);
+  assert(parser_context != NULL);
+  xmlCtxtSetErrorHandler(parser_context, structured_error, NULL);
   cleaned_html = plaintext_rendering_cleaned_html(html);
-  htmlSAXParseDoc((xmlChar *) cleaned_html, "utf-8", &handler, &state);
+  parsed_doc = htmlCtxtReadDoc(parser_context, (xmlChar *) cleaned_html, NULL,
+      "utf-8", 0);
+  if (parsed_doc != NULL)
+    xmlFreeDoc(parsed_doc);
+  htmlFreeParserCtxt(parser_context);
   free(cleaned_html);
   clean_terminal_space(state.result);
   for (i = 0; i < state.link_count; i++)
