@@ -65,6 +65,27 @@ etpan  sasl2  ssl  crypto  iconv  z  log
 > `build-android/include/libetpan/` during the build; the demo app's
 > `prepare-libs.sh` sources them from there.
 
+### ctemplate (for MailCore2, not libetpan)
+
+`dependencies/ctemplate/build.sh` is provided here for convenience but is **not**
+a libetpan dependency — `build.sh` does not run it. It rebuilds Google ctemplate
+(the dinhviethoa fork) against NDK 26 / libc++ for MailCore2's HTML renderer:
+
+```sh
+export ANDROID_NDK=$HOME/Library/Android/sdk/ndk/27.1.12297006
+cd build-android/dependencies/ctemplate
+./build.sh        # → ctemplate-android-3.zip   (needs Python 3 for the fsm headers)
+```
+
+## Using these zips in MailCore2
+
+The zips produced here are exactly the rebuilt dependencies MailCore2's
+`build-android` consumes. Build them, then copy
+`libetpan-android-7.zip`, `openssl-android-3.zip`, `cyrus-sasl-android-4.zip`,
+`iconv-android-1.zip` and `ctemplate-android-3.zip` into
+`mailcore2/build-android/third-party/` and follow that repo's
+`build-android/README.md` to produce `mailcore2-android-4.aar`.
+
 ## Demo app
 
 `example/` is a Kotlin + Jetpack Compose app that uses the libraries above via a
