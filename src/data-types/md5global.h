@@ -33,9 +33,6 @@
  * $Id: md5global.h,v 1.7 2006/06/02 15:44:29 smarinier Exp $
  */
 
-/* GLOBAL.H - RSAREF types and constants
- */
-
 #ifndef MD5GLOBAL_H
 
 #define MD5GLOBAL_H

@@ -29,34 +29,6 @@
  * SUCH DAMAGE.
  */
 
-/*
- * $Id: md5.h,v 1.11 2006/06/02 15:44:29 smarinier Exp $
- */
-
-/* MD5.H - header file for MD5C.C
- */
-
-/* Copyright (C) 1991-2, RSA Data Security, Inc. Created 1991. All
-rights reserved.
-
-License to copy and use this software is granted provided that it
-is identified as the "RSA Data Security, Inc. MD5 Message-Digest
-Algorithm" in all material mentioning or referencing this software
-or this function.
-
-License is also granted to make and use derivative works provided
-that such works are identified as "derived from the RSA Data
-Security, Inc. MD5 Message-Digest Algorithm" in all material
-mentioning or referencing the derived work.
-
-RSA Data Security, Inc. makes no representations concerning either
-the merchantability of this software or the suitability of this
-software for any particular purpose. It is provided "as is"
-without express or implied warranty of any kind.
-These notices must be retained in any copies of any part of this
-documentation and/or software.
- */
-
 #include "md5global.h"
 
 #ifndef MD5_H
@@ -79,7 +51,7 @@ void MD5Update PROTO_LIST
   ((MD5_CTX *, const unsigned char *, unsigned int));
 void MD5Final PROTO_LIST ((unsigned char [16], MD5_CTX *));
 
-void hmac_md5 PROTO_LIST ((const unsigned char *, int, const unsigned char *, int, unsigned char *));
+void hmac_md5 PROTO_LIST ((const unsigned char *, int, const unsigned char *, int, unsigned char [16]));
 
 #ifdef __cplusplus
 }
