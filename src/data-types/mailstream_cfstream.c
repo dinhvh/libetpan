@@ -502,6 +502,9 @@ static int numberIntValue(CFNumberRef nb)
 mailstream_low * mailstream_low_cfstream_open_voip_timeout(const char * hostname, int16_t port,
   int voip_enabled, time_t timeout)
 {
+  /* kCFStreamNetworkServiceTypeVoIP is deprecated; keep this parameter for API compatibility. */
+  (void) voip_enabled;
+
 #if HAVE_CFNETWORK
   mailstream_low * s;
   struct mailstream_cfstream_data * cfstream_data;
@@ -515,13 +518,6 @@ mailstream_low * mailstream_low_cfstream_open_voip_timeout(const char * hostname
   hostString = CFStringCreateWithCString(NULL, hostname, kCFStringEncodingUTF8);
   CFStreamCreatePairWithSocketToHost(NULL, hostString, port, &readStream, &writeStream);
   CFRelease(hostString);
-
-#if TARGET_OS_IPHONE && !TARGET_IPHONE_SIMULATOR  
-  if (voip_enabled) {
-    CFReadStreamSetProperty(readStream, kCFStreamNetworkServiceType, kCFStreamNetworkServiceTypeVoIP);
-    CFWriteStreamSetProperty(writeStream, kCFStreamNetworkServiceType, kCFStreamNetworkServiceTypeVoIP);
-  }
-#endif
 
 #if !TARGET_OS_IPHONE && !TARGET_IPHONE_SIMULATOR
   CFDictionaryRef proxySettings = CFNetworkCopySystemProxySettings();
