@@ -49,6 +49,14 @@ libetpan_deps = $(libetpan_res)
 
 else
 
+# A dummy.cpp file is present for Windows builds to force automake to
+# generate the link command in C++ mode.  Override that on non-Windows
+# builds so a C++ compiler is not required unnecessarily.
+libetpan@LIBSUFFIX@_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
+	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CC) \
+	$(AM_CFLAGS) $(CFLAGS) $(libetpan@LIBSUFFIX@_la_LDFLAGS) \
+	$(LDFLAGS) -o $@
+
 libetpan_res =
 libetpan_res_ldflag =
 no_undefined =
