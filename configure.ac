@@ -62,17 +62,17 @@ AC_SUBST(API_CURRENT)
 AC_SUBST(API_COMPATIBILITY)
 AC_SUBST(API_REVISION)
 
-API_AGE=`expr $API_CURRENT - $API_COMPATIBILITY`
+API_AGE=$(expr "$API_CURRENT" - "$API_COMPATIBILITY")
 API_VERSION="$API_CURRENT:$API_REVISION:$API_AGE"
 AC_SUBST(API_VERSION)
 
 dnl FIXME: This should be the git revision.
 BUILD_REVISION=0
 AC_SUBST(BUILD_REVISION)
-BUILD_TIMESTAMP=`date +'%Y-%m-%dT%H:%M%z'`
+BUILD_TIMESTAMP=$(date +'%Y-%m-%dT%H:%M%z')
 AC_SUBST(BUILD_TIMESTAMP)
 changequote(,)dnl 
-BUILD_FILEVERSION=`echo "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_MICRO}" | sed 's/\([0-9.]*\).*/\1./;s/\./,/g'`
+BUILD_FILEVERSION=$(printf '%s\n' "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_MICRO}" | sed 's/\([0-9.]*\).*/\1./;s/\./,/g')
 changequote([,])dnl
 BUILD_FILEVERSION="${BUILD_FILEVERSION}${BUILD_REVISION}"
 AC_SUBST(BUILD_FILEVERSION)
@@ -104,10 +104,10 @@ case "${host}" in
     *)
 	;;
 esac
-if test "$have_w32_system" = yes; then
+if test "x$have_w32_system" = xyes; then
    AC_DEFINE(HAVE_MINGW32_SYSTEM, 1, [Defined if we run on a W32 API based system])
 fi
-AM_CONDITIONAL(HAVE_MINGW32_SYSTEM, test "$have_w32_system" = yes)
+AM_CONDITIONAL([HAVE_MINGW32_SYSTEM], [test "x$have_w32_system" = xyes])
 
 # Check the C compiler.
 AC_PROG_CC
@@ -237,7 +237,7 @@ if test "x$with_gnutls" != "xno"; then
   OCPPFLAGS="$CPPFLAGS"
   OLDFLAGS="$LDFLAGS"
   if test "x$with_gnutls" != "xyes" ; then
-    CPPFLAGS="CPPFLAGS -I$with_gnutls/include"
+    CPPFLAGS="$CPPFLAGS -I$with_gnutls/include"
     LDFLAGS="$LDFLAGS -L$with_gnutls/lib"
   fi
   GNUTLSLIB=""
@@ -271,7 +271,7 @@ LIBICONV=""
 
 AC_ARG_ENABLE(iconv, [AS_HELP_STRING([--disable-iconv], [make a version not using iconv])],
 		enable_iconv=no, enable_iconv=yes)
-if test x$enable_iconv = xyes; then
+if test "x$enable_iconv" = xyes; then
    dnl get prototype
    AC_CHECK_HEADER(iconv.h, [ICONV_HEADER=1], [ICONV_HEADER=0])
    
@@ -299,7 +299,7 @@ if test x$enable_iconv = xyes; then
 
    dnl try to link
    ICONV_LINKED=NO
-   if test "$ICONV_PROTO" != "xno" ; then
+   if test "x$ICONV_PROTO" != xno ; then
      AC_MSG_RESULT([ok])
      
      AC_MSG_CHECKING([for iconv])
@@ -315,7 +315,7 @@ if test x$enable_iconv = xyes; then
      saved_LIBS="$LIBS"
      for lib in iconv ; do
        if test "x$ICONV_LINKED" = "x0" ; then
-	 LIBS=-l$lib
+	 LIBS="-l$lib"
          AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <stdlib.h>
 #include <iconv.h>]],
          [[iconv_t cd = iconv_open("","");
@@ -401,7 +401,7 @@ if test "x$enable_lmdb" = "xyes"; then
      AC_MSG_WARN(lmdb.h not found cache support disabled)
    else
      AC_CHECK_LIB(lmdb, mdb_env_create, [DBLIB="-llmdb"; DBLINKED=1], [])
-     if test "$DBLINKED" = 1; then
+     if test "x$DBLINKED" = x1; then
        AC_DEFINE([LMDB], [1], [Enable support for lmdb cache])
        enable_db="no"
      else
@@ -455,7 +455,7 @@ dnl        AC_CHECK_LIB($lib, db_create, [DBLIB="-l$lib"; DBLINKED=1], [])
 dnl installations of libdb4 function names are defined in db.h
 dnl to other symbols
         AC_MSG_CHECKING([for db_create() in -l$lib])
-	LIBS=-l$lib
+	LIBS="-l$lib"
 	AC_LINK_IFELSE(
 	   [AC_LANG_PROGRAM([[#include <db.h>]],
 	   [[db_create(0,0,0)]])],
@@ -520,7 +520,7 @@ elif test "x$enable_threads" = "xyes"; then
   AC_LINK_IFELSE([AC_LANG_PROGRAM([[char pthread_create(void);]], [[pthread_create();]])],
                   [pthflag=yes; checkpthread=no], 
                   [pthflag=no])
-  AC_MSG_RESULT($pthflag)
+  AC_MSG_RESULT([$pthflag])
 
   for flag in "pthreads" "pthread"; do
     if test "x$checkpthread" = "xyes"; then
@@ -530,7 +530,7 @@ elif test "x$enable_threads" = "xyes"; then
       AC_LINK_IFELSE([AC_LANG_PROGRAM([[]], [[pthread_create();]])],
                       [pthflag=yes; checkpthread=no], 
                       [pthflag=no; LIBS="$OLDLIBS"])
-      AC_MSG_RESULT($pthflag)
+      AC_MSG_RESULT([$pthflag])
     fi
   done
 
@@ -609,7 +609,7 @@ dnl IPv6 support
 enable_ipv6=maybe
 AC_ARG_ENABLE(ipv6, AS_HELP_STRING([--enable-ipv6], [enable IPv6 support]), enable_ipv6=$enableval)
 AC_MSG_CHECKING([whether to use IPv6])
-AC_MSG_RESULT($enable_ipv6)
+AC_MSG_RESULT([$enable_ipv6])
 if test "x$enable_ipv6" != "xno"; then
   dnl check for IPv6 support
   AC_MSG_CHECKING([for IPv6 support])
@@ -618,7 +618,7 @@ if test "x$enable_ipv6" != "xno"; then
             #include <netinet/in.h>]],
          [[int x = IPPROTO_IPV6; struct in6_addr a;]])],
          ipv6_support=yes, ipv6_support=no)
-  AC_MSG_RESULT($ipv6_support)
+  AC_MSG_RESULT([$ipv6_support])
 
   if test "x$ipv6_support" = "xno"; then
     if test "x$enable_ipv6" = "xyes"; then
@@ -635,7 +635,7 @@ if test "x$enable_ipv6" != "xno"; then
                       [[(void)$func;]])],
                       [func_present=yes],
                       [func_present=no])
-      AC_MSG_RESULT($func_present)
+      AC_MSG_RESULT([$func_present])
 
       if test "x$func_present" = "xno"; then
         AC_MSG_ERROR([$func function required for IPv6 support])
@@ -671,12 +671,14 @@ elif test "x$with_curl" != "xauto"; then
 else
   AC_PATH_PROG(libcurlconfig, [curl-config])
   if test "x$libcurlconfig" != "x"; then
-      CPPFLAGS="$CPPFLAGS `$libcurlconfig --cflags 2>/dev/null`"
+      libcurl_cflags=$("${libcurlconfig}" --cflags 2>/dev/null)
+      CPPFLAGS="$CPPFLAGS $libcurl_cflags"
       AC_CHECK_HEADER(curl/curl.h, [libcurl=yes])
       if test "x$libcurl" = "xyes"; then
           AC_MSG_CHECKING([whether curl-config hints compiles and links fine])
           OLDFLAGS="$LDFLAGS"
-          LDFLAGS="$LDFLAGS `$libcurlconfig --libs 2>/dev/null`"
+          libcurl_libs=$("${libcurlconfig}" --libs 2>/dev/null)
+          LDFLAGS="$LDFLAGS $libcurl_libs"
           AC_LINK_IFELSE([AC_LANG_PROGRAM([[]], [[curl_easy_init();]])], [libcurl=yes], [libcurl=no])
           AC_MSG_RESULT([$libcurl])
           if test "x$libcurl" = "xno"; then
@@ -684,10 +686,10 @@ else
           fi
       fi
       
-      libcurl_major_version=`$libcurlconfig --version | \
-          sed 's/^.* \([[0-9]]*\)\.\([[0-9]]*\).*$/\1/'`
-      libcurl_minor_version=`$libcurlconfig --version | \
-          sed 's/^.* \([[0-9]]*\)\.\([[0-9]]*\).*$/\2/'`
+      libcurl_major_version=$("${libcurlconfig}" --version | \
+          sed 's/^.* \([[0-9]]*\)\.\([[0-9]]*\).*$/\1/')
+      libcurl_minor_version=$("${libcurlconfig}" --version | \
+          sed 's/^.* \([[0-9]]*\)\.\([[0-9]]*\).*$/\2/')
       if test "$libcurl_major_version" -lt "$libcurl_major_required" ; then
           libcurl=no
       fi
@@ -782,11 +784,11 @@ AS_IF([test "$with_zlib" != no], [
     ])
   ])
 ])
-AM_CONDITIONAL([HAVE_ZLIB], [test $HAVE_ZLIB = 1])
+AM_CONDITIONAL([HAVE_ZLIB], [test "x$HAVE_ZLIB" = x1])
 
 dnl Version
 VERSION="$VERSION_MAJOR.$VERSION_MINOR.$VERSION_MICRO"
-test -d .git && VERSION="$VERSION-dev-"`date +'%Y%m%d'`
+test -d .git && VERSION="$VERSION-dev-$(date +'%Y%m%d')"
 AC_DEFINE_UNQUOTED(LIBETPAN_VERSION, "$VERSION",
   [Define this to the version of libEtPan])
 AC_SUBST(VERSION)
@@ -841,8 +843,8 @@ AC_CONFIG_FILES(Makefile
 # $(top_builddir), $(cfg_files), we need to calculate absolute path
 # names here for automatic dependency tracking to work properly.
 cfg_files=
-crd="`pwd`"
-for cfg_file in ${ac_config_files}; do
+crd="$(pwd)"
+for cfg_file in $ac_config_files; do
   cfg_files="${cfg_files} ${crd}/${cfg_file}"
 done
 AC_SUBST(cfg_files)
