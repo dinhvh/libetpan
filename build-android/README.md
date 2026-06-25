@@ -65,6 +65,16 @@ etpan  sasl2  ssl  crypto  iconv  z  log
 > `build-android/include/libetpan/` during the build; the demo app's
 > `prepare-libs.sh` sources them from there.
 
+## Using these zips in MailCore2
+
+The four zips produced here — `libetpan-android-7.zip`, `openssl-android-3.zip`,
+`cyrus-sasl-android-4.zip`, `iconv-android-1.zip` — are rebuilt dependencies that
+MailCore2's `build-android` consumes (reusing the *same* OpenSSL/SASL/iconv that
+libetpan links keeps the ABI consistent). Copy them into
+`mailcore2/build-android/third-party/` and follow that repo's
+`build-android/README.md`, which also builds its own ctemplate dependency, to
+produce `mailcore2-android-4.aar`.
+
 ## Demo app
 
 `example/` is a Kotlin + Jetpack Compose app that uses the libraries above via a
