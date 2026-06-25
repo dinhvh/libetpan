@@ -42,6 +42,9 @@
 #ifdef HAVE_ICONV
 #include <iconv.h>
 #endif
+#ifdef HAVE_ICU
+#include <unicode/ucnv.h>
+#endif
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -567,6 +570,45 @@ static size_t mail_iconv (iconv_t cd, const char **inbuf, size_t *inbytesleft,
 }
 #endif
 
+#ifdef HAVE_ICU
+static int icu_should_try_charset(const char * fromcode)
+{
+  return strcasecmp(fromcode, "iso-2022-jp") == 0 ||
+      strcasecmp(fromcode, "iso-2022-jp-2") == 0 ||
+      strcasecmp(fromcode, "shift_jis") == 0 ||
+      strcasecmp(fromcode, "shift-jis") == 0 ||
+      strcasecmp(fromcode, "euc-jp") == 0 ||
+      strcasecmp(fromcode, "eucjp") == 0;
+}
+
+static int icu_charconv(const char * tocode, const char * fromcode,
+    const char * str, size_t length, char * result, size_t * result_len)
+{
+  UErrorCode err = U_ZERO_ERROR;
+  int32_t converted_len;
+
+  if (length > (size_t) 0x7fffffff || *result_len > (size_t) 0x7fffffff)
+    return MAIL_CHARCONV_ERROR_MEMORY;
+
+  converted_len = ucnv_convert(tocode, fromcode, result, (int32_t) *result_len,
+      str, (int32_t) length, &err);
+  if (err == U_BUFFER_OVERFLOW_ERROR)
+    return MAIL_CHARCONV_ERROR_MEMORY;
+  if (U_FAILURE(err)) {
+    if (err == U_FILE_ACCESS_ERROR || err == U_MISSING_RESOURCE_ERROR ||
+        err == U_INVALID_TABLE_FORMAT)
+      return MAIL_CHARCONV_ERROR_UNKNOWN_CHARSET;
+    return MAIL_CHARCONV_ERROR_CONV;
+  }
+  if (converted_len < 0)
+    return MAIL_CHARCONV_ERROR_CONV;
+
+  result[converted_len] = '\0';
+  *result_len = (size_t) converted_len;
+  return MAIL_CHARCONV_NO_ERROR;
+}
+#endif
+
 static const char * get_valid_charset(const char * fromcode)
 {
   if ((strcasecmp(fromcode, "GB2312") == 0) || (strcasecmp(fromcode, "GB_2312-80") == 0)) {
@@ -638,6 +680,34 @@ int charconv(const char * tocode, const char * fromcode,
 			return res;
 		/* else, let's try with iconv, if available */
 	}
+
+#ifdef HAVE_ICU
+	if (icu_should_try_charset(fromcode))
+	{
+		size_t allocated_length;
+		size_t result_length;
+
+		res = charconv_get_output_size(length, &allocated_length);
+		if (res != MAIL_CHARCONV_NO_ERROR)
+			return res;
+		result_length = allocated_length;
+		*result = malloc(allocated_length + 1);
+		if (*result == NULL)
+			return MAIL_CHARCONV_ERROR_MEMORY;
+		res = icu_charconv(tocode, fromcode, str, length, *result,
+		    &result_length);
+		if (res == MAIL_CHARCONV_NO_ERROR) {
+			out = realloc(*result, result_length + 1);
+			if (out != NULL)
+				*result = out;
+			return MAIL_CHARCONV_NO_ERROR;
+		}
+		free(*result);
+		*result = NULL;
+		if (res != MAIL_CHARCONV_ERROR_UNKNOWN_CHARSET)
+			return res;
+	}
+#endif
 
 #ifndef HAVE_ICONV
   return MAIL_CHARCONV_ERROR_UNKNOWN_CHARSET;
@@ -751,6 +821,41 @@ int charconv_buffer(const char * tocode, const char * fromcode,
 		}
 		/* else, let's try with iconv, if available */
 	}
+
+#ifdef HAVE_ICU
+	if (icu_should_try_charset(fromcode))
+	{
+		size_t allocated_length;
+		size_t result_length;
+
+		res = charconv_get_output_size(length, &allocated_length);
+		if (res != MAIL_CHARCONV_NO_ERROR)
+			return res;
+		result_length = allocated_length;
+		mmapstr = mmap_string_sized_new(allocated_length + 1);
+		*result_len = 0;
+		if (mmapstr == NULL)
+			return MAIL_CHARCONV_ERROR_MEMORY;
+		res = icu_charconv(tocode, fromcode, str, length, mmapstr->str,
+		    &result_length);
+		if (res == MAIL_CHARCONV_NO_ERROR) {
+			int r;
+
+			*result = mmapstr->str;
+			r = mmap_string_ref(mmapstr);
+			if (r < 0) {
+				mmap_string_free(mmapstr);
+				return MAIL_CHARCONV_ERROR_MEMORY;
+			}
+			mmap_string_set_size(mmapstr, result_length);
+			*result_len = result_length;
+			return MAIL_CHARCONV_NO_ERROR;
+		}
+		mmap_string_free(mmapstr);
+		if (res != MAIL_CHARCONV_ERROR_UNKNOWN_CHARSET)
+			return res;
+	}
+#endif
 
 #ifndef HAVE_ICONV
   return MAIL_CHARCONV_ERROR_UNKNOWN_CHARSET;

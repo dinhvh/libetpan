@@ -13,6 +13,7 @@ CPPFLAGS += \
 
 CFLAGS += -Wall -Wextra -Werror -g
 LDLIBS += $(TOP)/src/.libs/libetpan.a -lz -lsasl2 -lpthread
+LDLIBS += $(shell pkg-config --libs icu-uc 2>/dev/null)
 XML2_CPPFLAGS := -I$(shell xcrun --show-sdk-path)/usr/include/libxml2
 XML2_LDLIBS := -lxml2
 TIDY_CPPFLAGS := $(shell pkg-config --cflags tidy 2>/dev/null || printf '%s' "-I$$(brew --prefix tidy-html5)/include") -I /usr/include/tidy

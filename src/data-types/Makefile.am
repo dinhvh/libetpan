@@ -38,7 +38,7 @@ etpaninclude_HEADERS = \
 	carray.h clist.h chash.h \
 	charconv.h mailsem.h maillock.h
 
-AM_CPPFLAGS = -I$(top_builddir)/include
+AM_CPPFLAGS = -I$(top_builddir)/include @ICUCPPFLAGS@
 
 noinst_LTLIBRARIES = libdata-types.la
 

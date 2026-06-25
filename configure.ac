@@ -348,6 +348,44 @@ if test x$enable_iconv = xyes; then
 fi
 AC_SUBST(LIBICONV)
 
+dnl ICU
+ICULIB=""
+ICUCPPFLAGS=""
+
+AC_ARG_WITH(icu, [AS_HELP_STRING([--with-icu], [use ICU for charset conversion before iconv (default=auto)])],
+            [], [with_icu=auto])
+if test "x$with_icu" != "xno"; then
+  PKG_CHECK_MODULES([ICU], [icu-uc],
+    [with_icu=yes],
+    [if test "x$with_icu" = "xyes"; then
+       AC_MSG_ERROR([ICU support requested but icu-uc was not found])
+     else
+       with_icu=no
+     fi])
+  if test "x$with_icu" = "xyes"; then
+    SAVED_CPPFLAGS="$CPPFLAGS"
+    SAVED_LIBS="$LIBS"
+    CPPFLAGS="$CPPFLAGS $ICU_CFLAGS"
+    LIBS="$LIBS $ICU_LIBS"
+    AC_CHECK_HEADERS([unicode/ucnv.h unicode/ustring.h],
+      [],
+      [AC_MSG_ERROR([ICU headers are missing])])
+    AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <unicode/ucnv.h>]],
+      [[UErrorCode err = U_ZERO_ERROR;
+        UConverter * conv = ucnv_open("UTF-8", &err);
+        if (conv != NULL) ucnv_close(conv);
+        return U_FAILURE(err);]])],
+      [AC_DEFINE(HAVE_ICU, 1, [Define if you have ICU charset conversion.])
+       ICUCPPFLAGS="$ICU_CFLAGS"
+       ICULIB="$ICU_LIBS"],
+      [AC_MSG_ERROR([ICU libraries are missing])])
+    CPPFLAGS="$SAVED_CPPFLAGS"
+    LIBS="$SAVED_LIBS"
+  fi
+fi
+AC_SUBST(ICUCPPFLAGS)
+AC_SUBST(ICULIB)
+
 dnl Berkeley DB
 
 DBVERS=0
