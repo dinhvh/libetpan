@@ -10,7 +10,15 @@ cd ..
 if test "x$1" = xprepare ; then
   echo preparing
   ./autogen.sh > "$logfile" 2>&1
-  tar czf build-mac/autogen-result.tar.gz `find . -name '*.in'` configure install-sh config.sub missing config.guess
+  # Package every build aux file autogen.sh produced. Newer autoconf/automake/
+  # libtool require compile, depcomp and ltmain.sh at configure time; omitting
+  # them makes ./configure abort with "cannot find required auxiliary files".
+  # Only include the ones that exist so the command works across tool versions.
+  aux_files=""
+  for f in configure install-sh config.sub config.guess missing compile depcomp ltmain.sh ar-lib test-driver ; do
+    test -f "$f" && aux_files="$aux_files $f"
+  done
+  tar czf build-mac/autogen-result.tar.gz `find . -name '*.in'` $aux_files
   exit 0
 elif test "x$1" = xprepare-clean ; then
   if test -f Makefile ; then
