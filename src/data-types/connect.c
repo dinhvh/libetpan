@@ -55,6 +55,7 @@
 #else
 #	include <netdb.h>
 #	include <netinet/in.h>
+#	include <netinet/tcp.h>   /* TCP_KEEPALIVE / TCP_KEEPINTVL / TCP_KEEPCNT */
 #	include <sys/socket.h>
 #	ifdef HAVE_SYS_POLL_H
 #		include <sys/poll.h>
@@ -62,6 +63,33 @@
 #	include <unistd.h>
 #	include <arpa/inet.h>
 #endif
+
+/* Enable TCP keepalive so that a "half-open" connection (peer gone without
+   sending RST/FIN, e.g. after a laptop sleep/wake or a network change) is
+   detected by the OS. Without keepalive, a blocked read on such a dead
+   socket only returns after the full stream timeout, which can be many
+   minutes. With keepalive the kernel probes the peer and the blocked read
+   fails with ETIMEDOUT once the probes go unanswered.
+   idle 15s + 4 probes * 15s ~= 75s detection. Values are conservative and
+   can be tuned; best-effort (a failing setsockopt does not abort connect). */
+static void setup_tcp_keepalive(int s)
+{
+#ifdef SO_KEEPALIVE
+  int on = 1;
+  setsockopt(s, SOL_SOCKET, SO_KEEPALIVE, &on, sizeof(on));
+#ifdef TCP_KEEPALIVE   /* macOS/BSD: seconds of idle before first probe */
+  { int v = 15; setsockopt(s, IPPROTO_TCP, TCP_KEEPALIVE, &v, sizeof(v)); }
+#elif defined(TCP_KEEPIDLE)  /* Linux */
+  { int v = 15; setsockopt(s, IPPROTO_TCP, TCP_KEEPIDLE, &v, sizeof(v)); }
+#endif
+#ifdef TCP_KEEPINTVL
+  { int v = 15; setsockopt(s, IPPROTO_TCP, TCP_KEEPINTVL, &v, sizeof(v)); }
+#endif
+#ifdef TCP_KEEPCNT
+  { int v = 4;  setsockopt(s, IPPROTO_TCP, TCP_KEEPCNT, &v, sizeof(v)); }
+#endif
+#endif
+}
 
 uint16_t mail_get_service_port(const char * name, char * protocol)
 {
@@ -241,6 +269,7 @@ int mail_tcp_connect_with_local_address_timeout(const char * server, uint16_t po
   s = socket(PF_INET, SOCK_STREAM, 0);
   if (s == -1)
     goto err;
+  setup_tcp_keepalive(s);
 
   if ((local_address != NULL) || (local_port != 0)) {
     struct sockaddr_in la;
@@ -301,6 +330,8 @@ int mail_tcp_connect_with_local_address_timeout(const char * server, uint16_t po
     if (s == -1)
       continue;
     
+    setup_tcp_keepalive(s);
+
     // Christopher Lyon Anderson - prevent SigPipe
 #ifdef SO_NOSIGPIPE
     int kOne = 1;
