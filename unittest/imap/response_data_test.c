@@ -47,6 +47,28 @@ static void check_case(const struct response_data_case * test_case,
   mailimap_response_data_free(data);
 }
 
+static void check_nested_invalid_flags(bool compressed)
+{
+  struct mailimap_response_data * data = NULL;
+  struct mailimap_flag_list * flags;
+  int r;
+
+  r = imap_test_parse_response_data_file(
+      "data/response-data/flags-nested-invalid.imap", compressed, &data);
+  assert(r == MAILIMAP_NO_ERROR);
+  assert(data != NULL);
+  assert(data->rsp_type == MAILIMAP_RESP_DATA_TYPE_MAILBOX_DATA);
+  assert(data->rsp_data.rsp_mailbox_data->mbd_type ==
+      MAILIMAP_MAILBOX_DATA_FLAGS);
+
+  flags = data->rsp_data.rsp_mailbox_data->mbd_data.mbd_flags;
+  assert(flags != NULL);
+  assert(flags->fl_list != NULL);
+  assert(clist_count(flags->fl_list) == 6);
+
+  mailimap_response_data_free(data);
+}
+
 int imap_response_data_test_run(void)
 {
   static const struct response_data_case cases[] = {
@@ -117,6 +139,8 @@ int imap_response_data_test_run(void)
     check_case(&cases[i], false);
     check_case(&cases[i], true);
   }
+  check_nested_invalid_flags(false);
+  check_nested_invalid_flags(true);
 
   puts("response_data_test: ok");
   return 0;

@@ -1,0 +1,1 @@
+* FLAGS (\Answered \Deleted \Draft \Flagged \Seen (\Seen nonjunk $label1 FLAGS) $label1)
