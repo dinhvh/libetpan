@@ -1807,6 +1807,15 @@ int mailimap_authenticate(mailimap * session, const char * auth_type,
     res = MAILIMAP_ERROR_LOGIN;
     goto free_secret;
   }
+
+  if ((auth_type != NULL) && (login != NULL) &&
+      (strcmp(auth_type, "EXTERNAL") == 0)) {
+    r = sasl_setprop(session->imap_sasl.sasl_conn, SASL_AUTH_EXTERNAL, login);
+    if (r != SASL_OK) {
+      res = MAILIMAP_ERROR_LOGIN;
+      goto free_sasl_conn;
+    }
+  }
   
   r = sasl_client_start(session->imap_sasl.sasl_conn,
       auth_type, NULL, &sasl_out, &sasl_out_len, &mechusing);
