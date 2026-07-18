@@ -8009,16 +8009,15 @@ mailimap_msg_att_dynamic_parse(mailstream * fd, MMAPString * buffer, struct mail
     goto err;
   }
 
-  r = mailimap_struct_spaced_list_parse(fd, buffer, parser_ctx, &cur_token,
-					&list,
-					(mailimap_struct_parser *)
-					mailimap_flag_fetch_parse,
-					(mailimap_struct_destructor *)
-					mailimap_flag_fetch_free,
-					progr_rate, progr_fun);
+  r = mailimap_struct_spaced_list_parse_recover(fd, buffer, parser_ctx,
+      &cur_token, &list,
+      (mailimap_struct_parser *) mailimap_flag_fetch_parse,
+      (mailimap_struct_destructor *) mailimap_flag_fetch_free,
+      mailimap_flag_list_skip_group_parse,
+      progr_rate, progr_fun);
   if ((r != MAILIMAP_NO_ERROR) && (r != MAILIMAP_ERROR_PARSE)) {
     res = r;
-    goto err;
+    goto free;
   }
 
   r = mailimap_cparenth_parse(fd, buffer, parser_ctx, &cur_token);
@@ -10169,15 +10168,15 @@ mailimap_resp_text_code_permanentflags_parse(mailstream * fd,
     goto err;
   }
   
-  r = mailimap_struct_spaced_list_parse(fd, buffer, parser_ctx, &cur_token, &flaglist,
-					(mailimap_struct_parser *)
-					mailimap_flag_perm_parse,
-					(mailimap_struct_destructor *)
-					mailimap_flag_perm_free,
-					progr_rate, progr_fun);
+  r = mailimap_struct_spaced_list_parse_recover(fd, buffer, parser_ctx,
+      &cur_token, &flaglist,
+      (mailimap_struct_parser *) mailimap_flag_perm_parse,
+      (mailimap_struct_destructor *) mailimap_flag_perm_free,
+      mailimap_flag_list_skip_group_parse,
+      progr_rate, progr_fun);
   if ((r != MAILIMAP_NO_ERROR) && (r != MAILIMAP_ERROR_PARSE)) {
     res = r;
-    goto err;
+    goto free;
   }
   
   r = mailimap_cparenth_parse(fd, buffer, parser_ctx, &cur_token);

@@ -69,6 +69,67 @@ static void check_nested_invalid_flags(bool compressed)
   mailimap_response_data_free(data);
 }
 
+static void check_nested_invalid_permanentflags(bool compressed)
+{
+  struct mailimap_response_data * data = NULL;
+  struct mailimap_resp_text_code * code;
+  clist * flags;
+  int r;
+
+  r = imap_test_parse_response_data_file(
+      "data/response-data/cond-state-ok-permanentflags-nested-invalid.imap",
+      compressed, &data);
+  assert(r == MAILIMAP_NO_ERROR);
+  assert(data != NULL);
+  assert(data->rsp_type == MAILIMAP_RESP_DATA_TYPE_COND_STATE);
+  assert(data->rsp_data.rsp_cond_state->rsp_type ==
+      MAILIMAP_RESP_COND_STATE_OK);
+  assert(data->rsp_data.rsp_cond_state->rsp_text != NULL);
+
+  code = data->rsp_data.rsp_cond_state->rsp_text->rsp_code;
+  assert(code != NULL);
+  assert(code->rc_type == MAILIMAP_RESP_TEXT_CODE_PERMANENTFLAGS);
+
+  flags = code->rc_data.rc_perm_flags;
+  assert(flags != NULL);
+  assert(clist_count(flags) == 6);
+
+  mailimap_response_data_free(data);
+}
+
+static void check_nested_invalid_fetch_flags(bool compressed)
+{
+  struct mailimap_response_data * data = NULL;
+  struct mailimap_msg_att * msg_att;
+  struct mailimap_msg_att_item * item;
+  struct mailimap_msg_att_dynamic * dyn;
+  int r;
+
+  r = imap_test_parse_response_data_file(
+      "data/response-data/fetch-flags-nested-invalid.imap", compressed,
+      &data);
+  assert(r == MAILIMAP_NO_ERROR);
+  assert(data != NULL);
+  assert(data->rsp_type == MAILIMAP_RESP_DATA_TYPE_MESSAGE_DATA);
+  assert(data->rsp_data.rsp_message_data->mdt_type ==
+      MAILIMAP_MESSAGE_DATA_FETCH);
+
+  msg_att = data->rsp_data.rsp_message_data->mdt_msg_att;
+  assert(msg_att != NULL);
+  assert(msg_att->att_list != NULL);
+
+  item = clist_content(clist_begin(msg_att->att_list));
+  assert(item != NULL);
+  assert(item->att_type == MAILIMAP_MSG_ATT_ITEM_DYNAMIC);
+
+  dyn = item->att_data.att_dyn;
+  assert(dyn != NULL);
+  assert(dyn->att_list != NULL);
+  assert(clist_count(dyn->att_list) == 2);
+
+  mailimap_response_data_free(data);
+}
+
 int imap_response_data_test_run(void)
 {
   static const struct response_data_case cases[] = {
@@ -141,6 +202,10 @@ int imap_response_data_test_run(void)
   }
   check_nested_invalid_flags(false);
   check_nested_invalid_flags(true);
+  check_nested_invalid_permanentflags(false);
+  check_nested_invalid_permanentflags(true);
+  check_nested_invalid_fetch_flags(false);
+  check_nested_invalid_fetch_flags(true);
 
   puts("response_data_test: ok");
   return 0;
