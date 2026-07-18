@@ -139,8 +139,8 @@ function build_target {
   
   echo "*** building for $TARGET - $MARCH ***" >> "$current_logfile" 2>&1
   
-  local PREFIX=${BUILD_DIR}/${LIB_NAME}/${TARGET}${SDK_IOS_VERSION}${MARCH}
-  rm -rf $PREFIX
+  local PREFIX="${BUILD_DIR}/${LIB_NAME}/${TARGET}${SDK_IOS_VERSION}${MARCH}"
+  rm -rf "$PREFIX"
   
   local CURRENT_TARGET="$MARCH-apple-ios${SDK_IOS_MIN_VERSION}${TARGET_SUFFIX}"
   export CPPFLAGS="-isysroot ${SYSROOT} -target ${CURRENT_TARGET} -Os"
@@ -151,8 +151,8 @@ function build_target {
   export AR="$xcode_developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ar"
   
   OPENSSL="--with-openssl=$BUILD_DIR/openssl-1.0.0d/universal"
-  PLUGINS="--enable-otp=no --enable-digest=no --with-des=no --enable-login"
-  ./configure --host=${ARCH} --prefix=$PREFIX --enable-shared=no --enable-static=yes --with-pam=$BUILD_DIR/openpam-20071221/universal $PLUGINS >> "$current_logfile" 2>&1
+  local PLUGINS=(--enable-otp=no --enable-digest=no --with-des=no --enable-login)
+  ./configure --host="${ARCH}" --prefix="$PREFIX" --enable-shared=no --enable-static=yes --with-pam="$BUILD_DIR/openpam-20071221/universal" "${PLUGINS[@]}" >> "$current_logfile" 2>&1
   make -j 8 >> "$current_logfile" 2>&1
   if [[ "$?" != "0" ]]; then
     echo "CONFIGURE FAILED"
@@ -235,18 +235,18 @@ ALL_LIBS="libsasl2.a sasl2/libanonymous.a sasl2/libcrammd5.a sasl2/libplain.a sa
 for lib in $ALL_LIBS; do
     dir="`dirname $lib`"
     if [[ "$dir" != "." ]]; then
-        mkdir -p ${INSTALL_PATH}/lib/$dir
+        mkdir -p "${INSTALL_PATH}/lib/$dir"
     fi
 
-    LIBS="${BUILD_DIR}/${LIB_NAME}/iPhoneOS${SDK_IOS_VERSION}*/lib/${lib}"
+    LIBS=("${BUILD_DIR}/${LIB_NAME}/iPhoneOS${SDK_IOS_VERSION}"*/lib/"${lib}")
     output="${INSTALL_PATH}/lib/iphoneos/${lib}"
     mkdir -p "$(dirname "$output")"
-    lipo -create ${LIBS} -output "$output"
+    lipo -create "${LIBS[@]}" -output "$output"
 
-    LIBS="${BUILD_DIR}/${LIB_NAME}/iPhoneSimulator${SDK_IOS_VERSION}*/lib/${lib}"
+    LIBS=("${BUILD_DIR}/${LIB_NAME}/iPhoneSimulator${SDK_IOS_VERSION}"*/lib/"${lib}")
     output="${INSTALL_PATH}/lib/iphonesimulator/${lib}"
     mkdir -p "$(dirname "$output")"
-    lipo -create ${LIBS} -output "$output"
+    lipo -create "${LIBS[@]}" -output "$output"
 done
 
 echo "*** creating built package ***" >> "$logfile" 2>&1

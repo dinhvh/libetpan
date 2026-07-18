@@ -1708,7 +1708,7 @@
 /* Begin PBXLegacyTarget section */
 		C6635C4316DFFE6E0066276E /* libetpan-prepare */ = {
 			isa = PBXLegacyTarget;
-			buildArgumentsString = "$(SRCROOT)/update.sh";
+			buildArgumentsString = ./update.sh;
 			buildConfigurationList = C6635C4416DFFE6E0066276E /* Build configuration list for PBXLegacyTarget "libetpan-prepare" */;
 			buildPhases = (
 			);
@@ -1722,7 +1722,7 @@
 		};
 		C6635C4D16E002340066276E /* libetpan-prepare-ios */ = {
 			isa = PBXLegacyTarget;
-			buildArgumentsString = "$(SRCROOT)/update.sh";
+			buildArgumentsString = ./update.sh;
 			buildConfigurationList = C6635C4E16E002340066276E /* Build configuration list for PBXLegacyTarget "libetpan-prepare-ios" */;
 			buildPhases = (
 			);
