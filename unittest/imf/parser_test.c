@@ -196,6 +196,8 @@ static void check_address_forms(void)
       "Giant; \"Big\" Box", "sysservices@example.net");
   check_mailbox("user@[127.0.0.1]", NULL, "user@[127.0.0.1]");
   check_mailbox("admin <>", "admin", "");
+  check_mailbox("\"Folded\" <wangshiyin@\r\n 258.com>", "Folded",
+      "wangshiyin@258.com");
 
   indx = 0;
   r = mailimf_fields_parse("From: admin <>\r\n",

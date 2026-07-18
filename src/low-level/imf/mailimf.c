@@ -3326,12 +3326,32 @@ static int mailimf_addr_spec_parse(const char * message, size_t length,
     switch (message[end]) {
     case '>':
     case ',':
-    case '\r':
-    case '\n':
     case '(':
     case ')':
     case ':':
     case ';':
+      final = TRUE;
+      break;
+    case '\r':
+      if ((end + 2 < length) && (message[end + 1] == '\n') &&
+          ((message[end + 2] == ' ') || (message[end + 2] == '\t'))) {
+        end += 3;
+        while ((end < length) &&
+            ((message[end] == ' ') || (message[end] == '\t')))
+          end ++;
+        continue;
+      }
+      final = TRUE;
+      break;
+    case '\n':
+      if ((end + 1 < length) &&
+          ((message[end + 1] == ' ') || (message[end + 1] == '\t'))) {
+        end += 2;
+        while ((end < length) &&
+            ((message[end] == ' ') || (message[end] == '\t')))
+          end ++;
+        continue;
+      }
       final = TRUE;
       break;
     }
@@ -3359,7 +3379,8 @@ static int mailimf_addr_spec_parse(const char * message, size_t length,
   src = message + cur_token;
   dest = addr_spec;
   for(i = 0 ; i < count ; i ++) {
-    if ((* src != ' ') && (* src != '\t')) {
+    if ((* src != ' ') && (* src != '\t') &&
+        (* src != '\r') && (* src != '\n')) {
       * dest = * src;
       dest ++;
     }
