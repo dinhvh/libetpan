@@ -28,6 +28,11 @@ struct capture_stream {
   MMAPString * output;
 };
 
+struct script_stream {
+  struct memory_stream memory;
+  MMAPString * output;
+};
+
 static ssize_t memory_read(mailstream_low * s, void * buf, size_t count)
 {
   struct memory_stream * data = s->data;
@@ -164,6 +169,52 @@ static mailstream_low_driver capture_driver = {
   memory_idle
 };
 
+static ssize_t script_read(mailstream_low * s, void * buf, size_t count)
+{
+  struct script_stream * data = s->data;
+  size_t remaining = data->memory.input_len - data->memory.input_pos;
+  size_t chunk = remaining < count ? remaining : count;
+
+  if (chunk == 0)
+    return 0;
+
+  memcpy(buf, data->memory.input + data->memory.input_pos, chunk);
+  data->memory.input_pos += chunk;
+  return (ssize_t) chunk;
+}
+
+static ssize_t script_write(mailstream_low * s, const void * buf,
+    size_t count)
+{
+  struct script_stream * data = s->data;
+
+  assert(mmap_string_append_len(data->output, buf, count) != NULL);
+  return (ssize_t) count;
+}
+
+static void script_free(mailstream_low * s)
+{
+  struct script_stream * data = s->data;
+
+  free(data->memory.input);
+  free(data);
+  free(s);
+}
+
+static mailstream_low_driver script_driver = {
+  script_read,
+  script_write,
+  memory_close,
+  memory_get_fd,
+  script_free,
+  memory_cancel,
+  NULL,
+  memory_get_certificate_chain,
+  memory_idle,
+  memory_idle,
+  memory_idle
+};
+
 static MMAPString * read_fixture(const char * path)
 {
   FILE * f;
@@ -258,6 +309,45 @@ static mailstream * stream_from_fixture(MMAPString * fixture, bool compressed)
   stream = mailstream_new(low, 128);
   assert(stream != NULL);
   free(compressed_bytes);
+  return stream;
+}
+
+mailstream * imap_test_stream_from_string(const char * input)
+{
+  mailstream_low * low;
+  mailstream * stream;
+
+  low = memory_stream_low_new((const unsigned char *) input, strlen(input));
+  stream = mailstream_new(low, 128);
+  assert(stream != NULL);
+  return stream;
+}
+
+mailstream * imap_test_stream_from_string_with_output(const char * input,
+    MMAPString ** output)
+{
+  struct script_stream * data;
+  mailstream_low * low;
+  mailstream * stream;
+  size_t input_len;
+
+  data = calloc(1, sizeof(* data));
+  assert(data != NULL);
+
+  input_len = strlen(input);
+  data->memory.input = malloc(input_len);
+  assert(data->memory.input != NULL);
+  memcpy(data->memory.input, input, input_len);
+  data->memory.input_len = input_len;
+  data->output = mmap_string_new("");
+  assert(data->output != NULL);
+
+  low = mailstream_low_new(data, &script_driver);
+  assert(low != NULL);
+  stream = mailstream_new(low, 128);
+  assert(stream != NULL);
+
+  *output = data->output;
   return stream;
 }
 

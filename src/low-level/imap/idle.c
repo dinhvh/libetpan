@@ -67,15 +67,70 @@ static int mailimap_done_send(mailimap * session)
   return MAILIMAP_NO_ERROR;
 }
 
-LIBETPAN_EXPORT
-int mailimap_idle(mailimap * session)
+static int mailimap_idle_wait_continuation(mailimap * session)
 {
   int r;
   size_t indx;
   struct mailimap_continue_req * cont_req;
+  struct mailimap_response_data * resp_data;
   struct mailimap_response * response;
-  clist * resp_data_list;
   struct mailimap_parser_context * parser_ctx;
+
+  parser_ctx = mailimap_parser_context_new(session);
+  if (parser_ctx == NULL)
+    return MAILIMAP_ERROR_MEMORY;
+
+  while (1) {
+    indx = 0;
+    r = mailimap_continue_req_parse(session->imap_stream,
+        session->imap_stream_buffer, parser_ctx,
+        &indx, &cont_req,
+        session->imap_progr_rate, session->imap_progr_fun);
+
+    if (r == MAILIMAP_NO_ERROR) {
+      mailimap_continue_req_free(cont_req);
+      mailimap_parser_context_free(parser_ctx);
+      return MAILIMAP_NO_ERROR;
+    }
+    if (r != MAILIMAP_ERROR_PARSE) {
+      mailimap_parser_context_free(parser_ctx);
+      return r;
+    }
+
+    indx = 0;
+    r = mailimap_response_data_parse(session->imap_stream,
+        session->imap_stream_buffer, parser_ctx,
+        &indx, &resp_data,
+        session->imap_progr_rate, session->imap_progr_fun);
+
+    if (r == MAILIMAP_NO_ERROR) {
+      mailimap_response_data_free(resp_data);
+      if (mailimap_read_line(session) == NULL) {
+        mailimap_parser_context_free(parser_ctx);
+        return MAILIMAP_ERROR_STREAM;
+      }
+      continue;
+    }
+    if (r != MAILIMAP_ERROR_PARSE) {
+      mailimap_parser_context_free(parser_ctx);
+      return r;
+    }
+
+    mailimap_parser_context_free(parser_ctx);
+
+    r = mailimap_parse_response(session, &response);
+    if (r != MAILIMAP_NO_ERROR)
+      return r;
+    mailimap_response_free(response);
+
+    return MAILIMAP_ERROR_PARSE;
+  }
+}
+
+LIBETPAN_EXPORT
+int mailimap_idle(mailimap * session)
+{
+  int r;
   
   session->imap_selection_info->sel_has_exists = 0;
   session->imap_selection_info->sel_has_recent = 0;
@@ -98,49 +153,8 @@ int mailimap_idle(mailimap * session)
   
   if (mailimap_read_line(session) == NULL)
     return MAILIMAP_ERROR_STREAM;
-  
-  indx = 0;
 
-  parser_ctx = mailimap_parser_context_new(session);
-  if (parser_ctx == NULL)
-    return MAILIMAP_ERROR_MEMORY;
-
-  r = mailimap_struct_multiple_parse(session->imap_stream,
-					session->imap_stream_buffer, parser_ctx,
-					&indx,
-					&resp_data_list,
-					(mailimap_struct_parser *)
-					mailimap_response_data_parse,
-					(mailimap_struct_destructor *)
-					mailimap_response_data_free,
-					session->imap_progr_rate, session->imap_progr_fun);
-  mailimap_parser_context_free(parser_ctx);
-  if ((r != MAILIMAP_NO_ERROR) && (r != MAILIMAP_ERROR_PARSE))
-    return r;
-  if (r == MAILIMAP_NO_ERROR) {
-    clist_foreach(resp_data_list,
-	  (clist_func) mailimap_response_data_free, NULL);
-    clist_free(resp_data_list);
-  }
-
-  r = mailimap_continue_req_parse(session->imap_stream,
-      session->imap_stream_buffer, NULL,
-      &indx, &cont_req,
-      session->imap_progr_rate, session->imap_progr_fun);
-  
-  if (r == MAILIMAP_NO_ERROR)
-    mailimap_continue_req_free(cont_req);
-
-  if (r == MAILIMAP_ERROR_PARSE) {
-    r = mailimap_parse_response(session, &response);
-    if (r != MAILIMAP_NO_ERROR)
-      return r;
-    mailimap_response_free(response);
-    
-    return MAILIMAP_ERROR_PARSE;
-  }
-  
-  return MAILIMAP_NO_ERROR;
+  return mailimap_idle_wait_continuation(session);
 }
 
 LIBETPAN_EXPORT

@@ -9,6 +9,7 @@ int main(void)
   imap_unsupported_response_test_run();
   imap_command_sender_test_run();
   imap_command_parameter_sender_test_run();
+  imap_idle_test_run();
 
   puts("imap_test: ok");
   return 0;
