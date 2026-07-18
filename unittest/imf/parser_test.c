@@ -182,6 +182,9 @@ static void check_address_forms(void)
   struct mailimf_address_list * address_list;
   struct mailimf_address * address;
   struct mailimf_mailbox_list * mailbox_list;
+  struct mailimf_fields * fields;
+  struct mailimf_field * field;
+  struct mailimf_mailbox * mailbox;
   size_t indx;
   int r;
 
@@ -192,6 +195,19 @@ static void check_address_forms(void)
   check_mailbox("\"Giant; \\\"Big\\\" Box\" <sysservices@example.net>",
       "Giant; \"Big\" Box", "sysservices@example.net");
   check_mailbox("user@[127.0.0.1]", NULL, "user@[127.0.0.1]");
+  check_mailbox("admin <>", "admin", "");
+
+  indx = 0;
+  r = mailimf_fields_parse("From: admin <>\r\n",
+      strlen("From: admin <>\r\n"), &indx, &fields);
+  assert_parse_consumes(r, indx, "From: admin <>\r\n");
+  field = field_at(fields, 0);
+  assert(field->fld_type == MAILIMF_FIELD_FROM);
+  mailbox = clist_content(clist_begin(
+          field->fld_data.fld_from->frm_mb_list->mb_list));
+  assert(strcmp(mailbox->mb_display_name, "admin") == 0);
+  assert(strcmp(mailbox->mb_addr_spec, "") == 0);
+  mailimf_fields_free(fields);
 
   indx = 0;
   mailbox_list = NULL;

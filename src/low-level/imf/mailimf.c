@@ -3062,7 +3062,18 @@ static int mailimf_angle_addr_parse(const char * message, size_t length,
     return r;
   
   r = mailimf_addr_spec_parse(message, length, &cur_token, &addr_spec);
-  if (r != MAILIMF_NO_ERROR)
+  if (r == MAILIMF_ERROR_PARSE) {
+    addr_spec = strdup("");
+    if (addr_spec == NULL)
+      return MAILIMF_ERROR_MEMORY;
+
+    r = mailimf_cfws_parse(message, length, &cur_token);
+    if ((r != MAILIMF_NO_ERROR) && (r != MAILIMF_ERROR_PARSE)) {
+      free(addr_spec);
+      return r;
+    }
+  }
+  else if (r != MAILIMF_NO_ERROR)
     return r;
   
   r = mailimf_greater_parse(message, length, &cur_token);
