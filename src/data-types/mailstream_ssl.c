@@ -138,6 +138,10 @@ struct mailstream_ssl_data {
   SSL * ssl_conn;
   SSL_CTX * ssl_ctx;
   struct mailstream_cancel * cancel;
+#ifdef WIN32
+  HANDLE read_event;
+  HANDLE write_event;
+#endif
 };
 
 #else
@@ -146,6 +150,10 @@ struct mailstream_ssl_data {
   gnutls_session session;
   gnutls_certificate_credentials_t xcred;
   struct mailstream_cancel * cancel;
+#ifdef WIN32
+  HANDLE read_event;
+  HANDLE write_event;
+#endif
 };
 #endif
 #endif
@@ -535,10 +543,25 @@ again:
   ssl_data->ssl_conn = ssl_conn;
   ssl_data->ssl_ctx = tmp_ctx;
   ssl_data->cancel = cancel;
+#ifdef WIN32
+  ssl_data->read_event = CreateEvent(NULL, TRUE, FALSE, NULL);
+  if (ssl_data->read_event == NULL)
+    goto free_ssl_data;
+
+  ssl_data->write_event = CreateEvent(NULL, TRUE, FALSE, NULL);
+  if (ssl_data->write_event == NULL)
+    goto close_read_event;
+#endif
   mailstream_ssl_context_free(ssl_context);
 
   return ssl_data;
 
+#ifdef WIN32
+ close_read_event:
+  CloseHandle(ssl_data->read_event);
+ free_ssl_data:
+  free(ssl_data);
+#endif
  free_cancel:
   mailstream_cancel_free(cancel);
  free_ssl_conn:
@@ -686,11 +709,26 @@ static struct mailstream_ssl_data * ssl_data_new(int fd, time_t timeout,
   ssl_data->session = session;
   ssl_data->xcred = xcred;
   ssl_data->cancel = cancel;
+#ifdef WIN32
+  ssl_data->read_event = CreateEvent(NULL, TRUE, FALSE, NULL);
+  if (ssl_data->read_event == NULL)
+    goto free_ssl_data;
+
+  ssl_data->write_event = CreateEvent(NULL, TRUE, FALSE, NULL);
+  if (ssl_data->write_event == NULL)
+    goto close_read_event;
+#endif
   
   mailstream_ssl_context_free(ssl_context);
 
   return ssl_data;
   
+#ifdef WIN32
+ close_read_event:
+  CloseHandle(ssl_data->read_event);
+ free_ssl_data:
+  free(ssl_data);
+#endif
  free_cancel:
   mailstream_cancel_free(cancel);
  free_ssl_conn:
@@ -705,6 +743,10 @@ static struct mailstream_ssl_data * ssl_data_new(int fd, time_t timeout,
 static void  ssl_data_free(struct mailstream_ssl_data * ssl_data)
 {
   mailstream_cancel_free(ssl_data->cancel);
+#ifdef WIN32
+  CloseHandle(ssl_data->read_event);
+  CloseHandle(ssl_data->write_event);
+#endif
   free(ssl_data);
 }
 
@@ -857,19 +899,25 @@ static int wait_read(mailstream_low * s)
 #if defined(WIN32)
   FD_ZERO(&fds_read);
   FD_SET(cancellation_fd, &fds_read);
-  event = CreateEvent(NULL, TRUE, FALSE, NULL);
+  event = ssl_data->read_event;
+  ResetEvent(event);
   WSAEventSelect(ssl_data->fd, event, FD_READ | FD_CLOSE);
   FD_SET(event, &fds_read);
   r = WaitForMultipleObjects(fds_read.fd_count, fds_read.fd_array, FALSE, timeout.tv_sec * 1000 + timeout.tv_usec / 1000);
-  if (WAIT_TIMEOUT == r) {
+  if (r < WAIT_OBJECT_0 || r >= WAIT_OBJECT_0 + fds_read.fd_count) {
     WSAEventSelect(ssl_data->fd, event, 0);
-    CloseHandle(event);
     return -1;
   }
   
   cancelled = (fds_read.fd_array[r - WAIT_OBJECT_0] == cancellation_fd);
+  if (fds_read.fd_array[r - WAIT_OBJECT_0] == event) {
+    WSANETWORKEVENTS events;
+    if (WSAEnumNetworkEvents(ssl_data->fd, event, &events) == SOCKET_ERROR) {
+      WSAEventSelect(ssl_data->fd, event, 0);
+      return -1;
+    }
+  }
   WSAEventSelect(ssl_data->fd, event, 0);
-  CloseHandle(event);
 #elif USE_POLL
   pfd[0].fd = ssl_data->fd;
   pfd[0].events = POLLIN;
@@ -1017,20 +1065,27 @@ static int wait_write(mailstream_low * s)
   FD_ZERO(&fds_read);
   FD_ZERO(&fds_write);
   FD_SET(cancellation_fd, &fds_read);
-  event = CreateEvent(NULL, TRUE, FALSE, NULL);
+  event = ssl_data->write_event;
+  ResetEvent(event);
   WSAEventSelect(ssl_data->fd, event, FD_WRITE | FD_CLOSE);
   FD_SET(event, &fds_read);
   r = WaitForMultipleObjects(fds_read.fd_count, fds_read.fd_array, FALSE, timeout.tv_sec * 1000 + timeout.tv_usec / 1000);
-  if (r < 0) {
+  if (r < WAIT_OBJECT_0 || r >= WAIT_OBJECT_0 + fds_read.fd_count) {
 		WSAEventSelect(ssl_data->fd, event, 0);
-		CloseHandle(event);
     return -1;
 	}
   
   cancelled = (fds_read.fd_array[r - WAIT_OBJECT_0] == cancellation_fd) /* SEB 20070709 */;
   write_enabled = (fds_read.fd_array[r - WAIT_OBJECT_0] == event);
+  if (write_enabled) {
+    WSANETWORKEVENTS events;
+    if (WSAEnumNetworkEvents(ssl_data->fd, event, &events) == SOCKET_ERROR) {
+      WSAEventSelect(ssl_data->fd, event, 0);
+      return -1;
+    }
+    write_enabled = (events.lNetworkEvents & (FD_WRITE | FD_CLOSE)) != 0;
+  }
 	WSAEventSelect(ssl_data->fd, event, 0);
-	CloseHandle(event);
 #elif USE_POLL
   pfd[0].fd = ssl_data->fd;
   pfd[0].events = POLLOUT;
