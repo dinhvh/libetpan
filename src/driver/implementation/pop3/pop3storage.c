@@ -43,6 +43,7 @@
 #include <string.h>
 
 #include "mail.h"
+#include "pop3driver.h"
 #include "mailstorage_tools.h"
 #include "maildriver.h"
 
@@ -394,7 +395,7 @@ static int pop3_mailstorage_connect(struct mailstorage * storage)
   else
     driver = pop3_session_driver;
 
-  r = mailstorage_generic_connect_with_local_address(driver,
+  r = mailstorage_generic_connect_with_local_address_tls(driver,
       pop3_storage->pop3_servername,
       pop3_storage->pop3_port,
       pop3_storage->pop3_local_address,
@@ -405,6 +406,8 @@ static int pop3_mailstorage_connect(struct mailstorage * storage)
       pop3_storage->pop3_cache_directory,
       POP3DRIVER_CACHED_SET_FLAGS_DIRECTORY,
       pop3_storage->pop3_flags_directory,
+      POP3DRIVER_CACHED_SET_SSL_CALLBACK,
+      POP3DRIVER_CACHED_SET_SSL_CALLBACK_DATA,
       &session);
   switch (r) {
   case MAIL_NO_ERROR_NON_AUTHENTICATED:
@@ -479,4 +482,3 @@ static int pop3_mailstorage_get_folder_session(struct mailstorage * storage,
  
   return MAIL_NO_ERROR;
 }
-

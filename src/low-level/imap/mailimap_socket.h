@@ -60,6 +60,15 @@ LIBETPAN_EXPORT
 int mailimap_socket_starttls_with_callback(mailimap * f,
     void (* callback)(struct mailstream_ssl_context * ssl_context, void * data), void * data);
 
+LIBETPAN_EXPORT
+int mailimap_socket_starttls_with_server_name(mailimap * f,
+    const char * server_name);
+
+LIBETPAN_EXPORT
+int mailimap_socket_starttls_with_server_name_callback(mailimap * f,
+    const char * server_name,
+    void (* callback)(struct mailstream_ssl_context * ssl_context, void * data), void * data);
+
 #ifdef __cplusplus
 }
 #endif

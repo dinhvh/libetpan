@@ -67,6 +67,21 @@ int mailstorage_generic_connect_with_local_address(mailsession_driver * driver,
     char * flags_directory,
     mailsession ** result);
 
+int mailstorage_generic_connect_with_local_address_tls(mailsession_driver * driver,
+    char * servername,
+    uint16_t port,
+    char * local_address,
+    uint16_t local_port,
+    char * command,
+    int connection_type,
+    int cache_function_id,
+    char * cache_directory,
+    int flags_function_id,
+    char * flags_directory,
+    int ssl_callback_function_id,
+    int ssl_callback_data_function_id,
+    mailsession ** result);
+
 int mailstorage_generic_auth(mailsession * session,
     int connect_result,
     int auth_type,

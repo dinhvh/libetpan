@@ -224,6 +224,8 @@ static int imapdriver_initialize(mailsession * session)
   data->imap_mailbox = NULL;
   data->imap_session = imap;
   data->imap_flags_store = flags_store;
+  data->imap_ssl_callback = NULL;
+  data->imap_ssl_cb_data = NULL;
 
   session->sess_data = data;
 
@@ -1161,7 +1163,9 @@ static int imapdriver_starttls(mailsession * session)
   if (!starttls)
     return MAIL_ERROR_NO_TLS;
   
-  r = mailimap_socket_starttls(imap);
+  r = mailimap_socket_starttls_with_callback(imap,
+      get_data(session)->imap_ssl_callback,
+      get_data(session)->imap_ssl_cb_data);
   return imap_error_to_mail_error(r);
 }
 
@@ -1283,10 +1287,10 @@ static int imapdriver_parameters(mailsession * session,
   switch (id) {
   case IMAPDRIVER_CACHED_SET_SSL_CALLBACK:
     data->imap_ssl_callback = value;
-    break;
+    return MAIL_NO_ERROR;
   case IMAPDRIVER_CACHED_SET_SSL_CALLBACK_DATA:
     data->imap_ssl_cb_data = value;
-    break;
+    return MAIL_NO_ERROR;
   }
   
   return MAIL_ERROR_INVAL;

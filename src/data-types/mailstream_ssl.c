@@ -125,6 +125,12 @@ struct mailstream_ssl_context
 #endif
 };
 
+struct mailstream_ssl_server_name_callback_data {
+  const char * server_name;
+  void (* callback)(struct mailstream_ssl_context * ssl_context, void * data);
+  void * callback_data;
+};
+
 #ifdef USE_SSL
 #ifndef USE_GNUTLS
 struct mailstream_ssl_data {
@@ -385,6 +391,18 @@ static void mailstream_low_ssl_cancel(mailstream_low * s);
 static struct mailstream_cancel * mailstream_low_ssl_get_cancel(mailstream_low * s);
 static carray * mailstream_low_ssl_get_certificate_chain(mailstream_low * s);
 
+static void mailstream_ssl_server_name_callback(struct mailstream_ssl_context * ssl_context, void * data)
+{
+  struct mailstream_ssl_server_name_callback_data * callback_data;
+
+  callback_data = data;
+  if (callback_data->server_name != NULL)
+    mailstream_ssl_set_server_name(ssl_context, callback_data->server_name);
+
+  if (callback_data->callback != NULL)
+    callback_data->callback(ssl_context, callback_data->callback_data);
+}
+
 static mailstream_low_driver local_mailstream_ssl_driver = {
   /* mailstream_read */ mailstream_low_ssl_read,
   /* mailstream_write */ mailstream_low_ssl_write,
@@ -468,9 +486,11 @@ static struct mailstream_ssl_data * ssl_data_new_full(int fd, time_t timeout,
 
 #if (OPENSSL_VERSION_NUMBER >= 0x10000000L)
   if (ssl_context != NULL && ssl_context->server_name != NULL) {
-    SSL_set_tlsext_host_name(ssl_conn, ssl_context->server_name);
+    r = SSL_set_tlsext_host_name(ssl_conn, ssl_context->server_name);
     free(ssl_context->server_name);
     ssl_context->server_name = NULL;
+    if (r != 1)
+      goto free_ssl_conn;
   }
 #endif /* (OPENSSL_VERSION_NUMBER >= 0x10000000L) */
 
@@ -1160,6 +1180,24 @@ mailstream * mailstream_ssl_open_with_callback_timeout(int fd, time_t timeout,
 #endif
 }
 
+mailstream * mailstream_ssl_open_with_server_name_callback_timeout(int fd, time_t timeout,
+    const char * server_name,
+    void (* callback)(struct mailstream_ssl_context * ssl_context, void * data), void * data)
+{
+#ifdef USE_SSL
+  struct mailstream_ssl_server_name_callback_data callback_data;
+
+  callback_data.server_name = server_name;
+  callback_data.callback = callback;
+  callback_data.callback_data = data;
+
+  return mailstream_ssl_open_with_callback_timeout(fd, timeout,
+      mailstream_ssl_server_name_callback, &callback_data);
+#else
+  return NULL;
+#endif
+}
+
 ssize_t mailstream_ssl_get_certificate(mailstream *stream, unsigned char **cert_DER)
 {
 #ifdef USE_SSL
@@ -1264,6 +1302,42 @@ mailstream_low * mailstream_low_tls_open_with_callback_timeout(int fd, time_t ti
     void (* callback)(struct mailstream_ssl_context * ssl_context, void * data), void * data)
 {
   return mailstream_low_ssl_open_full(fd, 1, timeout, callback, data);
+}
+
+mailstream_low * mailstream_low_ssl_open_with_server_name_callback_timeout(int fd, time_t timeout,
+    const char * server_name,
+    void (* callback)(struct mailstream_ssl_context * ssl_context, void * data), void * data)
+{
+#ifdef USE_SSL
+  struct mailstream_ssl_server_name_callback_data callback_data;
+
+  callback_data.server_name = server_name;
+  callback_data.callback = callback;
+  callback_data.callback_data = data;
+
+  return mailstream_low_ssl_open_with_callback_timeout(fd, timeout,
+      mailstream_ssl_server_name_callback, &callback_data);
+#else
+  return NULL;
+#endif
+}
+
+mailstream_low * mailstream_low_tls_open_with_server_name_callback_timeout(int fd, time_t timeout,
+    const char * server_name,
+    void (* callback)(struct mailstream_ssl_context * ssl_context, void * data), void * data)
+{
+#ifdef USE_SSL
+  struct mailstream_ssl_server_name_callback_data callback_data;
+
+  callback_data.server_name = server_name;
+  callback_data.callback = callback;
+  callback_data.callback_data = data;
+
+  return mailstream_low_tls_open_with_callback_timeout(fd, timeout,
+      mailstream_ssl_server_name_callback, &callback_data);
+#else
+  return NULL;
+#endif
 }
 
 int mailstream_ssl_set_client_certicate(struct mailstream_ssl_context * ssl_context,
@@ -1373,7 +1447,7 @@ int mailstream_ssl_set_server_certicate(struct mailstream_ssl_context * ssl_cont
 
 LIBETPAN_EXPORT
 int mailstream_ssl_set_server_name(struct mailstream_ssl_context * ssl_context,
-    char * hostname)
+    const char * hostname)
 {
   int r = -1;
 
@@ -1410,6 +1484,12 @@ int mailstream_ssl_set_server_name(struct mailstream_ssl_context * ssl_context,
 #endif /* USE_SSL */
 
   return r;
+}
+
+void mailstream_ssl_set_server_name_callback(struct mailstream_ssl_context * ssl_context,
+    void * data)
+{
+  mailstream_ssl_set_server_name(ssl_context, (const char *) data);
 }
 
 #ifdef USE_SSL

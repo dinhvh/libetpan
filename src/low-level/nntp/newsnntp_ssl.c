@@ -90,7 +90,8 @@ int newsnntp_ssl_connect_with_callback(newsnntp * f, const char * server, uint16
   if (s == -1)
     return NEWSNNTP_ERROR_CONNECTION_REFUSED;
 
-  stream = mailstream_ssl_open_with_callback_timeout(s, f->nntp_timeout, callback, data);
+  stream = mailstream_ssl_open_with_server_name_callback_timeout(s, f->nntp_timeout,
+      server, callback, data);
   if (stream == NULL) {
 #ifdef WIN32
 	closesocket(s);
@@ -114,6 +115,7 @@ static int newsnntp_cfssl_connect_ssl_level(newsnntp * f, const char * server, u
     return NEWSNNTP_ERROR_CONNECTION_REFUSED;
   }
   mailstream_cfstream_set_ssl_level(stream, ssl_level);
+  mailstream_cfstream_set_ssl_peer_name(stream, server);
   mailstream_cfstream_set_ssl_verification_mask(stream, MAILSTREAM_CFSTREAM_SSL_NO_VERIFICATION);
   r = mailstream_cfstream_set_ssl_enabled(stream, 1);
   if (r < 0) {
@@ -131,4 +133,3 @@ static int newsnntp_cfssl_connect(newsnntp * f, const char * server, uint16_t po
     return newsnntp_cfssl_connect_ssl_level(f, server, port, MAILSTREAM_CFSTREAM_SSL_LEVEL_NEGOCIATED_SSL);
 }
 #endif
-

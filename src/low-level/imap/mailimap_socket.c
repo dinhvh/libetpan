@@ -110,9 +110,22 @@ int mailimap_socket_starttls(mailimap * f)
   return mailimap_socket_starttls_with_callback(f, NULL, NULL);
 }
 
-static int mailimap_cfsocket_starttls(mailimap * f);
+static int mailimap_cfsocket_starttls(mailimap * f, const char * server_name);
 
 int mailimap_socket_starttls_with_callback(mailimap * f,
+    void (* callback)(struct mailstream_ssl_context * ssl_context, void * data), void * data)
+{
+  return mailimap_socket_starttls_with_server_name_callback(f, NULL, callback, data);
+}
+
+int mailimap_socket_starttls_with_server_name(mailimap * f,
+    const char * server_name)
+{
+  return mailimap_socket_starttls_with_server_name_callback(f, server_name, NULL, NULL);
+}
+
+int mailimap_socket_starttls_with_server_name_callback(mailimap * f,
+    const char * server_name,
     void (* callback)(struct mailstream_ssl_context * ssl_context, void * data), void * data)
 {
   mailstream_low * low;
@@ -123,7 +136,7 @@ int mailimap_socket_starttls_with_callback(mailimap * f,
   low = mailstream_get_low(f->imap_stream);
   if (low->driver == mailstream_cfstream_driver) {
     // won't use callback
-    return mailimap_cfsocket_starttls(f);
+    return mailimap_cfsocket_starttls(f, server_name);
   }
   
   r = mailimap_starttls(f);
@@ -139,8 +152,8 @@ int mailimap_socket_starttls_with_callback(mailimap * f,
   if (fd == -1)
     return MAILIMAP_ERROR_STREAM;
   
-  new_low = mailstream_low_tls_open_with_callback_timeout(fd, f->imap_timeout,
-    callback, data);
+  new_low = mailstream_low_tls_open_with_server_name_callback_timeout(fd, f->imap_timeout,
+    server_name, callback, data);
   if (new_low == NULL)
     return MAILIMAP_ERROR_STREAM;
   
@@ -164,7 +177,7 @@ static int mailimap_cfsocket_connect_voip(mailimap * f, const char * server, uin
 }
 #endif
 
-static int mailimap_cfsocket_starttls(mailimap * f)
+static int mailimap_cfsocket_starttls(mailimap * f, const char * server_name)
 {
   int r;
   
@@ -176,6 +189,8 @@ static int mailimap_cfsocket_starttls(mailimap * f)
       return r;
   }
   
+  if (server_name != NULL)
+    mailstream_cfstream_set_ssl_peer_name(f->imap_stream, server_name);
   mailstream_cfstream_set_ssl_verification_mask(f->imap_stream, MAILSTREAM_CFSTREAM_SSL_NO_VERIFICATION);
   r = mailstream_cfstream_set_ssl_enabled(f->imap_stream, 1);
   if (r < 0) {

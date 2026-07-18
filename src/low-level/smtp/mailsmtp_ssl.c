@@ -95,7 +95,8 @@ int mailsmtp_ssl_connect_with_callback(mailsmtp * session,
   if (s == -1)
     return MAILSMTP_ERROR_CONNECTION_REFUSED;
 
-  stream = mailstream_ssl_open_with_callback_timeout(s, session->smtp_timeout, callback, data);
+  stream = mailstream_ssl_open_with_server_name_callback_timeout(s, session->smtp_timeout,
+      server, callback, data);
   if (stream == NULL) {
 #ifdef WIN32
 	closesocket(s);
@@ -120,6 +121,7 @@ static int mailsmtp_cfssl_connect_ssl_level(mailsmtp * session,
     return MAILSMTP_ERROR_CONNECTION_REFUSED;
   }
   mailstream_cfstream_set_ssl_level(stream, ssl_level);
+  mailstream_cfstream_set_ssl_peer_name(stream, server);
   mailstream_cfstream_set_ssl_verification_mask(stream, MAILSTREAM_CFSTREAM_SSL_NO_VERIFICATION);
   r = mailstream_cfstream_set_ssl_enabled(stream, 1);
   if (r < 0) {

@@ -61,6 +61,7 @@
 #include "mailmessage.h"
 #include "maildriver.h"
 #include "connect.h"
+#include "mailstream_ssl.h"
 
 /* tools */
 
@@ -217,6 +218,37 @@ int mailstorage_generic_connect_with_local_address(mailsession_driver * driver,
     char * flags_directory,
     mailsession ** result)
 {
+  return mailstorage_generic_connect_with_local_address_tls(driver,
+      servername,
+      port,
+      local_address,
+      local_port,
+      command,
+      connection_type,
+      cache_function_id,
+      cache_directory,
+      flags_function_id,
+      flags_directory,
+      0,
+      0,
+      result);
+}
+
+int mailstorage_generic_connect_with_local_address_tls(mailsession_driver * driver,
+    char * servername,
+    uint16_t port,
+    char * local_address,
+    uint16_t local_port,
+    char * command,
+    int connection_type,
+    int cache_function_id,
+    char * cache_directory,
+    int flags_function_id,
+    char * flags_directory,
+    int ssl_callback_function_id,
+    int ssl_callback_data_function_id,
+    mailsession ** result)
+{
   int r;
   int res;
   mailstream * stream = NULL;
@@ -281,6 +313,7 @@ int mailstorage_generic_connect_with_local_address(mailsession_driver * driver,
     if (mailstream_cfstream_enabled) {
       int ssl_level = MAILSTREAM_CFSTREAM_SSL_LEVEL_NEGOCIATED_SSL;
       mailstream_cfstream_set_ssl_level(stream, ssl_level);
+      mailstream_cfstream_set_ssl_peer_name(stream, servername);
       mailstream_cfstream_set_ssl_verification_mask(stream, MAILSTREAM_CFSTREAM_SSL_NO_VERIFICATION);
       r = mailstream_cfstream_set_ssl_enabled(stream, 1);
       if (r < 0) {
@@ -290,7 +323,8 @@ int mailstorage_generic_connect_with_local_address(mailsession_driver * driver,
     }
 #endif
     if (stream == NULL) {
-      stream = mailstream_ssl_open(fd);
+      stream = mailstream_ssl_open_with_server_name_callback_timeout(fd, 0,
+          servername, NULL, NULL);
     }
     break;
     
@@ -361,6 +395,22 @@ int mailstorage_generic_connect_with_local_address(mailsession_driver * driver,
   switch (connection_type) {
   case CONNECTION_TYPE_TRY_STARTTLS:
   case CONNECTION_TYPE_COMMAND_TRY_STARTTLS:
+    if (ssl_callback_function_id != 0) {
+      r = mailsession_parameters(session, ssl_callback_function_id,
+          (void *) mailstream_ssl_set_server_name_callback);
+      if (r != MAIL_NO_ERROR) {
+        res = r;
+        goto free;
+      }
+    }
+    if (ssl_callback_data_function_id != 0) {
+      r = mailsession_parameters(session, ssl_callback_data_function_id,
+          servername);
+      if (r != MAIL_NO_ERROR) {
+        res = r;
+        goto free;
+      }
+    }
     r = mailsession_starttls(session);
     if ((r != MAIL_NO_ERROR) && (r != MAIL_ERROR_NO_TLS)) {
       res = r;
@@ -370,6 +420,22 @@ int mailstorage_generic_connect_with_local_address(mailsession_driver * driver,
 
   case CONNECTION_TYPE_STARTTLS:
   case CONNECTION_TYPE_COMMAND_STARTTLS:
+    if (ssl_callback_function_id != 0) {
+      r = mailsession_parameters(session, ssl_callback_function_id,
+          (void *) mailstream_ssl_set_server_name_callback);
+      if (r != MAIL_NO_ERROR) {
+        res = r;
+        goto free;
+      }
+    }
+    if (ssl_callback_data_function_id != 0) {
+      r = mailsession_parameters(session, ssl_callback_data_function_id,
+          servername);
+      if (r != MAIL_NO_ERROR) {
+        res = r;
+        goto free;
+      }
+    }
     r = mailsession_starttls(session);
     if (r != MAIL_NO_ERROR) {
       res = r;

@@ -367,7 +367,7 @@ static int imap_connect(struct mailstorage * storage,
   else
     driver = imap_session_driver;
   
-  r = mailstorage_generic_connect_with_local_address(driver,
+  r = mailstorage_generic_connect_with_local_address_tls(driver,
       imap_storage->imap_servername,
       imap_storage->imap_port,
       imap_storage->imap_local_address,
@@ -377,6 +377,8 @@ static int imap_connect(struct mailstorage * storage,
       IMAPDRIVER_CACHED_SET_CACHE_DIRECTORY,
       imap_storage->imap_cache_directory,
       0, NULL,
+      IMAPDRIVER_CACHED_SET_SSL_CALLBACK,
+      IMAPDRIVER_CACHED_SET_SSL_CALLBACK_DATA,
       &session);
   switch (r) {
   case MAIL_NO_ERROR_NON_AUTHENTICATED:

@@ -979,7 +979,9 @@ int mailstream_cfstream_set_ssl_enabled(mailstream * s, int ssl_enabled)
   cfstream_data->ssl_enabled = ssl_enabled;
   if (ssl_enabled) {
     CFMutableDictionaryRef settings;
+    CFStringRef peerName;
     
+    peerName = NULL;
     settings = CFDictionaryCreateMutable(NULL, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
     switch (cfstream_data->ssl_level) {
       case MAILSTREAM_CFSTREAM_SSL_LEVEL_NONE:
@@ -1000,9 +1002,18 @@ int mailstream_cfstream_set_ssl_enabled(mailstream * s, int ssl_enabled)
     if (cfstream_data->ssl_certificate_verification_mask != 0) {
       CFDictionarySetValue(settings, kCFStreamSSLValidatesCertificateChain, kCFBooleanFalse);
     }
+
+    if (cfstream_data->ssl_peer_name != NULL) {
+      peerName = CFStringCreateWithCString(NULL,
+          cfstream_data->ssl_peer_name, kCFStringEncodingUTF8);
+      if (peerName != NULL)
+        CFDictionarySetValue(settings, kCFStreamSSLPeerName, peerName);
+    }
     
     CFReadStreamSetProperty(cfstream_data->readStream, kCFStreamPropertySSLSettings, settings);
     CFWriteStreamSetProperty(cfstream_data->writeStream, kCFStreamPropertySSLSettings, settings);
+    if (peerName != NULL)
+      CFRelease(peerName);
     CFRelease(settings);
   }
   else {
