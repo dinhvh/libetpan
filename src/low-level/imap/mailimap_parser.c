@@ -320,6 +320,8 @@ static int mailimap_date_time_parse(mailstream * fd, MMAPString * buffer, struct
 				    size_t progr_rate,
 				    progress_function * progr_fun);
 
+static int is_text_char(char ch);
+
 #ifndef UNSTRICT_SYNTAX
 static int mailimap_digit_nz_parse(mailstream * fd, MMAPString * buffer, struct mailimap_parser_context * parser_ctx,
 				   size_t * indx, int * result);
@@ -370,6 +372,10 @@ static int mailimap_env_message_id_parse(mailstream * fd,
 					 size_t * indx, char ** result,
 					 size_t progr_rate,
 					 progress_function * progr_fun);
+
+static int mailimap_env_message_id_parse_icloud_workaround(mailstream * fd,
+					 MMAPString * buffer, struct mailimap_parser_context * parser_ctx,
+					 size_t * indx, char ** result);
 
 static int
 mailimap_env_reply_to_parse(mailstream * fd, MMAPString * buffer, struct mailimap_parser_context * parser_ctx,
@@ -5422,14 +5428,144 @@ static int mailimap_env_in_reply_to_parse(mailstream * fd,
    env-message-id  = nstring
 */
 
+static int mailimap_env_message_id_fill_buffer(mailstream * fd,
+    MMAPString * buffer, size_t cur_token)
+{
+  while (cur_token >= buffer->len) {
+    if (fd == NULL) {
+      if (!has_crlf(buffer, cur_token))
+        return MAILIMAP_ERROR_NEEDS_MORE_DATA;
+      return MAILIMAP_ERROR_PARSE;
+    }
+    if (mailstream_read_line_append(fd, buffer) == NULL)
+      return MAILIMAP_ERROR_PARSE;
+  }
+
+  return MAILIMAP_NO_ERROR;
+}
+
+static int mailimap_env_message_id_parse_icloud_workaround(mailstream * fd,
+					 MMAPString * buffer, struct mailimap_parser_context * parser_ctx,
+					 size_t * indx, char ** result)
+{
+  char ch;
+  size_t cur_token;
+  MMAPString * message_id;
+  int r;
+  int res;
+
+  (void) parser_ctx;
+
+  cur_token = * indx;
+
+#ifdef UNSTRICT_SYNTAX
+  r = mailimap_space_parse(fd, buffer, &cur_token);
+  if ((r != MAILIMAP_NO_ERROR) && (r != MAILIMAP_ERROR_PARSE))
+    return r;
+#endif
+
+  r = mailimap_env_message_id_fill_buffer(fd, buffer, cur_token + 1);
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+
+  if ((buffer->str[cur_token] != '\"') || (buffer->str[cur_token + 1] != '<'))
+    return MAILIMAP_ERROR_PARSE;
+
+  cur_token ++;
+
+  message_id = mmap_string_new("");
+  if (message_id == NULL)
+    return MAILIMAP_ERROR_MEMORY;
+
+  while (1) {
+    r = mailimap_env_message_id_fill_buffer(fd, buffer, cur_token);
+    if (r != MAILIMAP_NO_ERROR) {
+      res = r;
+      goto free;
+    }
+
+    ch = buffer->str[cur_token];
+    if (!is_text_char(ch)) {
+      res = MAILIMAP_ERROR_PARSE;
+      goto free;
+    }
+
+    if (mmap_string_append_c(message_id, ch) == NULL) {
+      res = MAILIMAP_ERROR_MEMORY;
+      goto free;
+    }
+    cur_token ++;
+
+    if (ch == '>') {
+      r = mailimap_env_message_id_fill_buffer(fd, buffer, cur_token + 1);
+      if (r != MAILIMAP_NO_ERROR) {
+        res = r;
+        goto free;
+      }
+
+      if ((buffer->str[cur_token] == '\"') &&
+          (buffer->str[cur_token + 1] == ')')) {
+        cur_token ++;
+        break;
+      }
+    }
+  }
+
+  if (mmap_string_ref(message_id) < 0) {
+    res = MAILIMAP_ERROR_MEMORY;
+    goto free;
+  }
+
+  * indx = cur_token;
+  * result = message_id->str;
+
+  return MAILIMAP_NO_ERROR;
+
+ free:
+  mmap_string_free(message_id);
+  return res;
+}
+
 static int mailimap_env_message_id_parse(mailstream * fd,
 					 MMAPString * buffer, struct mailimap_parser_context * parser_ctx,
 					 size_t * indx, char ** result,
 					 size_t progr_rate,
 					 progress_function * progr_fun)
 {
-  return mailimap_nstring_parse(fd, buffer, parser_ctx, indx, result, NULL,
-				progr_rate, progr_fun);
+  char * message_id;
+  size_t cur_token;
+  int r;
+
+  cur_token = * indx;
+
+  r = mailimap_nstring_parse(fd, buffer, parser_ctx, &cur_token, &message_id, NULL,
+      progr_rate, progr_fun);
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+
+  if ((message_id != NULL) && (strcmp(message_id, "<") == 0)) {
+    char * recovered_message_id;
+    size_t recovered_token;
+
+    recovered_message_id = NULL;
+    recovered_token = * indx;
+    r = mailimap_env_message_id_parse_icloud_workaround(fd, buffer, parser_ctx,
+        &recovered_token, &recovered_message_id);
+    if (r == MAILIMAP_NO_ERROR) {
+      mailimap_nstring_free(message_id);
+      * result = recovered_message_id;
+      * indx = recovered_token;
+      return MAILIMAP_NO_ERROR;
+    }
+    if (r != MAILIMAP_ERROR_PARSE) {
+      mailimap_nstring_free(message_id);
+      return r;
+    }
+  }
+
+  * result = message_id;
+  * indx = cur_token;
+  return MAILIMAP_NO_ERROR;
 }
 
 /*

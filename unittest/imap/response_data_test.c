@@ -1,6 +1,7 @@
 #include <assert.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "response_data_test.h"
 
@@ -130,6 +131,57 @@ static void check_nested_invalid_fetch_flags(bool compressed)
   mailimap_response_data_free(data);
 }
 
+static void check_icloud_message_id(bool compressed)
+{
+  static const char expected_message_id[] =
+      "<\"392889836.11.1529401004417.JavaMail.Redacted\"@Redacted>";
+  struct mailimap_response_data * data = NULL;
+  struct mailimap_msg_att * msg_att;
+  clistiter * cur;
+  int found;
+  int r;
+
+  r = imap_test_parse_response_data_file(
+      "data/response-data/fetch-envelope-icloud-message-id.imap", compressed,
+      &data);
+  assert(r == MAILIMAP_NO_ERROR);
+  assert(data != NULL);
+  assert(data->rsp_type == MAILIMAP_RESP_DATA_TYPE_MESSAGE_DATA);
+  assert(data->rsp_data.rsp_message_data->mdt_type ==
+      MAILIMAP_MESSAGE_DATA_FETCH);
+
+  msg_att = data->rsp_data.rsp_message_data->mdt_msg_att;
+  assert(msg_att != NULL);
+  assert(msg_att->att_list != NULL);
+
+  found = 0;
+  for (cur = clist_begin(msg_att->att_list); cur != NULL; cur = clist_next(cur)) {
+    struct mailimap_msg_att_item * item;
+    struct mailimap_msg_att_static * static_att;
+    struct mailimap_envelope * envelope;
+
+    item = clist_content(cur);
+    assert(item != NULL);
+    if (item->att_type != MAILIMAP_MSG_ATT_ITEM_STATIC)
+      continue;
+
+    static_att = item->att_data.att_static;
+    assert(static_att != NULL);
+    if (static_att->att_type != MAILIMAP_MSG_ATT_ENVELOPE)
+      continue;
+
+    envelope = static_att->att_data.att_env;
+    assert(envelope != NULL);
+    assert(envelope->env_message_id != NULL);
+    assert(strcmp(envelope->env_message_id, expected_message_id) == 0);
+    found = 1;
+    break;
+  }
+
+  assert(found);
+  mailimap_response_data_free(data);
+}
+
 int imap_response_data_test_run(void)
 {
   static const struct response_data_case cases[] = {
@@ -189,6 +241,8 @@ int imap_response_data_test_run(void)
       MAILIMAP_RESP_DATA_TYPE_MESSAGE_DATA, MAILIMAP_MESSAGE_DATA_FETCH },
     { "data/response-data/fetch-envelope.imap",
       MAILIMAP_RESP_DATA_TYPE_MESSAGE_DATA, MAILIMAP_MESSAGE_DATA_FETCH },
+    { "data/response-data/fetch-envelope-icloud-message-id.imap",
+      MAILIMAP_RESP_DATA_TYPE_MESSAGE_DATA, MAILIMAP_MESSAGE_DATA_FETCH },
     { "data/response-data/fetch-rfc822-text.imap",
       MAILIMAP_RESP_DATA_TYPE_MESSAGE_DATA, MAILIMAP_MESSAGE_DATA_FETCH },
     { "data/response-data/enabled.imap",
@@ -210,6 +264,8 @@ int imap_response_data_test_run(void)
   check_nested_invalid_permanentflags(true);
   check_nested_invalid_fetch_flags(false);
   check_nested_invalid_fetch_flags(true);
+  check_icloud_message_id(false);
+  check_icloud_message_id(true);
 
   puts("response_data_test: ok");
   return 0;
