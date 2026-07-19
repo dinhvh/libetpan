@@ -11,6 +11,7 @@ extern "C" {
 #endif
 
 #include <libetpan/mailactivesync_types.h>
+#include <libetpan/mailactivesync_http.h>
 
 LIBETPAN_EXPORT
 mailactivesync * mailactivesync_new(int cached,
@@ -35,6 +36,10 @@ int mailactivesync_set_protocol_version(mailactivesync * session,
 LIBETPAN_EXPORT
 int mailactivesync_set_policy_key(mailactivesync * session,
     const char * policy_key);
+
+LIBETPAN_EXPORT
+int mailactivesync_set_http_transport(mailactivesync * session,
+    struct mailactivesync_http_transport * transport);
 
 LIBETPAN_EXPORT
 int mailactivesync_login(mailactivesync * session,

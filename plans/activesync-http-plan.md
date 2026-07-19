@@ -5,6 +5,30 @@
 Implement the HTTP layer and command-level ActiveSync primitives on top of the
 WBXML codec described in `plans/activesync-wbxml-plan.md`.
 
+## Implementation Status
+
+The HTTP core and `OPTIONS` slice are implemented:
+
+- `mailactivesync_http.{h,c}` defines request/response/header structures,
+  ownership helpers, response-header lookup, transport dispatch, and the
+  libcurl backend guarded by `HAVE_CURL`.
+- `mailactivesync_command.{h,c}` builds ActiveSync command URLs, adds OAuth2 or
+  Basic authentication, adds common ActiveSync headers, maps basic HTTP status
+  results, implements `mailactivesync_command_post()`, and implements
+  `mailactivesync_options()`.
+- `mailactivesync_connect()` normalizes host URLs to
+  `/Microsoft-Server-ActiveSync` and creates the default curl transport when
+  curl is available.
+- `mailactivesync_set_http_transport()` lets tests inject fake transports
+  without network access.
+- `tests/activesync-http-test.c` validates fake-transport `OPTIONS`, endpoint
+  normalization, bearer auth, option header parsing, and 401 mapping.
+
+Remaining work from this plan is still relevant: command-specific WBXML
+builders/parsers for `FolderSync`, `Sync`, `ItemOperations`, mail send/move,
+minimal provisioning if a server proves it is needed, richer HTTP status
+mapping, and live interop with caller-provided OAuth tokens.
+
 This plan starts after the WBXML layer can:
 
 - build command payload trees;
@@ -432,4 +456,5 @@ Do not log:
   supplied with a real OAuth token.
 - Command code does not manually emit or parse raw WBXML bytes; it depends on
   the WBXML plan's codec/builders.
-- No hard dependency on libcurl is required.
+- ActiveSync HTTP requires libcurl for live network transport; fake transports
+  continue to work without curl for tests.

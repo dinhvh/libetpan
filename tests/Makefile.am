@@ -34,7 +34,8 @@ EXTRA_DIST = README
 noinst_PROGRAMS = smime decrypt pgp frm frm-tree frm-simple	\
 	readmsg-simple fetch-attachment smtpsend readmsg-uid \
 	readmsg compose-msg imap-sample mime-create mime-parse \
-	pop-sample activesync-sample activesync-wbxml-test
+	pop-sample activesync-sample activesync-wbxml-test \
+	activesync-http-test
 
 # For W32, reverse the -DLIBETPAN_DLL.  Unfortunately, CFLAGS comes
 # after AM_CPPFLAGS, so we have to frob CFLAGS.
@@ -62,3 +63,5 @@ readmsg_uid_SOURCES = $(READMSGCOMMON) readmsg-uid.c
 fetch_attachment_SOURCES = $(READMSGCOMMON) fetch-attachment.c
 
 activesync_wbxml_test_SOURCES = activesync-wbxml-test.c
+
+activesync_http_test_SOURCES = activesync-http-test.c

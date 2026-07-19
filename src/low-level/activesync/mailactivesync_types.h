@@ -26,10 +26,12 @@ enum {
   MAILACTIVESYNC_ERROR_PARSE,
   MAILACTIVESYNC_ERROR_MEMORY,
   MAILACTIVESYNC_ERROR_SSL,
-  MAILACTIVESYNC_ERROR_NOT_IMPLEMENTED
+  MAILACTIVESYNC_ERROR_NOT_IMPLEMENTED,
+  MAILACTIVESYNC_ERROR_HTTP_UNAVAILABLE
 };
 
 typedef struct mailactivesync mailactivesync;
+struct mailactivesync_http_transport;
 
 struct mailactivesync {
   char * as_server_url;
@@ -44,6 +46,7 @@ struct mailactivesync {
   int as_authenticated;
   int as_cached;
   char * as_cache_directory;
+  struct mailactivesync_http_transport * as_http_transport;
 };
 
 struct mailactivesync_options {

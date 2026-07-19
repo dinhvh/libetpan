@@ -7,7 +7,12 @@
 #endif
 
 #include "mailactivesync.h"
+#include "mailactivesync_command.h"
+#include "mailactivesync_http.h"
 
+#include <libetpan/mmapstring.h>
+
+#include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -27,6 +32,61 @@ static int set_string(char ** target, const char * value)
   free(* target);
   * target = dup_value;
 
+  return MAILACTIVESYNC_NO_ERROR;
+}
+
+static int string_ends_with(const char * str, const char * suffix)
+{
+  size_t str_len;
+  size_t suffix_len;
+
+  str_len = strlen(str);
+  suffix_len = strlen(suffix);
+  if (str_len < suffix_len)
+    return 0;
+
+  return strcmp(str + str_len - suffix_len, suffix) == 0;
+}
+
+static int normalize_server_url(char ** result, const char * server_url)
+{
+  static const char active_sync_path[] = "/Microsoft-Server-ActiveSync";
+  MMAPString * buffer;
+  size_t len;
+  char * normalized;
+
+  if ((result == NULL) || (server_url == NULL))
+    return MAILACTIVESYNC_ERROR_BAD_STATE;
+
+  buffer = mmap_string_sized_new(strlen(server_url) + sizeof(active_sync_path));
+  if (buffer == NULL)
+    return MAILACTIVESYNC_ERROR_MEMORY;
+
+  if (mmap_string_append(buffer, server_url) == NULL) {
+    mmap_string_free(buffer);
+    return MAILACTIVESYNC_ERROR_MEMORY;
+  }
+
+  len = buffer->len;
+  while ((len > 0) && isspace((unsigned char) buffer->str[len - 1]))
+    len --;
+  mmap_string_truncate(buffer, len);
+
+  if (!string_ends_with(buffer->str, active_sync_path)) {
+    if ((buffer->len > 0) && (buffer->str[buffer->len - 1] == '/'))
+      mmap_string_truncate(buffer, buffer->len - 1);
+    if (mmap_string_append(buffer, active_sync_path) == NULL) {
+      mmap_string_free(buffer);
+      return MAILACTIVESYNC_ERROR_MEMORY;
+    }
+  }
+
+  normalized = strdup(buffer->str);
+  mmap_string_free(buffer);
+  if (normalized == NULL)
+    return MAILACTIVESYNC_ERROR_MEMORY;
+
+  * result = normalized;
   return MAILACTIVESYNC_NO_ERROR;
 }
 
@@ -51,6 +111,7 @@ mailactivesync * mailactivesync_new(int cached,
   session->as_authenticated = 0;
   session->as_cached = cached;
   session->as_cache_directory = NULL;
+  session->as_http_transport = NULL;
 
   if (cache_directory != NULL) {
     session->as_cache_directory = strdup(cache_directory);
@@ -82,6 +143,7 @@ void mailactivesync_free(mailactivesync * session)
   free(session->as_protocol_version);
   free(session->as_policy_key);
   free(session->as_cache_directory);
+  mailactivesync_http_transport_free(session->as_http_transport);
   free(session);
 }
 
@@ -89,15 +151,38 @@ int mailactivesync_connect(mailactivesync * session,
     const char * server_url)
 {
   int r;
+  char * normalized_url;
 
   if ((session == NULL) || (server_url == NULL))
     return MAILACTIVESYNC_ERROR_BAD_STATE;
 
-  r = set_string(&session->as_server_url, server_url);
+  normalized_url = NULL;
+  r = normalize_server_url(&normalized_url, server_url);
   if (r != MAILACTIVESYNC_NO_ERROR)
     return r;
 
+  free(session->as_server_url);
+  session->as_server_url = normalized_url;
+
+  if (session->as_http_transport == NULL) {
+    r = mailactivesync_http_transport_new_curl(
+        &session->as_http_transport);
+    if (r != MAILACTIVESYNC_NO_ERROR)
+      return r;
+  }
+
   session->as_connected = 1;
+  return MAILACTIVESYNC_NO_ERROR;
+}
+
+int mailactivesync_set_http_transport(mailactivesync * session,
+    struct mailactivesync_http_transport * transport)
+{
+  if (session == NULL)
+    return MAILACTIVESYNC_ERROR_BAD_STATE;
+
+  mailactivesync_http_transport_free(session->as_http_transport);
+  session->as_http_transport = transport;
   return MAILACTIVESYNC_NO_ERROR;
 }
 
@@ -208,7 +293,7 @@ int mailactivesync_options(mailactivesync * session,
   if (r != MAILACTIVESYNC_NO_ERROR)
     return r;
 
-  return MAILACTIVESYNC_ERROR_NOT_IMPLEMENTED;
+  return mailactivesync_command_options(session, result);
 }
 
 int mailactivesync_folder_sync(mailactivesync * session,
