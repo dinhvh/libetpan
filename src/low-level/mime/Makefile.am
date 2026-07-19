@@ -47,4 +47,5 @@ libmime_la_SOURCES = \
 	mailmime.c mailmime_types.c mailmime_content.c mailmime_decode.c \
 	mailmime_disposition.c mailmime_write_file.c \
 	mailmime_types_helper.c mailmime_write_generic.c \
-	mailmime_write_mem.c mailmime_write.h
+	mailmime_write_mem.c mailmime_write.h mailmime_rfc2231.c \
+	mailmime_rfc2231.h

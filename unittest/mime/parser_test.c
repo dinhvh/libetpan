@@ -71,6 +71,20 @@ static struct mailmime_parameter * parameter_at(
   return clist_content(iter);
 }
 
+static struct mailmime_disposition_parm * disposition_parameter_at(
+    struct mailmime_disposition * disposition, int index)
+{
+  clistiter * iter;
+  int i;
+
+  iter = clist_begin(disposition->dsp_parms);
+  for (i = 0; i < index; i++)
+    iter = clist_next(iter);
+
+  assert(iter != NULL);
+  return clist_content(iter);
+}
+
 static void check_content_type(const char * input, int top_type,
     int concrete_type, const char * subtype, int parameter_count)
 {
@@ -294,6 +308,107 @@ static void check_encoded_structured_field_recovery(void)
   mailimf_fields_free(imf_fields);
 }
 
+static void check_rfc2231_content_type_parameters(void)
+{
+  struct mailmime_content * content;
+  struct mailmime_parameter * parameter;
+  size_t indx;
+  int r;
+
+  indx = 0;
+  content = NULL;
+  r = mailmime_content_parse(
+      "application/pdf; name*=utf-8''%E2%82%AC%20rates.pdf",
+      strlen("application/pdf; name*=utf-8''%E2%82%AC%20rates.pdf"),
+      &indx, &content);
+  assert_parse_consumes(r, indx,
+      "application/pdf; name*=utf-8''%E2%82%AC%20rates.pdf");
+  assert(clist_count(content->ct_parameters) == 1);
+  parameter = parameter_at(content, 0);
+  assert(strcasecmp(parameter->pa_name, "name") == 0);
+  assert(strcmp(parameter->pa_value,
+        "\xE2\x82\xAC rates.pdf") == 0);
+  assert(strcmp(mailmime_content_param_get(content, "name"),
+        "\xE2\x82\xAC rates.pdf") == 0);
+  mailmime_content_free(content);
+
+  indx = 0;
+  content = NULL;
+  r = mailmime_content_parse(
+      "application/pdf; name*0*=utf-8''quarterly%20; name*1=report; name*2*=.pdf",
+      strlen("application/pdf; name*0*=utf-8''quarterly%20; name*1=report; name*2*=.pdf"),
+      &indx, &content);
+  assert_parse_consumes(r, indx,
+      "application/pdf; name*0*=utf-8''quarterly%20; name*1=report; name*2*=.pdf");
+  assert(clist_count(content->ct_parameters) == 1);
+  assert(strcmp(mailmime_content_param_get(content, "name"),
+        "quarterly report.pdf") == 0);
+  mailmime_content_free(content);
+
+  indx = 0;
+  content = NULL;
+  r = mailmime_content_parse(
+      "application/pdf; name=\"fallback.pdf\"; name*=utf-8''real.pdf",
+      strlen("application/pdf; name=\"fallback.pdf\"; name*=utf-8''real.pdf"),
+      &indx, &content);
+  assert_parse_consumes(r, indx,
+      "application/pdf; name=\"fallback.pdf\"; name*=utf-8''real.pdf");
+  assert(clist_count(content->ct_parameters) == 1);
+  assert(strcmp(mailmime_content_param_get(content, "name"),
+        "real.pdf") == 0);
+  mailmime_content_free(content);
+
+  indx = 0;
+  content = NULL;
+  r = mailmime_content_parse(
+      "application/pdf; name=\"fallback.pdf\"; name*1*=ignored.pdf",
+      strlen("application/pdf; name=\"fallback.pdf\"; name*1*=ignored.pdf"),
+      &indx, &content);
+  assert_parse_consumes(r, indx,
+      "application/pdf; name=\"fallback.pdf\"; name*1*=ignored.pdf");
+  assert(clist_count(content->ct_parameters) == 2);
+  assert(strcmp(mailmime_content_param_get(content, "name"),
+        "fallback.pdf") == 0);
+  mailmime_content_free(content);
+}
+
+static void check_rfc2231_content_disposition_filename(void)
+{
+  struct mailmime_disposition * disposition;
+  struct mailmime_disposition_parm * parameter;
+  size_t indx;
+  int r;
+
+  indx = 0;
+  disposition = NULL;
+  r = mailmime_disposition_parse(
+      "attachment; filename*=utf-8''%E2%82%AC%20rates.pdf",
+      strlen("attachment; filename*=utf-8''%E2%82%AC%20rates.pdf"),
+      &indx, &disposition);
+  assert_parse_consumes(r, indx,
+      "attachment; filename*=utf-8''%E2%82%AC%20rates.pdf");
+  assert(clist_count(disposition->dsp_parms) == 1);
+  parameter = disposition_parameter_at(disposition, 0);
+  assert(parameter->pa_type == MAILMIME_DISPOSITION_PARM_FILENAME);
+  assert(strcmp(parameter->pa_data.pa_filename,
+        "\xE2\x82\xAC rates.pdf") == 0);
+  mailmime_disposition_free(disposition);
+
+  indx = 0;
+  disposition = NULL;
+  r = mailmime_disposition_parse(
+      "attachment; filename=\"fallback.pdf\"; filename*0*=utf-8''real%20; filename*1*=name.pdf",
+      strlen("attachment; filename=\"fallback.pdf\"; filename*0*=utf-8''real%20; filename*1*=name.pdf"),
+      &indx, &disposition);
+  assert_parse_consumes(r, indx,
+      "attachment; filename=\"fallback.pdf\"; filename*0*=utf-8''real%20; filename*1*=name.pdf");
+  assert(clist_count(disposition->dsp_parms) == 1);
+  parameter = disposition_parameter_at(disposition, 0);
+  assert(parameter->pa_type == MAILMIME_DISPOSITION_PARM_FILENAME);
+  assert(strcmp(parameter->pa_data.pa_filename, "real name.pdf") == 0);
+  mailmime_disposition_free(disposition);
+}
+
 static void check_transfer_decoders(void)
 {
   const char * base64_input = "SGVsbG8sIGJhc2U2NCE=\r\n";
@@ -481,6 +596,8 @@ int mime_parser_test_run(void)
   check_encoding_grammar();
   check_field_grammar();
   check_encoded_structured_field_recovery();
+  check_rfc2231_content_type_parameters();
+  check_rfc2231_content_disposition_filename();
   check_transfer_decoders();
   check_rfc2047_encoded_words();
   check_full_rfc822_multipart();

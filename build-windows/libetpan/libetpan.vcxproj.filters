@@ -324,6 +324,9 @@
     <ClCompile Include="..\..\src\low-level\mime\mailmime_disposition.c">
       <Filter>Source Files\low-level\mime</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\low-level\mime\mailmime_rfc2231.c">
+      <Filter>Source Files\low-level\mime</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\low-level\mime\mailmime_types.c">
       <Filter>Source Files\low-level\mime</Filter>
     </ClCompile>

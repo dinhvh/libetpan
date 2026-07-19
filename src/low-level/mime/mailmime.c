@@ -61,6 +61,7 @@
 
 #include "mailmime_types.h"
 #include "mailmime_disposition.h"
+#include "mailmime_rfc2231.h"
 #include "mailimf.h"
 
 #ifndef TRUE
@@ -287,6 +288,12 @@ int mailmime_content_parse(const char * message, size_t length,
       res = MAILIMF_ERROR_MEMORY;
       goto free_parameters;
     }
+  }
+
+  r = mailmime_rfc2231_normalize_parameters(parameters_list);
+  if (r != MAILIMF_NO_ERROR) {
+    res = r;
+    goto free_parameters;
   }
 
   content = mailmime_content_new(type, subtype, parameters_list);
