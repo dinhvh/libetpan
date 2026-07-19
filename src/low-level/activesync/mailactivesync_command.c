@@ -341,6 +341,12 @@ int mailactivesync_command_options(mailactivesync * session,
       "MS-ASProtocolVersions");
   commands = mailactivesync_http_response_header_value(response,
       "MS-ASProtocolCommands");
+  if ((versions == NULL) || (commands == NULL)) {
+    mailactivesync_options_free(options);
+    r = MAILACTIVESYNC_ERROR_PROTOCOL;
+    goto cleanup_response;
+  }
+
   r = parse_comma_list(options->protocol_versions, versions);
   if (r != MAILACTIVESYNC_NO_ERROR) {
     mailactivesync_options_free(options);
