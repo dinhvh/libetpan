@@ -26,6 +26,9 @@ struct fake_context {
   size_t response_body_len;
 };
 
+static struct mailactivesync_http_transport * fake_transport_new(
+    int status_code, struct fake_context ** context_result);
+
 static int check(int condition, const char * message)
 {
   if (!condition) {
@@ -196,6 +199,70 @@ static int fake_context_set_response_body(struct fake_context * context,
   context->response_body = body;
   context->response_body_len = body_len;
   return MAILACTIVESYNC_NO_ERROR;
+}
+
+static int fake_context_set_raw_response_body(struct fake_context * context,
+    const unsigned char * body, size_t body_len)
+{
+  unsigned char * copied;
+
+  copied = NULL;
+  if (body_len > 0) {
+    copied = malloc(body_len);
+    if (copied == NULL)
+      return MAILACTIVESYNC_ERROR_MEMORY;
+    memcpy(copied, body, body_len);
+  }
+
+  free(context->response_body);
+  context->response_body = copied;
+  context->response_body_len = body_len;
+  return MAILACTIVESYNC_NO_ERROR;
+}
+
+static int setup_oauth_session(mailactivesync ** session_result,
+    struct fake_context ** context_result)
+{
+  mailactivesync * session;
+  struct mailactivesync_http_transport * transport;
+  struct fake_context * context;
+
+  if ((session_result == NULL) || (context_result == NULL))
+    return MAILACTIVESYNC_ERROR_BAD_STATE;
+
+  * session_result = NULL;
+  * context_result = NULL;
+  context = NULL;
+  transport = NULL;
+
+  session = mailactivesync_new(0, NULL);
+  if (session == NULL)
+    return MAILACTIVESYNC_ERROR_MEMORY;
+
+  transport = fake_transport_new(200, &context);
+  if (transport == NULL)
+    goto err;
+
+  if (mailactivesync_set_http_transport(session, transport) !=
+      MAILACTIVESYNC_NO_ERROR)
+    goto err;
+  transport = NULL;
+
+  if (mailactivesync_connect(session, "https://example.com") !=
+      MAILACTIVESYNC_NO_ERROR)
+    goto err;
+  if (mailactivesync_login_oauth2(session, "user@example.com",
+      "token-value") != MAILACTIVESYNC_NO_ERROR)
+    goto err;
+
+  * session_result = session;
+  * context_result = context;
+  return MAILACTIVESYNC_NO_ERROR;
+
+ err:
+  mailactivesync_http_transport_free(transport);
+  mailactivesync_free(session);
+  return MAILACTIVESYNC_ERROR_MEMORY;
 }
 
 static int fake_perform(struct mailactivesync_http_transport * transport,
@@ -909,6 +976,100 @@ static int test_folder_sync_success(void)
   return 0;
 }
 
+static int test_folder_sync_response_errors(void)
+{
+  static const unsigned char malformed[] = {
+    0x03, 0x01, 0x6A, 0x00, 0x00, 0x07, 0x56
+  };
+  mailactivesync * session;
+  struct fake_context * context;
+  struct mailactivesync_folder_sync_result * result;
+  struct mailactivesync_wbxml_node * root;
+  struct mailactivesync_wbxml_node * changes;
+  struct mailactivesync_wbxml_node * folder;
+  int r;
+
+  session = NULL;
+  context = NULL;
+  result = NULL;
+  root = NULL;
+  changes = NULL;
+  folder = NULL;
+
+  if (!check(setup_oauth_session(&session, &context) ==
+      MAILACTIVESYNC_NO_ERROR, "setup OAuth session failed"))
+    return 0;
+
+  r = mailactivesync_folder_sync(session, "0", &result);
+  if (!check((r == MAILACTIVESYNC_ERROR_PROTOCOL) && (result == NULL),
+      "FolderSync empty body did not fail as protocol error"))
+    goto err;
+
+  if (!check(fake_context_set_raw_response_body(context, malformed,
+      sizeof(malformed)) == MAILACTIVESYNC_NO_ERROR,
+      "set malformed FolderSync body failed"))
+    goto err;
+  r = mailactivesync_folder_sync(session, "0", &result);
+  if (!check((r == MAILACTIVESYNC_ERROR_PARSE) && (result == NULL),
+      "FolderSync malformed body did not fail as parse error"))
+    goto err;
+
+  root = mailactivesync_wbxml_node_new(MAILACTIVESYNC_CP_AIRSYNC,
+      MAILACTIVESYNC_AIRSYNC_SYNC);
+  if (!check(root != NULL, "wrong-root FolderSync response allocation failed"))
+    goto err;
+  if (!check(fake_context_set_response_body(context, root) ==
+      MAILACTIVESYNC_NO_ERROR, "wrong-root FolderSync response encode failed"))
+    goto err;
+  mailactivesync_wbxml_node_free(root);
+  root = NULL;
+  r = mailactivesync_folder_sync(session, "0", &result);
+  if (!check((r == MAILACTIVESYNC_ERROR_PROTOCOL) && (result == NULL),
+      "FolderSync wrong root did not fail as protocol error"))
+    goto err;
+
+  root = mailactivesync_wbxml_node_new(
+      MAILACTIVESYNC_CP_FOLDERHIERARCHY,
+      MAILACTIVESYNC_FOLDER_FOLDER_SYNC);
+  changes = mailactivesync_wbxml_node_new(
+      MAILACTIVESYNC_CP_FOLDERHIERARCHY,
+      MAILACTIVESYNC_FOLDER_CHANGES);
+  folder = mailactivesync_wbxml_node_new(
+      MAILACTIVESYNC_CP_FOLDERHIERARCHY, MAILACTIVESYNC_FOLDER_ADD);
+  if (!check((root != NULL) && (changes != NULL) && (folder != NULL),
+      "FolderSync missing ServerId fixture allocation failed"))
+    goto err;
+  if (!check(mailactivesync_wbxml_node_add_child(changes, folder) ==
+      MAILACTIVESYNC_NO_ERROR, "FolderSync missing ServerId append failed"))
+    goto err;
+  folder = NULL;
+  if (!check(mailactivesync_wbxml_node_add_child(root, changes) ==
+      MAILACTIVESYNC_NO_ERROR, "FolderSync missing ServerId changes failed"))
+    goto err;
+  changes = NULL;
+  if (!check(fake_context_set_response_body(context, root) ==
+      MAILACTIVESYNC_NO_ERROR,
+      "FolderSync missing ServerId response encode failed"))
+    goto err;
+  mailactivesync_wbxml_node_free(root);
+  root = NULL;
+  r = mailactivesync_folder_sync(session, "0", &result);
+  if (!check((r == MAILACTIVESYNC_ERROR_PROTOCOL) && (result == NULL),
+      "FolderSync add without ServerId did not fail as protocol error"))
+    goto err;
+
+  mailactivesync_free(session);
+  return 1;
+
+ err:
+  mailactivesync_wbxml_node_free(folder);
+  mailactivesync_wbxml_node_free(changes);
+  mailactivesync_wbxml_node_free(root);
+  mailactivesync_folder_sync_result_free(result);
+  mailactivesync_free(session);
+  return 0;
+}
+
 static int test_sync_success(void)
 {
   static const unsigned char mime[] =
@@ -1178,6 +1339,425 @@ static int test_sync_success(void)
   return 0;
 }
 
+static int append_sync_collection_response(
+    struct mailactivesync_wbxml_node * root,
+    struct mailactivesync_wbxml_node * collection)
+{
+  struct mailactivesync_wbxml_node * collections;
+  int r;
+
+  collections = mailactivesync_wbxml_node_new(MAILACTIVESYNC_CP_AIRSYNC,
+      MAILACTIVESYNC_AIRSYNC_COLLECTIONS);
+  if (collections == NULL)
+    return MAILACTIVESYNC_ERROR_MEMORY;
+
+  r = mailactivesync_wbxml_node_add_child(collections, collection);
+  if (r != MAILACTIVESYNC_NO_ERROR) {
+    mailactivesync_wbxml_node_free(collections);
+    return r;
+  }
+
+  r = mailactivesync_wbxml_node_add_child(root, collections);
+  if (r != MAILACTIVESYNC_NO_ERROR) {
+    mailactivesync_wbxml_node_free(collections);
+    return r;
+  }
+
+  return MAILACTIVESYNC_NO_ERROR;
+}
+
+static int test_sync_empty_response_and_request_defaults(void)
+{
+  mailactivesync * session;
+  struct fake_context * context;
+  struct mailactivesync_sync_request * request;
+  struct mailactivesync_sync_result * result;
+  struct mailactivesync_wbxml_node * root;
+  struct mailactivesync_wbxml_node * collection;
+  struct mailactivesync_wbxml_document * request_document;
+  struct mailactivesync_wbxml_node * request_collections;
+  struct mailactivesync_wbxml_node * request_collection;
+  int r;
+
+  session = NULL;
+  context = NULL;
+  request = NULL;
+  result = NULL;
+  root = NULL;
+  collection = NULL;
+  request_document = NULL;
+
+  if (!check(setup_oauth_session(&session, &context) ==
+      MAILACTIVESYNC_NO_ERROR, "setup OAuth session failed"))
+    return 0;
+
+  root = mailactivesync_wbxml_node_new(MAILACTIVESYNC_CP_AIRSYNC,
+      MAILACTIVESYNC_AIRSYNC_SYNC);
+  collection = mailactivesync_wbxml_node_new(MAILACTIVESYNC_CP_AIRSYNC,
+      MAILACTIVESYNC_AIRSYNC_COLLECTION);
+  if (!check((root != NULL) && (collection != NULL),
+      "empty Sync response allocation failed"))
+    goto err;
+  if (!check(test_node_add_text(collection, MAILACTIVESYNC_CP_AIRSYNC,
+      MAILACTIVESYNC_AIRSYNC_SYNC_KEY, "333") == MAILACTIVESYNC_NO_ERROR,
+      "empty Sync response SyncKey add failed"))
+    goto err;
+  if (!check(test_node_add_text(collection, MAILACTIVESYNC_CP_AIRSYNC,
+      MAILACTIVESYNC_AIRSYNC_STATUS, "5") == MAILACTIVESYNC_NO_ERROR,
+      "empty Sync response Status add failed"))
+    goto err;
+  if (!check(append_sync_collection_response(root, collection) ==
+      MAILACTIVESYNC_NO_ERROR, "empty Sync response collection append failed"))
+    goto err;
+  collection = NULL;
+  if (!check(fake_context_set_response_body(context, root) ==
+      MAILACTIVESYNC_NO_ERROR, "empty Sync response encode failed"))
+    goto err;
+  mailactivesync_wbxml_node_free(root);
+  root = NULL;
+
+  request = mailactivesync_sync_request_new("5", NULL);
+  if (!check(request != NULL, "default Sync request allocation failed"))
+    goto err;
+  if (!check(mailactivesync_sync_request_set_get_changes(request, 0) ==
+      MAILACTIVESYNC_NO_ERROR, "set GetChanges=0 failed"))
+    goto err;
+
+  r = mailactivesync_sync(session, request, &result);
+  if (!check(r == MAILACTIVESYNC_NO_ERROR, "empty Sync failed"))
+    goto err;
+  if (!check(mailactivesync_wbxml_decode(context->last_request->body,
+      context->last_request->body_len, &request_document) ==
+      MAILACTIVESYNC_NO_ERROR, "empty Sync request decode failed"))
+    goto err;
+  request_collections = test_node_child(request_document->root,
+      MAILACTIVESYNC_CP_AIRSYNC, MAILACTIVESYNC_AIRSYNC_COLLECTIONS);
+  request_collection = test_node_child(request_collections,
+      MAILACTIVESYNC_CP_AIRSYNC, MAILACTIVESYNC_AIRSYNC_COLLECTION);
+  if (!check(strcmp(test_node_child_text(request_collection,
+      MAILACTIVESYNC_CP_AIRSYNC, MAILACTIVESYNC_AIRSYNC_SYNC_KEY), "0") == 0,
+      "default SyncKey was not 0"))
+    goto err;
+  if (!check(strcmp(test_node_child_text(request_collection,
+      MAILACTIVESYNC_CP_AIRSYNC, MAILACTIVESYNC_AIRSYNC_GET_CHANGES), "0") == 0,
+      "GetChanges=0 request mismatch"))
+    goto err;
+  if (!check(test_node_child(request_collection, MAILACTIVESYNC_CP_AIRSYNC,
+      MAILACTIVESYNC_AIRSYNC_WINDOW_SIZE) == NULL,
+      "default Sync request unexpectedly included WindowSize"))
+    goto err;
+  if (!check(test_node_child(request_collection, MAILACTIVESYNC_CP_AIRSYNC,
+      MAILACTIVESYNC_AIRSYNC_OPTIONS) == NULL,
+      "default Sync request unexpectedly included Options"))
+    goto err;
+  if (!check((result->sync_key != NULL) &&
+      (strcmp(result->sync_key, "333") == 0) &&
+      (result->status == 5) && !result->more_available &&
+      (clist_count(result->added) == 0) &&
+      (clist_count(result->changed) == 0) &&
+      (clist_count(result->deleted) == 0),
+      "empty Sync result mismatch"))
+    goto err;
+
+  mailactivesync_wbxml_document_free(request_document);
+  mailactivesync_sync_result_free(result);
+  mailactivesync_sync_request_free(request);
+  mailactivesync_free(session);
+  return 1;
+
+ err:
+  mailactivesync_wbxml_document_free(request_document);
+  mailactivesync_wbxml_node_free(collection);
+  mailactivesync_wbxml_node_free(root);
+  mailactivesync_sync_result_free(result);
+  mailactivesync_sync_request_free(request);
+  mailactivesync_free(session);
+  return 0;
+}
+
+static int test_sync_change_softdelete_and_html_body(void)
+{
+  static const char html_body[] = "<p>Hello</p>";
+  mailactivesync * session;
+  struct fake_context * context;
+  struct mailactivesync_sync_request * request;
+  struct mailactivesync_sync_result * result;
+  struct mailactivesync_wbxml_node * root;
+  struct mailactivesync_wbxml_node * collection;
+  struct mailactivesync_wbxml_node * commands;
+  struct mailactivesync_wbxml_node * command;
+  struct mailactivesync_wbxml_node * app_data;
+  struct mailactivesync_wbxml_node * body;
+  struct mailactivesync_message * message;
+  const char * deleted_id;
+  int r;
+
+  session = NULL;
+  context = NULL;
+  request = NULL;
+  result = NULL;
+  root = NULL;
+  collection = NULL;
+  commands = NULL;
+  command = NULL;
+  app_data = NULL;
+  body = NULL;
+
+  if (!check(setup_oauth_session(&session, &context) ==
+      MAILACTIVESYNC_NO_ERROR, "setup OAuth session failed"))
+    return 0;
+
+  root = mailactivesync_wbxml_node_new(MAILACTIVESYNC_CP_AIRSYNC,
+      MAILACTIVESYNC_AIRSYNC_SYNC);
+  collection = mailactivesync_wbxml_node_new(MAILACTIVESYNC_CP_AIRSYNC,
+      MAILACTIVESYNC_AIRSYNC_COLLECTION);
+  commands = mailactivesync_wbxml_node_new(MAILACTIVESYNC_CP_AIRSYNC,
+      MAILACTIVESYNC_AIRSYNC_COMMANDS);
+  command = mailactivesync_wbxml_node_new(MAILACTIVESYNC_CP_AIRSYNC,
+      MAILACTIVESYNC_AIRSYNC_CHANGE);
+  app_data = mailactivesync_wbxml_node_new(MAILACTIVESYNC_CP_AIRSYNC,
+      MAILACTIVESYNC_AIRSYNC_APPLICATION_DATA);
+  body = mailactivesync_wbxml_node_new(MAILACTIVESYNC_CP_AIRSYNCBASE,
+      MAILACTIVESYNC_AIRSYNCBASE_BODY);
+  if (!check((root != NULL) && (collection != NULL) &&
+      (commands != NULL) && (command != NULL) &&
+      (app_data != NULL) && (body != NULL),
+      "Sync change response allocation failed"))
+    goto err;
+
+  if (!check(test_node_add_text(collection, MAILACTIVESYNC_CP_AIRSYNC,
+      MAILACTIVESYNC_AIRSYNC_SYNC_KEY, "444") == MAILACTIVESYNC_NO_ERROR,
+      "Sync change response SyncKey add failed"))
+    goto err;
+  if (!check(test_node_add_text(collection, MAILACTIVESYNC_CP_AIRSYNC,
+      MAILACTIVESYNC_AIRSYNC_STATUS, "1") == MAILACTIVESYNC_NO_ERROR,
+      "Sync change response Status add failed"))
+    goto err;
+  if (!check(test_node_add_text(command, MAILACTIVESYNC_CP_AIRSYNC,
+      MAILACTIVESYNC_AIRSYNC_SERVER_ID, "msg-change") ==
+      MAILACTIVESYNC_NO_ERROR, "Sync change ServerId add failed"))
+    goto err;
+  if (!check(test_node_add_text(app_data, MAILACTIVESYNC_CP_EMAIL,
+      MAILACTIVESYNC_EMAIL_SUBJECT, "Changed") == MAILACTIVESYNC_NO_ERROR,
+      "Sync change subject add failed"))
+    goto err;
+  if (!check(test_node_add_text(body, MAILACTIVESYNC_CP_AIRSYNCBASE,
+      MAILACTIVESYNC_AIRSYNCBASE_TYPE, "2") == MAILACTIVESYNC_NO_ERROR,
+      "Sync HTML body type add failed"))
+    goto err;
+  if (!check(test_node_add_text(body, MAILACTIVESYNC_CP_AIRSYNCBASE,
+      MAILACTIVESYNC_AIRSYNCBASE_DATA, html_body) ==
+      MAILACTIVESYNC_NO_ERROR, "Sync HTML body data add failed"))
+    goto err;
+  if (!check(mailactivesync_wbxml_node_add_child(app_data, body) ==
+      MAILACTIVESYNC_NO_ERROR, "Sync HTML body append failed"))
+    goto err;
+  body = NULL;
+  if (!check(mailactivesync_wbxml_node_add_child(command, app_data) ==
+      MAILACTIVESYNC_NO_ERROR, "Sync change app data append failed"))
+    goto err;
+  app_data = NULL;
+  if (!check(mailactivesync_wbxml_node_add_child(commands, command) ==
+      MAILACTIVESYNC_NO_ERROR, "Sync change command append failed"))
+    goto err;
+  command = NULL;
+
+  command = mailactivesync_wbxml_node_new(MAILACTIVESYNC_CP_AIRSYNC,
+      MAILACTIVESYNC_AIRSYNC_SOFT_DELETE);
+  if (!check(command != NULL, "Sync soft delete allocation failed"))
+    goto err;
+  if (!check(test_node_add_text(command, MAILACTIVESYNC_CP_AIRSYNC,
+      MAILACTIVESYNC_AIRSYNC_SERVER_ID, "msg-soft-delete") ==
+      MAILACTIVESYNC_NO_ERROR, "Sync soft delete ServerId add failed"))
+    goto err;
+  if (!check(mailactivesync_wbxml_node_add_child(commands, command) ==
+      MAILACTIVESYNC_NO_ERROR, "Sync soft delete append failed"))
+    goto err;
+  command = NULL;
+  if (!check(mailactivesync_wbxml_node_add_child(collection, commands) ==
+      MAILACTIVESYNC_NO_ERROR, "Sync change commands append failed"))
+    goto err;
+  commands = NULL;
+  if (!check(append_sync_collection_response(root, collection) ==
+      MAILACTIVESYNC_NO_ERROR, "Sync change collection append failed"))
+    goto err;
+  collection = NULL;
+  if (!check(fake_context_set_response_body(context, root) ==
+      MAILACTIVESYNC_NO_ERROR, "Sync change response encode failed"))
+    goto err;
+  mailactivesync_wbxml_node_free(root);
+  root = NULL;
+
+  request = mailactivesync_sync_request_new("5", "333");
+  if (!check(request != NULL, "Sync change request allocation failed"))
+    goto err;
+  r = mailactivesync_sync(session, request, &result);
+  if (!check(r == MAILACTIVESYNC_NO_ERROR, "Sync change failed"))
+    goto err;
+  if (!check((clist_count(result->added) == 0) &&
+      (clist_count(result->changed) == 1) &&
+      (clist_count(result->deleted) == 1),
+      "Sync change result counts mismatch"))
+    goto err;
+  message = clist_content(clist_begin(result->changed));
+  if (!check((message != NULL) &&
+      (strcmp(message->server_id, "msg-change") == 0) &&
+      (strcmp(message->subject, "Changed") == 0) &&
+      (message->body != NULL) &&
+      (message->body->type == MAILACTIVESYNC_AIRSYNCBASE_BODY_TYPE_HTML) &&
+      (strcmp(message->body->data, html_body) == 0) &&
+      (message->mime == NULL) && (message->mime_len == 0),
+      "Sync change HTML body parse mismatch"))
+    goto err;
+  deleted_id = clist_content(clist_begin(result->deleted));
+  if (!check((deleted_id != NULL) &&
+      (strcmp(deleted_id, "msg-soft-delete") == 0),
+      "Sync soft delete parse mismatch"))
+    goto err;
+
+  mailactivesync_sync_result_free(result);
+  mailactivesync_sync_request_free(request);
+  mailactivesync_free(session);
+  return 1;
+
+ err:
+  mailactivesync_wbxml_node_free(body);
+  mailactivesync_wbxml_node_free(app_data);
+  mailactivesync_wbxml_node_free(command);
+  mailactivesync_wbxml_node_free(commands);
+  mailactivesync_wbxml_node_free(collection);
+  mailactivesync_wbxml_node_free(root);
+  mailactivesync_sync_result_free(result);
+  mailactivesync_sync_request_free(request);
+  mailactivesync_free(session);
+  return 0;
+}
+
+static int test_sync_response_errors(void)
+{
+  static const unsigned char malformed[] = {
+    0x03, 0x01, 0x6A, 0x00, 0x00, 0x00, 0x45
+  };
+  mailactivesync * session;
+  struct fake_context * context;
+  struct mailactivesync_sync_request * request;
+  struct mailactivesync_sync_result * result;
+  struct mailactivesync_wbxml_node * root;
+  struct mailactivesync_wbxml_node * collection;
+  struct mailactivesync_wbxml_node * commands;
+  struct mailactivesync_wbxml_node * command;
+  int r;
+
+  session = NULL;
+  context = NULL;
+  request = NULL;
+  result = NULL;
+  root = NULL;
+  collection = NULL;
+  commands = NULL;
+  command = NULL;
+
+  if (!check(setup_oauth_session(&session, &context) ==
+      MAILACTIVESYNC_NO_ERROR, "setup OAuth session failed"))
+    return 0;
+  request = mailactivesync_sync_request_new("5", "1");
+  if (!check(request != NULL, "Sync error request allocation failed"))
+    goto err;
+
+  r = mailactivesync_sync(session, request, &result);
+  if (!check((r == MAILACTIVESYNC_ERROR_PROTOCOL) && (result == NULL),
+      "Sync empty body did not fail as protocol error"))
+    goto err;
+
+  if (!check(fake_context_set_raw_response_body(context, malformed,
+      sizeof(malformed)) == MAILACTIVESYNC_NO_ERROR,
+      "set malformed Sync body failed"))
+    goto err;
+  r = mailactivesync_sync(session, request, &result);
+  if (!check((r == MAILACTIVESYNC_ERROR_PARSE) && (result == NULL),
+      "Sync malformed body did not fail as parse error"))
+    goto err;
+
+  root = mailactivesync_wbxml_node_new(
+      MAILACTIVESYNC_CP_FOLDERHIERARCHY,
+      MAILACTIVESYNC_FOLDER_FOLDER_SYNC);
+  if (!check(root != NULL, "wrong-root Sync response allocation failed"))
+    goto err;
+  if (!check(fake_context_set_response_body(context, root) ==
+      MAILACTIVESYNC_NO_ERROR, "wrong-root Sync response encode failed"))
+    goto err;
+  mailactivesync_wbxml_node_free(root);
+  root = NULL;
+  r = mailactivesync_sync(session, request, &result);
+  if (!check((r == MAILACTIVESYNC_ERROR_PROTOCOL) && (result == NULL),
+      "Sync wrong root did not fail as protocol error"))
+    goto err;
+
+  root = mailactivesync_wbxml_node_new(MAILACTIVESYNC_CP_AIRSYNC,
+      MAILACTIVESYNC_AIRSYNC_SYNC);
+  if (!check(root != NULL, "Sync no collection response allocation failed"))
+    goto err;
+  if (!check(fake_context_set_response_body(context, root) ==
+      MAILACTIVESYNC_NO_ERROR, "Sync no collection response encode failed"))
+    goto err;
+  mailactivesync_wbxml_node_free(root);
+  root = NULL;
+  r = mailactivesync_sync(session, request, &result);
+  if (!check((r == MAILACTIVESYNC_ERROR_PROTOCOL) && (result == NULL),
+      "Sync response without collection did not fail as protocol error"))
+    goto err;
+
+  root = mailactivesync_wbxml_node_new(MAILACTIVESYNC_CP_AIRSYNC,
+      MAILACTIVESYNC_AIRSYNC_SYNC);
+  collection = mailactivesync_wbxml_node_new(MAILACTIVESYNC_CP_AIRSYNC,
+      MAILACTIVESYNC_AIRSYNC_COLLECTION);
+  commands = mailactivesync_wbxml_node_new(MAILACTIVESYNC_CP_AIRSYNC,
+      MAILACTIVESYNC_AIRSYNC_COMMANDS);
+  command = mailactivesync_wbxml_node_new(MAILACTIVESYNC_CP_AIRSYNC,
+      MAILACTIVESYNC_AIRSYNC_ADD);
+  if (!check((root != NULL) && (collection != NULL) &&
+      (commands != NULL) && (command != NULL),
+      "Sync missing ServerId fixture allocation failed"))
+    goto err;
+  if (!check(mailactivesync_wbxml_node_add_child(commands, command) ==
+      MAILACTIVESYNC_NO_ERROR, "Sync missing ServerId command append failed"))
+    goto err;
+  command = NULL;
+  if (!check(mailactivesync_wbxml_node_add_child(collection, commands) ==
+      MAILACTIVESYNC_NO_ERROR, "Sync missing ServerId commands append failed"))
+    goto err;
+  commands = NULL;
+  if (!check(append_sync_collection_response(root, collection) ==
+      MAILACTIVESYNC_NO_ERROR,
+      "Sync missing ServerId collection append failed"))
+    goto err;
+  collection = NULL;
+  if (!check(fake_context_set_response_body(context, root) ==
+      MAILACTIVESYNC_NO_ERROR,
+      "Sync missing ServerId response encode failed"))
+    goto err;
+  mailactivesync_wbxml_node_free(root);
+  root = NULL;
+  r = mailactivesync_sync(session, request, &result);
+  if (!check((r == MAILACTIVESYNC_ERROR_PROTOCOL) && (result == NULL),
+      "Sync add without ServerId did not fail as protocol error"))
+    goto err;
+
+  mailactivesync_sync_request_free(request);
+  mailactivesync_free(session);
+  return 1;
+
+ err:
+  mailactivesync_wbxml_node_free(command);
+  mailactivesync_wbxml_node_free(commands);
+  mailactivesync_wbxml_node_free(collection);
+  mailactivesync_wbxml_node_free(root);
+  mailactivesync_sync_result_free(result);
+  mailactivesync_sync_request_free(request);
+  mailactivesync_free(session);
+  return 0;
+}
+
 int main(void)
 {
   if (!test_response_header_lookup())
@@ -1198,7 +1778,15 @@ int main(void)
     return 1;
   if (!test_folder_sync_success())
     return 1;
+  if (!test_folder_sync_response_errors())
+    return 1;
   if (!test_sync_success())
+    return 1;
+  if (!test_sync_empty_response_and_request_defaults())
+    return 1;
+  if (!test_sync_change_softdelete_and_html_body())
+    return 1;
+  if (!test_sync_response_errors())
     return 1;
 
   return 0;
