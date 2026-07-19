@@ -260,6 +260,18 @@ static void check_identifier_fields(void)
   free(message_id);
 
   indx = 0;
+  message_id = NULL;
+  r = mailimf_msg_id_parse(
+      "<NMID-105-12327863-31469233-domiagrp_prod-AA==@communication.aca\r\n\tdomia.fr>",
+      strlen("<NMID-105-12327863-31469233-domiagrp_prod-AA==@communication.aca\r\n\tdomia.fr>"),
+      &indx, &message_id);
+  assert_parse_consumes(r, indx,
+      "<NMID-105-12327863-31469233-domiagrp_prod-AA==@communication.aca\r\n\tdomia.fr>");
+  assert(strcmp(message_id,
+        "NMID-105-12327863-31469233-domiagrp_prod-AA==@communication.acadomia.fr") == 0);
+  free(message_id);
+
+  indx = 0;
   references = NULL;
   r = mailimf_references_parse("References: <a@example> <b@example>\r\n",
       strlen("References: <a@example> <b@example>\r\n"), &indx, &references);
