@@ -2069,6 +2069,7 @@ int mailimf_date_time_parse(const char * message, size_t length,
   int sec;
   int zone;
   int r;
+  size_t date_token;
 
   cur_token = * indx;
 
@@ -2089,8 +2090,10 @@ int mailimf_date_time_parse(const char * message, size_t length,
   day = 0;
   month = 0;
   year = 0;
+  date_token = cur_token;
   r = mailimf_date_parse(message, length, &cur_token, &day, &month, &year);
   if (r == MAILIMF_ERROR_PARSE) {
+    cur_token = date_token;
     r = mailimf_broken_date_parse(message, length, &cur_token, &day, &month, &year);
   }
   else if (r != MAILIMF_NO_ERROR) {

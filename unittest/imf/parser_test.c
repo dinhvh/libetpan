@@ -96,6 +96,48 @@ static void check_date_time(void)
     assert(date_time->dt_zone == -600);
     mailimf_date_time_free(date_time);
   }
+
+  {
+    const char * input = "Sat, Apr 09 2005 06:39:52 -0700";
+    size_t indx = 0;
+    int r;
+
+    date_time = NULL;
+    r = mailimf_date_time_parse(input, strlen(input), &indx, &date_time);
+    assert_parse_consumes(r, indx, input);
+    assert(date_time->dt_day == 9);
+    assert(date_time->dt_month == 4);
+    assert(date_time->dt_year == 2005);
+    assert(date_time->dt_hour == 6);
+    assert(date_time->dt_min == 39);
+    assert(date_time->dt_sec == 52);
+    assert(date_time->dt_zone == -700);
+    mailimf_date_time_free(date_time);
+  }
+
+  {
+    const char * input = "DATE: Sat, Apr 09 2005 06:39:52 -0700\r\n";
+    struct mailimf_fields * fields;
+    struct mailimf_field * field;
+    size_t indx = 0;
+    int r;
+
+    fields = NULL;
+    r = mailimf_fields_parse(input, strlen(input), &indx, &fields);
+    assert_parse_consumes(r, indx, input);
+    assert(clist_count(fields->fld_list) == 1);
+    field = field_at(fields, 0);
+    assert(field->fld_type == MAILIMF_FIELD_ORIG_DATE);
+    date_time = field->fld_data.fld_orig_date->dt_date_time;
+    assert(date_time->dt_day == 9);
+    assert(date_time->dt_month == 4);
+    assert(date_time->dt_year == 2005);
+    assert(date_time->dt_hour == 6);
+    assert(date_time->dt_min == 39);
+    assert(date_time->dt_sec == 52);
+    assert(date_time->dt_zone == -700);
+    mailimf_fields_free(fields);
+  }
 }
 
 static void check_lexical_tokens(void)
