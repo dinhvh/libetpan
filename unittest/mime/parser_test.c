@@ -233,6 +233,67 @@ static void check_field_grammar(void)
   mmap_string_free(input);
 }
 
+static void check_encoded_structured_field_recovery(void)
+{
+  static const char expected_filename[] =
+      "\xD1\x82\xD0\xB5\xD1\x81\xD1\x82.png";
+  struct mailimf_fields * imf_fields;
+  struct mailmime_fields * mime_fields;
+  struct mailmime_field * field;
+  struct mailmime_parameter * parameter;
+  struct mailmime_disposition_parm * disposition_parameter;
+  const char * input;
+  size_t indx;
+  int r;
+
+  input =
+      "Content-Type: =?koi8-r?Q?image/png=3B_x-unix-mode=3D0644=3B_name=3D=22=D4=C5?=\r\n"
+      " =?koi8-r?Q?=D3=D4=2Epng=22?=\r\n"
+      "Content-Disposition: =?koi8-r?Q?attachment=3B_filename=3D=22=D4=C5=D3=D4=2Epng=22?=\r\n";
+  indx = 0;
+  imf_fields = NULL;
+  r = mailimf_fields_parse(input, strlen(input), &indx, &imf_fields);
+  assert(r == MAILIMF_NO_ERROR);
+  assert(indx == strlen(input));
+
+  mime_fields = NULL;
+  r = mailmime_fields_parse(imf_fields, &mime_fields);
+  assert(r == MAILIMF_NO_ERROR);
+  assert(clist_count(mime_fields->fld_list) == 2);
+
+  field = mime_field_at(mime_fields, 0);
+  assert(field->fld_type == MAILMIME_FIELD_TYPE);
+  assert(field->fld_data.fld_content->ct_type->tp_type ==
+      MAILMIME_TYPE_DISCRETE_TYPE);
+  assert(field->fld_data.fld_content->ct_type->tp_data.tp_discrete_type->dt_type ==
+      MAILMIME_DISCRETE_TYPE_IMAGE);
+  assert(strcasecmp(field->fld_data.fld_content->ct_subtype, "png") == 0);
+  assert(clist_count(field->fld_data.fld_content->ct_parameters) == 2);
+
+  parameter = parameter_at(field->fld_data.fld_content, 0);
+  assert(strcasecmp(parameter->pa_name, "x-unix-mode") == 0);
+  assert(strcmp(parameter->pa_value, "0644") == 0);
+
+  parameter = parameter_at(field->fld_data.fld_content, 1);
+  assert(strcasecmp(parameter->pa_name, "name") == 0);
+  assert(strcmp(parameter->pa_value, expected_filename) == 0);
+
+  field = mime_field_at(mime_fields, 1);
+  assert(field->fld_type == MAILMIME_FIELD_DISPOSITION);
+  assert(field->fld_data.fld_disposition->dsp_type->dsp_type ==
+      MAILMIME_DISPOSITION_TYPE_ATTACHMENT);
+  assert(clist_count(field->fld_data.fld_disposition->dsp_parms) == 1);
+
+  disposition_parameter =
+      clist_content(clist_begin(field->fld_data.fld_disposition->dsp_parms));
+  assert(disposition_parameter->pa_type == MAILMIME_DISPOSITION_PARM_FILENAME);
+  assert(strcmp(disposition_parameter->pa_data.pa_filename,
+        expected_filename) == 0);
+
+  mailmime_fields_free(mime_fields);
+  mailimf_fields_free(imf_fields);
+}
+
 static void check_transfer_decoders(void)
 {
   const char * base64_input = "SGVsbG8sIGJhc2U2NCE=\r\n";
@@ -419,6 +480,7 @@ int mime_parser_test_run(void)
   check_content_type_grammar();
   check_encoding_grammar();
   check_field_grammar();
+  check_encoded_structured_field_recovery();
   check_transfer_decoders();
   check_rfc2047_encoded_words();
   check_full_rfc822_multipart();
