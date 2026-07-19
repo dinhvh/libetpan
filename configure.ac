@@ -654,19 +654,22 @@ if test "x$with_curl" = "xno"; then
 elif test "x$with_curl" != "xauto"; then
   OCPPFLAGS="$CPPFLAGS"
   OLDFLAGS="$LDFLAGS"
+  OLIBS="$LIBS"
   if test "x$with_curl" != "xyes" ; then
     CPPFLAGS="$CPPFLAGS -I$with_curl/include"
-    LDFLAGS="$LDFLAGS -L$with_curl/lib -lcurl -lz"
+    LDFLAGS="$LDFLAGS -L$with_curl/lib"
+    LIBS="$LIBS -lcurl -lz"
   fi
   AC_CHECK_HEADER(curl/curl.h, [libcurl=yes])
   if test "x$libcurl" = "xyes"; then
       AC_MSG_CHECKING([whether with-curl compiles and links fine])
-      AC_LINK_IFELSE([AC_LANG_PROGRAM([[]], [[curl_easy_init();]])], [libcurl=yes], [libcurl=no])
+      AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <curl/curl.h>]], [[curl_easy_init();]])], [libcurl=yes], [libcurl=no])
       AC_MSG_RESULT([$libcurl])
   fi
    if test "x$libcurl" = "xno"; then
       CPPFLAGS="$OCPPFLAGS"
       LDFLAGS="$OLDFLAGS"
+      LIBS="$OLIBS"
    fi
 else
   AC_PATH_PROG(libcurlconfig, [curl-config])
@@ -677,12 +680,14 @@ else
       if test "x$libcurl" = "xyes"; then
           AC_MSG_CHECKING([whether curl-config hints compiles and links fine])
           OLDFLAGS="$LDFLAGS"
+          OLIBS="$LIBS"
           libcurl_libs=$("${libcurlconfig}" --libs 2>/dev/null)
-          LDFLAGS="$LDFLAGS $libcurl_libs"
-          AC_LINK_IFELSE([AC_LANG_PROGRAM([[]], [[curl_easy_init();]])], [libcurl=yes], [libcurl=no])
+          LIBS="$LIBS $libcurl_libs"
+          AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <curl/curl.h>]], [[curl_easy_init();]])], [libcurl=yes], [libcurl=no])
           AC_MSG_RESULT([$libcurl])
           if test "x$libcurl" = "xno"; then
               LDFLAGS="$OLDFLAGS"
+              LIBS="$OLIBS"
           fi
       fi
       
