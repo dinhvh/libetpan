@@ -29,11 +29,12 @@
 
 include $(top_srcdir)/rules.mk
 
-SUBDIRS = imap imf maildir mbox mh mime nntp pop3 smtp feed
+SUBDIRS = activesync imap imf maildir mbox mh mime nntp pop3 smtp feed
 
 noinst_LTLIBRARIES = liblow-level.la
 liblow_level_la_SOURCES = 
 liblow_level_la_LIBADD = \
+	activesync/libactivesync.la \
 	imap/libimap.la \
 	imf/libimf.la \
 	maildir/libmaildir.la \

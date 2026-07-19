@@ -803,6 +803,7 @@ AC_CONFIG_FILES(Makefile
 		src/windows/Makefile
 		src/data-types/Makefile
 		src/low-level/Makefile
+		src/low-level/activesync/Makefile
 		src/low-level/feed/Makefile
 		src/low-level/imap/Makefile
 		src/low-level/imf/Makefile
