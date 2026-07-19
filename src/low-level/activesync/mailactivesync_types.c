@@ -194,7 +194,19 @@ void mailactivesync_message_free(struct mailactivesync_message * message)
   free(message->date_received);
   free(message->message_class);
   free(message->mime);
+  mailactivesync_airsyncbase_body_free(message->body);
   free(message);
+}
+
+void mailactivesync_airsyncbase_body_free(
+    struct mailactivesync_airsyncbase_body * body)
+{
+  if (body == NULL)
+    return;
+  free(body->data);
+  free(body->content_type);
+  free(body->preview);
+  free(body);
 }
 
 void mailactivesync_sync_result_free(
@@ -221,6 +233,7 @@ void mailactivesync_item_free(struct mailactivesync_item * item)
     return;
   free(item->server_id);
   free(item->mime);
+  mailactivesync_airsyncbase_body_free(item->body);
   free(item);
 }
 

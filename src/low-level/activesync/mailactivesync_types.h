@@ -72,6 +72,24 @@ struct mailactivesync_body_preference {
   int all_or_none;
 };
 
+enum {
+  MAILACTIVESYNC_AIRSYNCBASE_BODY_TYPE_PLAIN_TEXT = 1,
+  MAILACTIVESYNC_AIRSYNCBASE_BODY_TYPE_HTML = 2,
+  MAILACTIVESYNC_AIRSYNCBASE_BODY_TYPE_RTF = 3,
+  MAILACTIVESYNC_AIRSYNCBASE_BODY_TYPE_MIME = 4
+};
+
+struct mailactivesync_airsyncbase_body {
+  int type;
+  char * data;
+  size_t data_len;
+  uint32_t estimated_data_size;
+  int truncated;
+  int native_body_type;
+  char * content_type;
+  char * preview;
+};
+
 struct mailactivesync_message {
   char * server_id;
   char * subject;
@@ -86,6 +104,7 @@ struct mailactivesync_message {
   int flagged;
   char * mime;
   size_t mime_len;
+  struct mailactivesync_airsyncbase_body * body;
 };
 
 struct mailactivesync_sync_request {
@@ -110,6 +129,7 @@ struct mailactivesync_item {
   char * server_id;
   char * mime;
   size_t mime_len;
+  struct mailactivesync_airsyncbase_body * body;
 };
 
 struct mailactivesync_move {
@@ -171,6 +191,10 @@ int mailactivesync_sync_request_set_mime_body_preference(
 
 LIBETPAN_EXPORT
 void mailactivesync_message_free(struct mailactivesync_message * message);
+
+LIBETPAN_EXPORT
+void mailactivesync_airsyncbase_body_free(
+    struct mailactivesync_airsyncbase_body * body);
 
 LIBETPAN_EXPORT
 void mailactivesync_sync_result_free(

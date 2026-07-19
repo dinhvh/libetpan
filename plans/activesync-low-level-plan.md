@@ -28,6 +28,11 @@ protocols, including Exchange ActiveSync. The low-level API can keep a Basic
 authentication entry point for private/on-premises Exchange deployments, but the
 primary sample and interop path should use bearer tokens.
 
+OAuth scope selection, OAuth token acquisition, refresh tokens, device-code
+flows, browser flows, and Microsoft identity application registration are out of
+scope for libEtPan. Callers pass an already acquired bearer token to
+`mailactivesync_login_oauth2()`.
+
 ## Specification Sources
 
 The implementation should be driven from Microsoft's Open Specifications rather
@@ -89,6 +94,8 @@ Implement mail-only ActiveSync protocol support.
 In scope:
 
 - HTTP(S) transport for ActiveSync commands.
+- libcurl-backed HTTP for ActiveSync. ActiveSync HTTP requires libcurl even
+  though the rest of libEtPan can still build without curl.
 - WBXML encoding and decoding.
 - `OPTIONS` command.
 - `FolderSync` command.
@@ -108,6 +115,7 @@ Out of scope for the first phase:
 - Contacts, calendars, tasks, notes, SMS, and document sync.
 - Device provisioning policy enforcement beyond carrying a policy key when
   provided.
+- OAuth token acquisition.
 - Autodiscover, unless manual server URL configuration proves insufficient for
   interop testing.
 
@@ -371,6 +379,24 @@ struct mailactivesync_body_preference {
   int all_or_none;
 };
 
+enum {
+  MAILACTIVESYNC_BODY_TYPE_PLAIN_TEXT = 1,
+  MAILACTIVESYNC_BODY_TYPE_HTML = 2,
+  MAILACTIVESYNC_BODY_TYPE_RTF = 3,
+  MAILACTIVESYNC_BODY_TYPE_MIME = 4
+};
+
+struct mailactivesync_airsyncbase_body {
+  int type;
+  char * data;
+  size_t data_len;
+  uint32_t estimated_data_size;
+  int truncated;
+  char * content_type;
+  char * preview;
+  int native_body_type;
+};
+
 struct mailactivesync_message {
   char * server_id;
   char * subject;
@@ -385,6 +411,7 @@ struct mailactivesync_message {
   int flagged;
   char * mime;
   size_t mime_len;
+  struct mailactivesync_airsyncbase_body * body;
 };
 
 struct mailactivesync_sync_request {
@@ -405,6 +432,17 @@ struct mailactivesync_sync_result {
   clist * deleted; /* char * server_id */
 };
 ```
+
+MIME/body result policy:
+
+- Request MIME first with `airsyncbase:BodyPreference` `Type=4` and
+  AirSync `MIMESupport`.
+- Preserve raw MIME in `mime` / `mime_len` when the server returns it.
+- Also parse AirSyncBase body fields into `mailactivesync_airsyncbase_body`
+  when present.
+- If raw MIME is unavailable, callers can still consume `body` as plain text,
+  HTML, RTF, or MIME content depending on `body->type`.
+- `mailactivesync_message_free()` owns and frees both `mime` and `body`.
 
 ## Implementation Phases
 
@@ -473,7 +511,8 @@ struct mailactivesync_sync_result {
 ### Phase 7: Body And MIME Retrieval
 
 - Request MIME where supported.
-- Fall back to AirSyncBase body fields when MIME is not returned.
+- Parse both raw MIME and AirSyncBase body fields when present.
+- Fall back to AirSyncBase body fields when raw MIME is not returned.
 - Add `ItemOperations` fetch for full message retrieval by collection ID and
   server ID.
 - Preserve raw MIME bytes so higher layers can reuse existing MIME parsers.
