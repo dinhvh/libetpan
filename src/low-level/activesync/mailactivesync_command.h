@@ -16,6 +16,14 @@ extern "C" {
 int mailactivesync_command_options(mailactivesync * session,
     struct mailactivesync_options ** result);
 
+int mailactivesync_command_folder_sync(mailactivesync * session,
+    const char * sync_key,
+    struct mailactivesync_folder_sync_result ** result);
+
+int mailactivesync_command_sync(mailactivesync * session,
+    struct mailactivesync_sync_request * request,
+    struct mailactivesync_sync_result ** result);
+
 int mailactivesync_command_post(mailactivesync * session,
     const char * command,
     const char * collection_id,

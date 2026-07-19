@@ -311,7 +311,7 @@ int mailactivesync_folder_sync(mailactivesync * session,
   if (r != MAILACTIVESYNC_NO_ERROR)
     return r;
 
-  return MAILACTIVESYNC_ERROR_NOT_IMPLEMENTED;
+  return mailactivesync_command_folder_sync(session, sync_key, result);
 }
 
 int mailactivesync_sync(mailactivesync * session,
@@ -329,7 +329,7 @@ int mailactivesync_sync(mailactivesync * session,
   if (r != MAILACTIVESYNC_NO_ERROR)
     return r;
 
-  return MAILACTIVESYNC_ERROR_NOT_IMPLEMENTED;
+  return mailactivesync_command_sync(session, request, result);
 }
 
 int mailactivesync_item_operations_fetch(mailactivesync * session,
