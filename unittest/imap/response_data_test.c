@@ -163,6 +163,8 @@ int imap_response_data_test_run(void)
       MAILIMAP_RESP_DATA_TYPE_MAILBOX_DATA, MAILIMAP_MAILBOX_DATA_FLAGS },
     { "data/response-data/list.imap",
       MAILIMAP_RESP_DATA_TYPE_MAILBOX_DATA, MAILIMAP_MAILBOX_DATA_LIST },
+    { "data/response-data/list-empty-flag-extension.imap",
+      MAILIMAP_RESP_DATA_TYPE_MAILBOX_DATA, MAILIMAP_MAILBOX_DATA_LIST },
     { "data/response-data/list-nil-delimiter.imap",
       MAILIMAP_RESP_DATA_TYPE_MAILBOX_DATA, MAILIMAP_MAILBOX_DATA_LIST },
     { "data/response-data/lsub.imap",
@@ -192,7 +194,9 @@ int imap_response_data_test_run(void)
     { "data/response-data/enabled.imap",
       MAILIMAP_RESP_DATA_TYPE_EXTENSION_DATA, MAILIMAP_EXTENSION_ENABLE },
     { "data/response-data/namespace.imap",
-      MAILIMAP_RESP_DATA_TYPE_EXTENSION_DATA, MAILIMAP_EXTENSION_NAMESPACE }
+      MAILIMAP_RESP_DATA_TYPE_EXTENSION_DATA, MAILIMAP_EXTENSION_NAMESPACE },
+    { "data/response-data/xlist-empty-flag-extension.imap",
+      MAILIMAP_RESP_DATA_TYPE_EXTENSION_DATA, MAILIMAP_EXTENSION_XLIST }
   };
   size_t i;
 

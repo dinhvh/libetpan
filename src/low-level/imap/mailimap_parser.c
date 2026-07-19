@@ -501,6 +501,11 @@ mailimap_mbx_list_oflag_parse(mailstream * fd, MMAPString * buffer, struct maili
 			      progress_function * progr_fun);
 
 static int
+mailimap_mbx_list_empty_flag_extension_parse(mailstream * fd, MMAPString * buffer, struct mailimap_parser_context * parser_ctx,
+			      size_t * indx,
+			      char ** result);
+
+static int
 mailimap_mbx_list_oflag_no_sflag_parse(mailstream * fd, MMAPString * buffer, struct mailimap_parser_context * parser_ctx,
     size_t * indx,
     struct mailimap_mbx_list_oflag ** result,
@@ -7343,6 +7348,13 @@ mailimap_mbx_list_oflag_parse(mailstream * fd, MMAPString * buffer, struct maili
       type = MAILIMAP_MBX_LIST_OFLAG_FLAG_EXT;
   }
 
+  if (r == MAILIMAP_ERROR_PARSE) {
+    r = mailimap_mbx_list_empty_flag_extension_parse(fd, buffer, parser_ctx,
+        &cur_token, &flag_ext);
+    if (r == MAILIMAP_NO_ERROR)
+      type = MAILIMAP_MBX_LIST_OFLAG_FLAG_EXT;
+  }
+
   if (r != MAILIMAP_NO_ERROR) {
     res = r;
     goto err;
@@ -7364,6 +7376,41 @@ mailimap_mbx_list_oflag_parse(mailstream * fd, MMAPString * buffer, struct maili
     mailimap_flag_extension_free(flag_ext);
  err:
   return res;
+}
+
+static int
+mailimap_mbx_list_empty_flag_extension_parse(mailstream * fd, MMAPString * buffer, struct mailimap_parser_context * parser_ctx,
+			      size_t * indx,
+			      char ** result)
+{
+  size_t cur_token;
+  size_t lookahead_token;
+  char * atom;
+  int r;
+
+  cur_token = * indx;
+
+  r = mailimap_char_parse(fd, buffer, &cur_token, '\\');
+  if (r == MAILIMAP_ERROR_PARSE)
+    r = mailimap_char_parse(fd, buffer, &cur_token, '/');
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+
+  lookahead_token = cur_token;
+  r = mailimap_cparenth_parse(fd, buffer, parser_ctx, &lookahead_token);
+  if (r != MAILIMAP_NO_ERROR)
+    return r;
+
+  atom = malloc(1);
+  if (atom == NULL)
+    return MAILIMAP_ERROR_MEMORY;
+
+  atom[0] = '\0';
+
+  * result = atom;
+  * indx = cur_token;
+
+  return MAILIMAP_NO_ERROR;
 }
 
 static int
