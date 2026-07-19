@@ -1553,6 +1553,15 @@ int mailpop3_auth(mailpop3 * f, const char * auth_type,
     res = MAILPOP3_ERROR_BAD_USER;
     goto free_secret;
   }
+
+  if ((auth_type != NULL) && (login != NULL) &&
+      (strcmp(auth_type, "EXTERNAL") == 0)) {
+    r = sasl_setprop(f->pop3_sasl.sasl_conn, SASL_AUTH_EXTERNAL, login);
+    if (r != SASL_OK) {
+      res = MAILPOP3_ERROR_BAD_USER;
+      goto free_sasl_conn;
+    }
+  }
   
   r = sasl_client_start(f->pop3_sasl.sasl_conn,
       auth_type, NULL, &sasl_out, &sasl_out_len, &mechusing);
