@@ -27,7 +27,15 @@ enum {
   MAILACTIVESYNC_ERROR_MEMORY,
   MAILACTIVESYNC_ERROR_SSL,
   MAILACTIVESYNC_ERROR_NOT_IMPLEMENTED,
-  MAILACTIVESYNC_ERROR_HTTP_UNAVAILABLE
+  MAILACTIVESYNC_ERROR_HTTP_UNAVAILABLE,
+  MAILACTIVESYNC_ERROR_PROVISION_REQUIRED,
+  MAILACTIVESYNC_ERROR_REDIRECT,
+  MAILACTIVESYNC_ERROR_RESPONSE_NOT_WBXML,
+  MAILACTIVESYNC_ERROR_INVALID_SYNC_KEY,
+  MAILACTIVESYNC_ERROR_FOLDER_RESYNC_REQUIRED,
+  MAILACTIVESYNC_ERROR_ACCOUNT_RESYNC_REQUIRED,
+  MAILACTIVESYNC_ERROR_SERVER_BUSY,
+  MAILACTIVESYNC_ERROR_CLIENT_DENIED
 };
 
 typedef struct mailactivesync mailactivesync;
@@ -42,6 +50,9 @@ struct mailactivesync {
   char * as_device_type;
   char * as_protocol_version;
   char * as_policy_key;
+  char * as_user_agent;
+  char * as_last_redirect_url;
+  char * as_last_authenticate_header;
   int as_connected;
   int as_authenticated;
   int as_cached;
@@ -91,6 +102,18 @@ struct mailactivesync_airsyncbase_body {
   int native_body_type;
   char * content_type;
   char * preview;
+  clist * attachments; /* struct mailactivesync_attachment * */
+};
+
+struct mailactivesync_attachment {
+  char * display_name;
+  char * file_reference;
+  int method;
+  char * content_id;
+  char * content_location;
+  int is_inline;
+  char * content_type;
+  uint32_t estimated_data_size;
 };
 
 struct mailactivesync_message {
@@ -113,7 +136,14 @@ struct mailactivesync_message {
 struct mailactivesync_sync_request {
   char * collection_id;
   char * sync_key;
+  char * collection_class;
   int get_changes;
+  int has_deletes_as_moves;
+  int deletes_as_moves;
+  int has_filter_type;
+  uint32_t filter_type;
+  int has_conflict;
+  uint32_t conflict;
   uint32_t window_size;
   struct mailactivesync_body_preference * body_preference;
   clist * client_commands;
@@ -123,9 +153,40 @@ struct mailactivesync_sync_result {
   char * sync_key;
   int status;
   int more_available;
+  int empty_response;
+  int sync_key_from_response;
   clist * added;   /* struct mailactivesync_message * */
   clist * changed; /* struct mailactivesync_message * */
   clist * deleted; /* char * server_id */
+};
+
+struct mailactivesync_provision_result {
+  int status;
+  int policy_status;
+  char * policy_key;
+};
+
+struct mailactivesync_device_information {
+  const char * model;
+  const char * imei;
+  const char * friendly_name;
+  const char * os;
+  const char * os_language;
+  const char * phone_number;
+  const char * user_agent;
+  const char * mobile_operator;
+};
+
+struct mailactivesync_settings_result {
+  int status;
+  int device_information_status;
+};
+
+struct mailactivesync_get_item_estimate_result {
+  int status;
+  int collection_status;
+  uint32_t estimate;
+  int empty_response;
 };
 
 struct mailactivesync_item {
@@ -189,8 +250,51 @@ int mailactivesync_sync_request_set_window_size(
     struct mailactivesync_sync_request * request, uint32_t window_size);
 
 LIBETPAN_EXPORT
+int mailactivesync_sync_request_set_collection_class(
+    struct mailactivesync_sync_request * request,
+    const char * collection_class);
+
+LIBETPAN_EXPORT
+int mailactivesync_sync_request_set_deletes_as_moves(
+    struct mailactivesync_sync_request * request, int deletes_as_moves);
+
+LIBETPAN_EXPORT
+int mailactivesync_sync_request_set_filter_type(
+    struct mailactivesync_sync_request * request, uint32_t filter_type);
+
+LIBETPAN_EXPORT
+int mailactivesync_sync_request_set_conflict(
+    struct mailactivesync_sync_request * request, uint32_t conflict);
+
+LIBETPAN_EXPORT
 int mailactivesync_sync_request_set_mime_body_preference(
     struct mailactivesync_sync_request * request, uint32_t truncation_size);
+
+LIBETPAN_EXPORT
+int mailactivesync_sync_request_set_body_preference(
+    struct mailactivesync_sync_request * request, int body_type,
+    uint32_t truncation_size);
+
+LIBETPAN_EXPORT
+int mailactivesync_global_status_to_error(int status);
+
+LIBETPAN_EXPORT
+int mailactivesync_sync_status_to_error(int status);
+
+LIBETPAN_EXPORT
+int mailactivesync_folder_sync_status_to_error(int status);
+
+LIBETPAN_EXPORT
+void mailactivesync_provision_result_free(
+    struct mailactivesync_provision_result * result);
+
+LIBETPAN_EXPORT
+void mailactivesync_settings_result_free(
+    struct mailactivesync_settings_result * result);
+
+LIBETPAN_EXPORT
+void mailactivesync_get_item_estimate_result_free(
+    struct mailactivesync_get_item_estimate_result * result);
 
 LIBETPAN_EXPORT
 void mailactivesync_message_free(struct mailactivesync_message * message);
@@ -198,6 +302,10 @@ void mailactivesync_message_free(struct mailactivesync_message * message);
 LIBETPAN_EXPORT
 void mailactivesync_airsyncbase_body_free(
     struct mailactivesync_airsyncbase_body * body);
+
+LIBETPAN_EXPORT
+void mailactivesync_attachment_free(
+    struct mailactivesync_attachment * attachment);
 
 LIBETPAN_EXPORT
 void mailactivesync_sync_result_free(

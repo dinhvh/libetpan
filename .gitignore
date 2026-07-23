@@ -88,6 +88,8 @@ xcuserdata/
 /src/engine/Makefile.in
 /src/low-level/Makefile
 /src/low-level/Makefile.in
+/src/low-level/activesync/Makefile
+/src/low-level/activesync/Makefile.in
 /src/low-level/feed/Makefile
 /src/low-level/feed/Makefile.in
 /src/low-level/imap/Makefile
@@ -169,3 +171,5 @@ third-party
 
 .idea/
 libetpan.pc
+
+/tests/activesync-ms-oauth.local.json

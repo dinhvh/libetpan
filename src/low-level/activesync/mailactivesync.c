@@ -107,6 +107,9 @@ mailactivesync * mailactivesync_new(int cached,
   session->as_device_type = NULL;
   session->as_protocol_version = NULL;
   session->as_policy_key = NULL;
+  session->as_user_agent = NULL;
+  session->as_last_redirect_url = NULL;
+  session->as_last_authenticate_header = NULL;
   session->as_connected = 0;
   session->as_authenticated = 0;
   session->as_cached = cached;
@@ -142,6 +145,9 @@ void mailactivesync_free(mailactivesync * session)
   free(session->as_device_type);
   free(session->as_protocol_version);
   free(session->as_policy_key);
+  free(session->as_user_agent);
+  free(session->as_last_redirect_url);
+  free(session->as_last_authenticate_header);
   free(session->as_cache_directory);
   mailactivesync_http_transport_free(session->as_http_transport);
   free(session);
@@ -220,6 +226,32 @@ int mailactivesync_set_policy_key(mailactivesync * session,
   return set_string(&session->as_policy_key, policy_key);
 }
 
+int mailactivesync_set_user_agent(mailactivesync * session,
+    const char * user_agent)
+{
+  if (session == NULL)
+    return MAILACTIVESYNC_ERROR_BAD_STATE;
+
+  return set_string(&session->as_user_agent, user_agent);
+}
+
+const char * mailactivesync_get_last_redirect_url(mailactivesync * session)
+{
+  if (session == NULL)
+    return NULL;
+
+  return session->as_last_redirect_url;
+}
+
+const char * mailactivesync_get_last_authenticate_header(
+    mailactivesync * session)
+{
+  if (session == NULL)
+    return NULL;
+
+  return session->as_last_authenticate_header;
+}
+
 int mailactivesync_login(mailactivesync * session,
     const char * user,
     const char * password)
@@ -268,6 +300,15 @@ int mailactivesync_login_oauth2(mailactivesync * session,
 
   session->as_authenticated = 1;
   return MAILACTIVESYNC_NO_ERROR;
+}
+
+int mailactivesync_set_oauth2_token(mailactivesync * session,
+    const char * access_token)
+{
+  if ((session == NULL) || (access_token == NULL))
+    return MAILACTIVESYNC_ERROR_BAD_STATE;
+
+  return set_string(&session->as_oauth_token, access_token);
 }
 
 static int require_ready(mailactivesync * session)
@@ -332,6 +373,62 @@ int mailactivesync_sync(mailactivesync * session,
   return mailactivesync_command_sync(session, request, result);
 }
 
+int mailactivesync_provision(mailactivesync * session,
+    struct mailactivesync_provision_result ** result)
+{
+  int r;
+
+  if (result == NULL)
+    return MAILACTIVESYNC_ERROR_BAD_STATE;
+
+  * result = NULL;
+
+  r = require_ready(session);
+  if (r != MAILACTIVESYNC_NO_ERROR)
+    return r;
+
+  return mailactivesync_command_provision(session, result);
+}
+
+int mailactivesync_settings_set_device_information(mailactivesync * session,
+    const struct mailactivesync_device_information * device_information,
+    struct mailactivesync_settings_result ** result)
+{
+  int r;
+
+  if ((device_information == NULL) || (result == NULL))
+    return MAILACTIVESYNC_ERROR_BAD_STATE;
+
+  * result = NULL;
+
+  r = require_ready(session);
+  if (r != MAILACTIVESYNC_NO_ERROR)
+    return r;
+
+  return mailactivesync_command_settings_set_device_information(session,
+      device_information, result);
+}
+
+int mailactivesync_get_item_estimate(mailactivesync * session,
+    const char * collection_id,
+    const char * sync_key,
+    struct mailactivesync_get_item_estimate_result ** result)
+{
+  int r;
+
+  if ((collection_id == NULL) || (sync_key == NULL) || (result == NULL))
+    return MAILACTIVESYNC_ERROR_BAD_STATE;
+
+  * result = NULL;
+
+  r = require_ready(session);
+  if (r != MAILACTIVESYNC_NO_ERROR)
+    return r;
+
+  return mailactivesync_command_get_item_estimate(session, collection_id,
+      sync_key, result);
+}
+
 int mailactivesync_item_operations_fetch(mailactivesync * session,
     const char * collection_id,
     const char * server_id,
@@ -348,7 +445,8 @@ int mailactivesync_item_operations_fetch(mailactivesync * session,
   if (r != MAILACTIVESYNC_NO_ERROR)
     return r;
 
-  return MAILACTIVESYNC_ERROR_NOT_IMPLEMENTED;
+  return mailactivesync_command_item_operations_fetch(session, collection_id,
+      server_id, result);
 }
 
 int mailactivesync_send_mail(mailactivesync * session,

@@ -7,6 +7,7 @@
 #endif
 
 #include "mailactivesync_http.h"
+#include "mailactivesync_wbxml.h"
 
 #include <libetpan/mmapstring.h>
 
@@ -15,6 +16,7 @@
 #endif
 
 #include <ctype.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <strings.h>
@@ -365,6 +367,387 @@ static int curl_error_convert(CURLcode curl_res)
   }
 }
 
+static int curl_debug_enabled(void)
+{
+  const char * value;
+
+  value = getenv("LIBETPAN_ACTIVESYNC_HTTP_DEBUG");
+  return (value != NULL) && (value[0] != '\0') && (strcmp(value, "0") != 0);
+}
+
+static int wbxml_debug_enabled(void)
+{
+  const char * value;
+
+  value = getenv("LIBETPAN_ACTIVESYNC_WBXML_DEBUG");
+  return (value != NULL) && (value[0] != '\0') && (strcmp(value, "0") != 0);
+}
+
+static int debug_xml_append_escaped(MMAPString * buffer, const char * value)
+{
+  const char * cur;
+
+  if (value == NULL)
+    return MAILACTIVESYNC_NO_ERROR;
+
+  for (cur = value; * cur != '\0'; cur ++) {
+    const char * escaped;
+
+    escaped = NULL;
+    switch (* cur) {
+    case '&':
+      escaped = "&amp;";
+      break;
+    case '<':
+      escaped = "&lt;";
+      break;
+    case '>':
+      escaped = "&gt;";
+      break;
+    case '"':
+      escaped = "&quot;";
+      break;
+    case '\'':
+      escaped = "&apos;";
+      break;
+    default:
+      break;
+    }
+
+    if (escaped != NULL) {
+      if (mmap_string_append(buffer, escaped) == NULL)
+        return MAILACTIVESYNC_ERROR_MEMORY;
+    }
+    else if (mmap_string_append_c(buffer, * cur) == NULL)
+      return MAILACTIVESYNC_ERROR_MEMORY;
+  }
+
+  return MAILACTIVESYNC_NO_ERROR;
+}
+
+static int debug_wbxml_dump_node(MMAPString * buffer,
+    struct mailactivesync_wbxml_node * node, unsigned int depth)
+{
+  clistiter * cur;
+  const char * name;
+  unsigned int i;
+
+  if ((buffer == NULL) || (node == NULL))
+    return MAILACTIVESYNC_ERROR_BAD_STATE;
+
+  name = node->name != NULL ? node->name : "Unknown";
+  for (i = 0; i < depth; i ++) {
+    if (mmap_string_append(buffer, "  ") == NULL)
+      return MAILACTIVESYNC_ERROR_MEMORY;
+  }
+  if ((mmap_string_append_c(buffer, '<') == NULL) ||
+      (mmap_string_append(buffer, name) == NULL) ||
+      (mmap_string_append_c(buffer, '>') == NULL))
+    return MAILACTIVESYNC_ERROR_MEMORY;
+
+  if (node->text != NULL) {
+    int r;
+
+    r = debug_xml_append_escaped(buffer, node->text);
+    if (r != MAILACTIVESYNC_NO_ERROR)
+      return r;
+  }
+  if (node->opaque != NULL) {
+    char opaque[64];
+
+    snprintf(opaque, sizeof(opaque), "<opaque bytes=\"%lu\"/>",
+        (unsigned long) node->opaque_len);
+    if (mmap_string_append(buffer, opaque) == NULL)
+      return MAILACTIVESYNC_ERROR_MEMORY;
+  }
+
+  if ((node->children != NULL) && (clist_count(node->children) > 0)) {
+    if (mmap_string_append_c(buffer, '\n') == NULL)
+      return MAILACTIVESYNC_ERROR_MEMORY;
+    for (cur = clist_begin(node->children); cur != NULL;
+        cur = clist_next(cur)) {
+      int r;
+
+      r = debug_wbxml_dump_node(buffer, clist_content(cur), depth + 1);
+      if (r != MAILACTIVESYNC_NO_ERROR)
+        return r;
+    }
+    for (i = 0; i < depth; i ++) {
+      if (mmap_string_append(buffer, "  ") == NULL)
+        return MAILACTIVESYNC_ERROR_MEMORY;
+    }
+  }
+
+  if ((mmap_string_append(buffer, "</") == NULL) ||
+      (mmap_string_append(buffer, name) == NULL) ||
+      (mmap_string_append(buffer, ">\n") == NULL))
+    return MAILACTIVESYNC_ERROR_MEMORY;
+
+  return MAILACTIVESYNC_NO_ERROR;
+}
+
+static int debug_summary_interesting_node(
+    struct mailactivesync_wbxml_node * node)
+{
+  if ((node == NULL) || (node->name == NULL) || (node->text == NULL))
+    return 0;
+
+  return (strstr(node->name, ":Status") != NULL) ||
+      (strstr(node->name, ":SyncKey") != NULL) ||
+      (strstr(node->name, ":PolicyKey") != NULL) ||
+      (strstr(node->name, ":Estimate") != NULL);
+}
+
+static int debug_wbxml_append_summary_node(MMAPString * buffer,
+    struct mailactivesync_wbxml_node * node)
+{
+  clistiter * cur;
+
+  if ((buffer == NULL) || (node == NULL))
+    return MAILACTIVESYNC_ERROR_BAD_STATE;
+
+  if (debug_summary_interesting_node(node)) {
+    int r;
+
+    if ((mmap_string_append_c(buffer, ' ') == NULL) ||
+        (mmap_string_append(buffer, node->name) == NULL) ||
+        (mmap_string_append_c(buffer, '=') == NULL))
+      return MAILACTIVESYNC_ERROR_MEMORY;
+    if (strstr(node->name, ":PolicyKey") != NULL) {
+      if (mmap_string_append(buffer, "<present>") == NULL)
+        return MAILACTIVESYNC_ERROR_MEMORY;
+    }
+    else {
+      r = debug_xml_append_escaped(buffer, node->text);
+      if (r != MAILACTIVESYNC_NO_ERROR)
+        return r;
+    }
+  }
+
+  for (cur = node->children != NULL ? clist_begin(node->children) : NULL;
+      cur != NULL; cur = clist_next(cur)) {
+    int r;
+
+    r = debug_wbxml_append_summary_node(buffer, clist_content(cur));
+    if (r != MAILACTIVESYNC_NO_ERROR)
+      return r;
+  }
+
+  return MAILACTIVESYNC_NO_ERROR;
+}
+
+static void debug_wbxml_summary(const char * prefix,
+    struct mailactivesync_wbxml_document * document)
+{
+  MMAPString * buffer;
+  int r;
+
+  if ((document == NULL) || (document->root == NULL))
+    return;
+
+  buffer = mmap_string_sized_new(256);
+  if (buffer == NULL)
+    return;
+
+  if ((mmap_string_append(buffer, "root=") == NULL) ||
+      (mmap_string_append(buffer,
+          document->root->name != NULL ? document->root->name : "Unknown") ==
+          NULL)) {
+    mmap_string_free(buffer);
+    return;
+  }
+
+  r = debug_wbxml_append_summary_node(buffer, document->root);
+  if (r == MAILACTIVESYNC_NO_ERROR)
+    fprintf(stderr, "activesync-wbxml: %s summary %s\n", prefix,
+        buffer->str);
+
+  mmap_string_free(buffer);
+}
+
+static void debug_wbxml_body(const char * prefix, const unsigned char * body,
+    size_t body_len)
+{
+  struct mailactivesync_wbxml_document * document;
+  MMAPString * buffer;
+  int r;
+
+  if (!wbxml_debug_enabled() || (body == NULL) || (body_len == 0))
+    return;
+
+  document = NULL;
+  r = mailactivesync_wbxml_decode(body, body_len, &document);
+  if (r != MAILACTIVESYNC_NO_ERROR) {
+    fprintf(stderr, "activesync-wbxml: %s decode failed: %d\n", prefix, r);
+    return;
+  }
+
+  buffer = mmap_string_sized_new(1024);
+  if (buffer == NULL) {
+    mailactivesync_wbxml_document_free(document);
+    return;
+  }
+
+  r = debug_wbxml_dump_node(buffer, document->root, 0);
+  if (r == MAILACTIVESYNC_NO_ERROR) {
+    debug_wbxml_summary(prefix, document);
+    fprintf(stderr, "activesync-wbxml: %s\n%s", prefix, buffer->str);
+  }
+  else
+    fprintf(stderr, "activesync-wbxml: %s dump failed: %d\n", prefix, r);
+
+  mmap_string_free(buffer);
+  mailactivesync_wbxml_document_free(document);
+}
+
+static void curl_debug_write_line(const char * prefix,
+    const char * data, size_t size)
+{
+  if ((size >= 14) && (strncasecmp(data, "Authorization:", 14) == 0)) {
+    fprintf(stderr, "activesync-http: %s Authorization: <redacted>\n",
+        prefix);
+    return;
+  }
+
+  fprintf(stderr, "activesync-http: %s %.*s\n", prefix, (int) size, data);
+}
+
+static void curl_debug_write(const char * prefix, char * data, size_t size)
+{
+  size_t start;
+  size_t i;
+
+  start = 0;
+  for (i = 0; i < size; i ++) {
+    if (data[i] == '\n') {
+      size_t end;
+
+      end = i;
+      if ((end > start) && (data[end - 1] == '\r'))
+        end --;
+      curl_debug_write_line(prefix, data + start, end - start);
+      start = i + 1;
+    }
+  }
+
+  if (start < size)
+    curl_debug_write_line(prefix, data + start, size - start);
+}
+
+static int active_sync_curl_debug_callback(CURL * curl, curl_infotype type,
+    char * data, size_t size, void * userdata)
+{
+  (void) curl;
+  (void) userdata;
+
+  switch (type) {
+  case CURLINFO_HEADER_IN:
+    curl_debug_write("<", data, size);
+    break;
+  default:
+    break;
+  }
+
+  return 0;
+}
+
+static void debug_request(struct mailactivesync_http_request * request)
+{
+  clistiter * cur;
+
+  if (!curl_debug_enabled() || (request == NULL))
+    return;
+
+  fprintf(stderr, "activesync-http: > %s %s\n", request->method,
+      request->url);
+  for (cur = request->headers != NULL ? clist_begin(request->headers) : NULL;
+      cur != NULL; cur = clist_next(cur)) {
+    struct mailactivesync_http_header * header;
+
+    header = clist_content(cur);
+    if (strcasecmp(header->name, "Authorization") == 0)
+      fprintf(stderr, "activesync-http: > Authorization: <redacted>\n");
+    else
+      fprintf(stderr, "activesync-http: > %s: %s\n",
+          header->name, header->value);
+  }
+  if (request->body_len > 0)
+    fprintf(stderr, "activesync-http: > body: <%lu bytes>\n",
+        (unsigned long) request->body_len);
+  debug_wbxml_body(">", request->body, request->body_len);
+}
+
+static int buffer_is_mostly_text(const unsigned char * data, size_t len)
+{
+  size_t i;
+  size_t text_count;
+
+  if (len == 0)
+    return 1;
+
+  text_count = 0;
+  for (i = 0; i < len; i ++) {
+    if ((data[i] == '\r') || (data[i] == '\n') || (data[i] == '\t') ||
+        isprint(data[i]))
+      text_count ++;
+  }
+
+  return text_count >= ((len * 3) / 4);
+}
+
+static void debug_response_body(struct mailactivesync_http_response * response)
+{
+  size_t i;
+  size_t len;
+
+  if ((response == NULL) || (response->body == NULL) ||
+      (response->body_len == 0))
+    return;
+
+  len = response->body_len;
+  if (len > 512)
+    len = 512;
+
+  if (buffer_is_mostly_text(response->body, len)) {
+    fprintf(stderr, "activesync-http: < body: ");
+    for (i = 0; i < len; i ++) {
+      unsigned char ch;
+
+      ch = response->body[i];
+      if ((ch == '\r') || (ch == '\n'))
+        fputc(' ', stderr);
+      else if ((ch == '\t') || isprint(ch))
+        fputc(ch, stderr);
+      else
+        fputc('.', stderr);
+    }
+    if (response->body_len > len)
+      fprintf(stderr, "...");
+    fprintf(stderr, "\n");
+  }
+  else {
+    fprintf(stderr, "activesync-http: < body-hex:");
+    for (i = 0; i < len; i ++)
+      fprintf(stderr, " %02x", response->body[i]);
+    if (response->body_len > len)
+      fprintf(stderr, " ...");
+    fprintf(stderr, "\n");
+  }
+}
+
+static void debug_response_summary(
+    struct mailactivesync_http_response * response)
+{
+  if (!curl_debug_enabled() || (response == NULL))
+    return;
+
+  fprintf(stderr, "activesync-http: < status=%d body_bytes=%lu\n",
+      response->status_code, (unsigned long) response->body_len);
+  debug_wbxml_body("<", response->body, response->body_len);
+  if (response->status_code >= 400)
+    debug_response_body(response);
+}
+
 static int curl_perform(struct mailactivesync_http_transport * transport,
     struct mailactivesync_http_request * request,
     struct mailactivesync_http_response ** result)
@@ -417,6 +800,8 @@ static int curl_perform(struct mailactivesync_http_transport * transport,
     }
   }
 
+  debug_request(request);
+
   curl_easy_setopt(curl, CURLOPT_URL, request->url);
   curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
   curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curl_write_body);
@@ -427,7 +812,12 @@ static int curl_perform(struct mailactivesync_http_transport * transport,
   curl_easy_setopt(curl, CURLOPT_MAXREDIRS, 3);
   curl_easy_setopt(curl, CURLOPT_TIMEOUT, request->timeout);
   curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1);
-  curl_easy_setopt(curl, CURLOPT_USERAGENT, "libEtPan ActiveSync");
+  curl_easy_setopt(curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
+  if (curl_debug_enabled()) {
+    curl_easy_setopt(curl, CURLOPT_VERBOSE, 1);
+    curl_easy_setopt(curl, CURLOPT_DEBUGFUNCTION,
+        active_sync_curl_debug_callback);
+  }
 
   if (strcasecmp(request->method, "OPTIONS") == 0) {
     curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "OPTIONS");
@@ -450,6 +840,7 @@ static int curl_perform(struct mailactivesync_http_transport * transport,
   status_code = 0;
   curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &status_code);
   response->status_code = (int) status_code;
+  debug_response_summary(response);
 
   curl_slist_free_all(headers);
   curl_easy_cleanup(curl);

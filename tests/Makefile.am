@@ -29,13 +29,13 @@
 
 include $(top_srcdir)/rules.mk
 
-EXTRA_DIST = README
+EXTRA_DIST = README activesync-ms-device-oauth.py
 
 noinst_PROGRAMS = smime decrypt pgp frm frm-tree frm-simple	\
 	readmsg-simple fetch-attachment smtpsend readmsg-uid \
 	readmsg compose-msg imap-sample mime-create mime-parse \
 	pop-sample activesync-sample activesync-wbxml-test \
-	activesync-http-test
+	activesync-http-test activesync-sample-test
 
 # For W32, reverse the -DLIBETPAN_DLL.  Unfortunately, CFLAGS comes
 # after AM_CPPFLAGS, so we have to frob CFLAGS.
@@ -65,3 +65,5 @@ fetch_attachment_SOURCES = $(READMSGCOMMON) fetch-attachment.c
 activesync_wbxml_test_SOURCES = activesync-wbxml-test.c
 
 activesync_http_test_SOURCES = activesync-http-test.c
+
+activesync_sample_test_SOURCES = activesync-sample-test.c

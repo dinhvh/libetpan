@@ -5,6 +5,44 @@ connect to Gmail IMAP server and fetches the messages of INBOX to a folder "down
 syntax: imap-sample mygmailaccount@gmail.com mypassword
 
 
+activesync-ms-device-oauth.py
+-----------------------------
+gets a Microsoft OAuth access token with the device-code flow for local
+ActiveSync testing.
+
+Minimal Outlook.com / Hotmail / Live account flow:
+
+  ./tests/activesync-ms-device-oauth.py \
+    --tenant consumers \
+    --servertype personal-ms \
+    --client-id [client ID] \
+    --login [email@outlook.com] \
+    --activesync-url https://eas.outlook.com/Microsoft-Server-ActiveSync \
+    --token-json /tmp/libetpan-eas-token.json
+
+  ./tests/activesync-sample \
+    --server https://eas.outlook.com/Microsoft-Server-ActiveSync \
+    --login [email@outlook.com] \
+    --oauth-token "$(jq -r .access_token /tmp/libetpan-eas-token.json)" \
+    --state-file /tmp/libetpan-activesync-state.json
+
+Minimal Microsoft 365 work or school account flow:
+
+  ./tests/activesync-ms-device-oauth.py \
+    --tenant organizations \
+    --servertype office365 \
+    --client-id [client ID] \
+    --login [email@example.com] \
+    --activesync-url https://outlook.office365.com/Microsoft-Server-ActiveSync \
+    --token-json /tmp/libetpan-eas-token.json
+
+  ./tests/activesync-sample \
+    --server https://outlook.office365.com/Microsoft-Server-ActiveSync \
+    --login [email@example.com] \
+    --oauth-token "$(jq -r .access_token /tmp/libetpan-eas-token.json)" \
+    --state-file /tmp/libetpan-activesync-state.json
+
+
 mime-parse
 ----------
 parse a MIME message and show the structure

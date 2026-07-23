@@ -38,6 +38,17 @@ int mailactivesync_set_policy_key(mailactivesync * session,
     const char * policy_key);
 
 LIBETPAN_EXPORT
+int mailactivesync_set_user_agent(mailactivesync * session,
+    const char * user_agent);
+
+LIBETPAN_EXPORT
+const char * mailactivesync_get_last_redirect_url(mailactivesync * session);
+
+LIBETPAN_EXPORT
+const char * mailactivesync_get_last_authenticate_header(
+    mailactivesync * session);
+
+LIBETPAN_EXPORT
 int mailactivesync_set_http_transport(mailactivesync * session,
     struct mailactivesync_http_transport * transport);
 
@@ -49,6 +60,10 @@ int mailactivesync_login(mailactivesync * session,
 LIBETPAN_EXPORT
 int mailactivesync_login_oauth2(mailactivesync * session,
     const char * user,
+    const char * access_token);
+
+LIBETPAN_EXPORT
+int mailactivesync_set_oauth2_token(mailactivesync * session,
     const char * access_token);
 
 LIBETPAN_EXPORT
@@ -64,6 +79,21 @@ LIBETPAN_EXPORT
 int mailactivesync_sync(mailactivesync * session,
     struct mailactivesync_sync_request * request,
     struct mailactivesync_sync_result ** result);
+
+LIBETPAN_EXPORT
+int mailactivesync_provision(mailactivesync * session,
+    struct mailactivesync_provision_result ** result);
+
+LIBETPAN_EXPORT
+int mailactivesync_settings_set_device_information(mailactivesync * session,
+    const struct mailactivesync_device_information * device_information,
+    struct mailactivesync_settings_result ** result);
+
+LIBETPAN_EXPORT
+int mailactivesync_get_item_estimate(mailactivesync * session,
+    const char * collection_id,
+    const char * sync_key,
+    struct mailactivesync_get_item_estimate_result ** result);
 
 LIBETPAN_EXPORT
 int mailactivesync_item_operations_fetch(mailactivesync * session,
