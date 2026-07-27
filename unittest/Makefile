@@ -6,13 +6,14 @@ CPPFLAGS += \
 	-I$(TOP) \
 	-I$(TOP)/include \
 	-I$(TOP)/src/data-types \
+	-I$(TOP)/src/low-level/activesync \
 	-I$(TOP)/src/low-level/imf \
 	-I$(TOP)/src/low-level/imap \
 	-I$(TOP)/src/low-level/mime \
 	-Icommon
 
 CFLAGS += -Wall -Wextra -Werror -g
-LDLIBS += $(TOP)/src/.libs/libetpan.a -lz -lsasl2 -lpthread
+LDLIBS += $(TOP)/src/.libs/libetpan.a -lz -lcurl -lsasl2 -lpthread
 LDLIBS += $(shell pkg-config --libs icu-uc 2>/dev/null)
 XML2_CPPFLAGS := -I$(shell xcrun --show-sdk-path)/usr/include/libxml2
 XML2_LDLIBS := -lxml2
@@ -29,6 +30,9 @@ CHARSET_DETECTION_TEST = charset-detection/charset_detection_test
 PLAINTEXT_RENDERING_TEST = plaintext-rendering/plaintext_rendering_test
 IMAP_UTF7_TEST = imap-utf7/imap_utf7_test
 DATA_TYPES_TEST = data-types/data_types_test
+ACTIVESYNC_WBXML_TEST = activesync/wbxml_test
+ACTIVESYNC_HTTP_TEST = activesync/http_test
+ACTIVESYNC_SAMPLE_TEST = activesync/sample_test
 COMMON_TEST_SRCS = \
 	common/test_utils.c
 IMAP_TEST_SRCS = \
@@ -81,6 +85,12 @@ IMAP_UTF7_TEST_SRCS = \
 DATA_TYPES_TEST_SRCS = \
 	data-types/md5_test.c \
 	$(TOP)/src/data-types/md5.c
+ACTIVESYNC_WBXML_TEST_SRCS = \
+	activesync/wbxml_test.c
+ACTIVESYNC_HTTP_TEST_SRCS = \
+	activesync/http_test.c
+ACTIVESYNC_SAMPLE_TEST_SRCS = \
+	activesync/sample_test.c
 MIME_BUILDER_TEST_DEPS = $(MIME_BUILDER_TEST_SRCS) common/*.h \
 	mime-builder/data/input/photo.jpg \
 	mime-builder/data/input/photo2.jpg \
@@ -96,13 +106,21 @@ DATA_TYPES_TEST_DEPS = $(DATA_TYPES_TEST_SRCS) \
         $(TOP)/src/data-types/md5.h \
         $(TOP)/src/data-types/md5global.h \
         $(TOP)/src/data-types/hmac-md5.h
+ACTIVESYNC_WBXML_TEST_DEPS = $(ACTIVESYNC_WBXML_TEST_SRCS)
+ACTIVESYNC_HTTP_TEST_DEPS = $(ACTIVESYNC_HTTP_TEST_SRCS) \
+	$(TOP)/src/low-level/activesync/mailactivesync_command.h
+ACTIVESYNC_SAMPLE_TEST_DEPS = $(ACTIVESYNC_SAMPLE_TEST_SRCS) \
+	$(TOP)/tests/activesync-sample.c \
+	$(TOP)/src/low-level/activesync/mailactivesync_command.h
 
 
 .PHONY: all check clean
 
 all: $(IMAP_TEST) $(IMF_TEST) $(MIME_TEST) $(MIME_BUILDER_TEST) \
 	$(MIME_PARSER_SERIALIZATION_TEST) $(CHARSET_DETECTION_TEST) \
-	$(PLAINTEXT_RENDERING_TEST) $(IMAP_UTF7_TEST) $(DATA_TYPES_TEST)
+	$(PLAINTEXT_RENDERING_TEST) $(IMAP_UTF7_TEST) $(DATA_TYPES_TEST) \
+	$(ACTIVESYNC_WBXML_TEST) $(ACTIVESYNC_HTTP_TEST) \
+	$(ACTIVESYNC_SAMPLE_TEST)
 
 libetpan:
 	cd .. && make
@@ -117,6 +135,9 @@ check: all
 	@cd plaintext-rendering && ./plaintext_rendering_test
 	@cd imap-utf7 && ./imap_utf7_test
 	@cd data-types && ./data_types_test
+	@cd activesync && ./wbxml_test
+	@cd activesync && ./http_test
+	@cd activesync && ./sample_test
 
 $(IMAP_TEST): $(IMAP_TEST_DEPS) libetpan
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(IMAP_TEST_SRCS) $(LDLIBS) -o $@
@@ -145,11 +166,22 @@ $(IMAP_UTF7_TEST): $(IMAP_UTF7_TEST_DEPS) libetpan
 $(DATA_TYPES_TEST): $(DATA_TYPES_TEST_DEPS)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(DATA_TYPES_TEST_SRCS) -o $@
 
+$(ACTIVESYNC_WBXML_TEST): $(ACTIVESYNC_WBXML_TEST_DEPS) libetpan
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(ACTIVESYNC_WBXML_TEST_SRCS) $(LDLIBS) -o $@
+
+$(ACTIVESYNC_HTTP_TEST): $(ACTIVESYNC_HTTP_TEST_DEPS) libetpan
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(ACTIVESYNC_HTTP_TEST_SRCS) $(LDLIBS) -o $@
+
+$(ACTIVESYNC_SAMPLE_TEST): $(ACTIVESYNC_SAMPLE_TEST_DEPS) libetpan
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(ACTIVESYNC_SAMPLE_TEST_SRCS) $(LDLIBS) -o $@
+
 clean:
 	rm -f $(IMAP_TEST) $(IMF_TEST) $(MIME_TEST) $(MIME_BUILDER_TEST)
 	rm -f $(MIME_PARSER_SERIALIZATION_TEST) $(CHARSET_DETECTION_TEST)
 	rm -f $(PLAINTEXT_RENDERING_TEST) $(IMAP_UTF7_TEST)
 	rm -f $(DATA_TYPES_TEST)
+	rm -f $(ACTIVESYNC_WBXML_TEST) $(ACTIVESYNC_HTTP_TEST)
+	rm -f $(ACTIVESYNC_SAMPLE_TEST)
 	rm -rf $(IMAP_TEST).dSYM
 	rm -rf $(IMF_TEST).dSYM
 	rm -rf $(MIME_TEST).dSYM
@@ -159,3 +191,6 @@ clean:
 	rm -rf $(PLAINTEXT_RENDERING_TEST).dSYM
 	rm -rf $(IMAP_UTF7_TEST).dSYM
 	rm -rf $(DATA_TYPES_TEST).dSYM
+	rm -rf $(ACTIVESYNC_WBXML_TEST).dSYM
+	rm -rf $(ACTIVESYNC_HTTP_TEST).dSYM
+	rm -rf $(ACTIVESYNC_SAMPLE_TEST).dSYM

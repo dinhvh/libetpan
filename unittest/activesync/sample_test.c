@@ -6,10 +6,10 @@
 #	include <config.h>
 #endif
 
-#include "../src/low-level/activesync/mailactivesync_command.h"
+#include "../../src/low-level/activesync/mailactivesync_command.h"
 
 #define main activesync_sample_cli_main
-#include "activesync-sample.c"
+#include "../../tests/activesync-sample.c"
 #undef main
 
 #include <libetpan/mailactivesync_codes.h>

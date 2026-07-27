@@ -15,7 +15,7 @@ Phase 1 through the first encoder/decoder slice are implemented:
   code pages and tag tokens.
 - `mailactivesync_wbxml.{h,c}` provides document/node construction, ownership,
   WBXML encode, and WBXML decode.
-- `tests/activesync-wbxml-test.c` validates tag lookup, the public FolderSync
+- `unittest/activesync/wbxml_test.c` validates tag lookup, the public FolderSync
   golden fixture, opaque payload round-trip, and malformed input rejection.
 - `src/low-level/activesync/Makefile.am` installs the new headers and links the
   new sources into `libactivesync.la`.

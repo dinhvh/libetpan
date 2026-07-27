@@ -10,7 +10,7 @@
 #include <libetpan/mailactivesync_codes.h>
 #include <libetpan/mailactivesync_wbxml.h>
 
-#include "../src/low-level/activesync/mailactivesync_command.h"
+#include "../../src/low-level/activesync/mailactivesync_command.h"
 
 #include <stdio.h>
 #include <stdlib.h>

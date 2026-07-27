@@ -21,7 +21,7 @@ The HTTP core and `OPTIONS` slice are implemented:
   curl is available.
 - `mailactivesync_set_http_transport()` lets tests inject fake transports
   without network access.
-- `tests/activesync-http-test.c` validates fake-transport `OPTIONS`, endpoint
+- `unittest/activesync/http_test.c` validates fake-transport `OPTIONS`, endpoint
   normalization, bearer auth, option header parsing, and 401 mapping.
 
 Remaining work from this plan is still relevant: command-specific WBXML
