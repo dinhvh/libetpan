@@ -1183,8 +1183,8 @@ char * mailmime_extract_boundary(struct mailmime_content * content_type)
     if (new_boundary == NULL)
       return NULL;
 
-    if (boundary[0] == '"') {
-      strncpy(new_boundary, boundary + 1, len - 2);
+    if ((len >= 2) && (boundary[0] == '"') && (boundary[len - 1] == '"')) {
+      memcpy(new_boundary, boundary + 1, len - 2);
       new_boundary[len - 2] = 0;
     }
     else

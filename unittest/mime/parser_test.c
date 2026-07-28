@@ -590,6 +590,31 @@ static void check_full_rfc822_multipart(void)
   mmap_string_free(input);
 }
 
+static void check_boundary_quoted_pair_quote(void)
+{
+  const char * input = "multipart/mixed; boundary=\"\\\"\"";
+  struct mailmime_content * content;
+  char * boundary;
+  size_t indx;
+  int r;
+
+  indx = 0;
+  content = NULL;
+  r = mailmime_content_parse(input, strlen(input), &indx, &content);
+  assert_parse_consumes(r, indx, input);
+
+  boundary = mailmime_content_param_get(content, "boundary");
+  assert(boundary != NULL);
+  assert(strcmp(boundary, "\"") == 0);
+
+  boundary = mailmime_extract_boundary(content);
+  assert(boundary != NULL);
+  assert(strcmp(boundary, "\"") == 0);
+  free(boundary);
+
+  mailmime_content_free(content);
+}
+
 int mime_parser_test_run(void)
 {
   check_content_type_grammar();
@@ -601,6 +626,7 @@ int mime_parser_test_run(void)
   check_transfer_decoders();
   check_rfc2047_encoded_words();
   check_full_rfc822_multipart();
+  check_boundary_quoted_pair_quote();
 
   puts("parser_test: ok");
   return 0;
