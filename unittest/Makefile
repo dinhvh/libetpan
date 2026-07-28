@@ -33,6 +33,7 @@ DATA_TYPES_TEST = data-types/data_types_test
 ACTIVESYNC_WBXML_TEST = activesync/wbxml_test
 ACTIVESYNC_HTTP_TEST = activesync/http_test
 ACTIVESYNC_SAMPLE_TEST = activesync/sample_test
+POP3_TEST = pop3/pop3_test
 COMMON_TEST_SRCS = \
 	common/test_utils.c
 IMAP_TEST_SRCS = \
@@ -91,6 +92,8 @@ ACTIVESYNC_HTTP_TEST_SRCS = \
 	activesync/http_test.c
 ACTIVESYNC_SAMPLE_TEST_SRCS = \
 	activesync/sample_test.c
+POP3_TEST_SRCS = \
+	pop3/main.c
 MIME_BUILDER_TEST_DEPS = $(MIME_BUILDER_TEST_SRCS) common/*.h \
 	mime-builder/data/input/photo.jpg \
 	mime-builder/data/input/photo2.jpg \
@@ -112,6 +115,7 @@ ACTIVESYNC_HTTP_TEST_DEPS = $(ACTIVESYNC_HTTP_TEST_SRCS) \
 ACTIVESYNC_SAMPLE_TEST_DEPS = $(ACTIVESYNC_SAMPLE_TEST_SRCS) \
 	$(TOP)/tests/activesync-sample.c \
 	$(TOP)/src/low-level/activesync/mailactivesync_command.h
+POP3_TEST_DEPS = $(POP3_TEST_SRCS)
 
 
 .PHONY: all check clean
@@ -120,7 +124,7 @@ all: $(IMAP_TEST) $(IMF_TEST) $(MIME_TEST) $(MIME_BUILDER_TEST) \
 	$(MIME_PARSER_SERIALIZATION_TEST) $(CHARSET_DETECTION_TEST) \
 	$(PLAINTEXT_RENDERING_TEST) $(IMAP_UTF7_TEST) $(DATA_TYPES_TEST) \
 	$(ACTIVESYNC_WBXML_TEST) $(ACTIVESYNC_HTTP_TEST) \
-	$(ACTIVESYNC_SAMPLE_TEST)
+	$(ACTIVESYNC_SAMPLE_TEST) $(POP3_TEST)
 
 libetpan:
 	cd .. && make
@@ -138,6 +142,7 @@ check: all
 	@cd activesync && ./wbxml_test
 	@cd activesync && ./http_test
 	@cd activesync && ./sample_test
+	@cd pop3 && ./pop3_test
 
 $(IMAP_TEST): $(IMAP_TEST_DEPS) libetpan
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(IMAP_TEST_SRCS) $(LDLIBS) -o $@
@@ -175,13 +180,16 @@ $(ACTIVESYNC_HTTP_TEST): $(ACTIVESYNC_HTTP_TEST_DEPS) libetpan
 $(ACTIVESYNC_SAMPLE_TEST): $(ACTIVESYNC_SAMPLE_TEST_DEPS) libetpan
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(ACTIVESYNC_SAMPLE_TEST_SRCS) $(LDLIBS) -o $@
 
+$(POP3_TEST): $(POP3_TEST_DEPS) libetpan
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(POP3_TEST_SRCS) $(LDLIBS) -o $@
+
 clean:
 	rm -f $(IMAP_TEST) $(IMF_TEST) $(MIME_TEST) $(MIME_BUILDER_TEST)
 	rm -f $(MIME_PARSER_SERIALIZATION_TEST) $(CHARSET_DETECTION_TEST)
 	rm -f $(PLAINTEXT_RENDERING_TEST) $(IMAP_UTF7_TEST)
 	rm -f $(DATA_TYPES_TEST)
 	rm -f $(ACTIVESYNC_WBXML_TEST) $(ACTIVESYNC_HTTP_TEST)
-	rm -f $(ACTIVESYNC_SAMPLE_TEST)
+	rm -f $(ACTIVESYNC_SAMPLE_TEST) $(POP3_TEST)
 	rm -rf $(IMAP_TEST).dSYM
 	rm -rf $(IMF_TEST).dSYM
 	rm -rf $(MIME_TEST).dSYM
@@ -194,3 +202,4 @@ clean:
 	rm -rf $(ACTIVESYNC_WBXML_TEST).dSYM
 	rm -rf $(ACTIVESYNC_HTTP_TEST).dSYM
 	rm -rf $(ACTIVESYNC_SAMPLE_TEST).dSYM
+	rm -rf $(POP3_TEST).dSYM

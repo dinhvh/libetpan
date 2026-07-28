@@ -47,6 +47,7 @@
 #endif
 
 #include "mailpop3.h"
+#include <errno.h>
 #include <limits.h>
 #include <stdio.h>
 #include <string.h>
@@ -95,8 +96,29 @@ mailpop3_msg_info_new(unsigned int indx, uint32_t size, char * uidl)
   return msg;
 }
 
+static int mailpop3_msg_index_parse(char ** line, unsigned int * result)
+{
+  char * start;
+  unsigned long value;
+
+  start = * line;
+  if (* start == '-')
+    return -1;
+
+  errno = 0;
+  value = strtoul(start, line, 10);
+  if ((* line == start) || (errno == ERANGE) || (value < 1) ||
+      (value > UINT_MAX))
+    return -1;
+
+  * result = (unsigned int) value;
+  return 0;
+}
+
 static void mailpop3_msg_info_free(struct mailpop3_msg_info * msg)
 {
+  if (msg == NULL)
+    return;
   if (msg->msg_uidl != NULL)
     free(msg->msg_uidl);
   free(msg);
@@ -1155,7 +1177,8 @@ static int read_list(mailpop3 * f, carray ** result)
     if (mailstream_is_end_multiline(line))
       break;
 
-    indx = (unsigned int) strtol(line, &line, 10);
+    if (mailpop3_msg_index_parse(&line, &indx) < 0)
+      continue;
 
     if (!parse_space(&line))
       continue;
@@ -1207,7 +1230,8 @@ static int read_uidl(mailpop3 * f, carray * msg_tab)
     if (mailstream_is_end_multiline(line))
       break;
     
-    indx = (unsigned int) strtol(line, &line, 10);
+    if (mailpop3_msg_index_parse(&line, &indx) < 0)
+      continue;
 
     if (!parse_space(&line))
       continue;
