@@ -14,8 +14,7 @@ extern "C" {
 #include <libetpan/mailactivesync_http.h>
 
 LIBETPAN_EXPORT
-mailactivesync * mailactivesync_new(int cached,
-    const char * cache_directory);
+mailactivesync * mailactivesync_new(void);
 
 LIBETPAN_EXPORT
 void mailactivesync_free(mailactivesync * session);

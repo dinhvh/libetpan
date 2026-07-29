@@ -265,7 +265,7 @@ static int setup_oauth_session(mailactivesync ** session_result,
   context = NULL;
   transport = NULL;
 
-  session = mailactivesync_new(0, NULL);
+  session = mailactivesync_new();
   if (session == NULL)
     return MAILACTIVESYNC_ERROR_MEMORY;
 
@@ -522,7 +522,7 @@ static int test_options_success(void)
 
   options = NULL;
   context = NULL;
-  session = mailactivesync_new(0, NULL);
+  session = mailactivesync_new();
   if (!check(session != NULL, "session allocation failed"))
     return 0;
 
@@ -605,7 +605,7 @@ static int test_options_trims_empty_list_items(void)
 
   options = NULL;
   context = NULL;
-  session = mailactivesync_new(0, NULL);
+  session = mailactivesync_new();
   if (!check(session != NULL, "session allocation failed"))
     return 0;
 
@@ -657,7 +657,7 @@ static int test_options_missing_headers(void)
 
   options = NULL;
   context = NULL;
-  session = mailactivesync_new(0, NULL);
+  session = mailactivesync_new();
   if (!check(session != NULL, "session allocation failed"))
     return 0;
 
@@ -704,7 +704,7 @@ static int test_options_unauthorized(void)
 
   options = NULL;
   context = NULL;
-  session = mailactivesync_new(0, NULL);
+  session = mailactivesync_new();
   if (!check(session != NULL, "session allocation failed"))
     return 0;
 
@@ -776,7 +776,7 @@ static int test_options_status_mapping(void)
 
     options = NULL;
     context = NULL;
-    session = mailactivesync_new(0, NULL);
+    session = mailactivesync_new();
     if (!check(session != NULL, "session allocation failed"))
       return 0;
 
@@ -1451,7 +1451,7 @@ static int test_outlook_anchor_mailbox_cookie(void)
 
   options = NULL;
   context = NULL;
-  session = mailactivesync_new(0, NULL);
+  session = mailactivesync_new();
   if (!check(session != NULL, "session allocation failed"))
     return 0;
 
@@ -1506,7 +1506,7 @@ static int test_anchor_mailbox_cookie_not_sent_to_office365(void)
 
   options = NULL;
   context = NULL;
-  session = mailactivesync_new(0, NULL);
+  session = mailactivesync_new();
   if (!check(session != NULL, "session allocation failed"))
     return 0;
 
@@ -1555,7 +1555,7 @@ static int test_command_post_request(void)
 
   response = NULL;
   context = NULL;
-  session = mailactivesync_new(0, NULL);
+  session = mailactivesync_new();
   if (!check(session != NULL, "session allocation failed"))
     return 0;
 
@@ -1638,7 +1638,7 @@ static int test_command_post_basic_auth(void)
 
   response = NULL;
   context = NULL;
-  session = mailactivesync_new(0, NULL);
+  session = mailactivesync_new();
   if (!check(session != NULL, "session allocation failed"))
     return 0;
 
@@ -1702,7 +1702,7 @@ static int test_folder_sync_success(void)
   request_document = NULL;
   context = NULL;
   transport = NULL;
-  session = mailactivesync_new(0, NULL);
+  session = mailactivesync_new();
   if (!check(session != NULL, "session allocation failed"))
     return 0;
 
@@ -1977,7 +1977,7 @@ static int test_sync_success(void)
   request_document = NULL;
   context = NULL;
   transport = NULL;
-  session = mailactivesync_new(0, NULL);
+  session = mailactivesync_new();
   if (!check(session != NULL, "session allocation failed"))
     return 0;
 

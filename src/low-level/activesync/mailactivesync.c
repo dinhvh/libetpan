@@ -90,8 +90,7 @@ static int normalize_server_url(char ** result, const char * server_url)
   return MAILACTIVESYNC_NO_ERROR;
 }
 
-mailactivesync * mailactivesync_new(int cached,
-    const char * cache_directory)
+mailactivesync * mailactivesync_new(void)
 {
   mailactivesync * session;
 
@@ -112,15 +111,7 @@ mailactivesync * mailactivesync_new(int cached,
   session->as_last_authenticate_header = NULL;
   session->as_connected = 0;
   session->as_authenticated = 0;
-  session->as_cached = cached;
-  session->as_cache_directory = NULL;
   session->as_http_transport = NULL;
-
-  if (cache_directory != NULL) {
-    session->as_cache_directory = strdup(cache_directory);
-    if (session->as_cache_directory == NULL)
-      goto err;
-  }
 
   if (mailactivesync_set_protocol_version(session, "16.1") !=
       MAILACTIVESYNC_NO_ERROR)
@@ -148,7 +139,6 @@ void mailactivesync_free(mailactivesync * session)
   free(session->as_user_agent);
   free(session->as_last_redirect_url);
   free(session->as_last_authenticate_header);
-  free(session->as_cache_directory);
   mailactivesync_http_transport_free(session->as_http_transport);
   free(session);
 }

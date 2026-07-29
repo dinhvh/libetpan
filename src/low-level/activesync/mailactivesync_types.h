@@ -55,8 +55,6 @@ struct mailactivesync {
   char * as_last_authenticate_header;
   int as_connected;
   int as_authenticated;
-  int as_cached;
-  char * as_cache_directory;
   struct mailactivesync_http_transport * as_http_transport;
 };
 

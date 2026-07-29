@@ -194,7 +194,7 @@ static int setup_sample_session(mailactivesync ** session_result,
   mailactivesync * session;
   struct mailactivesync_http_transport * transport;
 
-  session = mailactivesync_new(0, NULL);
+  session = mailactivesync_new();
   if (session == NULL)
     return MAILACTIVESYNC_ERROR_MEMORY;
 

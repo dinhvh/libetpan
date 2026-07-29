@@ -156,8 +156,7 @@ For the planning phase, only the low-level source layout is required.
 ```c
 typedef struct mailactivesync mailactivesync;
 
-mailactivesync * mailactivesync_new(int cached,
-    const char * cache_directory);
+mailactivesync * mailactivesync_new(void);
 
 void mailactivesync_free(mailactivesync * session);
 
@@ -307,7 +306,7 @@ struct mailactivesync_sync_result * sync_res;
 const char * inbox_id;
 int r;
 
-as = mailactivesync_new(0, NULL);
+as = mailactivesync_new();
 mailactivesync_set_device(as, "libetpan-test-device-001", "libetpan");
 mailactivesync_set_protocol_version(as, "16.1");
 
@@ -336,7 +335,7 @@ r = mailactivesync_sync(as, sync_req, &sync_res);
 Optional private Exchange Basic-auth sample:
 
 ```c
-as = mailactivesync_new(0, NULL);
+as = mailactivesync_new();
 mailactivesync_set_device(as, "libetpan-test-device-001", "libetpan");
 mailactivesync_set_protocol_version(as, "16.1");
 

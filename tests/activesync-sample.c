@@ -743,7 +743,7 @@ int main(int argc, char ** argv)
   }
 
   debug_step(args.debug, "creating ActiveSync session");
-  as = mailactivesync_new(0, NULL);
+  as = mailactivesync_new();
   if (as == NULL) {
     fprintf(stderr, "mailactivesync_new failed: out of memory\n");
     goto cleanup;
