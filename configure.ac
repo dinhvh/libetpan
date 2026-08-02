@@ -109,9 +109,20 @@ if test "x$have_w32_system" = xyes; then
 fi
 AM_CONDITIONAL([HAVE_MINGW32_SYSTEM], [test "x$have_w32_system" = xyes])
 
+have_nsurlsession=no
+case "${host}" in
+    *-apple-darwin*)
+        have_nsurlsession=yes
+        AC_DEFINE([HAVE_NSURLSESSION], 1, [Define to use NSURLSession])
+        LIBS="$LIBS -framework Foundation"
+        ;;
+esac
+AM_CONDITIONAL([HAVE_NSURLSESSION], [test "x$have_nsurlsession" = xyes])
+
 # Check the C compiler.
 AC_PROG_CC
 AC_PROG_CXX
+AC_PROG_OBJC
 
 # Compiler flags.
 AC_ARG_ENABLE(debug, [AS_HELP_STRING([--enable-debug], [setup flags (gcc) for debugging (default=no)])],
@@ -810,6 +821,7 @@ AC_CONFIG_FILES(Makefile
 		src/low-level/Makefile
 		src/low-level/activesync/Makefile
 		src/low-level/feed/Makefile
+		src/low-level/gmail/Makefile
 		src/low-level/imap/Makefile
 		src/low-level/imf/Makefile
 		src/low-level/maildir/Makefile

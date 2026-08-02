@@ -48,6 +48,7 @@ extern "C" {
 #include <libetpan/mailstorage.h>
 #include <libetpan/mailthread.h>
 #include <libetpan/mailactivesync.h>
+#include <libetpan/mailgmail.h>
 #include <libetpan/mailsmtp.h>
 #include <libetpan/charconv.h>
 #include <libetpan/mailsem.h>

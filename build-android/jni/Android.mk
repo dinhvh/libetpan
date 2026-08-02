@@ -36,6 +36,12 @@ src_files = \
 ./src/data-types/md5.c \
 ./src/data-types/mmapstring.c \
 ./src/data-types/timeutils.c \
+./src/low-level/gmail/mailgmail.c \
+./src/low-level/gmail/mailgmail_http.c \
+./src/low-level/gmail/mailgmail_http_curl.c \
+./src/low-level/gmail/mailgmail_json.c \
+./src/low-level/gmail/mailgmail_types.c \
+./src/low-level/gmail/mailgmail_url.c \
 ./src/low-level/imap/acl.c \
 ./src/low-level/imap/acl_parser.c \
 ./src/low-level/imap/acl_sender.c \
@@ -134,6 +140,7 @@ c_includes = \
 src \
 src/data-types \
 src/low-level \
+src/low-level/gmail \
 src/low-level/imap \
 src/low-level/imf \
 src/low-level/mime \
