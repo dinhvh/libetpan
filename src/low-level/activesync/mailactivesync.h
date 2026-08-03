@@ -75,8 +75,39 @@ int mailactivesync_folder_sync(mailactivesync * session,
     struct mailactivesync_folder_sync_result ** result);
 
 LIBETPAN_EXPORT
+int mailactivesync_folder_resync(mailactivesync * session,
+    struct mailactivesync_folder_sync_result ** result);
+
+LIBETPAN_EXPORT
+int mailactivesync_folder_create(mailactivesync * session,
+    const char * sync_key,
+    const char * parent_id,
+    const char * display_name,
+    int type,
+    struct mailactivesync_folder_mutation_result ** result);
+
+LIBETPAN_EXPORT
+int mailactivesync_folder_update(mailactivesync * session,
+    const char * sync_key,
+    const char * server_id,
+    const char * parent_id,
+    const char * display_name,
+    struct mailactivesync_folder_mutation_result ** result);
+
+LIBETPAN_EXPORT
+int mailactivesync_folder_delete(mailactivesync * session,
+    const char * sync_key,
+    const char * server_id,
+    struct mailactivesync_folder_mutation_result ** result);
+
+LIBETPAN_EXPORT
 int mailactivesync_sync(mailactivesync * session,
     struct mailactivesync_sync_request * request,
+    struct mailactivesync_sync_result ** result);
+
+LIBETPAN_EXPORT
+int mailactivesync_sync_multi(mailactivesync * session,
+    clist * requests,
     struct mailactivesync_sync_result ** result);
 
 LIBETPAN_EXPORT
@@ -89,9 +120,18 @@ int mailactivesync_settings_set_device_information(mailactivesync * session,
     struct mailactivesync_settings_result ** result);
 
 LIBETPAN_EXPORT
+int mailactivesync_settings_get_user_information(mailactivesync * session,
+    struct mailactivesync_settings_result ** result);
+
+LIBETPAN_EXPORT
 int mailactivesync_get_item_estimate(mailactivesync * session,
     const char * collection_id,
     const char * sync_key,
+    struct mailactivesync_get_item_estimate_result ** result);
+
+LIBETPAN_EXPORT
+int mailactivesync_get_item_estimate_multi(mailactivesync * session,
+    clist * collections,
     struct mailactivesync_get_item_estimate_result ** result);
 
 LIBETPAN_EXPORT
@@ -101,10 +141,98 @@ int mailactivesync_item_operations_fetch(mailactivesync * session,
     struct mailactivesync_item ** result);
 
 LIBETPAN_EXPORT
+int mailactivesync_item_operations_fetch_body_part(mailactivesync * session,
+    const char * collection_id,
+    const char * server_id,
+    int body_type,
+    uint32_t truncation_size,
+    struct mailactivesync_item ** result);
+
+LIBETPAN_EXPORT
+int mailactivesync_item_operations_fetch_multi(mailactivesync * session,
+    clist * requests,
+    struct mailactivesync_item_operations_fetch_result ** result);
+
+LIBETPAN_EXPORT
+int mailactivesync_item_operations_fetch_attachment(mailactivesync * session,
+    const char * file_reference,
+    const char * range,
+    struct mailactivesync_attachment_data ** result);
+
+LIBETPAN_EXPORT
+int mailactivesync_mail_search(mailactivesync * session,
+    const struct mailactivesync_mail_search_request * request,
+    struct mailactivesync_mail_search_result ** result);
+
+LIBETPAN_EXPORT
+int mailactivesync_mail_find(mailactivesync * session,
+    const struct mailactivesync_mail_find_request * request,
+    struct mailactivesync_mail_find_result ** result);
+
+int mailactivesync_resolve_recipients(mailactivesync * session,
+    clist * recipients,
+    uint32_t max_ambiguous_recipients,
+    struct mailactivesync_resolve_recipients_result ** result);
+
+LIBETPAN_EXPORT
+int mailactivesync_resolve_recipients_ext(mailactivesync * session,
+    const struct mailactivesync_resolve_recipients_request * request,
+    struct mailactivesync_resolve_recipients_result ** result);
+
+LIBETPAN_EXPORT
+int mailactivesync_validate_cert(mailactivesync * session,
+    const struct mailactivesync_validate_cert_request * request,
+    struct mailactivesync_validate_cert_result ** result);
+
+LIBETPAN_EXPORT
+int mailactivesync_mark_read(mailactivesync * session,
+    const char * collection_id,
+    const char * sync_key,
+    const char * server_id,
+    int read,
+    struct mailactivesync_sync_result ** result);
+
+LIBETPAN_EXPORT
+int mailactivesync_set_flagged(mailactivesync * session,
+    const char * collection_id,
+    const char * sync_key,
+    const char * server_id,
+    int flagged,
+    struct mailactivesync_sync_result ** result);
+
+LIBETPAN_EXPORT
+int mailactivesync_delete_message(mailactivesync * session,
+    const char * collection_id,
+    const char * sync_key,
+    const char * server_id,
+    int deletes_as_moves,
+    struct mailactivesync_sync_result ** result);
+
+LIBETPAN_EXPORT
+int mailactivesync_add_draft(mailactivesync * session,
+    const char * collection_id,
+    const char * sync_key,
+    const char * client_id,
+    const struct mailactivesync_draft * draft,
+    struct mailactivesync_sync_result ** result);
+
+LIBETPAN_EXPORT
+int mailactivesync_update_draft(mailactivesync * session,
+    const char * collection_id,
+    const char * sync_key,
+    const char * server_id,
+    const struct mailactivesync_draft * draft,
+    struct mailactivesync_sync_result ** result);
+
+LIBETPAN_EXPORT
 int mailactivesync_send_mail(mailactivesync * session,
     const char * mime_message,
     size_t mime_message_len,
     int save_in_sent);
+
+LIBETPAN_EXPORT
+int mailactivesync_send_mail_ext(mailactivesync * session,
+    const struct mailactivesync_composemail_request * request);
 
 LIBETPAN_EXPORT
 int mailactivesync_smart_reply(mailactivesync * session,
@@ -115,12 +243,20 @@ int mailactivesync_smart_reply(mailactivesync * session,
     int save_in_sent);
 
 LIBETPAN_EXPORT
+int mailactivesync_smart_reply_ext(mailactivesync * session,
+    const struct mailactivesync_composemail_request * request);
+
+LIBETPAN_EXPORT
 int mailactivesync_smart_forward(mailactivesync * session,
     const char * collection_id,
     const char * server_id,
     const char * mime_message,
     size_t mime_message_len,
     int save_in_sent);
+
+LIBETPAN_EXPORT
+int mailactivesync_smart_forward_ext(mailactivesync * session,
+    const struct mailactivesync_composemail_request * request);
 
 LIBETPAN_EXPORT
 int mailactivesync_move_items(mailactivesync * session,

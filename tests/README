@@ -10,6 +10,21 @@ activesync-ms-device-oauth.py
 gets a Microsoft OAuth access token with the device-code flow for local
 ActiveSync testing.
 
+By default the helper reads optional local config from
+tests/activesync-ms-oauth.local.json. It only saves tokens when
+--token-json, --json-file, or --token-file is provided. The local config file
+is ignored by git and can contain reusable values such as:
+
+  {
+    "client_id": "...",
+    "tenant": "consumers",
+    "servertype": "personal-ms",
+    "login": "email@outlook.com",
+    "activesync_url": "https://eas.outlook.com/Microsoft-Server-ActiveSync",
+    "token_json": "/tmp/libetpan-eas-token.json",
+    "state_file": "/tmp/libetpan-activesync-state.json"
+  }
+
 Minimal Outlook.com / Hotmail / Live account flow:
 
   ./tests/activesync-ms-device-oauth.py \
@@ -41,6 +56,188 @@ Minimal Microsoft 365 work or school account flow:
     --login [email@example.com] \
     --oauth-token "$(jq -r .access_token /tmp/libetpan-eas-token.json)" \
     --state-file /tmp/libetpan-activesync-state.json
+
+activesync-live-sync-test.sh
+----------------------------
+refreshes the cached OAuth token, probes the ActiveSync endpoint, then runs
+activesync-sample against the live server.
+
+It reuses tests/activesync-ms-oauth.local.json when present, otherwise it
+defaults to:
+
+  token JSON: /tmp/libetpan-eas-token.json
+  state file: /tmp/libetpan-activesync-state.json
+  server: https://eas.outlook.com/Microsoft-Server-ActiveSync
+
+When the token JSON already contains OAuth metadata such as client_id, tenant,
+oauth_version, servertype, scope, or resource, the wrapper passes those values
+back to the OAuth helper for refresh.
+
+Set LIBETPAN_ACTIVESYNC_LOGIN if the login is not present in the local config.
+
+  LIBETPAN_ACTIVESYNC_LOGIN=email@outlook.com \
+    ./tests/activesync-live-sync-test.sh
+
+Equivalent one-off form:
+
+  ./tests/activesync-live-sync-test.sh --login email@outlook.com
+
+The email-only guarded suite runs all currently scripted live validation hooks.
+It mutates only generated messages and temporary mail folders. Attachment
+validation still requires at least one synced message with an attachment, and
+ValidateCert is included only when certificate data is provided:
+
+  ./tests/activesync-live-sync-test.sh --login email@outlook.com --email-suite
+
+  ./tests/activesync-live-sync-test.sh --login email@outlook.com \
+    --email-suite --validate-cert-file /tmp/certificate-base64.txt
+
+Guarded live send validation is opt-in. It sends a generated plain-text
+message to the authenticated account and saves a copy in Sent:
+
+  LIBETPAN_ACTIVESYNC_SAMPLE_ARGS=--send-self-test \
+    ./tests/activesync-live-sync-test.sh --login email@outlook.com
+
+Guarded SmartReply and SmartForward validation are also opt-in. Each sends a
+generated self-addressed source message, syncs Inbox until that source appears,
+then replies to or forwards that generated item:
+
+  LIBETPAN_ACTIVESYNC_SAMPLE_ARGS=--smart-reply-self-test \
+    ./tests/activesync-live-sync-test.sh --login email@outlook.com
+
+  LIBETPAN_ACTIVESYNC_SAMPLE_ARGS=--smart-forward-self-test \
+    ./tests/activesync-live-sync-test.sh --login email@outlook.com
+
+Guarded read-only recipient resolution validation is also opt-in:
+
+  LIBETPAN_ACTIVESYNC_SAMPLE_ARGS=--resolve-self-test \
+    ./tests/activesync-live-sync-test.sh --login email@outlook.com
+
+Guarded recipient certificate lookup validation requests S/MIME certificate
+metadata for the authenticated account:
+
+  LIBETPAN_ACTIVESYNC_SAMPLE_ARGS=--resolve-cert-self-test \
+    ./tests/activesync-live-sync-test.sh --login email@outlook.com
+
+Guarded ValidateCert validation sends base64 certificate data from a local
+file:
+
+  LIBETPAN_ACTIVESYNC_SAMPLE_ARGS="--validate-cert-self-test \
+    --validate-cert-file /tmp/certificate-base64.txt" \
+    ./tests/activesync-live-sync-test.sh --login email@outlook.com
+
+Guarded read-only mailbox search validation runs advertised Search/Find
+commands against Inbox using the authenticated address as the query:
+
+  LIBETPAN_ACTIVESYNC_SAMPLE_ARGS=--search-self-test \
+    ./tests/activesync-live-sync-test.sh --login email@outlook.com
+
+Guarded Ping validation runs a short heartbeat against the Inbox collection:
+
+  LIBETPAN_ACTIVESYNC_SAMPLE_ARGS=--ping-self-test \
+    ./tests/activesync-live-sync-test.sh --login email@outlook.com
+
+Guarded Ping change validation sends a generated self-addressed message,
+expects Ping to report Inbox as changed, then syncs that generated item:
+
+  LIBETPAN_ACTIVESYNC_SAMPLE_ARGS=--ping-change-self-test \
+    ./tests/activesync-live-sync-test.sh --login email@outlook.com
+
+Guarded draft validation creates, updates, and deletes a generated draft in
+the Drafts folder:
+
+  LIBETPAN_ACTIVESYNC_SAMPLE_ARGS=--draft-self-test \
+    ./tests/activesync-live-sync-test.sh --login email@outlook.com
+
+Guarded multi-folder Sync validation syncs Inbox and Drafts together:
+
+  LIBETPAN_ACTIVESYNC_SAMPLE_ARGS=--multi-sync-self-test \
+    ./tests/activesync-live-sync-test.sh --login email@outlook.com
+
+Guarded attachment validation fetches a byte range from the first attachment
+FileReference seen during Sync:
+
+  LIBETPAN_ACTIVESYNC_SAMPLE_ARGS=--attachment-self-test \
+    ./tests/activesync-live-sync-test.sh --login email@outlook.com
+
+Guarded generated mutation validation creates a generated draft, marks it
+unread/read, flags/unflags it, then deletes it:
+
+  LIBETPAN_ACTIVESYNC_SAMPLE_ARGS=--mutation-self-test \
+    ./tests/activesync-live-sync-test.sh --login email@outlook.com
+
+Guarded folder validation creates, verifies, renames, verifies, deletes, and
+verifies a temporary mail folder with `FolderSync`:
+
+  LIBETPAN_ACTIVESYNC_SAMPLE_ARGS=--folder-self-test \
+    ./tests/activesync-live-sync-test.sh --login email@outlook.com
+
+Guarded move validation creates a generated draft, creates a temporary mail
+folder, moves the draft into that folder, then deletes the temporary folder:
+
+  LIBETPAN_ACTIVESYNC_SAMPLE_ARGS=--move-self-test \
+    ./tests/activesync-live-sync-test.sh --login email@outlook.com
+
+ActiveSync command status matrix
+--------------------------------
+
+| Command / area | Current support | Mock coverage | Remaining gap |
+| --- | --- | --- | --- |
+| OPTIONS | Implemented. Parses protocol versions and advertised commands, caches advertised commands, and rejects non-advertised later commands. | Covered. | Live behavior still depends on server-advertised capability data. |
+| Provision | Implemented policy request/ack subset with status and policy key parsing plus command/policy/result status helpers. | Covered. | Live validation remains. |
+| Settings | Implemented DeviceInformation Set and UserInformation Get for email addresses/accounts plus command/result status helpers. | Covered. | Live validation remains. |
+| FolderSync | Implemented hierarchy sync parsing for Add/Update/Delete. | Covered. | Live validation remains. |
+| FolderCreate / FolderUpdate / FolderDelete | Implemented request/response shape with status, sync key, server id fields, invalid hierarchy sync-key detection, and folder resync helper. | Covered. A guarded `activesync-sample --folder-self-test` path exists for live create/update/delete plus FolderSync verification. | Live execution remains. |
+| Sync server changes | Implemented single and multi-folder mail Sync with per-folder lookup/status helpers, per-folder MoreAvailable preservation, common options, server Add/Change/Delete parsing, empty responses, ConversationMode, Wait, HeartbeatInterval, ordered BodyPreference, AllOrNone, optional protected-mail rights-management support, and Supported property declarations. | Covered, including version guards for delayed controls and ConversationMode. A guarded `activesync-sample --multi-sync-self-test` path exists for live multi-folder validation. | Live execution remains. |
+| Sync client commands | Implemented Add/Change/Delete/Fetch request encoding, Responses status/id/payload parsing, and command-response lookup/status helpers. | Covered. A guarded `activesync-sample --mutation-self-test` path exists for live generated-item mutation validation. | Live execution remains. |
+| Read / flag / delete helpers | Implemented mark read/unread, flag/unflag, and delete helpers through Sync Change/Delete. | Covered. A guarded `activesync-sample --mutation-self-test` path exists for live generated-item validation. | Live execution remains. |
+| Draft Add / Change | Implemented protocol 16.0/16.1 draft helpers with non-MIME body fields, MIME body-type validation, AirSyncBase body, and attachment Add request modeling. | Covered, including protocol and MIME field restriction guards. A guarded `activesync-sample --draft-self-test` path exists for live draft create/update/fetch/delete validation. | Live execution remains. |
+| GetItemEstimate | Implemented single and multi-collection request/response modeling with per-collection status/estimate lookup helpers, Class, FilterType, and ConversationMode. | Covered. | Live interoperability remains. |
+| ItemOperations Fetch | Implemented one-item fetch, repeated mailbox Fetch orchestration, attachment FileReference/Range fetch, BodyPartPreference request, BodyPart parsing, per-item status preservation, and truncation recovery predicates. | Covered, including BodyPartPreference protocol guards. A guarded `activesync-sample --attachment-self-test` path exists for live attachment range validation. | Live execution remains. |
+| MoveItems | Implemented repeated moves, per-response source/status/destination-id parsing, request-context preservation, and protocol-specific status mapping. | Covered. A guarded `activesync-sample --move-self-test` path exists for live generated-item move validation. | Live execution remains. |
+| ComposeMail | Implemented modern WBXML SendMail, SmartReply, and SmartForward, caller-supplied ClientId, SaveInSentItems, Mime, LongId, InstanceId, ReplaceMime, and legacy 2.5/12.x raw MIME bodies. | Covered. Guarded `activesync-sample --send-self-test`, `--smart-reply-self-test`, and `--smart-forward-self-test` paths exist for live generated-message validation. | Live execution remains. |
+| Ping | Implemented heartbeat requests, changed folder parsing, empty-body cache, and correction statuses. | Covered. Guarded `activesync-sample --ping-self-test` and `--ping-change-self-test` paths exist for live heartbeat and controlled-change validation. | Live execution remains. |
+| Search | Implemented legacy mailbox free-text/range helper and common email result parsing. | Covered, including protocol guards. A guarded `activesync-sample --search-self-test` path exists for live validation. | Live execution remains. |
+| Find | Implemented protocol 16.1 mailbox free-text/range helper and result parsing. | Covered, including protocol guards. A guarded `activesync-sample --search-self-test` path exists for live validation when Find is advertised. | Live execution remains. |
+| ResolveRecipients | Implemented repeated To, max ambiguous recipients, optional S/MIME certificate retrieval, command/per-input statuses, certificate data, response-status mapping, and certificate status helpers. | Covered. Guarded `activesync-sample --resolve-self-test` and `--resolve-cert-self-test` paths exist for live address and certificate-retrieval validation. | Live execution and certificate interoperability remain. |
+| ValidateCert | Implemented repeated certificates, optional certificate chain, CRL-check request flag, command status, and per-certificate status parsing. | Covered. A guarded `activesync-sample --validate-cert-self-test --validate-cert-file PATH` path exists for live certificate validation. | Live execution remains. |
+| Email data parsing | Implemented DisplayTo, Importance, ThreadTopic, InternetCPID, ContentClass, Categories, ConversationId, ConversationIndex, Email flag metadata, legacy Body/MIME data, size, and truncation parsing. | Covered. | Live validation remains. |
+| Stubbed or absent public APIs | None in the current email-focused low-level API surface. | Bad-state coverage exists for public email-related APIs. | New API gaps are tracked as under-modeled areas rather than stubs. |
+
+Notes:
+
+ActiveSync Sync Add is not an IMAP-style append API. The protocol rejects
+  client-created non-draft email items; draft synchronization is only supported
+  by protocol versions 16.0 and 16.1. The draft helpers implement AirSyncBase
+  body drafts, including MIME body-type drafts with the narrower spec-allowed
+  field set. For normal outbound mail, use SendMail, SmartReply, or
+  SmartForward.
+
+
+jmap-live-smoke-test.sh
+-----------------------
+runs the low-level JMAP live-provider smoke sample when credentials are
+available, and exits with status 77 to report a skipped test when they are not.
+
+Read-only smoke test with a direct Session URL:
+
+  JMAP_SESSION_URL=https://example.com/jmap/session \
+  JMAP_ACCESS_TOKEN=[access token] \
+    ./tests/jmap-live-smoke-test.sh
+
+Read-only smoke test using .well-known discovery:
+
+  JMAP_EMAIL=email@example.com \
+  JMAP_ACCESS_TOKEN=[access token] \
+    ./tests/jmap-live-smoke-test.sh
+
+Guarded send validation is opt-in. It uploads/imports a generated RFC 5322
+message and submits it only when JMAP_SEND_TO is set:
+
+  JMAP_SESSION_URL=https://example.com/jmap/session \
+  JMAP_ACCESS_TOKEN=[access token] \
+  JMAP_SEND_TO=recipient@example.com \
+    ./tests/jmap-live-smoke-test.sh
 
 
 mime-parse

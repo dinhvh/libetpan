@@ -29,12 +29,65 @@
 
 include $(top_srcdir)/rules.mk
 
-EXTRA_DIST = README activesync-ms-device-oauth.py
+EXTRA_DIST = README activesync-ms-device-oauth.py activesync-live-sync-test.sh \
+	jmap-live-smoke-test.sh \
+	jmap/data/blob/download-message.eml \
+	jmap/data/blob/upload-response.json \
+	jmap/data/email/get-multipart-vendor.json \
+	jmap/data/mailbox/changes.json \
+	jmap/data/mailbox/get.json \
+	jmap/data/mailbox/query.json \
+	jmap/data/mailbox/set.json \
+	jmap/data/request/mailbox-get.json \
+	jmap/data/request/email-query-get-result-reference.json \
+	jmap/data/response/method-success-and-error.json \
+	jmap/data/response/problem-limit.json \
+	jmap/data/session/fastmail-style.json \
+	jmap/data/session/minimal.json \
+	fuzz/README.md \
+	fuzz/fuzz_imap_response.c \
+	fuzz/fuzz_jmap_response.c \
+	fuzz/imap.dict \
+	fuzz/jmap.dict \
+	fuzz/seeds/01-server-greeting.imap \
+	fuzz/seeds/02-tagged-ok.imap \
+	fuzz/seeds/03-exists-recent.imap \
+	fuzz/seeds/04-fetch-flags-uid.imap \
+	fuzz/seeds/05-fetch-body-structure.imap \
+	fuzz/seeds/06-list-response.imap \
+	fuzz/seeds/07-status-response.imap \
+	fuzz/seeds/08-bye.imap \
+	fuzz/seeds/09-permanentflags.imap \
+	fuzz/seeds/10-search-response.imap \
+	fuzz/jmap-seeds/00e16c19687a5769f5abf23fd38884dbb5d8cb4f \
+	fuzz/jmap-seeds/01-method-response.json \
+	fuzz/jmap-seeds/02-method-error.json \
+	fuzz/jmap-seeds/03-problem-response.json \
+	fuzz/jmap-seeds/04-batched-response.json \
+	fuzz/jmap-seeds/043d5d94784763ec4f110552d1185687e0f4406f \
+	fuzz/jmap-seeds/60ba4b2daa4ed4d070fec06687e249e0e6f9ee45 \
+	fuzz/jmap-seeds/e8341a3d4611a65c09a0557157384d5075c05b36
+
+if HAVE_JMAP
+jmap_test_programs = jmap-json-test jmap-http-test jmap-request-test \
+	jmap-response-test jmap-call-test jmap-mailbox-test \
+	jmap-thread-test jmap-email-test jmap-blob-test \
+	jmap-session-test
+jmap_sample_programs = jmap-sample
+jmap_live_tests = jmap-live-smoke-test.sh
+else
+jmap_test_programs =
+jmap_sample_programs =
+jmap_live_tests =
+endif
 
 noinst_PROGRAMS = smime decrypt pgp frm frm-tree frm-simple	\
 	readmsg-simple fetch-attachment smtpsend readmsg-uid \
 	readmsg compose-msg imap-sample mime-create mime-parse \
-	pop-sample activesync-sample gmail-http-test
+	pop-sample activesync-sample gmail-http-test \
+	$(jmap_test_programs) $(jmap_sample_programs)
+
+TESTS = $(jmap_test_programs) $(jmap_live_tests)
 
 # For W32, reverse the -DLIBETPAN_DLL.  Unfortunately, CFLAGS comes
 # after AM_CPPFLAGS, so we have to frob CFLAGS.
@@ -62,3 +115,25 @@ readmsg_uid_SOURCES = $(READMSGCOMMON) readmsg-uid.c
 fetch_attachment_SOURCES = $(READMSGCOMMON) fetch-attachment.c
 
 gmail_http_test_SOURCES = gmail-http-test.c
+
+jmap_json_test_SOURCES = jmap-json-test.c
+
+jmap_http_test_SOURCES = jmap-http-test.c
+
+jmap_request_test_SOURCES = jmap-request-test.c
+
+jmap_response_test_SOURCES = jmap-response-test.c
+
+jmap_call_test_SOURCES = jmap-call-test.c
+
+jmap_mailbox_test_SOURCES = jmap-mailbox-test.c
+
+jmap_thread_test_SOURCES = jmap-thread-test.c
+
+jmap_email_test_SOURCES = jmap-email-test.c
+
+jmap_blob_test_SOURCES = jmap-blob-test.c
+
+jmap_session_test_SOURCES = jmap-session-test.c
+
+jmap_sample_SOURCES = jmap-sample.c
