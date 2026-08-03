@@ -54,14 +54,15 @@ if test ! -f "$current_dir/dependencies/iconv/iconv-android-$iconv_build_version
   ./build.sh
 fi
 
-function build {
+build() {
   rm -rf "$current_dir/obj"
 
   cd "$current_dir/jni"
   $ANDROID_NDK/ndk-build TARGET_PLATFORM=$ANDROID_PLATFORM TARGET_ARCH_ABI=$TARGET_ARCH_ABI \
     OPENSSL_PATH="$current_dir/third-party/openssl-android-$openssl_build_version" \
     CYRUS_SASL_PATH="$current_dir/third-party/cyrus-sasl-android-$cyrus_sasl_build_version" \
-    ICONV_PATH="$current_dir/third-party/iconv-android-$iconv_build_version"
+    ICONV_PATH="$current_dir/third-party/iconv-android-$iconv_build_version" \
+    JANSSON_PATH="$JANSSON_PATH"
 
   mkdir -p "$current_dir/$package_name-$build_version/libs/$TARGET_ARCH_ABI"
   cp "$current_dir/obj/local/$TARGET_ARCH_ABI/libetpan.a" "$current_dir/$package_name-$build_version/libs/$TARGET_ARCH_ABI"

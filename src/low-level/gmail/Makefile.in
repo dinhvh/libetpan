@@ -359,6 +359,8 @@ INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
+JANSSON_CFLAGS = @JANSSON_CFLAGS@
+JANSSON_LIBS = @JANSSON_LIBS@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
 LIBICONV = @LIBICONV@
@@ -495,6 +497,8 @@ libgmail_la_SOURCES = \
 	mailgmail_json.c mailgmail_url.c \
 	$(nsurlsession_sources)
 
+libgmail_la_LINK = $(LINK)
+
 all: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
@@ -509,9 +513,9 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(top_srcdir
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu src/low-level/gmail/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign src/low-level/gmail/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu src/low-level/gmail/Makefile
+	  $(AUTOMAKE) --foreign src/low-level/gmail/Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
 	  *config.status*) \
@@ -541,7 +545,7 @@ clean-noinstLTLIBRARIES:
 	$(am__rm_f) $${locs}
 
 libgmail.la: $(libgmail_la_OBJECTS) $(libgmail_la_DEPENDENCIES) $(EXTRA_libgmail_la_DEPENDENCIES) 
-	$(AM_V_OBJCLD)$(OBJCLINK)  $(libgmail_la_OBJECTS) $(libgmail_la_LIBADD) $(LIBS)
+	$(AM_V_CCLD)$(libgmail_la_LINK)  $(libgmail_la_OBJECTS) $(libgmail_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)

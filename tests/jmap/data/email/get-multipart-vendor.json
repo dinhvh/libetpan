@@ -1,0 +1,185 @@
+{
+  "methodResponses": [
+    [
+      "Email/get",
+      {
+        "accountId": "acc1",
+        "state": "email-state",
+        "list": [
+          {
+            "id": "e1",
+            "blobId": "blob1",
+            "threadId": "t1",
+            "mailboxIds": {
+              "mbox1": true
+            },
+            "keywords": {
+              "$seen": true,
+              "$flagged": false
+            },
+            "size": 1234,
+            "receivedAt": "2026-08-02T10:00:00Z",
+            "messageId": [
+              "msg@example.com",
+              "alt-msg@example.com"
+            ],
+            "inReplyTo": [
+              "parent@example.com",
+              "parent-2@example.com"
+            ],
+            "references": [
+              "root@example.com",
+              "parent@example.com"
+            ],
+            "sender": [
+              {
+                "name": "Sender",
+                "email": "sender@example.com"
+              }
+            ],
+            "from": [
+              {
+                "name": "From Name",
+                "email": "from@example.com"
+              }
+            ],
+            "to": [
+              {
+                "name": "Recipient",
+                "email": "to@example.com"
+              }
+            ],
+            "cc": [
+              {
+                "name": "Carbon",
+                "email": "cc@example.com"
+              }
+            ],
+            "bcc": [
+              {
+                "name": "Blind",
+                "email": "bcc@example.com"
+              }
+            ],
+            "replyTo": [
+              {
+                "name": "Replies",
+                "email": "reply@example.com"
+              }
+            ],
+            "subject": "Hello",
+            "sentAt": "2026-08-02T09:59:00Z",
+            "preview": "Short preview",
+            "headers": [
+              {
+                "name": "X-Test",
+                "value": "yes"
+              }
+            ],
+            "bodyStructure": {
+              "partId": "p-root",
+              "type": "multipart/mixed",
+              "subParts": [
+                {
+                  "partId": "p-alt",
+                  "type": "multipart/alternative",
+                  "subParts": [
+                    {
+                      "partId": "p-text",
+                      "blobId": "b-text",
+                      "type": "text/plain",
+                      "charset": "utf-8",
+                      "size": 12
+                    },
+                    {
+                      "partId": "p-html",
+                      "blobId": "b-html",
+                      "type": "text/html",
+                      "charset": "utf-8",
+                      "size": 20,
+                      "headers": [
+                        {
+                          "name": "Content-Language",
+                          "value": "en"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "partId": "p-att",
+                  "blobId": "b-att",
+                  "type": "text/plain",
+                  "name": "note.txt",
+                  "disposition": "attachment",
+                  "cid": "note@example.com",
+                  "language": [
+                    "en",
+                    "fr"
+                  ],
+                  "location": "https://example.com/note.txt",
+                  "size": 5,
+                  "x-vendor-body-part": {
+                    "ignored": true
+                  }
+                }
+              ]
+            },
+            "textBody": [
+              {
+                "partId": "p-text",
+                "blobId": "b-text",
+                "type": "text/plain",
+                "charset": "utf-8",
+                "size": 12
+              }
+            ],
+            "htmlBody": [
+              {
+                "partId": "p-html",
+                "blobId": "b-html",
+                "type": "text/html",
+                "charset": "utf-8",
+                "size": 20
+              }
+            ],
+            "attachments": [
+              {
+                "partId": "p-att",
+                "blobId": "b-att",
+                "type": "text/plain",
+                "name": "note.txt",
+                "disposition": "attachment",
+                "cid": "note@example.com",
+                "language": [
+                  "en",
+                  "fr"
+                ],
+                "location": "https://example.com/note.txt",
+                "size": 5
+              }
+            ],
+            "bodyValues": {
+              "p-text": {
+                "value": "body text",
+                "isTruncated": false
+              },
+              "p-html": {
+                "value": "<p>body text</p>",
+                "isTruncated": false
+              }
+            },
+            "x-vendor-email-property": {
+              "ignored": true
+            }
+          }
+        ],
+        "notFound": [
+          "missing"
+        ]
+      },
+      "c1"
+    ]
+  ],
+  "sessionState": "state-get"
+}

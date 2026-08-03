@@ -1,0 +1,24 @@
+{
+  "methodResponses": [
+    [
+      "Mailbox/changes",
+      {
+        "accountId": "acc1",
+        "oldState": "old",
+        "newState": "new",
+        "hasMoreChanges": true,
+        "created": [
+          "archive"
+        ],
+        "updated": [
+          "inbox"
+        ],
+        "destroyed": [
+          "trash"
+        ]
+      },
+      "c1"
+    ]
+  ],
+  "sessionState": "state3"
+}

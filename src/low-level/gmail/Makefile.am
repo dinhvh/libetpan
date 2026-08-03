@@ -24,3 +24,5 @@ libgmail_la_SOURCES = \
 	mailgmail_http.c mailgmail_http_curl.c \
 	mailgmail_json.c mailgmail_url.c \
 	$(nsurlsession_sources)
+
+libgmail_la_LINK = $(LINK)

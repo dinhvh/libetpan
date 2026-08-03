@@ -1,0 +1,41 @@
+{
+  "methodResponses": [
+    [
+      "Mailbox/get",
+      {
+        "accountId": "acc1",
+        "state": "mbox-state",
+        "list": [
+          {
+            "id": "inbox",
+            "name": "Inbox",
+            "parentId": null,
+            "role": "inbox",
+            "sortOrder": 10,
+            "isSubscribed": true,
+            "totalEmails": 42,
+            "unreadEmails": 5,
+            "totalThreads": 30,
+            "unreadThreads": 4,
+            "myRights": {
+              "mayReadItems": true,
+              "mayAddItems": true,
+              "mayRemoveItems": false,
+              "maySetSeen": true,
+              "maySetKeywords": true,
+              "mayCreateChild": false,
+              "mayRename": false,
+              "mayDelete": false,
+              "maySubmit": true
+            }
+          }
+        ],
+        "notFound": [
+          "missing"
+        ]
+      },
+      "c1"
+    ]
+  ],
+  "sessionState": "state2"
+}

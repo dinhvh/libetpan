@@ -1,0 +1,21 @@
+{
+  "methodResponses": [
+    [
+      "Mailbox/get",
+      {
+        "state": "s1",
+        "list": []
+      },
+      "c1"
+    ],
+    [
+      "error",
+      {
+        "type": "invalidArguments",
+        "description": "bad"
+      },
+      "c2"
+    ]
+  ],
+  "sessionState": "state2"
+}

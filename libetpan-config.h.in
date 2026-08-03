@@ -30,6 +30,12 @@
 
 @define MAIL_DIR_SEPARATOR_S "/"
 
+#ifdef HAVE_JMAP
+@define LIBETPAN_HAS_JMAP 1
+#else
+@define LIBETPAN_HAS_JMAP 0
+#endif
+
 @ifdef _MSC_VER
 @    ifdef LIBETPAN_DLL
 @       define LIBETPAN_EXPORT __declspec(dllexport)

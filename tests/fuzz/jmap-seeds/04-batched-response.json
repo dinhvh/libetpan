@@ -1,0 +1,1 @@
+{"sessionState":"s2","methodResponses":[["Email/query",{"accountId":"a1","queryState":"q1","ids":["e1"],"position":0,"total":1},"c1"],["Email/get",{"accountId":"a1","state":"e1","list":[{"id":"e1","threadId":"t1","mailboxIds":{"m1":true},"keywords":{"$seen":true},"size":42}],"notFound":[]},"c2"]]}

@@ -1,0 +1,20 @@
+{
+  "methodResponses": [
+    [
+      "Mailbox/query",
+      {
+        "accountId": "acc1",
+        "queryState": "query-state",
+        "canCalculateChanges": true,
+        "position": 0,
+        "ids": [
+          "inbox",
+          "archive"
+        ],
+        "total": 2
+      },
+      "c1"
+    ]
+  ],
+  "sessionState": "state4"
+}

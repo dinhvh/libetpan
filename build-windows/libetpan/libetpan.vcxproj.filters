@@ -41,6 +41,9 @@
     <Filter Include="Source Files\low-level\feed">
       <UniqueIdentifier>{f0007dc2-7c5e-4eaa-8bb2-e6b3f53c4fda}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\low-level\jmap">
+      <UniqueIdentifier>{00694489-0cc4-4dc7-a67b-37154354277f}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source Files\driver">
       <UniqueIdentifier>{91a7d348-d5c7-4e81-a366-06eaeaa0a318}</UniqueIdentifier>
     </Filter>
@@ -425,6 +428,33 @@
     </ClCompile>
     <ClCompile Include="..\..\src\low-level\feed\parser_rss20.c">
       <Filter>Source Files\low-level\feed</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\low-level\jmap\mailjmap.c">
+      <Filter>Source Files\low-level\jmap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\low-level\jmap\mailjmap_blob.c">
+      <Filter>Source Files\low-level\jmap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\low-level\jmap\mailjmap_http.c">
+      <Filter>Source Files\low-level\jmap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\low-level\jmap\mailjmap_http_curl.c">
+      <Filter>Source Files\low-level\jmap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\low-level\jmap\mailjmap_json.c">
+      <Filter>Source Files\low-level\jmap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\low-level\jmap\mailjmap_mail.c">
+      <Filter>Source Files\low-level\jmap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\low-level\jmap\mailjmap_request.c">
+      <Filter>Source Files\low-level\jmap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\low-level\jmap\mailjmap_response.c">
+      <Filter>Source Files\low-level\jmap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\low-level\jmap\mailjmap_types.c">
+      <Filter>Source Files\low-level\jmap</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\driver\interface\maildriver.c">
       <Filter>Source Files\driver\interface</Filter>
@@ -1138,6 +1168,33 @@
     </ClInclude>
     <ClInclude Include="..\..\src\low-level\imf\mailimf_write_mem.h">
       <Filter>Source Files\low-level\imf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\low-level\jmap\mailjmap.h">
+      <Filter>Source Files\low-level\jmap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\low-level\jmap\mailjmap_blob.h">
+      <Filter>Source Files\low-level\jmap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\low-level\jmap\mailjmap_http.h">
+      <Filter>Source Files\low-level\jmap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\low-level\jmap\mailjmap_json.h">
+      <Filter>Source Files\low-level\jmap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\low-level\jmap\mailjmap_mail.h">
+      <Filter>Source Files\low-level\jmap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\low-level\jmap\mailjmap_private.h">
+      <Filter>Source Files\low-level\jmap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\low-level\jmap\mailjmap_request.h">
+      <Filter>Source Files\low-level\jmap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\low-level\jmap\mailjmap_response.h">
+      <Filter>Source Files\low-level\jmap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\low-level\jmap\mailjmap_types.h">
+      <Filter>Source Files\low-level\jmap</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\low-level\maildir\maildir.h">
       <Filter>Source Files\low-level\maildir</Filter>

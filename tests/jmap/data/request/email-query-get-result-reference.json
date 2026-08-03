@@ -1,0 +1,1 @@
+{"methodCalls":[["Email/query",{"accountId":"acc1"},"c1"],["Email/get",{"#ids":{"name":"Email/query","path":"/ids","resultOf":"c1"},"accountId":"acc1"},"c2"]],"using":["urn:ietf:params:jmap:core","urn:ietf:params:jmap:mail"]}

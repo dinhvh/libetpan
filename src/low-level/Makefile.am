@@ -29,13 +29,22 @@
 
 include $(top_srcdir)/rules.mk
 
-SUBDIRS = activesync gmail imap imf maildir mbox mh mime nntp pop3 smtp feed
+if HAVE_JMAP
+jmap_subdir = jmap
+jmap_lib = jmap/libjmap.la
+else
+jmap_subdir =
+jmap_lib =
+endif
+
+SUBDIRS = activesync gmail $(jmap_subdir) imap imf maildir mbox mh mime nntp pop3 smtp feed
 
 noinst_LTLIBRARIES = liblow-level.la
 liblow_level_la_SOURCES = 
 liblow_level_la_LIBADD = \
 	activesync/libactivesync.la \
 	gmail/libgmail.la \
+	$(jmap_lib) \
 	imap/libimap.la \
 	imf/libimf.la \
 	maildir/libmaildir.la \

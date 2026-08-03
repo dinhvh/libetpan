@@ -81,6 +81,14 @@ src\low-level\feed\newsfeed.h
 src\low-level\feed\newsfeed_item.h
 src\low-level\feed\newsfeed_item_enclosure.h
 src\low-level\feed\newsfeed_types.h
+src\low-level\jmap\mailjmap.h
+src\low-level\jmap\mailjmap_blob.h
+src\low-level\jmap\mailjmap_http.h
+src\low-level\jmap\mailjmap_json.h
+src\low-level\jmap\mailjmap_mail.h
+src\low-level\jmap\mailjmap_request.h
+src\low-level\jmap\mailjmap_response.h
+src\low-level\jmap\mailjmap_types.h
 src\low-level\imap\acl.h
 src\low-level\imap\acl_types.h
 src\low-level\imap\annotatemore.h

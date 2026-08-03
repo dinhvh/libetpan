@@ -721,6 +721,30 @@ if test "x$libcurl" = "xyes" ; then
   AC_DEFINE([HAVE_CURL], 1, [Define to use curl])
 fi
 
+dnl JMAP
+AC_ARG_WITH([jmap],
+  [AS_HELP_STRING([--with-jmap],
+    [include low-level JMAP support using Jansson and curl @<:@default=auto@:>@])],
+  [], [with_jmap=auto])
+
+have_jmap=no
+AS_IF([test "x$with_jmap" != xno], [
+  AS_IF([test "x$libcurl" = xyes], [
+    PKG_CHECK_MODULES([JANSSON], [jansson],
+      [have_jmap=yes],
+      [AS_IF([test "x$with_jmap" = xyes],
+        [AC_MSG_ERROR([JMAP support requested but Jansson was not found])],
+        [have_jmap=no])])
+  ], [
+    AS_IF([test "x$with_jmap" = xyes],
+      [AC_MSG_ERROR([JMAP support requested but curl was not found])],
+      [have_jmap=no])
+  ])
+])
+AS_IF([test "x$have_jmap" = xyes],
+  [AC_DEFINE([HAVE_JMAP], [1], [Define to include low-level JMAP support])])
+AM_CONDITIONAL([HAVE_JMAP], [test "x$have_jmap" = xyes])
+
 dnl expat
 libexpat=no
 AC_ARG_WITH(expat, [AS_HELP_STRING([--with-expat[=DIR]], [expat install directory (default=auto)])],
@@ -823,6 +847,7 @@ AC_CONFIG_FILES(Makefile
 		src/low-level/feed/Makefile
 		src/low-level/gmail/Makefile
 		src/low-level/imap/Makefile
+		src/low-level/jmap/Makefile
 		src/low-level/imf/Makefile
 		src/low-level/maildir/Makefile
 		src/low-level/mbox/Makefile

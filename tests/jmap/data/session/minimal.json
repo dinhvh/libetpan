@@ -1,0 +1,24 @@
+{
+  "capabilities": {
+    "urn:ietf:params:jmap:core": {},
+    "urn:ietf:params:jmap:mail": {}
+  },
+  "accounts": {
+    "acc1": {
+      "name": "Personal",
+      "isPersonal": true,
+      "isReadOnly": false,
+      "accountCapabilities": {
+        "urn:ietf:params:jmap:mail": {}
+      }
+    }
+  },
+  "primaryAccounts": {
+    "urn:ietf:params:jmap:mail": "acc1",
+    "urn:ietf:params:jmap:submission": null
+  },
+  "apiUrl": "https://example.com/jmap/api",
+  "downloadUrl": "https://example.com/download/{accountId}/{blobId}/{name}?accept={type}",
+  "uploadUrl": "https://example.com/upload/{accountId}",
+  "sessionState": "state1"
+}

@@ -1,0 +1,65 @@
+{
+  "capabilities": {
+    "urn:ietf:params:jmap:core": {
+      "maxSizeUpload": 50000000,
+      "maxConcurrentUpload": 4,
+      "maxSizeRequest": 10000000,
+      "maxConcurrentRequests": 8,
+      "maxCallsInRequest": 32,
+      "maxObjectsInGet": 2048,
+      "maxObjectsInSet": 2048,
+      "collationAlgorithms": [
+        "i;unicode-casemap"
+      ]
+    },
+    "urn:ietf:params:jmap:mail": {
+      "maxMailboxesPerEmail": 1000000,
+      "maxMailboxDepth": null,
+      "emailQuerySortOptions": [
+        "receivedAt",
+        "size",
+        "from",
+        "to",
+        "subject"
+      ]
+    },
+    "https://www.fastmail.com/dev/protocol/jmap": {
+      "vendorAccountName": "Personal"
+    }
+  },
+  "accounts": {
+    "u12345": {
+      "name": "Personal",
+      "isPersonal": true,
+      "isReadOnly": false,
+      "accountCapabilities": {
+        "urn:ietf:params:jmap:mail": {
+          "maxMailboxesPerEmail": 1000000
+        },
+        "https://www.fastmail.com/dev/protocol/jmap": {
+          "mayUseForTests": true
+        }
+      }
+    },
+    "team987": {
+      "name": "Team mailbox",
+      "isPersonal": false,
+      "isReadOnly": true,
+      "accountCapabilities": {
+        "urn:ietf:params:jmap:mail": {}
+      }
+    }
+  },
+  "primaryAccounts": {
+    "urn:ietf:params:jmap:mail": "u12345",
+    "urn:ietf:params:jmap:submission": null
+  },
+  "apiUrl": "https://api.fastmail.example/jmap/api/",
+  "downloadUrl": "https://api.fastmail.example/jmap/download/{accountId}/{blobId}/{name}?accept={type}",
+  "uploadUrl": "https://api.fastmail.example/jmap/upload/{accountId}/",
+  "eventSourceUrl": "https://api.fastmail.example/jmap/eventsource/",
+  "sessionState": "fastmail-state-1",
+  "extraIgnoredField": {
+    "this": "must not break parsing"
+  }
+}

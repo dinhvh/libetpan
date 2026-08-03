@@ -202,6 +202,15 @@
       </DataExecutionPrevention>
     </Link>
   </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(EnableJMAP)'=='true'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>../../src/low-level/jmap;../../third-party/jansson/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>HAVE_JMAP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>libcurl.lib;jansson.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
   <ItemGroup>
     <CustomBuild Include="..\build_headers.list">
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">cd ..
@@ -310,6 +319,15 @@ build_headers.bat
     <ClCompile Include="..\..\src\low-level\feed\parser_atom10.c" />
     <ClCompile Include="..\..\src\low-level\feed\parser_rdf.c" />
     <ClCompile Include="..\..\src\low-level\feed\parser_rss20.c" />
+    <ClCompile Include="..\..\src\low-level\jmap\mailjmap.c" Condition="'$(EnableJMAP)'=='true'" />
+    <ClCompile Include="..\..\src\low-level\jmap\mailjmap_blob.c" Condition="'$(EnableJMAP)'=='true'" />
+    <ClCompile Include="..\..\src\low-level\jmap\mailjmap_http.c" Condition="'$(EnableJMAP)'=='true'" />
+    <ClCompile Include="..\..\src\low-level\jmap\mailjmap_http_curl.c" Condition="'$(EnableJMAP)'=='true'" />
+    <ClCompile Include="..\..\src\low-level\jmap\mailjmap_json.c" Condition="'$(EnableJMAP)'=='true'" />
+    <ClCompile Include="..\..\src\low-level\jmap\mailjmap_mail.c" Condition="'$(EnableJMAP)'=='true'" />
+    <ClCompile Include="..\..\src\low-level\jmap\mailjmap_request.c" Condition="'$(EnableJMAP)'=='true'" />
+    <ClCompile Include="..\..\src\low-level\jmap\mailjmap_response.c" Condition="'$(EnableJMAP)'=='true'" />
+    <ClCompile Include="..\..\src\low-level\jmap\mailjmap_types.c" Condition="'$(EnableJMAP)'=='true'" />
     <ClCompile Include="..\..\src\low-level\imap\acl.c" />
     <ClCompile Include="..\..\src\low-level\imap\acl_parser.c" />
     <ClCompile Include="..\..\src\low-level\imap\acl_sender.c" />
@@ -572,6 +590,15 @@ build_headers.bat
     <ClInclude Include="..\..\src\low-level\imf\mailimf_write_file.h" />
     <ClInclude Include="..\..\src\low-level\imf\mailimf_write_generic.h" />
     <ClInclude Include="..\..\src\low-level\imf\mailimf_write_mem.h" />
+    <ClInclude Include="..\..\src\low-level\jmap\mailjmap.h" />
+    <ClInclude Include="..\..\src\low-level\jmap\mailjmap_blob.h" />
+    <ClInclude Include="..\..\src\low-level\jmap\mailjmap_http.h" />
+    <ClInclude Include="..\..\src\low-level\jmap\mailjmap_json.h" />
+    <ClInclude Include="..\..\src\low-level\jmap\mailjmap_mail.h" />
+    <ClInclude Include="..\..\src\low-level\jmap\mailjmap_private.h" />
+    <ClInclude Include="..\..\src\low-level\jmap\mailjmap_request.h" />
+    <ClInclude Include="..\..\src\low-level\jmap\mailjmap_response.h" />
+    <ClInclude Include="..\..\src\low-level\jmap\mailjmap_types.h" />
     <ClInclude Include="..\..\src\low-level\maildir\maildir.h" />
     <ClInclude Include="..\..\src\low-level\maildir\maildir_types.h" />
     <ClInclude Include="..\..\src\low-level\mbox\mailmbox.h" />

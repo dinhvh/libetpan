@@ -1,10 +1,15 @@
-# libetpan IMAP response parser — libFuzzer harness
+# libetpan parser libFuzzer harnesses
 
-A coverage-guided fuzz harness for `mailimap_response_parse()`, the
-top-level entry point for parsing server-side IMAP responses in
-libetpan. Runs under LLVM's libFuzzer with AddressSanitizer and
-LeakSanitizer to surface memory-safety and resource defects in the
-IMAP parser.
+Coverage-guided fuzz harnesses for parser entry points in libetpan. They run
+under LLVM's libFuzzer with AddressSanitizer and LeakSanitizer to surface
+memory-safety and resource defects.
+
+Current harnesses:
+
+- `fuzz_imap_response.c` drives `mailimap_response_parse()`.
+- `fuzz_jmap_response.c` drives `mailjmap_response_parse()`.
+
+## IMAP Background
 
 This harness is what surfaced the four parser defects fixed in May 2026
 (see ChangeLog for `Fix PERMANENTFLAGS cleanup null dereference`,
@@ -41,7 +46,7 @@ make -j$(nproc)
 The static lib lands at `src/.libs/libetpan.a` (~9 MB with debug
 symbols + ASan instrumentation).
 
-Then build the harness against the instrumented lib:
+Then build an IMAP harness against the instrumented lib:
 
 ```
 clang -g -O1 -fsanitize=address,fuzzer \
@@ -55,18 +60,37 @@ clang -g -O1 -fsanitize=address,fuzzer \
 `<libetpan/foo.h>`-style includes from within the parser resolve
 correctly). `-I .` picks up the autotools-generated `config.h`.
 
+For the JMAP response harness, build with the same instrumented library plus
+the JSON/HTTP libraries enabled by the JMAP build:
+
+```
+clang -g -O1 -fsanitize=address,fuzzer \
+    -I . -I include -I src/low-level/jmap -I src/main \
+    tests/fuzz/fuzz_jmap_response.c src/.libs/libetpan.a \
+    -ljansson -lcurl -lexpat -lpthread -lz \
+    -o fuzz_jmap_response
+```
+
 ## Run
 
 ```
 mkdir -p corpus
-./fuzz_imap_response -dict=tests/fuzz/imap.dict tests/fuzz/seeds/ corpus/
+./fuzz_imap_response -dict=tests/fuzz/imap.dict corpus/ tests/fuzz/seeds/
+```
+
+Run the JMAP response parser harness:
+
+```
+mkdir -p jmap-corpus
+./fuzz_jmap_response -dict=tests/fuzz/jmap.dict jmap-corpus/ tests/fuzz/jmap-seeds/
 ```
 
 libFuzzer will:
 
-- Read the seed responses from `tests/fuzz/seeds/`
-- Mix in mutations guided by the IMAP keyword dictionary
-- Save interesting (newly-covering) inputs into `corpus/`
+- Read the seed responses from the supplied seed directory.
+- Mix in mutations guided by the selected protocol dictionary.
+- Save interesting (newly-covering) inputs into the first supplied corpus
+  directory. Keep the writable corpus before checked-in seed directories.
 - Write any crash/leak inputs to the current directory as `crash-*` or
   `leak-*` artifact files
 
@@ -77,6 +101,12 @@ without continuing to fuzz:
 ./fuzz_imap_response path/to/input.bin
 ```
 
+or:
+
+```
+./fuzz_jmap_response path/to/input.json
+```
+
 Useful environment variables:
 
 - `ASAN_OPTIONS=detect_leaks=1` — confirm LeakSanitizer is active
@@ -85,13 +115,18 @@ Useful environment variables:
 
 ## Files
 
-- `fuzz_imap_response.c` — the harness
+- `fuzz_imap_response.c` — IMAP response parser harness
+- `fuzz_jmap_response.c` — JMAP response parser harness
 - `imap.dict` — keyword dictionary covering the major IMAP tokens
   (commands, responses, server-side flags, namespace tokens). Used by
   libFuzzer's grammar-aware mutation
+- `jmap.dict` — keyword dictionary covering JMAP envelope, method, and error
+  tokens.
 - `seeds/` — a small set of hand-crafted valid IMAP responses covering
   different response shapes (untagged FETCH, server greeting, LIST,
   STATUS, BYE, tagged completion). Recommended starting corpus
+- `jmap-seeds/` — a small set of hand-crafted JMAP response envelopes covering
+  success, method error, problem response, and batched response shapes.
 - `README.md` — this file
 
 ## Reporting bugs found via this harness

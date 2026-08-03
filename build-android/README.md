@@ -60,6 +60,23 @@ libetpan-android-7/
 etpan  sasl2  ssl  crypto  iconv  z  log
 ```
 
+Low-level JMAP is optional in the Android makefile because it needs Jansson.
+To include the `mailjmap_*` sources, build Jansson for Android separately and
+set `JANSSON_PATH` to a prefix containing `include/jansson.h` before running
+`build.sh`:
+
+```sh
+export JANSSON_PATH=/path/to/jansson-android-prefix
+./build.sh
+```
+
+Consumers of a JMAP-enabled Android build must also link the matching Jansson
+static library, before the NDK system libraries:
+
+```
+etpan  jansson  sasl2  ssl  crypto  iconv  z  log
+```
+
 > Note: `libetpan-android-7.zip` currently ships only `libetpan-config.h`. The
 > full public API headers (`mailimap.h`, `mailsmtp.h`, …) are written to
 > `build-android/include/libetpan/` during the build; the demo app's

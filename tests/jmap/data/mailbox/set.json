@@ -1,0 +1,42 @@
+{
+  "methodResponses": [
+    [
+      "Mailbox/set",
+      {
+        "accountId": "acc1",
+        "oldState": "old",
+        "newState": "set-new",
+        "created": {
+          "newbox": {
+            "id": "archive"
+          }
+        },
+        "updated": [
+          "inbox"
+        ],
+        "destroyed": [
+          "trash"
+        ],
+        "notCreated": {
+          "badCreate": {
+            "type": "invalidProperties",
+            "description": "name required"
+          }
+        },
+        "notUpdated": {
+          "badUpdate": {
+            "type": "notFound"
+          }
+        },
+        "notDestroyed": {
+          "badDestroy": {
+            "type": "forbidden",
+            "description": "protected"
+          }
+        }
+      },
+      "c1"
+    ]
+  ],
+  "sessionState": "state-set"
+}
