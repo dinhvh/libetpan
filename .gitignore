@@ -173,3 +173,5 @@ third-party
 libetpan.pc
 
 /tests/activesync-ms-oauth.local.json
+/tests/gmail-google-oauth.local.json
+/tests/gmail-token.local.json

@@ -214,6 +214,69 @@ ActiveSync Sync Add is not an IMAP-style append API. The protocol rejects
   SmartForward.
 
 
+gmail-google-oauth.py
+---------------------
+gets a Google OAuth access token with the device-code flow for local Gmail HTTP
+testing. Token acquisition and refresh stay outside libEtPan; callers pass the
+resulting bearer token to the low-level Gmail API.
+
+By default the helper reads optional local config from
+tests/gmail-google-oauth.local.json. The local config file is ignored by git
+and can contain reusable values such as:
+
+  {
+    "client_id": "...apps.googleusercontent.com",
+    "client_secret": "...",
+    "scope": "https://www.googleapis.com/auth/gmail.readonly",
+    "token_json": "/tmp/libetpan-gmail-token.json",
+    "user": "me"
+  }
+
+Use a Google OAuth client for TVs and Limited Input devices. Some Google client
+types require a client_secret at the token endpoint; include it only when your
+client has one.
+
+Minimal flow:
+
+  ./tests/gmail-google-oauth.py \
+    --client-id [client ID] \
+    --token-json /tmp/libetpan-gmail-token.json \
+    --probe-gmail
+
+  ./tests/gmail-sample \
+    --oauth-token "$(jq -r .access_token /tmp/libetpan-gmail-token.json)"
+
+gmail-live-smoke-test.sh
+------------------------
+refreshes the cached Google OAuth token when client metadata is available,
+probes the Gmail profile endpoint through the helper, then runs gmail-sample
+against the live Gmail REST API.
+
+It reuses tests/gmail-google-oauth.local.json when present, otherwise it
+defaults to:
+
+  token JSON: /tmp/libetpan-gmail-token.json
+  user: me
+  max results: 5
+
+When no config or token JSON exists, the wrapper exits with status 77 to report
+a skipped test.
+
+  ./tests/gmail-live-smoke-test.sh
+
+Equivalent one-off form:
+
+  ./tests/gmail-live-smoke-test.sh \
+    --config tests/gmail-google-oauth.local.json \
+    --token-json /tmp/libetpan-gmail-token.json
+
+The smoke test is read-only. It calls users.getProfile, labels.list, and
+messages.list through libEtPan. Fetching metadata for the first listed message
+is opt-in:
+
+  ./tests/gmail-live-smoke-test.sh --fetch-first-message
+
+
 jmap-live-smoke-test.sh
 -----------------------
 runs the low-level JMAP live-provider smoke sample when credentials are

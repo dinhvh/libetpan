@@ -30,6 +30,7 @@
 include $(top_srcdir)/rules.mk
 
 EXTRA_DIST = README activesync-ms-device-oauth.py activesync-live-sync-test.sh \
+	gmail-google-oauth.py gmail-live-smoke-test.sh \
 	jmap-live-smoke-test.sh \
 	jmap/data/blob/download-message.eml \
 	jmap/data/blob/upload-response.json \
@@ -81,13 +82,15 @@ jmap_sample_programs =
 jmap_live_tests =
 endif
 
+gmail_live_tests = gmail-live-smoke-test.sh
+
 noinst_PROGRAMS = smime decrypt pgp frm frm-tree frm-simple	\
 	readmsg-simple fetch-attachment smtpsend readmsg-uid \
 	readmsg compose-msg imap-sample mime-create mime-parse \
-	pop-sample activesync-sample gmail-http-test \
+	pop-sample activesync-sample gmail-http-test gmail-sample \
 	$(jmap_test_programs) $(jmap_sample_programs)
 
-TESTS = $(jmap_test_programs) $(jmap_live_tests)
+TESTS = $(jmap_test_programs) $(jmap_live_tests) $(gmail_live_tests)
 
 # For W32, reverse the -DLIBETPAN_DLL.  Unfortunately, CFLAGS comes
 # after AM_CPPFLAGS, so we have to frob CFLAGS.
@@ -115,6 +118,8 @@ readmsg_uid_SOURCES = $(READMSGCOMMON) readmsg-uid.c
 fetch_attachment_SOURCES = $(READMSGCOMMON) fetch-attachment.c
 
 gmail_http_test_SOURCES = gmail-http-test.c
+
+gmail_sample_SOURCES = gmail-sample.c
 
 jmap_json_test_SOURCES = jmap-json-test.c
 
