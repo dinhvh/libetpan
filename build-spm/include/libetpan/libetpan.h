@@ -48,6 +48,7 @@ extern "C" {
 #include <libetpan/mailfolder.h>
 #include <libetpan/mailstorage.h>
 #include <libetpan/mailthread.h>
+#include <libetpan/mailactivesync.h>
 #include <libetpan/mailgmail.h>
 #if defined(HAVE_JMAP) || (defined(LIBETPAN_HAS_JMAP) && LIBETPAN_HAS_JMAP)
 #include <libetpan/mailjmap.h>
