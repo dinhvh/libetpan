@@ -294,6 +294,24 @@ Read-only smoke test using .well-known discovery:
   JMAP_ACCESS_TOKEN=[access token] \
     ./tests/jmap-live-smoke-test.sh
 
+Fastmail read-only smoke test with an API token saved in a local file:
+
+  JMAP_SESSION_URL=https://api.fastmail.com/jmap/session \
+  JMAP_EMAIL=dinhvh79@fastmail.com \
+  JMAP_ACCESS_TOKEN="$(sed -n '1p' tests/tmp/fastmail-access-token)" \
+    ./tests/jmap-live-smoke-test.sh
+
+Fastmail read-only smoke test with an OAuth token from fastmail-jmap-oauth.py:
+
+  ./tests/fastmail-jmap-oauth.py dinhvh79@fastmail.com \
+    --client-id=[registered client id] \
+    --token-json=/tmp/fastmail-jmap-token.json \
+    --env-file=/tmp/fastmail-jmap.env \
+    --probe-jmap
+
+  . /tmp/fastmail-jmap.env
+  ./tests/jmap-live-smoke-test.sh
+
 Guarded send validation is opt-in. It creates a temporary mailbox,
 uploads/imports a generated RFC 5322 message into it, submits the message, and
 cleans up the generated mailbox and imported message. It runs only when
@@ -316,6 +334,21 @@ mail and the temporary mailbox on success and on most failures:
   JMAP_SESSION_URL=https://api.fastmail.com/jmap/session \
   JMAP_EMAIL=dinhvh79@fastmail.com \
   JMAP_ACCESS_TOKEN="$(sed -n '1p' tests/tmp/fastmail-access-token)" \
+  JMAP_LIVE_FULL_TEST=1 \
+  JMAP_SEND_TO=dinhvh79@fastmail.com \
+    ./tests/jmap-live-smoke-test.sh
+
+Fastmail full guarded live validation with OAuth requires the submission scope
+when JMAP_SEND_TO is set:
+
+  ./tests/fastmail-jmap-oauth.py dinhvh79@fastmail.com \
+    --client-id=[registered client id] \
+    --scope="urn:ietf:params:jmap:core urn:ietf:params:jmap:mail urn:ietf:params:jmap:submission" \
+    --token-json=/tmp/fastmail-jmap-token.json \
+    --env-file=/tmp/fastmail-jmap.env \
+    --probe-jmap
+
+  . /tmp/fastmail-jmap.env
   JMAP_LIVE_FULL_TEST=1 \
   JMAP_SEND_TO=dinhvh79@fastmail.com \
     ./tests/jmap-live-smoke-test.sh
