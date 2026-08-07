@@ -47,6 +47,24 @@ static const char mailbox_method_limit_error_json[] =
     "\"sessionState\":\"state-error\""
     "}";
 
+static const char mailbox_set_fastmail_update_json[] =
+    "{"
+    "\"methodResponses\":["
+    "[\"Mailbox/set\",{"
+    "\"accountId\":\"acc1\","
+    "\"oldState\":\"old\","
+    "\"newState\":\"set-new\","
+    "\"created\":null,"
+    "\"updated\":{\"inbox\":null},"
+    "\"destroyed\":null,"
+    "\"notCreated\":null,"
+    "\"notUpdated\":{},"
+    "\"notDestroyed\":null"
+    "},\"c1\"]"
+    "],"
+    "\"sessionState\":\"state-set\""
+    "}";
+
 static int check(int condition, const char * message)
 {
   if (!condition) {
@@ -592,6 +610,96 @@ static int test_mailbox_set(void)
   return ok;
 }
 
+static int test_mailbox_set_fastmail_updated_map(void)
+{
+  mailjmap * client;
+  struct fake_context context;
+  struct mailjmap_session * session_object;
+  struct mailjmap_mailbox_set_item * update_item;
+  struct mailjmap_set_result * set_result;
+  clist * update;
+  char * updated;
+  int r;
+  int ok;
+
+  memset(&context, 0, sizeof(context));
+  client = NULL;
+  session_object = NULL;
+  update_item = NULL;
+  set_result = NULL;
+  update = NULL;
+  ok = 0;
+
+  context.mailbox_set_body = dup_string(mailbox_set_fastmail_update_json);
+  if (!check(context.mailbox_set_body != NULL,
+      "mailbox Fastmail set fixture allocation failed"))
+    goto cleanup;
+
+  client = mailjmap_new(0, NULL);
+  if (!check(client != NULL, "client allocation failed"))
+    goto cleanup;
+  r = mailjmap_set_http_transport(client, fake_transport_new(&context));
+  if (!check(r == MAILJMAP_NO_ERROR, "transport set failed"))
+    goto cleanup;
+  r = mailjmap_connect(client, "https://example.com/jmap/session");
+  if (!check(r == MAILJMAP_NO_ERROR, "connect failed"))
+    goto cleanup;
+  r = mailjmap_login_oauth2(client, "user@example.com", "token");
+  if (!check(r == MAILJMAP_NO_ERROR, "login failed"))
+    goto cleanup;
+
+  r = mailjmap_get_session(client, &session_object);
+  if (!check(r == MAILJMAP_NO_ERROR, "get session failed"))
+    goto cleanup;
+
+  update = clist_new();
+  update_item = mailjmap_mailbox_set_item_new("inbox");
+  if (!check((update != NULL) && (update_item != NULL),
+      "set update allocation failed"))
+    goto cleanup;
+  r = mailjmap_mailbox_set_item_set_name(update_item, "Inbox Renamed");
+  if (!check(r == MAILJMAP_NO_ERROR, "update name set failed"))
+    goto cleanup;
+  if (!check(clist_append(update, update_item) >= 0,
+      "update append failed"))
+    goto cleanup;
+  update_item = NULL;
+
+  r = mailjmap_mailbox_set(client, "acc1", NULL, NULL, update, NULL,
+      &set_result);
+  if (!check(r == MAILJMAP_NO_ERROR, "Fastmail Mailbox/set failed"))
+    goto cleanup;
+
+  updated = clist_content(clist_begin(set_result->updated));
+  ok = check(str_equal(set_result->account_id, "acc1"),
+          "Fastmail set accountId mismatch") &&
+      check(str_equal(set_result->old_state, "old"),
+          "Fastmail set oldState mismatch") &&
+      check(str_equal(set_result->new_state, "set-new"),
+          "Fastmail set newState mismatch") &&
+      check(str_equal(updated, "inbox"),
+          "Fastmail set updated object key mismatch") &&
+      check(clist_count(set_result->created) == 0,
+          "Fastmail set created should be empty") &&
+      check(clist_count(set_result->destroyed) == 0,
+          "Fastmail set destroyed should be empty") &&
+      check(clist_count(set_result->not_created) == 0,
+          "Fastmail set notCreated should be empty") &&
+      check(clist_count(set_result->not_updated) == 0,
+          "Fastmail set notUpdated should be empty") &&
+      check(clist_count(set_result->not_destroyed) == 0,
+          "Fastmail set notDestroyed should be empty");
+
+ cleanup:
+  mailjmap_mailbox_set_item_free(update_item);
+  mailbox_set_item_list_free(update);
+  mailjmap_set_result_free(set_result);
+  mailjmap_session_free(session_object);
+  mailjmap_free(client);
+  fake_context_clear(&context);
+  return ok;
+}
+
 static int test_mailbox_get_maps_limit_method_error(void)
 {
   mailjmap * client;
@@ -777,6 +885,8 @@ int main(void)
   if (!test_mailbox_get())
     return 1;
   if (!test_mailbox_set())
+    return 1;
+  if (!test_mailbox_set_fastmail_updated_map())
     return 1;
   if (!test_mailbox_get_maps_limit_method_error())
     return 1;

@@ -58,7 +58,8 @@
   "downloadUrl": "https://api.fastmail.example/jmap/download/{accountId}/{blobId}/{name}?accept={type}",
   "uploadUrl": "https://api.fastmail.example/jmap/upload/{accountId}/",
   "eventSourceUrl": "https://api.fastmail.example/jmap/eventsource/",
-  "sessionState": "fastmail-state-1",
+  "state": "fastmail-state-1",
+  "sessionState": null,
   "extraIgnoredField": {
     "this": "must not break parsing"
   }

@@ -719,7 +719,7 @@ void mailjmap_query_changes_result_free(
   free(result->account_id);
   free(result->old_query_state);
   free(result->new_query_state);
-  query_change_list_free(result->removed);
+  string_list_free(result->removed);
   query_change_list_free(result->added);
   free(result);
 }
@@ -3828,6 +3828,10 @@ static int parse_string_array(mailjmap_json_value * arguments,
     return r;
   if (array == NULL)
     return MAILJMAP_NO_ERROR;
+  if (mailjmap_json_is_null(array)) {
+    mailjmap_json_free(array);
+    return MAILJMAP_NO_ERROR;
+  }
   if (!mailjmap_json_is_array(array)) {
     mailjmap_json_free(array);
     return MAILJMAP_ERROR_PROTOCOL;
@@ -3863,6 +3867,66 @@ static int parse_string_array(mailjmap_json_value * arguments,
   return r;
 }
 
+struct parse_string_object_keys_context {
+  clist * list;
+};
+
+static int parse_string_object_key(const char * key,
+    mailjmap_json_value * value, void * context)
+{
+  struct parse_string_object_keys_context * keys_context;
+  char * key_copy;
+
+  (void) value;
+  if ((key == NULL) || (context == NULL))
+    return MAILJMAP_ERROR_PROTOCOL;
+
+  key_copy = strdup(key);
+  if (key_copy == NULL)
+    return MAILJMAP_ERROR_MEMORY;
+
+  keys_context = context;
+  if (clist_append(keys_context->list, key_copy) < 0) {
+    free(key_copy);
+    return MAILJMAP_ERROR_MEMORY;
+  }
+
+  return MAILJMAP_NO_ERROR;
+}
+
+static int parse_string_array_or_object_keys(mailjmap_json_value * arguments,
+    const char * key, clist * result)
+{
+  struct parse_string_object_keys_context context;
+  mailjmap_json_value * value;
+  int r;
+
+  value = NULL;
+  r = mailjmap_json_object_get(arguments, key, &value);
+  if (r != MAILJMAP_NO_ERROR)
+    return r;
+  if (value == NULL)
+    return MAILJMAP_NO_ERROR;
+  if (mailjmap_json_is_null(value)) {
+    mailjmap_json_free(value);
+    return MAILJMAP_NO_ERROR;
+  }
+  if (mailjmap_json_is_array(value)) {
+    mailjmap_json_free(value);
+    return parse_string_array(arguments, key, result);
+  }
+  if (!mailjmap_json_is_object(value)) {
+    mailjmap_json_free(value);
+    return MAILJMAP_ERROR_PROTOCOL;
+  }
+
+  context.list = result;
+  r = mailjmap_json_object_foreach(value, parse_string_object_key,
+      &context);
+  mailjmap_json_free(value);
+  return r;
+}
+
 static int parse_required_string_array(mailjmap_json_value * arguments,
     const char * key, clist * result)
 {
@@ -3875,6 +3939,10 @@ static int parse_required_string_array(mailjmap_json_value * arguments,
     return r;
   if (array == NULL)
     return MAILJMAP_ERROR_PROTOCOL;
+  if (mailjmap_json_is_null(array)) {
+    mailjmap_json_free(array);
+    return MAILJMAP_ERROR_PROTOCOL;
+  }
   mailjmap_json_free(array);
 
   return parse_string_array(arguments, key, result);
@@ -4276,6 +4344,10 @@ static int parse_email_header_list(mailjmap_json_value * object,
     return r;
   if (array == NULL)
     return MAILJMAP_NO_ERROR;
+  if (mailjmap_json_is_null(array)) {
+    mailjmap_json_free(array);
+    return MAILJMAP_NO_ERROR;
+  }
   if (!mailjmap_json_is_array(array)) {
     mailjmap_json_free(array);
     return MAILJMAP_ERROR_PROTOCOL;
@@ -4485,6 +4557,10 @@ static int parse_email_body_part_array(mailjmap_json_value * object,
     return r;
   if (array == NULL)
     return MAILJMAP_NO_ERROR;
+  if (mailjmap_json_is_null(array)) {
+    mailjmap_json_free(array);
+    return MAILJMAP_NO_ERROR;
+  }
   if (!mailjmap_json_is_array(array)) {
     mailjmap_json_free(array);
     return MAILJMAP_ERROR_PROTOCOL;
@@ -5064,6 +5140,10 @@ static int parse_import_created_map(mailjmap_json_value * arguments,
     return r;
   if (created == NULL)
     return MAILJMAP_NO_ERROR;
+  if (mailjmap_json_is_null(created)) {
+    mailjmap_json_free(created);
+    return MAILJMAP_NO_ERROR;
+  }
   if (!mailjmap_json_is_object(created)) {
     mailjmap_json_free(created);
     return MAILJMAP_ERROR_PROTOCOL;
@@ -5656,6 +5736,10 @@ static int parse_set_created_map(mailjmap_json_value * arguments,
     return r;
   if (created == NULL)
     return MAILJMAP_NO_ERROR;
+  if (mailjmap_json_is_null(created)) {
+    mailjmap_json_free(created);
+    return MAILJMAP_NO_ERROR;
+  }
   if (!mailjmap_json_is_object(created)) {
     mailjmap_json_free(created);
     return MAILJMAP_ERROR_PROTOCOL;
@@ -5730,6 +5814,10 @@ static int parse_set_error_map(mailjmap_json_value * arguments,
     return r;
   if (errors == NULL)
     return MAILJMAP_NO_ERROR;
+  if (mailjmap_json_is_null(errors)) {
+    mailjmap_json_free(errors);
+    return MAILJMAP_NO_ERROR;
+  }
   if (!mailjmap_json_is_object(errors)) {
     mailjmap_json_free(errors);
     return MAILJMAP_ERROR_PROTOCOL;
@@ -5776,7 +5864,8 @@ static int parse_set_arguments(mailjmap_json_value * arguments,
   r = parse_set_created_map(arguments, parsed);
   if (r != MAILJMAP_NO_ERROR)
     goto err;
-  r = parse_string_array(arguments, "updated", parsed->updated);
+  r = parse_string_array_or_object_keys(arguments, "updated",
+      parsed->updated);
   if (r != MAILJMAP_NO_ERROR)
     goto err;
   r = parse_string_array(arguments, "destroyed", parsed->destroyed);
@@ -5952,6 +6041,10 @@ static int parse_query_change_array(mailjmap_json_value * arguments,
     return r;
   if (array == NULL)
     return MAILJMAP_NO_ERROR;
+  if (mailjmap_json_is_null(array)) {
+    mailjmap_json_free(array);
+    return MAILJMAP_NO_ERROR;
+  }
   if (!mailjmap_json_is_array(array)) {
     mailjmap_json_free(array);
     return MAILJMAP_ERROR_PROTOCOL;
@@ -6019,7 +6112,7 @@ static int parse_query_changes_arguments(mailjmap_json_value * arguments,
       &parsed->total);
   if (r != MAILJMAP_NO_ERROR)
     goto err;
-  r = parse_query_change_array(arguments, "removed", parsed->removed);
+  r = parse_string_array(arguments, "removed", parsed->removed);
   if (r != MAILJMAP_NO_ERROR)
     goto err;
   r = parse_query_change_array(arguments, "added", parsed->added);
@@ -7146,6 +7239,10 @@ int mailjmap_identity_get(mailjmap * session,
     return MAILJMAP_ERROR_MEMORY;
 
   r = mailjmap_request_add_capability(request, MAILJMAP_CAPABILITY_MAIL);
+  if (r != MAILJMAP_NO_ERROR)
+    goto cleanup;
+  r = mailjmap_request_add_capability(request,
+      MAILJMAP_CAPABILITY_SUBMISSION);
   if (r != MAILJMAP_NO_ERROR)
     goto cleanup;
   r = build_mailbox_get_arguments(account_id, ids, properties, &arguments);

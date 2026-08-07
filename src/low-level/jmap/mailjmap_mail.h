@@ -165,7 +165,7 @@ struct mailjmap_query_changes_result {
   char * new_query_state;
   int total;
   int has_total;
-  clist * removed; /* struct mailjmap_query_change * */
+  clist * removed; /* char * */
   clist * added; /* struct mailjmap_query_change * */
 };
 

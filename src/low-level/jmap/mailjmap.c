@@ -748,6 +748,45 @@ static int parse_session_primary_accounts(mailjmap_json_value * root,
   return r;
 }
 
+static int parse_session_state(mailjmap_json_value * root,
+    struct mailjmap_session * parsed)
+{
+  mailjmap_json_value * value;
+  int r;
+
+  value = NULL;
+  r = mailjmap_json_object_get(root, "state", &value);
+  if (r != MAILJMAP_NO_ERROR)
+    return r;
+  if (value != NULL) {
+    if (!mailjmap_json_is_string(value)) {
+      mailjmap_json_free(value);
+      return MAILJMAP_ERROR_PROTOCOL;
+    }
+    r = mailjmap_json_string_dup(value, &parsed->session_state);
+    mailjmap_json_free(value);
+    return r;
+  }
+
+  r = mailjmap_json_object_get(root, "sessionState", &value);
+  if (r != MAILJMAP_NO_ERROR)
+    return r;
+  if (value == NULL)
+    return MAILJMAP_NO_ERROR;
+  if (mailjmap_json_is_null(value)) {
+    mailjmap_json_free(value);
+    return MAILJMAP_NO_ERROR;
+  }
+  if (!mailjmap_json_is_string(value)) {
+    mailjmap_json_free(value);
+    return MAILJMAP_ERROR_PROTOCOL;
+  }
+
+  r = mailjmap_json_string_dup(value, &parsed->session_state);
+  mailjmap_json_free(value);
+  return r;
+}
+
 int mailjmap_private_normalize_parse_error(int r)
 {
   if (r == MAILJMAP_ERROR_BAD_STATE)
@@ -799,8 +838,7 @@ static int parse_session_object(const char * data, size_t data_len,
       &parsed->event_source_url);
   if (r != MAILJMAP_NO_ERROR)
     goto err;
-  r = mailjmap_json_object_get_string_dup(root, "sessionState",
-      &parsed->session_state);
+  r = parse_session_state(root, parsed);
   if (r != MAILJMAP_NO_ERROR)
     goto err;
 

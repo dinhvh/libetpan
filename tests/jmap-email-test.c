@@ -19,6 +19,7 @@ struct fake_context {
   char * authorization;
   char * body;
   const char * email_get_body;
+  const char * email_query_changes_body;
 };
 
 static const char session_json[] =
@@ -100,8 +101,23 @@ static const char email_query_changes_json[] =
     "\"oldQueryState\":\"email-query-state\","
     "\"newQueryState\":\"email-query-state-2\","
     "\"total\":3,"
-    "\"removed\":[{\"id\":\"e0\",\"index\":0}],"
+    "\"removed\":[\"e0\"],"
     "\"added\":[{\"id\":\"e3\",\"index\":2}]"
+    "},\"c1\"]"
+    "],"
+    "\"sessionState\":\"state-query-changes\""
+    "}";
+
+static const char email_query_changes_fastmail_nulls_json[] =
+    "{"
+    "\"methodResponses\":["
+    "[\"Email/queryChanges\",{"
+    "\"accountId\":\"acc1\","
+    "\"oldQueryState\":\"email-query-state\","
+    "\"newQueryState\":\"email-query-state-2\","
+    "\"total\":1,"
+    "\"removed\":null,"
+    "\"added\":[{\"id\":\"e3\",\"index\":0}]"
     "},\"c1\"]"
     "],"
     "\"sessionState\":\"state-query-changes\""
@@ -478,7 +494,8 @@ static int fake_perform(struct mailjmap_http_transport * transport,
         context->email_get_body : email_get_json;
   else if ((context->body != NULL) &&
       (strstr(context->body, "\"Email/queryChanges\"") != NULL))
-    body = email_query_changes_json;
+    body = context->email_query_changes_body != NULL ?
+        context->email_query_changes_body : email_query_changes_json;
   else if ((context->body != NULL) &&
       (strstr(context->body, "\"Email/query\"") != NULL))
     body = email_query_json;
@@ -615,7 +632,6 @@ static int test_email_query_and_changes(void)
   struct mailjmap_email_body_part * alternative_html;
   char * mixed_attachment_second_language;
   char * attachment_second_language;
-  struct mailjmap_query_change * removed_change;
   struct mailjmap_query_change * added_change;
   struct mailjmap_import_created * import_created;
   struct mailjmap_import_not_created * import_not_created;
@@ -663,6 +679,7 @@ static int test_email_query_and_changes(void)
   chashdatum map_value;
   char * first_id;
   char * second_id;
+  char * query_removed;
   char * created;
   char * updated;
   char * destroyed;
@@ -714,7 +731,6 @@ static int test_email_query_and_changes(void)
   alternative_html = NULL;
   mixed_attachment_second_language = NULL;
   attachment_second_language = NULL;
-  removed_change = NULL;
   added_change = NULL;
   import_created = NULL;
   import_not_created = NULL;
@@ -757,6 +773,7 @@ static int test_email_query_and_changes(void)
   submission_create = NULL;
   submission_update = NULL;
   submission_destroy = NULL;
+  query_removed = NULL;
   submission_dsn_blob = NULL;
   identity_not_found = NULL;
   email_get_fixture = NULL;
@@ -1023,6 +1040,24 @@ static int test_email_query_and_changes(void)
 
   mailjmap_query_changes_result_free(query_changes_result);
   query_changes_result = NULL;
+  context.email_query_changes_body =
+      email_query_changes_fastmail_nulls_json;
+  r = mailjmap_email_query_changes(client, "acc1", "email-query-state",
+      &query_changes_result);
+  if (!check(r == MAILJMAP_NO_ERROR,
+      "Fastmail Email/queryChanges null arrays failed"))
+    goto cleanup;
+  if (!check(clist_count(query_changes_result->removed) == 0,
+      "Fastmail queryChanges removed should be empty"))
+    goto cleanup;
+  added_change = clist_content(clist_begin(query_changes_result->added));
+  if (!check(str_equal(added_change->id, "e3"),
+      "Fastmail queryChanges added id mismatch"))
+    goto cleanup;
+  context.email_query_changes_body = NULL;
+
+  mailjmap_query_changes_result_free(query_changes_result);
+  query_changes_result = NULL;
   r = mailjmap_email_query_changes_with_text_filter(client, "acc1",
       "email-query-state", "Hello", &query_changes_result);
   if (!check(r == MAILJMAP_NO_ERROR,
@@ -1095,7 +1130,7 @@ static int test_email_query_and_changes(void)
       "request body missing filtered queryChanges upToId"))
     goto cleanup;
 
-  removed_change = clist_content(clist_begin(query_changes_result->removed));
+  query_removed = clist_content(clist_begin(query_changes_result->removed));
   added_change = clist_content(clist_begin(query_changes_result->added));
 
   r = mailjmap_email_changes(client, "acc1", "email-old",
@@ -1401,6 +1436,10 @@ static int test_email_query_and_changes(void)
   if (!check(strstr(context.body, "\"Identity/get\"") != NULL,
       "request body missing Identity/get"))
     goto cleanup;
+  if (!check(strstr(context.body,
+      "\"urn:ietf:params:jmap:submission\"") != NULL,
+      "request body missing identity submission capability"))
+    goto cleanup;
   if (!check(strstr(context.body, "\"accountId\":\"acc1\"") != NULL,
       "request body missing identity accountId"))
     goto cleanup;
@@ -1549,7 +1588,7 @@ static int test_email_query_and_changes(void)
   submission_not_destroyed =
       clist_content(clist_begin(submission_result->not_destroyed));
 
-  ok = check(context.calls == 21, "call count mismatch") &&
+  ok = check(context.calls == 22, "call count mismatch") &&
       check(str_equal(get_result->account_id, "acc1"),
           "get accountId mismatch") &&
       check(str_equal(get_result->state, "email-state"),
@@ -1674,10 +1713,8 @@ static int test_email_query_and_changes(void)
           "queryChanges total presence mismatch") &&
       check(query_changes_result->total == 3,
           "queryChanges total mismatch") &&
-      check(str_equal(removed_change->id, "e0"),
+      check(str_equal(query_removed, "e0"),
           "removed change id mismatch") &&
-      check(removed_change->index == 0,
-          "removed change index mismatch") &&
       check(str_equal(added_change->id, "e3"),
           "added change id mismatch") &&
       check(added_change->index == 2,

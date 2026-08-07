@@ -294,13 +294,36 @@ Read-only smoke test using .well-known discovery:
   JMAP_ACCESS_TOKEN=[access token] \
     ./tests/jmap-live-smoke-test.sh
 
-Guarded send validation is opt-in. It uploads/imports a generated RFC 5322
-message and submits it only when JMAP_SEND_TO is set:
+Guarded send validation is opt-in. It creates a temporary mailbox,
+uploads/imports a generated RFC 5322 message into it, submits the message, and
+cleans up the generated mailbox and imported message. It runs only when
+JMAP_SEND_TO is set:
 
   JMAP_SESSION_URL=https://example.com/jmap/session \
   JMAP_ACCESS_TOKEN=[access token] \
   JMAP_SEND_TO=recipient@example.com \
     ./tests/jmap-live-smoke-test.sh
+
+Full guarded live validation is also opt-in. It creates, renames, and deletes
+a temporary mailbox; records mailbox, email, and thread sync states from
+scratch; imports a generated message with a unique marker; searches for that
+specific message; checks continued sync with changes/queryChanges; fetches the
+message, thread, and search snippets; updates and deletes the generated
+message; exercises Email/copy when the server can perform the requested copy;
+and submits the generated message to JMAP_SEND_TO. The test cleans up generated
+mail and the temporary mailbox on success and on most failures:
+
+  JMAP_SESSION_URL=https://api.fastmail.com/jmap/session \
+  JMAP_EMAIL=dinhvh79@fastmail.com \
+  JMAP_ACCESS_TOKEN="$(sed -n '1p' tests/tmp/fastmail-access-token)" \
+  JMAP_LIVE_FULL_TEST=1 \
+  JMAP_SEND_TO=dinhvh79@fastmail.com \
+    ./tests/jmap-live-smoke-test.sh
+
+Fastmail currently rejects same-account Email/copy with invalidArguments. The
+full live test still sends the Email/copy command and reports that single-account
+copy is unsupported, then continues with the rest of the generated-message
+coverage.
 
 
 fastmail-jmap-oauth.py
