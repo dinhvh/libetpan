@@ -92,10 +92,12 @@ xcuserdata/
 /src/low-level/activesync/Makefile.in
 /src/low-level/feed/Makefile
 /src/low-level/feed/Makefile.in
+/src/low-level/gmail/Makefile
 /src/low-level/imap/Makefile
 /src/low-level/imap/Makefile.in
 /src/low-level/imf/Makefile
 /src/low-level/imf/Makefile.in
+/src/low-level/jmap/Makefile
 /src/low-level/maildir/Makefile
 /src/low-level/maildir/Makefile.in
 /src/low-level/mbox/Makefile
@@ -118,14 +120,24 @@ xcuserdata/
 /src/windows/Makefile.in
 /stamp-h1
 /stamp-prepare
+/test-driver
 /tests/Makefile
 /tests/Makefile.in
+/tests/*.log
+/tests/*.trs
+/tests/__pycache__/
+/tests/activesync-http-test
+/tests/activesync-sample
+/tests/activesync-sample-test
+/tests/activesync-wbxml-test
 /tests/compose-msg
 /tests/decrypt
 /tests/fetch-attachment
 /tests/frm
 /tests/frm-simple
 /tests/frm-tree
+/tests/gmail-http-test
+/tests/gmail-sample
 /tests/pgp
 /tests/readmsg
 /tests/readmsg-simple
@@ -133,11 +145,23 @@ xcuserdata/
 /tests/smime
 /tests/smtpsend
 /tests/imap-sample
+/tests/jmap-blob-test
+/tests/jmap-call-test
+/tests/jmap-email-test
+/tests/jmap-http-test
+/tests/jmap-json-test
+/tests/jmap-mailbox-test
+/tests/jmap-request-test
+/tests/jmap-response-test
+/tests/jmap-sample
+/tests/jmap-session-test
+/tests/jmap-thread-test
 /tests/mime-create
 /tests/mime-parse
 /tests/pop-sample
 
 /unittest/*/*_test
+*.py[cod]
 *.dSYM/
 
 # Windows
@@ -172,6 +196,11 @@ third-party
 .idea/
 libetpan.pc
 
+/docs/
+/plans/
+
 /tests/activesync-ms-oauth.local.json
+/tests/activesync-token.local.json
+/tests/activesync-state.local.txt
 /tests/gmail-google-oauth.local.json
 /tests/gmail-token.local.json
