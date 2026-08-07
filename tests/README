@@ -303,6 +303,37 @@ message and submits it only when JMAP_SEND_TO is set:
     ./tests/jmap-live-smoke-test.sh
 
 
+fastmail-jmap-oauth.py
+----------------------
+gets a Fastmail OAuth bearer token for local JMAP testing. Fastmail OAuth uses
+authorization-code flow with PKCE, so this helper requires a Fastmail-registered
+OAuth client id and a browser sign-in. For one-user testing, a Fastmail JMAP API
+token can also be used directly as JMAP_ACCESS_TOKEN without this OAuth helper.
+
+Read-only JMAP scopes:
+
+  ./tests/fastmail-jmap-oauth.py user@example.com \
+    --client-id=[registered client id] \
+    --token-json=/tmp/fastmail-jmap-token.json \
+    --env-file=/tmp/fastmail-jmap.env \
+    --probe-jmap
+
+Then run:
+
+  . /tmp/fastmail-jmap.env
+  ./tests/jmap-live-smoke-test.sh
+
+The default scope is:
+
+  urn:ietf:params:jmap:core urn:ietf:params:jmap:mail
+
+Add submission only when testing send behavior:
+
+  ./tests/fastmail-jmap-oauth.py user@example.com \
+    --client-id=[registered client id] \
+    --scope="urn:ietf:params:jmap:core urn:ietf:params:jmap:mail urn:ietf:params:jmap:submission"
+
+
 mime-parse
 ----------
 parse a MIME message and show the structure

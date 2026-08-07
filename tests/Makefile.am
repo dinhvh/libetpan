@@ -30,7 +30,7 @@
 include $(top_srcdir)/rules.mk
 
 EXTRA_DIST = README activesync-ms-device-oauth.py activesync-live-sync-test.sh \
-	gmail-google-oauth.py gmail-live-smoke-test.sh \
+	fastmail-jmap-oauth.py gmail-google-oauth.py gmail-live-smoke-test.sh \
 	jmap-live-smoke-test.sh \
 	jmap/data/blob/download-message.eml \
 	jmap/data/blob/upload-response.json \

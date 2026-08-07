@@ -151,6 +151,25 @@ JMAP_SEND_TO=recipient@example.com \
 
 Do not set `JMAP_SEND_TO` during read-only smoke testing.
 
+For Fastmail OAuth testing, `tests/fastmail-jmap-oauth.py` can obtain a bearer
+token using authorization-code flow with PKCE:
+
+```sh
+./tests/fastmail-jmap-oauth.py user@example.com \
+  --client-id=registered-fastmail-client-id \
+  --token-json=/tmp/fastmail-jmap-token.json \
+  --env-file=/tmp/fastmail-jmap.env \
+  --probe-jmap
+
+. /tmp/fastmail-jmap.env
+./tests/jmap-live-smoke-test.sh
+```
+
+Fastmail OAuth clients must be registered with Fastmail. For personal one-user
+testing, a Fastmail JMAP API token can be used directly as `JMAP_ACCESS_TOKEN`;
+the HTTP authentication mechanism is the same `Authorization: Bearer ...`
+header.
+
 ## Local Validation
 
 The local fake-transport suite is expected to pass without live credentials:
