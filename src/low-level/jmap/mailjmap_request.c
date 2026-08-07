@@ -7,6 +7,7 @@
 #endif
 
 #include "mailjmap_request.h"
+#include "mailjmap_types.h"
 
 #include <libetpan/clist.h>
 
@@ -17,7 +18,7 @@
 
 struct mailjmap_method_call {
   char * name;
-  mailjmap_json_value * arguments;
+  mailjson_value * arguments;
   char * call_id;
 };
 
@@ -70,7 +71,7 @@ static void method_call_free(struct mailjmap_method_call * call)
     return;
 
   free(call->name);
-  mailjmap_json_free(call->arguments);
+  mailjson_free(call->arguments);
   free(call->call_id);
   free(call);
 }
@@ -140,13 +141,13 @@ int mailjmap_request_add_capability(struct mailjmap_request * request,
 }
 
 int mailjmap_request_add_call_json(struct mailjmap_request * request,
-    const char * name, mailjmap_json_value * arguments,
+    const char * name, mailjson_value * arguments,
     const char * call_id)
 {
   struct mailjmap_method_call * call;
 
   if ((request == NULL) || (name == NULL) || (* name == '\0') ||
-      (arguments == NULL) || !mailjmap_json_is_object(arguments) ||
+      (arguments == NULL) || !mailjson_is_object(arguments) ||
       (call_id == NULL) || (* call_id == '\0'))
     return MAILJMAP_ERROR_BAD_STATE;
 
@@ -172,20 +173,20 @@ int mailjmap_request_add_call_json(struct mailjmap_request * request,
   return MAILJMAP_NO_ERROR;
 }
 
-static int object_set_string(mailjmap_json_value * object,
+static int object_set_string(mailjson_value * object,
     const char * key, const char * string)
 {
-  mailjmap_json_value * value;
+  mailjson_value * value;
   int r;
 
   value = NULL;
-  r = mailjmap_json_new_string(string, &value);
+  r = mailjson_new_string(string, &value);
   if (r != MAILJMAP_NO_ERROR)
     return r;
 
-  r = mailjmap_json_object_set_new(object, key, value);
+  r = mailjson_object_set_new(object, key, value);
   if (r != MAILJMAP_NO_ERROR) {
-    mailjmap_json_free(value);
+    mailjson_free(value);
     return r;
   }
 
@@ -195,27 +196,27 @@ static int object_set_string(mailjmap_json_value * object,
 int mailjmap_request_add_call_empty(struct mailjmap_request * request,
     const char * name, const char * call_id)
 {
-  mailjmap_json_value * arguments;
+  mailjson_value * arguments;
   int r;
 
   arguments = NULL;
-  r = mailjmap_json_new_object(&arguments);
+  r = mailjson_new_object(&arguments);
   if (r != MAILJMAP_NO_ERROR)
     return r;
 
   r = mailjmap_request_add_call_json(request, name, arguments, call_id);
   if (r != MAILJMAP_NO_ERROR) {
-    mailjmap_json_free(arguments);
+    mailjson_free(arguments);
     return r;
   }
 
   return MAILJMAP_NO_ERROR;
 }
 
-int mailjmap_request_add_string_argument(mailjmap_json_value * arguments,
+int mailjmap_request_add_string_argument(mailjson_value * arguments,
     const char * key, const char * value)
 {
-  if ((arguments == NULL) || !mailjmap_json_is_object(arguments) ||
+  if ((arguments == NULL) || !mailjson_is_object(arguments) ||
       (key == NULL) || (* key == '\0') || (value == NULL))
     return MAILJMAP_ERROR_BAD_STATE;
 
@@ -223,16 +224,16 @@ int mailjmap_request_add_string_argument(mailjmap_json_value * arguments,
 }
 
 int mailjmap_request_arguments_set_result_reference(
-    mailjmap_json_value * arguments,
+    mailjson_value * arguments,
     const char * key,
     const char * result_of,
     const char * name,
     const char * path)
 {
-  mailjmap_json_value * reference;
+  mailjson_value * reference;
   int r;
 
-  if ((arguments == NULL) || !mailjmap_json_is_object(arguments) ||
+  if ((arguments == NULL) || !mailjson_is_object(arguments) ||
       (key == NULL) || (* key == '\0') || (key[0] != '#') ||
       (result_of == NULL) || (* result_of == '\0') ||
       (name == NULL) || (* name == '\0') ||
@@ -240,7 +241,7 @@ int mailjmap_request_arguments_set_result_reference(
     return MAILJMAP_ERROR_BAD_STATE;
 
   reference = NULL;
-  r = mailjmap_json_new_object(&reference);
+  r = mailjson_new_object(&reference);
   if (r != MAILJMAP_NO_ERROR)
     return r;
 
@@ -254,14 +255,14 @@ int mailjmap_request_arguments_set_result_reference(
   if (r != MAILJMAP_NO_ERROR)
     goto err;
 
-  r = mailjmap_json_object_set_new(arguments, key, reference);
+  r = mailjson_object_set_new(arguments, key, reference);
   if (r != MAILJMAP_NO_ERROR)
     goto err;
 
   return MAILJMAP_NO_ERROR;
 
  err:
-  mailjmap_json_free(reference);
+  mailjson_free(reference);
   return r;
 }
 
@@ -287,20 +288,20 @@ const char * mailjmap_request_method_name_for_call_id(
   return NULL;
 }
 
-static int append_string_value(mailjmap_json_value * array,
+static int append_string_value(mailjson_value * array,
     const char * string)
 {
-  mailjmap_json_value * value;
+  mailjson_value * value;
   int r;
 
   value = NULL;
-  r = mailjmap_json_new_string(string, &value);
+  r = mailjson_new_string(string, &value);
   if (r != MAILJMAP_NO_ERROR)
     return r;
 
-  r = mailjmap_json_array_append_new(array, value);
+  r = mailjson_array_append_new(array, value);
   if (r != MAILJMAP_NO_ERROR) {
-    mailjmap_json_free(value);
+    mailjson_free(value);
     return r;
   }
 
@@ -308,14 +309,14 @@ static int append_string_value(mailjmap_json_value * array,
 }
 
 static int build_using(struct mailjmap_request * request,
-    mailjmap_json_value ** result)
+    mailjson_value ** result)
 {
-  mailjmap_json_value * array;
+  mailjson_value * array;
   clistiter * cur;
   int r;
 
   array = NULL;
-  r = mailjmap_json_new_array(&array);
+  r = mailjson_new_array(&array);
   if (r != MAILJMAP_NO_ERROR)
     return r;
 
@@ -334,21 +335,21 @@ static int build_using(struct mailjmap_request * request,
   return MAILJMAP_NO_ERROR;
 
  err:
-  mailjmap_json_free(array);
+  mailjson_free(array);
   return r;
 }
 
 static int build_method_call(struct mailjmap_method_call * call,
-    mailjmap_json_value ** result)
+    mailjson_value ** result)
 {
-  mailjmap_json_value * array;
-  mailjmap_json_value * value;
+  mailjson_value * array;
+  mailjson_value * value;
   int r;
 
   array = NULL;
   value = NULL;
 
-  r = mailjmap_json_new_array(&array);
+  r = mailjson_new_array(&array);
   if (r != MAILJMAP_NO_ERROR)
     return r;
 
@@ -356,10 +357,10 @@ static int build_method_call(struct mailjmap_method_call * call,
   if (r != MAILJMAP_NO_ERROR)
     goto err;
 
-  r = mailjmap_json_deep_copy(call->arguments, &value);
+  r = mailjson_deep_copy(call->arguments, &value);
   if (r != MAILJMAP_NO_ERROR)
     goto err;
-  r = mailjmap_json_array_append_new(array, value);
+  r = mailjson_array_append_new(array, value);
   value = NULL;
   if (r != MAILJMAP_NO_ERROR)
     goto err;
@@ -372,35 +373,35 @@ static int build_method_call(struct mailjmap_method_call * call,
   return MAILJMAP_NO_ERROR;
 
  err:
-  mailjmap_json_free(value);
-  mailjmap_json_free(array);
+  mailjson_free(value);
+  mailjson_free(array);
   return r;
 }
 
 static int build_method_calls(struct mailjmap_request * request,
-    mailjmap_json_value ** result)
+    mailjson_value ** result)
 {
-  mailjmap_json_value * array;
+  mailjson_value * array;
   clistiter * cur;
   int r;
 
   array = NULL;
-  r = mailjmap_json_new_array(&array);
+  r = mailjson_new_array(&array);
   if (r != MAILJMAP_NO_ERROR)
     return r;
 
   for (cur = clist_begin(request->method_calls); cur != NULL;
        cur = clist_next(cur)) {
-    mailjmap_json_value * call_value;
+    mailjson_value * call_value;
 
     call_value = NULL;
     r = build_method_call(clist_content(cur), &call_value);
     if (r != MAILJMAP_NO_ERROR)
       goto err;
 
-    r = mailjmap_json_array_append_new(array, call_value);
+    r = mailjson_array_append_new(array, call_value);
     if (r != MAILJMAP_NO_ERROR) {
-      mailjmap_json_free(call_value);
+      mailjson_free(call_value);
       goto err;
     }
   }
@@ -409,16 +410,16 @@ static int build_method_calls(struct mailjmap_request * request,
   return MAILJMAP_NO_ERROR;
 
  err:
-  mailjmap_json_free(array);
+  mailjson_free(array);
   return r;
 }
 
 int mailjmap_request_serialize(struct mailjmap_request * request,
-    mailjmap_json_value ** result)
+    mailjson_value ** result)
 {
-  mailjmap_json_value * root;
-  mailjmap_json_value * using_array;
-  mailjmap_json_value * method_calls;
+  mailjson_value * root;
+  mailjson_value * using_array;
+  mailjson_value * method_calls;
   int r;
 
   if ((request == NULL) || (result == NULL))
@@ -428,7 +429,7 @@ int mailjmap_request_serialize(struct mailjmap_request * request,
   using_array = NULL;
   method_calls = NULL;
 
-  r = mailjmap_json_new_object(&root);
+  r = mailjson_new_object(&root);
   if (r != MAILJMAP_NO_ERROR)
     return r;
 
@@ -436,7 +437,7 @@ int mailjmap_request_serialize(struct mailjmap_request * request,
   if (r != MAILJMAP_NO_ERROR)
     goto err;
 
-  r = mailjmap_json_object_set_new(root, "using", using_array);
+  r = mailjson_object_set_new(root, "using", using_array);
   using_array = NULL;
   if (r != MAILJMAP_NO_ERROR)
     goto err;
@@ -445,7 +446,7 @@ int mailjmap_request_serialize(struct mailjmap_request * request,
   if (r != MAILJMAP_NO_ERROR)
     goto err;
 
-  r = mailjmap_json_object_set_new(root, "methodCalls", method_calls);
+  r = mailjson_object_set_new(root, "methodCalls", method_calls);
   method_calls = NULL;
   if (r != MAILJMAP_NO_ERROR)
     goto err;
@@ -454,8 +455,8 @@ int mailjmap_request_serialize(struct mailjmap_request * request,
   return MAILJMAP_NO_ERROR;
 
  err:
-  mailjmap_json_free(method_calls);
-  mailjmap_json_free(using_array);
-  mailjmap_json_free(root);
+  mailjson_free(method_calls);
+  mailjson_free(using_array);
+  mailjson_free(root);
   return r;
 }

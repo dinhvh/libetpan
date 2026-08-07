@@ -8,7 +8,7 @@
 
 #include <libetpan/mailgmail.h>
 
-#include "../src/low-level/gmail/mailgmail_json.h"
+#include "../src/low-level/gmail/mailgmail_parser.h"
 #include "../src/low-level/gmail/mailgmail_url.h"
 
 #include <stdio.h>
@@ -92,7 +92,7 @@ static int test_message_list_parse(void)
   int ok;
 
   list = NULL;
-  r = mailgmail_json_parse_message_list(json, strlen(json), &list);
+  r = mailgmail_parser_parse_message_list(json, strlen(json), &list);
   if (!check(r == MAILGMAIL_NO_ERROR, "message list parse failed"))
     return 0;
 
@@ -189,7 +189,7 @@ static int test_profile_parse(void)
   int ok;
 
   profile = NULL;
-  r = mailgmail_json_parse_profile(json, strlen(json), &profile);
+  r = mailgmail_parser_parse_profile(json, strlen(json), &profile);
   if (!check(r == MAILGMAIL_NO_ERROR, "profile parse failed"))
     return 0;
 
@@ -235,7 +235,7 @@ static int test_label_list_parse(void)
   int ok;
 
   label_list = NULL;
-  r = mailgmail_json_parse_label_list(json, strlen(json), &label_list);
+  r = mailgmail_parser_parse_label_list(json, strlen(json), &label_list);
   if (!check(r == MAILGMAIL_NO_ERROR, "label list parse failed"))
     return 0;
 
@@ -266,7 +266,7 @@ static int test_attachment_parse(void)
   int ok;
 
   attachment = NULL;
-  r = mailgmail_json_parse_attachment(json, strlen(json), &attachment);
+  r = mailgmail_parser_parse_attachment(json, strlen(json), &attachment);
   if (!check(r == MAILGMAIL_NO_ERROR, "attachment parse failed"))
     return 0;
 
@@ -305,7 +305,7 @@ static int test_message_parse(void)
   int ok;
 
   message = NULL;
-  r = mailgmail_json_parse_message(json, strlen(json), &message);
+  r = mailgmail_parser_parse_message(json, strlen(json), &message);
   if (!check(r == MAILGMAIL_NO_ERROR, "message parse failed"))
     return 0;
 

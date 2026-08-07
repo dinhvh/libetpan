@@ -6,8 +6,9 @@
 #	include <config.h>
 #endif
 
-#include "../src/low-level/jmap/mailjmap_json.h"
+#include "../src/data-types/mailjson.h"
 #include "../src/low-level/jmap/mailjmap_request.h"
+#include "../src/low-level/jmap/mailjmap_types.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -87,20 +88,20 @@ static int str_equal(const char * left, const char * right)
   return (left != NULL) && (right != NULL) && (strcmp(left, right) == 0);
 }
 
-static int add_string_property(mailjmap_json_value * object,
+static int add_string_property(mailjson_value * object,
     const char * key, const char * value)
 {
-  mailjmap_json_value * string_value;
+  mailjson_value * string_value;
   int r;
 
   string_value = NULL;
-  r = mailjmap_json_new_string(value, &string_value);
+  r = mailjson_new_string(value, &string_value);
   if (r != MAILJMAP_NO_ERROR)
     return r;
 
-  r = mailjmap_json_object_set_new(object, key, string_value);
+  r = mailjson_object_set_new(object, key, string_value);
   if (r != MAILJMAP_NO_ERROR) {
-    mailjmap_json_free(string_value);
+    mailjson_free(string_value);
     return r;
   }
 
@@ -110,8 +111,8 @@ static int add_string_property(mailjmap_json_value * object,
 static int test_request_convenience_helpers(void)
 {
   struct mailjmap_request * request;
-  mailjmap_json_value * arguments;
-  mailjmap_json_value * envelope;
+  mailjson_value * arguments;
+  mailjson_value * envelope;
   char * data;
   size_t data_len;
   int r;
@@ -133,7 +134,7 @@ static int test_request_convenience_helpers(void)
   if (!check(r == MAILJMAP_NO_ERROR, "extension capability add failed"))
     goto cleanup;
 
-  r = mailjmap_json_new_object(&arguments);
+  r = mailjson_new_object(&arguments);
   if (!check(r == MAILJMAP_NO_ERROR, "convenience args allocation failed"))
     goto cleanup;
   r = mailjmap_request_add_string_argument(arguments, "accountId", "acc1");
@@ -152,9 +153,9 @@ static int test_request_convenience_helpers(void)
   r = mailjmap_request_serialize(request, &envelope);
   if (!check(r == MAILJMAP_NO_ERROR, "convenience serialization failed"))
     goto cleanup;
-  r = mailjmap_json_serialize(envelope,
-      MAILJMAP_JSON_SERIALIZE_COMPACT |
-      MAILJMAP_JSON_SERIALIZE_SORT_KEYS,
+  r = mailjson_serialize(envelope,
+      MAILJSON_SERIALIZE_COMPACT |
+      MAILJSON_SERIALIZE_SORT_KEYS,
       &data, &data_len);
   if (!check(r == MAILJMAP_NO_ERROR, "convenience JSON serialization failed"))
     goto cleanup;
@@ -171,8 +172,8 @@ static int test_request_convenience_helpers(void)
 
  cleanup:
   free(data);
-  mailjmap_json_free(envelope);
-  mailjmap_json_free(arguments);
+  mailjson_free(envelope);
+  mailjson_free(arguments);
   mailjmap_request_free(request);
   return ok;
 }
@@ -180,8 +181,8 @@ static int test_request_convenience_helpers(void)
 static int test_request_serialize(void)
 {
   struct mailjmap_request * request;
-  mailjmap_json_value * arguments;
-  mailjmap_json_value * envelope;
+  mailjson_value * arguments;
+  mailjson_value * envelope;
   char * data;
   char * expected;
   size_t data_len;
@@ -210,7 +211,7 @@ static int test_request_serialize(void)
   if (!check(r == MAILJMAP_NO_ERROR, "mail capability add failed"))
     goto cleanup;
 
-  r = mailjmap_json_new_object(&arguments);
+  r = mailjson_new_object(&arguments);
   if (!check(r == MAILJMAP_NO_ERROR, "arguments allocation failed"))
     goto cleanup;
 
@@ -227,9 +228,9 @@ static int test_request_serialize(void)
   if (!check(r == MAILJMAP_NO_ERROR, "request serialization failed"))
     goto cleanup;
 
-  r = mailjmap_json_serialize(envelope,
-      MAILJMAP_JSON_SERIALIZE_COMPACT |
-      MAILJMAP_JSON_SERIALIZE_SORT_KEYS,
+  r = mailjson_serialize(envelope,
+      MAILJSON_SERIALIZE_COMPACT |
+      MAILJSON_SERIALIZE_SORT_KEYS,
       &data, &data_len);
   if (!check(r == MAILJMAP_NO_ERROR, "JSON serialization failed"))
     goto cleanup;
@@ -245,8 +246,8 @@ static int test_request_serialize(void)
  cleanup:
   free(expected);
   free(data);
-  mailjmap_json_free(envelope);
-  mailjmap_json_free(arguments);
+  mailjson_free(envelope);
+  mailjson_free(arguments);
   mailjmap_request_free(request);
   return ok;
 }
@@ -254,9 +255,9 @@ static int test_request_serialize(void)
 static int test_request_result_reference(void)
 {
   struct mailjmap_request * request;
-  mailjmap_json_value * query_args;
-  mailjmap_json_value * get_args;
-  mailjmap_json_value * envelope;
+  mailjson_value * query_args;
+  mailjson_value * get_args;
+  mailjson_value * envelope;
   char * data;
   char * expected;
   size_t data_len;
@@ -281,7 +282,7 @@ static int test_request_result_reference(void)
   if (!check(r == MAILJMAP_NO_ERROR, "mail capability add failed"))
     goto cleanup;
 
-  r = mailjmap_json_new_object(&query_args);
+  r = mailjson_new_object(&query_args);
   if (!check(r == MAILJMAP_NO_ERROR, "query args allocation failed"))
     goto cleanup;
   r = add_string_property(query_args, "accountId", "acc1");
@@ -293,7 +294,7 @@ static int test_request_result_reference(void)
     goto cleanup;
   query_args = NULL;
 
-  r = mailjmap_json_new_object(&get_args);
+  r = mailjson_new_object(&get_args);
   if (!check(r == MAILJMAP_NO_ERROR, "get args allocation failed"))
     goto cleanup;
   r = add_string_property(get_args, "accountId", "acc1");
@@ -312,9 +313,9 @@ static int test_request_result_reference(void)
   if (!check(r == MAILJMAP_NO_ERROR, "request serialization failed"))
     goto cleanup;
 
-  r = mailjmap_json_serialize(envelope,
-      MAILJMAP_JSON_SERIALIZE_COMPACT |
-      MAILJMAP_JSON_SERIALIZE_SORT_KEYS,
+  r = mailjson_serialize(envelope,
+      MAILJSON_SERIALIZE_COMPACT |
+      MAILJSON_SERIALIZE_SORT_KEYS,
       &data, &data_len);
   if (!check(r == MAILJMAP_NO_ERROR, "JSON serialization failed"))
     goto cleanup;
@@ -330,9 +331,9 @@ static int test_request_result_reference(void)
  cleanup:
   free(expected);
   free(data);
-  mailjmap_json_free(envelope);
-  mailjmap_json_free(get_args);
-  mailjmap_json_free(query_args);
+  mailjson_free(envelope);
+  mailjson_free(get_args);
+  mailjson_free(query_args);
   mailjmap_request_free(request);
   return ok;
 }

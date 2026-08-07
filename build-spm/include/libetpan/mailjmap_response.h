@@ -10,7 +10,7 @@
 extern "C" {
 #endif
 
-#include <libetpan/mailjmap_json.h>
+#include <libetpan/mailjson.h>
 
 #include <libetpan/clist.h>
 
@@ -18,7 +18,7 @@ extern "C" {
 
 struct mailjmap_method_response {
   char * name;
-  mailjmap_json_value * arguments;
+  mailjson_value * arguments;
   char * call_id;
 };
 
@@ -32,7 +32,7 @@ struct mailjmap_response {
 LIBETPAN_EXPORT
 struct mailjmap_method_response *
 mailjmap_method_response_new(const char * name,
-    mailjmap_json_value * arguments, const char * call_id);
+    mailjson_value * arguments, const char * call_id);
 
 LIBETPAN_EXPORT
 void mailjmap_method_response_free(

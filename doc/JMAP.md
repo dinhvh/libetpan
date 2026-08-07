@@ -27,11 +27,11 @@ Implemented session and transport behavior:
 
 JSON dependency and adapter boundary:
 
-- libjansson is the selected JSON dependency for low-level JMAP support.
-- Jansson is exposed only through the `mailjmap_json_*` adapter.
-- `mailjmap_json.c` owns the direct Jansson include and API calls. Request,
-  response, session, mail, and blob code use `mailjmap_json_value` and adapter
-  functions rather than depending on Jansson directly.
+- libjansson is the selected JSON dependency for low-level JSON support.
+- Jansson is exposed only through the shared `mailjson_*` adapter in
+  `src/data-types`.
+- Request, response, session, mail, and blob code use `mailjson_value` and
+  `mailjson_*` directly rather than depending on Jansson directly.
 - `tests/jmap-json-test.c` may include Jansson directly when it needs to verify
   adapter behavior against the backend.
 
@@ -95,8 +95,8 @@ keeping JSON ownership inside the adapter. Prefer typed helpers for stable RFC
   or ordered values by callers.
 - Mailboxes may represent labels rather than strict folders. Callers should not
   assume one mailbox per email.
-- JSON parsing is hidden behind `mailjmap_json_*`. As of this snapshot, that
-  adapter boundary is stable and the concrete backend is libjansson.
+- JSON parsing is hidden behind `mailjson_*`. As of this snapshot, that adapter
+  boundary is stable and the concrete backend is libjansson.
 - Typed method helpers map common method-level JMAP `error` types to specific
   low-level errors when possible, while preserving method name, call id, error
   type, and description in session diagnostics.

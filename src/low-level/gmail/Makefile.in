@@ -182,12 +182,12 @@ CONFIG_CLEAN_VPATH_FILES =
 LTLIBRARIES = $(noinst_LTLIBRARIES)
 libgmail_la_LIBADD =
 am__libgmail_la_SOURCES_DIST = mailgmail.c mailgmail_types.c \
-	mailgmail_http.c mailgmail_http_curl.c mailgmail_json.c \
+	mailgmail_http.c mailgmail_http_curl.c mailgmail_parser.c \
 	mailgmail_url.c mailgmail_http_nsurlsession.m
 @HAVE_NSURLSESSION_TRUE@am__objects_1 =  \
 @HAVE_NSURLSESSION_TRUE@	mailgmail_http_nsurlsession.lo
 am_libgmail_la_OBJECTS = mailgmail.lo mailgmail_types.lo \
-	mailgmail_http.lo mailgmail_http_curl.lo mailgmail_json.lo \
+	mailgmail_http.lo mailgmail_http_curl.lo mailgmail_parser.lo \
 	mailgmail_url.lo $(am__objects_1)
 libgmail_la_OBJECTS = $(am_libgmail_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
@@ -213,7 +213,7 @@ am__depfiles_remade = ./$(DEPDIR)/mailgmail.Plo \
 	./$(DEPDIR)/mailgmail_http.Plo \
 	./$(DEPDIR)/mailgmail_http_curl.Plo \
 	./$(DEPDIR)/mailgmail_http_nsurlsession.Plo \
-	./$(DEPDIR)/mailgmail_json.Plo ./$(DEPDIR)/mailgmail_types.Plo \
+	./$(DEPDIR)/mailgmail_parser.Plo ./$(DEPDIR)/mailgmail_types.Plo \
 	./$(DEPDIR)/mailgmail_url.Plo
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
@@ -483,7 +483,7 @@ etpaninclude_HEADERS = \
 	mailgmail.h mailgmail_types.h
 
 noinst_HEADERS = \
-	mailgmail_http.h mailgmail_json.h mailgmail_private.h mailgmail_url.h
+	mailgmail_http.h mailgmail_parser.h mailgmail_private.h mailgmail_url.h
 
 AM_CPPFLAGS = -I$(top_builddir)/include \
 	-I$(top_srcdir)/src/data-types
@@ -494,7 +494,7 @@ noinst_LTLIBRARIES = libgmail.la
 libgmail_la_SOURCES = \
 	mailgmail.c mailgmail_types.c \
 	mailgmail_http.c mailgmail_http_curl.c \
-	mailgmail_json.c mailgmail_url.c \
+	mailgmail_parser.c mailgmail_url.c \
 	$(nsurlsession_sources)
 
 libgmail_la_LINK = $(LINK)
@@ -557,7 +557,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mailgmail_http.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mailgmail_http_curl.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mailgmail_http_nsurlsession.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mailgmail_json.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mailgmail_parser.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mailgmail_types.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mailgmail_url.Plo@am__quote@ # am--include-marker
 
@@ -772,7 +772,7 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/mailgmail_http.Plo
 	-rm -f ./$(DEPDIR)/mailgmail_http_curl.Plo
 	-rm -f ./$(DEPDIR)/mailgmail_http_nsurlsession.Plo
-	-rm -f ./$(DEPDIR)/mailgmail_json.Plo
+	-rm -f ./$(DEPDIR)/mailgmail_parser.Plo
 	-rm -f ./$(DEPDIR)/mailgmail_types.Plo
 	-rm -f ./$(DEPDIR)/mailgmail_url.Plo
 	-rm -f Makefile
@@ -824,7 +824,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/mailgmail_http.Plo
 	-rm -f ./$(DEPDIR)/mailgmail_http_curl.Plo
 	-rm -f ./$(DEPDIR)/mailgmail_http_nsurlsession.Plo
-	-rm -f ./$(DEPDIR)/mailgmail_json.Plo
+	-rm -f ./$(DEPDIR)/mailgmail_parser.Plo
 	-rm -f ./$(DEPDIR)/mailgmail_types.Plo
 	-rm -f ./$(DEPDIR)/mailgmail_url.Plo
 	-rm -f Makefile

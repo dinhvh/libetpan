@@ -7,6 +7,7 @@
 #endif
 
 #include "../src/low-level/jmap/mailjmap_response.h"
+#include "../src/low-level/jmap/mailjmap_types.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -87,7 +88,7 @@ static int test_response_parse_success_and_error(void)
   struct mailjmap_response * response;
   struct mailjmap_method_response * first;
   struct mailjmap_method_response * second;
-  mailjmap_json_value * type_value;
+  mailjson_value * type_value;
   char * data;
   char * type;
   size_t data_len;
@@ -112,10 +113,10 @@ static int test_response_parse_success_and_error(void)
   first = clist_content(clist_begin(response->method_responses));
   second = clist_content(clist_next(clist_begin(response->method_responses)));
 
-  r = mailjmap_json_object_get(second->arguments, "type", &type_value);
+  r = mailjson_object_get(second->arguments, "type", &type_value);
   if (!check(r == MAILJMAP_NO_ERROR, "error type lookup failed"))
     goto cleanup;
-  r = mailjmap_json_string_dup(type_value, &type);
+  r = mailjson_string_dup(type_value, &type);
   if (!check(r == MAILJMAP_NO_ERROR, "error type duplication failed"))
     goto cleanup;
 
@@ -133,7 +134,7 @@ static int test_response_parse_success_and_error(void)
  cleanup:
   free(type);
   free(data);
-  mailjmap_json_free(type_value);
+  mailjson_free(type_value);
   mailjmap_response_free(response);
   return ok;
 }

@@ -7,7 +7,7 @@
 #endif
 
 #include "mailjmap.h"
-#include "mailjmap_json.h"
+#include <libetpan/mailjson.h>
 #include "mailjmap_private.h"
 #include "mailjmap_request.h"
 #include "mailjmap_response.h"
@@ -156,11 +156,11 @@ static int remember_last_method_error(mailjmap * session,
   method_name = mailjmap_request_method_name_for_call_id(request,
       method_response->call_id);
 
-  r = mailjmap_json_object_get_string_dup(method_response->arguments, "type",
+  r = mailjson_object_get_string_dup(method_response->arguments, "type",
       &type);
   if (r != MAILJMAP_NO_ERROR)
     goto cleanup;
-  r = mailjmap_json_object_get_string_dup(method_response->arguments,
+  r = mailjson_object_get_string_dup(method_response->arguments,
       "description", &description);
   if (r != MAILJMAP_NO_ERROR)
     goto cleanup;
@@ -540,7 +540,7 @@ struct parse_capability_context {
 };
 
 static int append_capability_detail(const char * key,
-    mailjmap_json_value * value, void * context)
+    mailjson_value * value, void * context)
 {
   struct parse_capability_context * capability_context;
   struct mailjmap_session_capability * detail;
@@ -557,8 +557,8 @@ static int append_capability_detail(const char * key,
     return r;
 
   json = NULL;
-  r = mailjmap_json_serialize(value,
-      MAILJMAP_JSON_SERIALIZE_COMPACT | MAILJMAP_JSON_SERIALIZE_SORT_KEYS,
+  r = mailjson_serialize(value,
+      MAILJSON_SERIALIZE_COMPACT | MAILJSON_SERIALIZE_SORT_KEYS,
       &json, &json_len);
   if (r != MAILJMAP_NO_ERROR)
     return r;
@@ -576,60 +576,60 @@ static int append_capability_detail(const char * key,
   return MAILJMAP_NO_ERROR;
 }
 
-static int parse_session_capabilities(mailjmap_json_value * root,
+static int parse_session_capabilities(mailjson_value * root,
     struct mailjmap_session * parsed)
 {
   struct parse_capability_context context;
-  mailjmap_json_value * capabilities;
+  mailjson_value * capabilities;
   int r;
 
   capabilities = NULL;
-  r = mailjmap_json_object_get(root, "capabilities", &capabilities);
+  r = mailjson_object_get(root, "capabilities", &capabilities);
   if (r != MAILJMAP_NO_ERROR)
     return r;
   if (capabilities == NULL)
     return MAILJMAP_ERROR_PROTOCOL;
-  if (!mailjmap_json_is_object(capabilities)) {
-    mailjmap_json_free(capabilities);
+  if (!mailjson_is_object(capabilities)) {
+    mailjson_free(capabilities);
     return MAILJMAP_ERROR_PROTOCOL;
   }
 
   context.names = parsed->capabilities;
   context.details = parsed->capability_details;
-  r = mailjmap_json_object_foreach(capabilities, append_capability_detail,
+  r = mailjson_object_foreach(capabilities, append_capability_detail,
       &context);
-  mailjmap_json_free(capabilities);
+  mailjson_free(capabilities);
   return r;
 }
 
-static int parse_account_capabilities(mailjmap_json_value * account_value,
+static int parse_account_capabilities(mailjson_value * account_value,
     struct mailjmap_session_account * account)
 {
   struct parse_capability_context context;
-  mailjmap_json_value * capabilities;
+  mailjson_value * capabilities;
   int r;
 
   capabilities = NULL;
-  r = mailjmap_json_object_get(account_value, "accountCapabilities",
+  r = mailjson_object_get(account_value, "accountCapabilities",
       &capabilities);
   if (r != MAILJMAP_NO_ERROR)
     return r;
   if (capabilities == NULL)
     return MAILJMAP_NO_ERROR;
-  if (!mailjmap_json_is_object(capabilities)) {
-    mailjmap_json_free(capabilities);
+  if (!mailjson_is_object(capabilities)) {
+    mailjson_free(capabilities);
     return MAILJMAP_ERROR_PROTOCOL;
   }
 
   context.names = account->capabilities;
   context.details = account->capability_details;
-  r = mailjmap_json_object_foreach(capabilities, append_capability_detail,
+  r = mailjson_object_foreach(capabilities, append_capability_detail,
       &context);
-  mailjmap_json_free(capabilities);
+  mailjson_free(capabilities);
   return r;
 }
 
-static int parse_account_entry(const char * key, mailjmap_json_value * value,
+static int parse_account_entry(const char * key, mailjson_value * value,
     void * context)
 {
   struct mailjmap_session * parsed;
@@ -637,21 +637,21 @@ static int parse_account_entry(const char * key, mailjmap_json_value * value,
   int r;
 
   parsed = context;
-  if (!mailjmap_json_is_object(value))
+  if (!mailjson_is_object(value))
     return MAILJMAP_ERROR_PROTOCOL;
 
   account = mailjmap_session_account_new(key);
   if (account == NULL)
     return MAILJMAP_ERROR_MEMORY;
 
-  r = mailjmap_json_object_get_string_dup(value, "name", &account->name);
+  r = mailjson_object_get_string_dup(value, "name", &account->name);
   if (r != MAILJMAP_NO_ERROR)
     goto err;
-  r = mailjmap_json_object_get_boolean(value, "isPersonal",
+  r = mailjson_object_get_boolean(value, "isPersonal",
       &account->is_personal);
   if (r != MAILJMAP_NO_ERROR)
     goto err;
-  r = mailjmap_json_object_get_boolean(value, "isReadOnly",
+  r = mailjson_object_get_boolean(value, "isReadOnly",
       &account->is_read_only);
   if (r != MAILJMAP_NO_ERROR)
     goto err;
@@ -671,30 +671,30 @@ static int parse_account_entry(const char * key, mailjmap_json_value * value,
   return r;
 }
 
-static int parse_session_accounts(mailjmap_json_value * root,
+static int parse_session_accounts(mailjson_value * root,
     struct mailjmap_session * parsed)
 {
-  mailjmap_json_value * accounts;
+  mailjson_value * accounts;
   int r;
 
   accounts = NULL;
-  r = mailjmap_json_object_get(root, "accounts", &accounts);
+  r = mailjson_object_get(root, "accounts", &accounts);
   if (r != MAILJMAP_NO_ERROR)
     return r;
   if (accounts == NULL)
     return MAILJMAP_ERROR_PROTOCOL;
-  if (!mailjmap_json_is_object(accounts)) {
-    mailjmap_json_free(accounts);
+  if (!mailjson_is_object(accounts)) {
+    mailjson_free(accounts);
     return MAILJMAP_ERROR_PROTOCOL;
   }
 
-  r = mailjmap_json_object_foreach(accounts, parse_account_entry, parsed);
-  mailjmap_json_free(accounts);
+  r = mailjson_object_foreach(accounts, parse_account_entry, parsed);
+  mailjson_free(accounts);
   return r;
 }
 
 static int parse_primary_account_entry(const char * key,
-    mailjmap_json_value * value, void * context)
+    mailjson_value * value, void * context)
 {
   struct mailjmap_session * parsed;
   struct mailjmap_session_primary_account * primary_account;
@@ -702,13 +702,13 @@ static int parse_primary_account_entry(const char * key,
   int r;
 
   parsed = context;
-  if (mailjmap_json_is_null(value))
+  if (mailjson_is_null(value))
     return MAILJMAP_NO_ERROR;
-  if (!mailjmap_json_is_string(value))
+  if (!mailjson_is_string(value))
     return MAILJMAP_ERROR_PROTOCOL;
 
   account_id = NULL;
-  r = mailjmap_json_string_dup(value, &account_id);
+  r = mailjson_string_dup(value, &account_id);
   if (r != MAILJMAP_NO_ERROR)
     return r;
 
@@ -725,65 +725,65 @@ static int parse_primary_account_entry(const char * key,
   return MAILJMAP_NO_ERROR;
 }
 
-static int parse_session_primary_accounts(mailjmap_json_value * root,
+static int parse_session_primary_accounts(mailjson_value * root,
     struct mailjmap_session * parsed)
 {
-  mailjmap_json_value * primary_accounts;
+  mailjson_value * primary_accounts;
   int r;
 
   primary_accounts = NULL;
-  r = mailjmap_json_object_get(root, "primaryAccounts", &primary_accounts);
+  r = mailjson_object_get(root, "primaryAccounts", &primary_accounts);
   if (r != MAILJMAP_NO_ERROR)
     return r;
   if (primary_accounts == NULL)
     return MAILJMAP_ERROR_PROTOCOL;
-  if (!mailjmap_json_is_object(primary_accounts)) {
-    mailjmap_json_free(primary_accounts);
+  if (!mailjson_is_object(primary_accounts)) {
+    mailjson_free(primary_accounts);
     return MAILJMAP_ERROR_PROTOCOL;
   }
 
-  r = mailjmap_json_object_foreach(primary_accounts,
+  r = mailjson_object_foreach(primary_accounts,
       parse_primary_account_entry, parsed);
-  mailjmap_json_free(primary_accounts);
+  mailjson_free(primary_accounts);
   return r;
 }
 
-static int parse_session_state(mailjmap_json_value * root,
+static int parse_session_state(mailjson_value * root,
     struct mailjmap_session * parsed)
 {
-  mailjmap_json_value * value;
+  mailjson_value * value;
   int r;
 
   value = NULL;
-  r = mailjmap_json_object_get(root, "state", &value);
+  r = mailjson_object_get(root, "state", &value);
   if (r != MAILJMAP_NO_ERROR)
     return r;
   if (value != NULL) {
-    if (!mailjmap_json_is_string(value)) {
-      mailjmap_json_free(value);
+    if (!mailjson_is_string(value)) {
+      mailjson_free(value);
       return MAILJMAP_ERROR_PROTOCOL;
     }
-    r = mailjmap_json_string_dup(value, &parsed->session_state);
-    mailjmap_json_free(value);
+    r = mailjson_string_dup(value, &parsed->session_state);
+    mailjson_free(value);
     return r;
   }
 
-  r = mailjmap_json_object_get(root, "sessionState", &value);
+  r = mailjson_object_get(root, "sessionState", &value);
   if (r != MAILJMAP_NO_ERROR)
     return r;
   if (value == NULL)
     return MAILJMAP_NO_ERROR;
-  if (mailjmap_json_is_null(value)) {
-    mailjmap_json_free(value);
+  if (mailjson_is_null(value)) {
+    mailjson_free(value);
     return MAILJMAP_NO_ERROR;
   }
-  if (!mailjmap_json_is_string(value)) {
-    mailjmap_json_free(value);
+  if (!mailjson_is_string(value)) {
+    mailjson_free(value);
     return MAILJMAP_ERROR_PROTOCOL;
   }
 
-  r = mailjmap_json_string_dup(value, &parsed->session_state);
-  mailjmap_json_free(value);
+  r = mailjson_string_dup(value, &parsed->session_state);
+  mailjson_free(value);
   return r;
 }
 
@@ -798,7 +798,7 @@ int mailjmap_private_normalize_parse_error(int r)
 static int parse_session_object(const char * data, size_t data_len,
     struct mailjmap_session ** result)
 {
-  mailjmap_json_value * root;
+  mailjson_value * root;
   struct mailjmap_session * parsed;
   int r;
 
@@ -808,10 +808,10 @@ static int parse_session_object(const char * data, size_t data_len,
   root = NULL;
   parsed = NULL;
 
-  r = mailjmap_json_parse(data, data_len, &root);
+  r = mailjson_parse(data, data_len, &root);
   if (r != MAILJMAP_NO_ERROR)
     return r;
-  if (!mailjmap_json_is_object(root)) {
+  if (!mailjson_is_object(root)) {
     r = MAILJMAP_ERROR_PROTOCOL;
     goto err;
   }
@@ -822,19 +822,19 @@ static int parse_session_object(const char * data, size_t data_len,
     goto err;
   }
 
-  r = mailjmap_json_object_get_string_dup(root, "apiUrl",
+  r = mailjson_object_get_string_dup(root, "apiUrl",
       &parsed->api_url);
   if (r != MAILJMAP_NO_ERROR)
     goto err;
-  r = mailjmap_json_object_get_string_dup(root, "uploadUrl",
+  r = mailjson_object_get_string_dup(root, "uploadUrl",
       &parsed->upload_url);
   if (r != MAILJMAP_NO_ERROR)
     goto err;
-  r = mailjmap_json_object_get_string_dup(root, "downloadUrl",
+  r = mailjson_object_get_string_dup(root, "downloadUrl",
       &parsed->download_url);
   if (r != MAILJMAP_NO_ERROR)
     goto err;
-  r = mailjmap_json_object_get_string_dup(root, "eventSourceUrl",
+  r = mailjson_object_get_string_dup(root, "eventSourceUrl",
       &parsed->event_source_url);
   if (r != MAILJMAP_NO_ERROR)
     goto err;
@@ -858,12 +858,12 @@ static int parse_session_object(const char * data, size_t data_len,
   if (r != MAILJMAP_NO_ERROR)
     goto err;
 
-  mailjmap_json_free(root);
+  mailjson_free(root);
   * result = parsed;
   return MAILJMAP_NO_ERROR;
 
  err:
-  mailjmap_json_free(root);
+  mailjson_free(root);
   mailjmap_session_free(parsed);
   return mailjmap_private_normalize_parse_error(r);
 }
@@ -1051,7 +1051,7 @@ int mailjmap_call(mailjmap * session,
 {
   struct mailjmap_http_request * request;
   struct mailjmap_http_response * response;
-  mailjmap_json_value * envelope;
+  mailjson_value * envelope;
   char * body;
   size_t body_len;
   int r;
@@ -1077,7 +1077,7 @@ int mailjmap_call(mailjmap * session,
   if (r != MAILJMAP_NO_ERROR)
     goto cleanup;
 
-  r = mailjmap_json_serialize(envelope, MAILJMAP_JSON_SERIALIZE_COMPACT,
+  r = mailjson_serialize(envelope, MAILJSON_SERIALIZE_COMPACT,
       &body, &body_len);
   if (r != MAILJMAP_NO_ERROR)
     goto cleanup;
@@ -1140,7 +1140,7 @@ int mailjmap_call(mailjmap * session,
 
  cleanup:
   free(body);
-  mailjmap_json_free(envelope);
+  mailjson_free(envelope);
   mailjmap_http_response_free(response);
   mailjmap_http_request_free(request);
   return r;

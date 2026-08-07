@@ -59,6 +59,7 @@ extern "C" {
 #include <libetpan/carray.h>
 #include <libetpan/chash.h>
 #include <libetpan/maillock.h>
+#include <libetpan/mailjson.h>
   
 /* mbox driver */
 #include <libetpan/mboxdriver.h>

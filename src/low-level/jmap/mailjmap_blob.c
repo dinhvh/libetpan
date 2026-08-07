@@ -7,7 +7,7 @@
 #endif
 
 #include "mailjmap_blob.h"
-#include "mailjmap_json.h"
+#include <libetpan/mailjson.h>
 #include "mailjmap_private.h"
 
 #include <stdint.h>
@@ -164,22 +164,22 @@ static int expand_jmap_url_template(const char * url_template,
   return MAILJMAP_NO_ERROR;
 }
 
-static int object_get_optional_size(mailjmap_json_value * object,
+static int object_get_optional_size(mailjson_value * object,
     const char * key, size_t * result)
 {
-  mailjmap_json_value * value;
+  mailjson_value * value;
   int64_t integer;
   int r;
 
   value = NULL;
-  r = mailjmap_json_object_get(object, key, &value);
+  r = mailjson_object_get(object, key, &value);
   if (r != MAILJMAP_NO_ERROR)
     return r;
   if (value == NULL)
     return MAILJMAP_NO_ERROR;
 
-  r = mailjmap_json_integer_value(value, &integer);
-  mailjmap_json_free(value);
+  r = mailjson_integer_value(value, &integer);
+  mailjson_free(value);
   if (r != MAILJMAP_NO_ERROR)
     return MAILJMAP_ERROR_PROTOCOL;
   if (integer < 0)
@@ -192,7 +192,7 @@ static int object_get_optional_size(mailjmap_json_value * object,
 static int parse_upload_response(const char * data, size_t data_len,
     struct mailjmap_blob_upload ** result)
 {
-  mailjmap_json_value * root;
+  mailjson_value * root;
   struct mailjmap_blob_upload * upload;
   int r;
 
@@ -202,10 +202,10 @@ static int parse_upload_response(const char * data, size_t data_len,
   root = NULL;
   upload = NULL;
 
-  r = mailjmap_json_parse(data, data_len, &root);
+  r = mailjson_parse(data, data_len, &root);
   if (r != MAILJMAP_NO_ERROR)
     return r;
-  if (!mailjmap_json_is_object(root)) {
+  if (!mailjson_is_object(root)) {
     r = MAILJMAP_ERROR_PROTOCOL;
     goto cleanup;
   }
@@ -216,17 +216,17 @@ static int parse_upload_response(const char * data, size_t data_len,
     goto cleanup;
   }
 
-  r = mailjmap_json_object_get_string_dup(root, "accountId",
+  r = mailjson_object_get_string_dup(root, "accountId",
       &upload->account_id);
   if (r != MAILJMAP_NO_ERROR)
     goto cleanup;
-  r = mailjmap_json_object_get_string_dup(root, "blobId", &upload->blob_id);
+  r = mailjson_object_get_string_dup(root, "blobId", &upload->blob_id);
   if (r != MAILJMAP_NO_ERROR)
     goto cleanup;
-  r = mailjmap_json_object_get_string_dup(root, "type", &upload->type);
+  r = mailjson_object_get_string_dup(root, "type", &upload->type);
   if (r != MAILJMAP_NO_ERROR)
     goto cleanup;
-  r = mailjmap_json_object_get_string_dup(root, "name", &upload->name);
+  r = mailjson_object_get_string_dup(root, "name", &upload->name);
   if (r != MAILJMAP_NO_ERROR)
     goto cleanup;
   r = object_get_optional_size(root, "size", &upload->size);
@@ -239,12 +239,12 @@ static int parse_upload_response(const char * data, size_t data_len,
     goto cleanup;
   }
 
-  mailjmap_json_free(root);
+  mailjson_free(root);
   * result = upload;
   return MAILJMAP_NO_ERROR;
 
  cleanup:
-  mailjmap_json_free(root);
+  mailjson_free(root);
   mailjmap_blob_upload_free(upload);
   return mailjmap_private_normalize_parse_error(r);
 }

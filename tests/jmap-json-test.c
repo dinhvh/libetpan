@@ -6,7 +6,7 @@
 #	include <config.h>
 #endif
 
-#include "../src/low-level/jmap/mailjmap_json.h"
+#include "../src/data-types/mailjson.h"
 
 #include <jansson.h>
 #include <limits.h>
@@ -31,56 +31,56 @@ static int str_equal(const char * left, const char * right)
 
 static int test_parse_invalid_json(void)
 {
-  mailjmap_json_value * sentinel;
-  mailjmap_json_value * value;
+  mailjson_value * sentinel;
+  mailjson_value * value;
   int r;
 
-  sentinel = (mailjmap_json_value *) 1;
+  sentinel = (mailjson_value *) 1;
   value = sentinel;
-  r = mailjmap_json_parse("{\"bad\"", 6, &value);
+  r = mailjson_parse("{\"bad\"", 6, &value);
 
   if (value != sentinel)
-    mailjmap_json_free(value);
-  return check(r == MAILJMAP_ERROR_JSON_PARSE,
+    mailjson_free(value);
+  return check(r == MAILJSON_ERROR_PARSE,
       "invalid JSON was not rejected") &&
       check(value == NULL, "invalid JSON did not clear result");
 }
 
 static int test_parse_duplicate_keys(void)
 {
-  mailjmap_json_value * value;
+  mailjson_value * value;
   int r;
   int ok;
 
   value = NULL;
-  r = mailjmap_json_parse("{\"id\":\"a\",\"id\":\"b\"}", 19, &value);
+  r = mailjson_parse("{\"id\":\"a\",\"id\":\"b\"}", 19, &value);
 
-  mailjmap_json_free(value);
-  ok = check(r == MAILJMAP_ERROR_JSON_PARSE,
+  mailjson_free(value);
+  ok = check(r == MAILJSON_ERROR_PARSE,
       "duplicate JSON object keys were not rejected");
 
   value = NULL;
-  r = mailjmap_json_parse("{\"outer\":{\"id\":\"a\",\"id\":\"b\"}}",
+  r = mailjson_parse("{\"outer\":{\"id\":\"a\",\"id\":\"b\"}}",
       strlen("{\"outer\":{\"id\":\"a\",\"id\":\"b\"}}"), &value);
 
-  mailjmap_json_free(value);
-  return check(r == MAILJMAP_ERROR_JSON_PARSE,
+  mailjson_free(value);
+  return check(r == MAILJSON_ERROR_PARSE,
       "nested duplicate JSON object keys were not rejected") && ok;
 }
 
 static int test_parse_trailing_data(void)
 {
-  mailjmap_json_value * sentinel;
-  mailjmap_json_value * value;
+  mailjson_value * sentinel;
+  mailjson_value * value;
   int r;
 
-  sentinel = (mailjmap_json_value *) 1;
+  sentinel = (mailjson_value *) 1;
   value = sentinel;
-  r = mailjmap_json_parse("{}{}", 4, &value);
+  r = mailjson_parse("{}{}", 4, &value);
 
   if (value != sentinel)
-    mailjmap_json_free(value);
-  return check(r == MAILJMAP_ERROR_JSON_PARSE,
+    mailjson_free(value);
+  return check(r == MAILJSON_ERROR_PARSE,
       "JSON with trailing data was not rejected") &&
       check(value == NULL, "trailing JSON did not clear result");
 }
@@ -96,10 +96,10 @@ static int test_parse_and_lookup(void)
       "\"ids\":[\"a\",\"b\"],"
       "\"none\":null"
       "}";
-  mailjmap_json_value * root;
-  mailjmap_json_value * ids;
-  mailjmap_json_value * first;
-  mailjmap_json_value * none;
+  mailjson_value * root;
+  mailjson_value * ids;
+  mailjson_value * first;
+  mailjson_value * none;
   char * name;
   char * label;
   char * id;
@@ -119,66 +119,66 @@ static int test_parse_and_lookup(void)
   enabled = 0;
   ok = 0;
 
-  r = mailjmap_json_parse(json, strlen(json), &root);
-  if (!check(r == MAILJMAP_NO_ERROR, "JSON parse failed"))
+  r = mailjson_parse(json, strlen(json), &root);
+  if (!check(r == MAILJSON_NO_ERROR, "JSON parse failed"))
     goto cleanup;
 
-  r = mailjmap_json_object_get_string_dup(root, "name", &name);
-  if (!check(r == MAILJMAP_NO_ERROR, "string lookup failed"))
+  r = mailjson_object_get_string_dup(root, "name", &name);
+  if (!check(r == MAILJSON_NO_ERROR, "string lookup failed"))
     goto cleanup;
 
-  r = mailjmap_json_object_get_integer(root, "count", &count);
-  if (!check(r == MAILJMAP_NO_ERROR, "integer lookup failed"))
+  r = mailjson_object_get_integer(root, "count", &count);
+  if (!check(r == MAILJSON_NO_ERROR, "integer lookup failed"))
     goto cleanup;
 
-  r = mailjmap_json_object_get_string_dup(root, "label", &label);
-  if (!check(r == MAILJMAP_NO_ERROR, "UTF-8 string lookup failed"))
+  r = mailjson_object_get_string_dup(root, "label", &label);
+  if (!check(r == MAILJSON_NO_ERROR, "UTF-8 string lookup failed"))
     goto cleanup;
 
-  r = mailjmap_json_object_get_boolean(root, "enabled", &enabled);
-  if (!check(r == MAILJMAP_NO_ERROR, "boolean lookup failed"))
+  r = mailjson_object_get_boolean(root, "enabled", &enabled);
+  if (!check(r == MAILJSON_NO_ERROR, "boolean lookup failed"))
     goto cleanup;
 
-  r = mailjmap_json_object_get(root, "ids", &ids);
-  if (!check(r == MAILJMAP_NO_ERROR, "array lookup failed"))
+  r = mailjson_object_get(root, "ids", &ids);
+  if (!check(r == MAILJSON_NO_ERROR, "array lookup failed"))
     goto cleanup;
 
-  r = mailjmap_json_array_get(ids, 0, &first);
-  if (!check(r == MAILJMAP_NO_ERROR, "array item lookup failed"))
+  r = mailjson_array_get(ids, 0, &first);
+  if (!check(r == MAILJSON_NO_ERROR, "array item lookup failed"))
     goto cleanup;
 
-  r = mailjmap_json_string_dup(first, &id);
-  if (!check(r == MAILJMAP_NO_ERROR, "array string dup failed"))
+  r = mailjson_string_dup(first, &id);
+  if (!check(r == MAILJSON_NO_ERROR, "array string dup failed"))
     goto cleanup;
 
-  r = mailjmap_json_object_get(root, "none", &none);
-  if (!check(r == MAILJMAP_NO_ERROR, "null lookup failed"))
+  r = mailjson_object_get(root, "none", &none);
+  if (!check(r == MAILJSON_NO_ERROR, "null lookup failed"))
     goto cleanup;
 
   ok = check(str_equal(name, "Inbox"), "name mismatch") &&
       check(count == INT64_C(9223372036854775807), "count mismatch") &&
       check(str_equal(label, "caf" "\xC3" "\xA9"), "UTF-8 label mismatch") &&
       check(enabled == 1, "enabled mismatch") &&
-      check(mailjmap_json_array_size(ids) == 2, "array size mismatch") &&
+      check(mailjson_array_size(ids) == 2, "array size mismatch") &&
       check(str_equal(id, "a"), "array value mismatch") &&
-      check(mailjmap_json_is_null(none), "null type mismatch");
+      check(mailjson_is_null(none), "null type mismatch");
 
  cleanup:
   free(name);
   free(label);
   free(id);
-  mailjmap_json_free(none);
-  mailjmap_json_free(first);
-  mailjmap_json_free(ids);
-  mailjmap_json_free(root);
+  mailjson_free(none);
+  mailjson_free(first);
+  mailjson_free(ids);
+  mailjson_free(root);
   return ok;
 }
 
 static int test_build_and_serialize(void)
 {
-  mailjmap_json_value * root;
-  mailjmap_json_value * using_array;
-  mailjmap_json_value * value;
+  mailjson_value * root;
+  mailjson_value * using_array;
+  mailjson_value * value;
   char * data;
   size_t data_len;
   int r;
@@ -191,40 +191,40 @@ static int test_build_and_serialize(void)
   data_len = 0;
   ok = 0;
 
-  r = mailjmap_json_new_object(&root);
-  if (!check(r == MAILJMAP_NO_ERROR, "object allocation failed"))
+  r = mailjson_new_object(&root);
+  if (!check(r == MAILJSON_NO_ERROR, "object allocation failed"))
     goto cleanup;
 
-  r = mailjmap_json_new_array(&using_array);
-  if (!check(r == MAILJMAP_NO_ERROR, "array allocation failed"))
+  r = mailjson_new_array(&using_array);
+  if (!check(r == MAILJSON_NO_ERROR, "array allocation failed"))
     goto cleanup;
 
-  r = mailjmap_json_new_string("urn:ietf:params:jmap:core", &value);
-  if (!check(r == MAILJMAP_NO_ERROR, "string allocation failed"))
+  r = mailjson_new_string("urn:ietf:params:jmap:core", &value);
+  if (!check(r == MAILJSON_NO_ERROR, "string allocation failed"))
     goto cleanup;
-  r = mailjmap_json_array_append_new(using_array, value);
+  r = mailjson_array_append_new(using_array, value);
   value = NULL;
-  if (!check(r == MAILJMAP_NO_ERROR, "array append failed"))
+  if (!check(r == MAILJSON_NO_ERROR, "array append failed"))
     goto cleanup;
 
-  r = mailjmap_json_object_set_new(root, "using", using_array);
+  r = mailjson_object_set_new(root, "using", using_array);
   using_array = NULL;
-  if (!check(r == MAILJMAP_NO_ERROR, "object set failed"))
+  if (!check(r == MAILJSON_NO_ERROR, "object set failed"))
     goto cleanup;
 
-  r = mailjmap_json_new_boolean(1, &value);
-  if (!check(r == MAILJMAP_NO_ERROR, "boolean allocation failed"))
+  r = mailjson_new_boolean(1, &value);
+  if (!check(r == MAILJSON_NO_ERROR, "boolean allocation failed"))
     goto cleanup;
-  r = mailjmap_json_object_set_new(root, "ok", value);
+  r = mailjson_object_set_new(root, "ok", value);
   value = NULL;
-  if (!check(r == MAILJMAP_NO_ERROR, "boolean object set failed"))
+  if (!check(r == MAILJSON_NO_ERROR, "boolean object set failed"))
     goto cleanup;
 
-  r = mailjmap_json_serialize(root,
-      MAILJMAP_JSON_SERIALIZE_COMPACT |
-      MAILJMAP_JSON_SERIALIZE_SORT_KEYS,
+  r = mailjson_serialize(root,
+      MAILJSON_SERIALIZE_COMPACT |
+      MAILJSON_SERIALIZE_SORT_KEYS,
       &data, &data_len);
-  if (!check(r == MAILJMAP_NO_ERROR, "serialization failed"))
+  if (!check(r == MAILJSON_NO_ERROR, "serialization failed"))
     goto cleanup;
 
   ok = check(str_equal(data,
@@ -234,16 +234,16 @@ static int test_build_and_serialize(void)
 
  cleanup:
   free(data);
-  mailjmap_json_free(value);
-  mailjmap_json_free(using_array);
-  mailjmap_json_free(root);
+  mailjson_free(value);
+  mailjson_free(using_array);
+  mailjson_free(root);
   return ok;
 }
 
 static int test_build_scalars_and_sorted_serialize(void)
 {
-  mailjmap_json_value * root;
-  mailjmap_json_value * value;
+  mailjson_value * root;
+  mailjson_value * value;
   char * data;
   size_t data_len;
   int r;
@@ -255,39 +255,39 @@ static int test_build_scalars_and_sorted_serialize(void)
   data_len = 0;
   ok = 0;
 
-  r = mailjmap_json_new_object(&root);
-  if (!check(r == MAILJMAP_NO_ERROR, "object allocation failed"))
+  r = mailjson_new_object(&root);
+  if (!check(r == MAILJSON_NO_ERROR, "object allocation failed"))
     goto cleanup;
 
-  r = mailjmap_json_new_string("z", &value);
-  if (!check(r == MAILJMAP_NO_ERROR, "string allocation failed"))
+  r = mailjson_new_string("z", &value);
+  if (!check(r == MAILJSON_NO_ERROR, "string allocation failed"))
     goto cleanup;
-  r = mailjmap_json_object_set_new(root, "zeta", value);
+  r = mailjson_object_set_new(root, "zeta", value);
   value = NULL;
-  if (!check(r == MAILJMAP_NO_ERROR, "zeta set failed"))
+  if (!check(r == MAILJSON_NO_ERROR, "zeta set failed"))
     goto cleanup;
 
-  r = mailjmap_json_new_null(&value);
-  if (!check(r == MAILJMAP_NO_ERROR, "null allocation failed"))
+  r = mailjson_new_null(&value);
+  if (!check(r == MAILJSON_NO_ERROR, "null allocation failed"))
     goto cleanup;
-  r = mailjmap_json_object_set_new(root, "middle", value);
+  r = mailjson_object_set_new(root, "middle", value);
   value = NULL;
-  if (!check(r == MAILJMAP_NO_ERROR, "null set failed"))
+  if (!check(r == MAILJSON_NO_ERROR, "null set failed"))
     goto cleanup;
 
-  r = mailjmap_json_new_integer(7, &value);
-  if (!check(r == MAILJMAP_NO_ERROR, "integer allocation failed"))
+  r = mailjson_new_integer(7, &value);
+  if (!check(r == MAILJSON_NO_ERROR, "integer allocation failed"))
     goto cleanup;
-  r = mailjmap_json_object_set_new(root, "alpha", value);
+  r = mailjson_object_set_new(root, "alpha", value);
   value = NULL;
-  if (!check(r == MAILJMAP_NO_ERROR, "integer set failed"))
+  if (!check(r == MAILJSON_NO_ERROR, "integer set failed"))
     goto cleanup;
 
-  r = mailjmap_json_serialize(root,
-      MAILJMAP_JSON_SERIALIZE_COMPACT |
-      MAILJMAP_JSON_SERIALIZE_SORT_KEYS,
+  r = mailjson_serialize(root,
+      MAILJSON_SERIALIZE_COMPACT |
+      MAILJSON_SERIALIZE_SORT_KEYS,
       &data, &data_len);
-  if (!check(r == MAILJMAP_NO_ERROR, "serialization failed"))
+  if (!check(r == MAILJSON_NO_ERROR, "serialization failed"))
     goto cleanup;
 
   ok = check(str_equal(data, "{\"alpha\":7,\"middle\":null,\"zeta\":\"z\"}"),
@@ -296,14 +296,14 @@ static int test_build_scalars_and_sorted_serialize(void)
 
  cleanup:
   free(data);
-  mailjmap_json_free(value);
-  mailjmap_json_free(root);
+  mailjson_free(value);
+  mailjson_free(root);
   return ok;
 }
 
 static int test_integer_creation_bounds(void)
 {
-  mailjmap_json_value * value;
+  mailjson_value * value;
   int64_t parsed;
   int r;
   int ok;
@@ -312,24 +312,24 @@ static int test_integer_creation_bounds(void)
   parsed = 0;
   ok = 0;
 
-  r = mailjmap_json_new_integer(INT64_C(9223372036854775807), &value);
+  r = mailjson_new_integer(INT64_C(9223372036854775807), &value);
   if (sizeof(json_int_t) >= sizeof(int64_t)) {
-    if (!check(r == MAILJMAP_NO_ERROR, "INT64_MAX allocation failed"))
+    if (!check(r == MAILJSON_NO_ERROR, "INT64_MAX allocation failed"))
       goto cleanup;
-    r = mailjmap_json_integer_value(value, &parsed);
-    if (!check(r == MAILJMAP_NO_ERROR, "INT64_MAX lookup failed"))
+    r = mailjson_integer_value(value, &parsed);
+    if (!check(r == MAILJSON_NO_ERROR, "INT64_MAX lookup failed"))
       goto cleanup;
     ok = check(parsed == INT64_C(9223372036854775807),
         "INT64_MAX value mismatch");
   }
   else {
-    ok = check(r == MAILJMAP_ERROR_BAD_STATE,
+    ok = check(r == MAILJSON_ERROR_BAD_STATE,
         "out-of-range integer was not rejected") &&
         check(value == NULL, "out-of-range integer did not clear result");
   }
 
  cleanup:
-  mailjmap_json_free(value);
+  mailjson_free(value);
   return ok;
 }
 

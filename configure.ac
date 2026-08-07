@@ -721,6 +721,11 @@ if test "x$libcurl" = "xyes" ; then
   AC_DEFINE([HAVE_CURL], 1, [Define to use curl])
 fi
 
+dnl JSON
+PKG_CHECK_MODULES([JANSSON], [jansson],
+  [],
+  [AC_MSG_ERROR([Jansson is required for JSON support])])
+
 dnl JMAP
 AC_ARG_WITH([jmap],
   [AS_HELP_STRING([--with-jmap],
@@ -730,11 +735,7 @@ AC_ARG_WITH([jmap],
 have_jmap=no
 AS_IF([test "x$with_jmap" != xno], [
   AS_IF([test "x$libcurl" = xyes], [
-    PKG_CHECK_MODULES([JANSSON], [jansson],
-      [have_jmap=yes],
-      [AS_IF([test "x$with_jmap" = xyes],
-        [AC_MSG_ERROR([JMAP support requested but Jansson was not found])],
-        [have_jmap=no])])
+    have_jmap=yes
   ], [
     AS_IF([test "x$with_jmap" = xyes],
       [AC_MSG_ERROR([JMAP support requested but curl was not found])],

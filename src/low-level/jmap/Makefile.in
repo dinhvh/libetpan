@@ -182,8 +182,8 @@ CONFIG_CLEAN_VPATH_FILES =
 LTLIBRARIES = $(noinst_LTLIBRARIES)
 libjmap_la_LIBADD =
 am_libjmap_la_OBJECTS = mailjmap.lo mailjmap_blob.lo mailjmap_http.lo \
-	mailjmap_http_curl.lo mailjmap_mail.lo mailjmap_json.lo \
-	mailjmap_request.lo mailjmap_response.lo mailjmap_types.lo
+	mailjmap_http_curl.lo mailjmap_mail.lo mailjmap_request.lo \
+	mailjmap_response.lo mailjmap_types.lo
 libjmap_la_OBJECTS = $(am_libjmap_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -207,8 +207,7 @@ am__maybe_remake_depfiles = depfiles
 am__depfiles_remade = ./$(DEPDIR)/mailjmap.Plo \
 	./$(DEPDIR)/mailjmap_blob.Plo ./$(DEPDIR)/mailjmap_http.Plo \
 	./$(DEPDIR)/mailjmap_http_curl.Plo \
-	./$(DEPDIR)/mailjmap_json.Plo ./$(DEPDIR)/mailjmap_mail.Plo \
-	./$(DEPDIR)/mailjmap_request.Plo \
+	./$(DEPDIR)/mailjmap_mail.Plo ./$(DEPDIR)/mailjmap_request.Plo \
 	./$(DEPDIR)/mailjmap_response.Plo \
 	./$(DEPDIR)/mailjmap_types.Plo
 am__mv = mv -f
@@ -458,19 +457,18 @@ etpanincludedir = $(includedir)/libetpan
 # "Built sources" in the automake manual for details.
 BUILT_SOURCES = $(top_builddir)/stamp-prepare
 etpaninclude_HEADERS = \
-	mailjmap.h mailjmap_blob.h mailjmap_http.h mailjmap_json.h mailjmap_mail.h \
+	mailjmap.h mailjmap_blob.h mailjmap_http.h mailjmap_mail.h \
 	mailjmap_request.h mailjmap_response.h mailjmap_types.h
 
 noinst_HEADERS = mailjmap_private.h
 AM_CPPFLAGS = -I$(top_builddir)/include \
-	-I$(top_srcdir)/src/data-types \
-	@JANSSON_CFLAGS@
+	-I$(top_srcdir)/src/data-types
 
 noinst_LTLIBRARIES = libjmap.la
 libjmap_la_SOURCES = \
 	mailjmap.c mailjmap_blob.c mailjmap_http.c mailjmap_http_curl.c \
 	mailjmap_mail.c \
-	mailjmap_json.c mailjmap_request.c mailjmap_response.c \
+	mailjmap_request.c mailjmap_response.c \
 	mailjmap_types.c
 
 all: $(BUILT_SOURCES)
@@ -531,7 +529,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mailjmap_blob.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mailjmap_http.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mailjmap_http_curl.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mailjmap_json.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mailjmap_mail.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mailjmap_request.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mailjmap_response.Plo@am__quote@ # am--include-marker
@@ -727,7 +724,6 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/mailjmap_blob.Plo
 	-rm -f ./$(DEPDIR)/mailjmap_http.Plo
 	-rm -f ./$(DEPDIR)/mailjmap_http_curl.Plo
-	-rm -f ./$(DEPDIR)/mailjmap_json.Plo
 	-rm -f ./$(DEPDIR)/mailjmap_mail.Plo
 	-rm -f ./$(DEPDIR)/mailjmap_request.Plo
 	-rm -f ./$(DEPDIR)/mailjmap_response.Plo
@@ -781,7 +777,6 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/mailjmap_blob.Plo
 	-rm -f ./$(DEPDIR)/mailjmap_http.Plo
 	-rm -f ./$(DEPDIR)/mailjmap_http_curl.Plo
-	-rm -f ./$(DEPDIR)/mailjmap_json.Plo
 	-rm -f ./$(DEPDIR)/mailjmap_mail.Plo
 	-rm -f ./$(DEPDIR)/mailjmap_request.Plo
 	-rm -f ./$(DEPDIR)/mailjmap_response.Plo

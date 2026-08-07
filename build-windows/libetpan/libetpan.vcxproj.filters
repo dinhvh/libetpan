@@ -120,6 +120,9 @@
     <ClCompile Include="..\..\src\data-types\mail_cache_db.c">
       <Filter>Source Files\datatypes</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\data-types\mailjson.c">
+      <Filter>Source Files\datatypes</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\data-types\maillock.c">
       <Filter>Source Files\datatypes</Filter>
     </ClCompile>
@@ -441,9 +444,6 @@
     <ClCompile Include="..\..\src\low-level\jmap\mailjmap_http_curl.c">
       <Filter>Source Files\low-level\jmap</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\low-level\jmap\mailjmap_json.c">
-      <Filter>Source Files\low-level\jmap</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\low-level\jmap\mailjmap_mail.c">
       <Filter>Source Files\low-level\jmap</Filter>
     </ClCompile>
@@ -699,6 +699,9 @@
       <Filter>Source Files\datatypes</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\data-types\mail_cache_db_types.h">
+      <Filter>Source Files\datatypes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\data-types\mailjson.h">
       <Filter>Source Files\datatypes</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\data-types\maillock.h">
@@ -1176,9 +1179,6 @@
       <Filter>Source Files\low-level\jmap</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\low-level\jmap\mailjmap_http.h">
-      <Filter>Source Files\low-level\jmap</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\low-level\jmap\mailjmap_json.h">
       <Filter>Source Files\low-level\jmap</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\low-level\jmap\mailjmap_mail.h">

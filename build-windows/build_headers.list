@@ -2,6 +2,7 @@ src\data-types\carray.h
 src\data-types\charconv.h
 src\data-types\chash.h
 src\data-types\clist.h
+src\data-types\mailjson.h
 src\data-types\maillock.h
 src\data-types\mailsem.h
 src\data-types\mailstream.h
@@ -84,7 +85,7 @@ src\low-level\feed\newsfeed_types.h
 src\low-level\jmap\mailjmap.h
 src\low-level\jmap\mailjmap_blob.h
 src\low-level\jmap\mailjmap_http.h
-src\low-level\jmap\mailjmap_json.h
+src\low-level\jmap\
 src\low-level\jmap\mailjmap_mail.h
 src\low-level\jmap\mailjmap_request.h
 src\low-level\jmap\mailjmap_response.h

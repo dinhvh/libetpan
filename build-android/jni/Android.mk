@@ -14,6 +14,10 @@ ifeq ($(ICONV_PATH),)
 $(error ICONV_PATH must be set)
 endif
 
+ifeq ($(JANSSON_PATH),)
+$(error JANSSON_PATH must be set)
+endif
+
 src_files = \
 ./src/data-types/base64.c \
 ./src/data-types/carray.c \
@@ -33,13 +37,14 @@ src_files = \
 ./src/data-types/mailstream_low.c \
 ./src/data-types/mailstream_socket.c \
 ./src/data-types/mailstream_ssl.c \
+./src/data-types/mailjson.c \
 ./src/data-types/md5.c \
 ./src/data-types/mmapstring.c \
 ./src/data-types/timeutils.c \
 ./src/low-level/gmail/mailgmail.c \
 ./src/low-level/gmail/mailgmail_http.c \
 ./src/low-level/gmail/mailgmail_http_curl.c \
-./src/low-level/gmail/mailgmail_json.c \
+./src/low-level/gmail/mailgmail_parser.c \
 ./src/low-level/gmail/mailgmail_types.c \
 ./src/low-level/gmail/mailgmail_url.c \
 ./src/low-level/imap/acl.c \
@@ -138,7 +143,6 @@ src_files += \
 ./src/low-level/jmap/mailjmap_blob.c \
 ./src/low-level/jmap/mailjmap_http.c \
 ./src/low-level/jmap/mailjmap_http_curl.c \
-./src/low-level/jmap/mailjmap_json.c \
 ./src/low-level/jmap/mailjmap_mail.c \
 ./src/low-level/jmap/mailjmap_request.c \
 ./src/low-level/jmap/mailjmap_response.c \
@@ -168,11 +172,8 @@ src/driver/interface
 LOCAL_C_INCLUDES = $(addprefix ../../, $(c_includes)) \
   libetpan-android-7/include \
   $(OPENSSL_PATH)/include $(CYRUS_SASL_PATH)/include $(ICONV_PATH)/include	  libetpan-android-7/include/libetpan \
+  $(JANSSON_PATH)/include \
   $(OPENSSL_PATH)/include \
   $(LOCAL_PATH)/../include $(LOCAL_PATH)/../include/libetpan
-
-ifneq ($(JANSSON_PATH),)
-LOCAL_C_INCLUDES += $(JANSSON_PATH)/include
-endif
 
 include $(BUILD_STATIC_LIBRARY)

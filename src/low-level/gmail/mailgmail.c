@@ -8,7 +8,7 @@
 
 #include "mailgmail.h"
 #include "mailgmail_http.h"
-#include "mailgmail_json.h"
+#include "mailgmail_parser.h"
 #include "mailgmail_private.h"
 #include "mailgmail_url.h"
 
@@ -284,7 +284,7 @@ static int perform_get(mailgmail * session, char * url,
   if (r != MAILGMAIL_NO_ERROR) {
     error_message = NULL;
     if ((response->body != NULL) && (response->body_len > 0)) {
-      if (mailgmail_json_parse_error_message((const char *) response->body,
+      if (mailgmail_parser_parse_error_message((const char *) response->body,
           response->body_len, &error_message) == MAILGMAIL_NO_ERROR)
         set_last_error_message(session, error_message);
       free(error_message);
@@ -323,7 +323,7 @@ int mailgmail_get_profile(mailgmail * session,
   if (r != MAILGMAIL_NO_ERROR)
     return r;
 
-  r = mailgmail_json_parse_profile((const char *) response->body,
+  r = mailgmail_parser_parse_profile((const char *) response->body,
       response->body_len, result);
   mailgmail_http_response_free(response);
   return r;
@@ -351,7 +351,7 @@ int mailgmail_list_labels(mailgmail * session,
   if (r != MAILGMAIL_NO_ERROR)
     return r;
 
-  r = mailgmail_json_parse_label_list((const char *) response->body,
+  r = mailgmail_parser_parse_label_list((const char *) response->body,
       response->body_len, result);
   mailgmail_http_response_free(response);
   return r;
@@ -380,7 +380,7 @@ int mailgmail_get_label(mailgmail * session,
   if (r != MAILGMAIL_NO_ERROR)
     return r;
 
-  r = mailgmail_json_parse_label((const char *) response->body,
+  r = mailgmail_parser_parse_label((const char *) response->body,
       response->body_len, result);
   mailgmail_http_response_free(response);
   return r;
@@ -409,7 +409,7 @@ int mailgmail_list_messages(mailgmail * session,
   if (r != MAILGMAIL_NO_ERROR)
     return r;
 
-  r = mailgmail_json_parse_message_list((const char *) response->body,
+  r = mailgmail_parser_parse_message_list((const char *) response->body,
       response->body_len, result);
   mailgmail_http_response_free(response);
   return r;
@@ -439,7 +439,7 @@ int mailgmail_get_message(mailgmail * session,
   if (r != MAILGMAIL_NO_ERROR)
     return r;
 
-  r = mailgmail_json_parse_message((const char *) response->body,
+  r = mailgmail_parser_parse_message((const char *) response->body,
       response->body_len, result);
   mailgmail_http_response_free(response);
   return r;
@@ -470,7 +470,7 @@ int mailgmail_get_attachment(mailgmail * session,
   if (r != MAILGMAIL_NO_ERROR)
     return r;
 
-  r = mailgmail_json_parse_attachment((const char *) response->body,
+  r = mailgmail_parser_parse_attachment((const char *) response->body,
       response->body_len, result);
   mailgmail_http_response_free(response);
   return r;

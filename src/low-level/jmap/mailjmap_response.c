@@ -7,6 +7,7 @@
 #endif
 
 #include "mailjmap_response.h"
+#include "mailjmap_types.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -21,12 +22,12 @@ static char * dup_string(const char * value)
 
 struct mailjmap_method_response *
 mailjmap_method_response_new(const char * name,
-    mailjmap_json_value * arguments, const char * call_id)
+    mailjson_value * arguments, const char * call_id)
 {
   struct mailjmap_method_response * response;
 
   if ((name == NULL) || (* name == '\0') || (arguments == NULL) ||
-      !mailjmap_json_is_object(arguments) ||
+      !mailjson_is_object(arguments) ||
       (call_id == NULL) || (* call_id == '\0'))
     return NULL;
 
@@ -53,7 +54,7 @@ void mailjmap_method_response_free(
     return;
 
   free(response->name);
-  mailjmap_json_free(response->arguments);
+  mailjson_free(response->arguments);
   free(response->call_id);
   free(response);
 }
@@ -110,21 +111,21 @@ static int normalize_parse_error(int r)
   return r;
 }
 
-static int parse_method_response_entry(mailjmap_json_value * entry,
+static int parse_method_response_entry(mailjson_value * entry,
     struct mailjmap_response * parsed)
 {
-  mailjmap_json_value * name_value;
-  mailjmap_json_value * args_value;
-  mailjmap_json_value * call_id_value;
-  mailjmap_json_value * args_copy;
+  mailjson_value * name_value;
+  mailjson_value * args_value;
+  mailjson_value * call_id_value;
+  mailjson_value * args_copy;
   struct mailjmap_method_response * method_response;
   char * name;
   char * call_id;
   int r;
 
-  if (!mailjmap_json_is_array(entry))
+  if (!mailjson_is_array(entry))
     return MAILJMAP_ERROR_PROTOCOL;
-  if (mailjmap_json_array_size(entry) != 3)
+  if (mailjson_array_size(entry) != 3)
     return MAILJMAP_ERROR_PROTOCOL;
 
   name_value = NULL;
@@ -134,30 +135,30 @@ static int parse_method_response_entry(mailjmap_json_value * entry,
   name = NULL;
   call_id = NULL;
 
-  r = mailjmap_json_array_get(entry, 0, &name_value);
+  r = mailjson_array_get(entry, 0, &name_value);
   if (r != MAILJMAP_NO_ERROR)
     goto cleanup;
-  r = mailjmap_json_array_get(entry, 1, &args_value);
+  r = mailjson_array_get(entry, 1, &args_value);
   if (r != MAILJMAP_NO_ERROR)
     goto cleanup;
-  r = mailjmap_json_array_get(entry, 2, &call_id_value);
+  r = mailjson_array_get(entry, 2, &call_id_value);
   if (r != MAILJMAP_NO_ERROR)
     goto cleanup;
 
-  if (!mailjmap_json_is_string(name_value) ||
-      !mailjmap_json_is_object(args_value) ||
-      !mailjmap_json_is_string(call_id_value)) {
+  if (!mailjson_is_string(name_value) ||
+      !mailjson_is_object(args_value) ||
+      !mailjson_is_string(call_id_value)) {
     r = MAILJMAP_ERROR_PROTOCOL;
     goto cleanup;
   }
 
-  r = mailjmap_json_string_dup(name_value, &name);
+  r = mailjson_string_dup(name_value, &name);
   if (r != MAILJMAP_NO_ERROR)
     goto cleanup;
-  r = mailjmap_json_string_dup(call_id_value, &call_id);
+  r = mailjson_string_dup(call_id_value, &call_id);
   if (r != MAILJMAP_NO_ERROR)
     goto cleanup;
-  r = mailjmap_json_deep_copy(args_value, &args_copy);
+  r = mailjson_deep_copy(args_value, &args_copy);
   if (r != MAILJMAP_NO_ERROR)
     goto cleanup;
 
@@ -177,19 +178,19 @@ static int parse_method_response_entry(mailjmap_json_value * entry,
   r = MAILJMAP_NO_ERROR;
 
  cleanup:
-  mailjmap_json_free(args_copy);
-  mailjmap_json_free(call_id_value);
-  mailjmap_json_free(args_value);
-  mailjmap_json_free(name_value);
+  mailjson_free(args_copy);
+  mailjson_free(call_id_value);
+  mailjson_free(args_value);
+  mailjson_free(name_value);
   free(call_id);
   free(name);
   return normalize_parse_error(r);
 }
 
-static int parse_method_responses(mailjmap_json_value * root,
+static int parse_method_responses(mailjson_value * root,
     struct mailjmap_response * parsed, int * has_method_responses)
 {
-  mailjmap_json_value * method_responses;
+  mailjson_value * method_responses;
   size_t count;
   size_t i;
   int r;
@@ -198,54 +199,54 @@ static int parse_method_responses(mailjmap_json_value * root,
     * has_method_responses = 0;
 
   method_responses = NULL;
-  r = mailjmap_json_object_get(root, "methodResponses", &method_responses);
+  r = mailjson_object_get(root, "methodResponses", &method_responses);
   if (r != MAILJMAP_NO_ERROR)
     return normalize_parse_error(r);
   if (method_responses == NULL)
     return MAILJMAP_NO_ERROR;
-  if (!mailjmap_json_is_array(method_responses)) {
-    mailjmap_json_free(method_responses);
+  if (!mailjson_is_array(method_responses)) {
+    mailjson_free(method_responses);
     return MAILJMAP_ERROR_PROTOCOL;
   }
   if (has_method_responses != NULL)
     * has_method_responses = 1;
 
-  count = mailjmap_json_array_size(method_responses);
+  count = mailjson_array_size(method_responses);
   for (i = 0; i < count; i ++) {
-    mailjmap_json_value * entry;
+    mailjson_value * entry;
 
     entry = NULL;
-    r = mailjmap_json_array_get(method_responses, i, &entry);
+    r = mailjson_array_get(method_responses, i, &entry);
     if (r == MAILJMAP_NO_ERROR)
       r = parse_method_response_entry(entry, parsed);
-    mailjmap_json_free(entry);
+    mailjson_free(entry);
     if (r != MAILJMAP_NO_ERROR) {
-      mailjmap_json_free(method_responses);
+      mailjson_free(method_responses);
       return normalize_parse_error(r);
     }
   }
 
-  mailjmap_json_free(method_responses);
+  mailjson_free(method_responses);
   return MAILJMAP_NO_ERROR;
 }
 
-static int parse_problem_fields(mailjmap_json_value * root,
+static int parse_problem_fields(mailjson_value * root,
     struct mailjmap_response * parsed)
 {
   int r;
 
-  r = mailjmap_json_object_get_string_dup(root, "type",
+  r = mailjson_object_get_string_dup(root, "type",
       &parsed->error_type);
   if (r != MAILJMAP_NO_ERROR)
     return normalize_parse_error(r);
 
-  r = mailjmap_json_object_get_string_dup(root, "detail",
+  r = mailjson_object_get_string_dup(root, "detail",
       &parsed->error_detail);
   if (r != MAILJMAP_NO_ERROR)
     return normalize_parse_error(r);
 
   if (parsed->error_detail == NULL) {
-    r = mailjmap_json_object_get_string_dup(root, "title",
+    r = mailjson_object_get_string_dup(root, "title",
         &parsed->error_detail);
     if (r != MAILJMAP_NO_ERROR)
       return normalize_parse_error(r);
@@ -257,7 +258,7 @@ static int parse_problem_fields(mailjmap_json_value * root,
 int mailjmap_response_parse(const char * data, size_t data_len,
     struct mailjmap_response ** result)
 {
-  mailjmap_json_value * root;
+  mailjson_value * root;
   struct mailjmap_response * parsed;
   int has_method_responses;
   int r;
@@ -269,10 +270,10 @@ int mailjmap_response_parse(const char * data, size_t data_len,
   root = NULL;
   parsed = NULL;
 
-  r = mailjmap_json_parse(data, data_len, &root);
+  r = mailjson_parse(data, data_len, &root);
   if (r != MAILJMAP_NO_ERROR)
     return r;
-  if (!mailjmap_json_is_object(root)) {
+  if (!mailjson_is_object(root)) {
     r = MAILJMAP_ERROR_PROTOCOL;
     goto err;
   }
@@ -283,7 +284,7 @@ int mailjmap_response_parse(const char * data, size_t data_len,
     goto err;
   }
 
-  r = mailjmap_json_object_get_string_dup(root, "sessionState",
+  r = mailjson_object_get_string_dup(root, "sessionState",
       &parsed->session_state);
   if (r != MAILJMAP_NO_ERROR)
     goto err;
@@ -303,12 +304,12 @@ int mailjmap_response_parse(const char * data, size_t data_len,
     goto err;
   }
 
-  mailjmap_json_free(root);
+  mailjson_free(root);
   * result = parsed;
   return MAILJMAP_NO_ERROR;
 
  err:
   mailjmap_response_free(parsed);
-  mailjmap_json_free(root);
+  mailjson_free(root);
   return normalize_parse_error(r);
 }

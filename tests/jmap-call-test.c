@@ -8,9 +8,10 @@
 
 #include <libetpan/mailjmap.h>
 
-#include "../src/low-level/jmap/mailjmap_json.h"
+#include "../src/data-types/mailjson.h"
 #include "../src/low-level/jmap/mailjmap_request.h"
 #include "../src/low-level/jmap/mailjmap_response.h"
+#include "../src/low-level/jmap/mailjmap_types.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -238,20 +239,20 @@ static struct mailjmap_http_transport * fake_transport_new(
   return transport;
 }
 
-static int add_string_property(mailjmap_json_value * object,
+static int add_string_property(mailjson_value * object,
     const char * key, const char * value)
 {
-  mailjmap_json_value * string_value;
+  mailjson_value * string_value;
   int r;
 
   string_value = NULL;
-  r = mailjmap_json_new_string(value, &string_value);
+  r = mailjson_new_string(value, &string_value);
   if (r != MAILJMAP_NO_ERROR)
     return r;
 
-  r = mailjmap_json_object_set_new(object, key, string_value);
+  r = mailjson_object_set_new(object, key, string_value);
   if (r != MAILJMAP_NO_ERROR) {
-    mailjmap_json_free(string_value);
+    mailjson_free(string_value);
     return r;
   }
 
@@ -261,7 +262,7 @@ static int add_string_property(mailjmap_json_value * object,
 static int mailbox_get_request_new(struct mailjmap_request ** result)
 {
   struct mailjmap_request * request;
-  mailjmap_json_value * arguments;
+  mailjson_value * arguments;
   int r;
 
   if (result == NULL)
@@ -275,7 +276,7 @@ static int mailbox_get_request_new(struct mailjmap_request ** result)
   if (request == NULL)
     return MAILJMAP_ERROR_MEMORY;
 
-  r = mailjmap_json_new_object(&arguments);
+  r = mailjson_new_object(&arguments);
   if (r != MAILJMAP_NO_ERROR)
     goto cleanup;
   r = add_string_property(arguments, "accountId", "acc1");
@@ -290,7 +291,7 @@ static int mailbox_get_request_new(struct mailjmap_request ** result)
   return MAILJMAP_NO_ERROR;
 
  cleanup:
-  mailjmap_json_free(arguments);
+  mailjson_free(arguments);
   mailjmap_request_free(request);
   return r;
 }
