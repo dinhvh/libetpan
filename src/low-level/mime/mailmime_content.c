@@ -1148,7 +1148,6 @@ int mailmime_parse(const char * message, size_t length,
       content_message, mime_fields, &mime);
   cur_token += bp_token;
   if (r != MAILIMF_NO_ERROR) {
-    mailmime_fields_free(mime_fields);
     res = r;
     goto free;
   }
@@ -1431,11 +1430,11 @@ static int mailmime_parse_with_default(const char * message, size_t length,
         /* do nothing */
       }
       else if (r == MAILIMF_ERROR_PARSE) {
-        mailmime_fields_free(mime_fields);
+        mailmime_fields_free(submime_fields);
         msg_mime = NULL;
       }
       else {
-        mailmime_fields_free(mime_fields);
+        mailmime_fields_free(submime_fields);
         res = r;
         goto free_content;
       }
