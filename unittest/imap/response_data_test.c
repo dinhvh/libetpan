@@ -182,6 +182,17 @@ static void check_icloud_message_id(bool compressed)
   mailimap_response_data_free(data);
 }
 
+static void check_number_overflow(bool compressed)
+{
+  struct mailimap_response_data * data = NULL;
+  int r;
+
+  r = imap_test_parse_response_data_file(
+      "data/response-data/fetch-literal-overflow.imap", compressed, &data);
+  assert(r == MAILIMAP_ERROR_PARSE);
+  assert(data == NULL);
+}
+
 int imap_response_data_test_run(void)
 {
   static const struct response_data_case cases[] = {
@@ -266,6 +277,8 @@ int imap_response_data_test_run(void)
   check_nested_invalid_fetch_flags(true);
   check_icloud_message_id(false);
   check_icloud_message_id(true);
+  check_number_overflow(false);
+  check_number_overflow(true);
 
   puts("response_data_test: ok");
   return 0;

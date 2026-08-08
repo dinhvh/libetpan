@@ -8969,6 +8969,28 @@ int mailimap_nstring_parse(mailstream * fd, MMAPString * buffer, struct mailimap
                        ; (0 <= n < 4,294,967,296)
 */
 
+static int mailimap_number_overflows(uint32_t number, int digit)
+{
+  uint32_t max_number;
+
+  max_number = (uint32_t) -1;
+
+  return number > (max_number - (uint32_t) digit) / 10;
+}
+
+static void mailimap_number_add_digit(uint32_t * number, int digit)
+{
+  if (mailimap_number_overflows(* number, digit)) {
+#ifdef UNSTRICT_SYNTAX
+    * number = (uint32_t) -1;
+#endif
+  }
+  else if (* number != (uint32_t) -1) {
+    * number *= 10;
+    * number += (uint32_t) digit;
+  }
+}
+
 int
 mailimap_number_parse(mailstream * fd, MMAPString * buffer,
 		      size_t * indx, uint32_t * result)
@@ -8999,8 +9021,11 @@ mailimap_number_parse(mailstream * fd, MMAPString * buffer,
     if (r == MAILIMAP_ERROR_PARSE)
       break;
     else if (r == MAILIMAP_NO_ERROR) {
-      number *= 10;
-      number += digit;
+#ifndef UNSTRICT_SYNTAX
+      if (mailimap_number_overflows(number, digit))
+        return MAILIMAP_ERROR_PARSE;
+#endif
+      mailimap_number_add_digit(&number, digit);
       parsed = TRUE;
     }
     else
@@ -9065,8 +9090,11 @@ mailimap_nz_number_parse(mailstream * fd, MMAPString * buffer, struct mailimap_p
     if (r == MAILIMAP_ERROR_PARSE)
       break;
     else if (r == MAILIMAP_NO_ERROR) {
-      number *= 10;
-      number += (guint32) digit;
+#ifndef UNSTRICT_SYNTAX
+      if (mailimap_number_overflows(number, digit))
+        return MAILIMAP_ERROR_PARSE;
+#endif
+      mailimap_number_add_digit(&number, digit);
     }
     else
       return r;
