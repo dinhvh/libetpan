@@ -121,8 +121,10 @@ char * decode_base64(const char * in, int len)
     return NULL;
   out = output;
 
-  if (len >= 2 && in[0] == '+' && in[1] == ' ')
+  if (len >= 2 && in[0] == '+' && in[1] == ' ') {
     in += 2;
+    len -= 2;
+  }
   
   for (i = 0; i < (len / 4); i++) {
     c1 = in[0];

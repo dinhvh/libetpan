@@ -85,6 +85,7 @@ IMAP_UTF7_TEST_SRCS = \
 	imap-utf7/main.c
 DATA_TYPES_TEST_SRCS = \
 	data-types/md5_test.c \
+	$(TOP)/src/data-types/base64.c \
 	$(TOP)/src/data-types/md5.c
 ACTIVESYNC_WBXML_TEST_SRCS = \
 	activesync/wbxml_test.c
@@ -106,6 +107,7 @@ CHARSET_DETECTION_TEST_DEPS = $(CHARSET_DETECTION_TEST_SRCS) common/*.h
 PLAINTEXT_RENDERING_TEST_DEPS = $(PLAINTEXT_RENDERING_TEST_SRCS) common/*.h
 IMAP_UTF7_TEST_DEPS = $(IMAP_UTF7_TEST_SRCS)
 DATA_TYPES_TEST_DEPS = $(DATA_TYPES_TEST_SRCS) \
+        $(TOP)/src/data-types/base64.h \
         $(TOP)/src/data-types/md5.h \
         $(TOP)/src/data-types/md5global.h \
         $(TOP)/src/data-types/hmac-md5.h

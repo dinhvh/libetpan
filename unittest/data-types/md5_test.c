@@ -1,7 +1,9 @@
 #include <assert.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
+#include "base64.h"
 #include "md5.h"
 #include "hmac-md5.h"
 
@@ -174,6 +176,30 @@ static void check_hmac_md5_streaming(void)
         sizeof(one_shot_digest)) == 0);
 }
 
+static void check_base64_codec(void)
+{
+  char * encoded;
+  char * decoded;
+  const char plain[] = "Hello, base64!";
+  const char encoded_plain[] = "SGVsbG8sIGJhc2U2NCE=";
+  const char prefixed_encoded[] = "+ SGVsbG8sIGJhc2U2NCE=";
+
+  encoded = encode_base64(plain, (int) strlen(plain));
+  assert(encoded != NULL);
+  assert(strcmp(encoded, encoded_plain) == 0);
+  free(encoded);
+
+  decoded = decode_base64(encoded_plain, (int) strlen(encoded_plain));
+  assert(decoded != NULL);
+  assert(strcmp(decoded, plain) == 0);
+  free(decoded);
+
+  decoded = decode_base64(prefixed_encoded, (int) strlen(prefixed_encoded));
+  assert(decoded != NULL);
+  assert(strcmp(decoded, plain) == 0);
+  free(decoded);
+}
+
 int main(void)
 {
   assert(sizeof(UINT4) == 4);
@@ -182,6 +208,7 @@ int main(void)
   check_md5_chunked_updates();
   check_hmac_md5_vectors();
   check_hmac_md5_streaming();
+  check_base64_codec();
 
   puts("data_types_test: ok");
   return 0;
