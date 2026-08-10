@@ -241,6 +241,61 @@ else
 fi
 AC_SUBST(SSLLIBS)
 
+dnl S/MIME backend
+AC_ARG_WITH(smime, [AS_HELP_STRING([--with-smime[=auto|openssl|apple|no]],
+            [include low-level S/MIME support (default=auto)])],
+            [], [with_smime=auto])
+SMIMELIBS=""
+case "x$with_smime" in
+  xauto)
+    case "${host}" in
+      *-apple-darwin*)
+        with_smime=apple
+        ;;
+      *)
+        if test "x$with_openssl" = "xyes"; then
+          with_smime=openssl
+        else
+          with_smime=no
+        fi
+        ;;
+    esac
+    ;;
+  xyes)
+    if test "x$with_openssl" = "xyes"; then
+      with_smime=openssl
+    else
+      with_smime=no
+    fi
+    ;;
+  xopenssl|xapple|xno)
+    ;;
+  *)
+    AC_MSG_ERROR([unknown S/MIME backend: $with_smime])
+    ;;
+esac
+
+if test "x$with_smime" = "xopenssl"; then
+  if test "x$with_openssl" != "xyes"; then
+    AC_MSG_ERROR([--with-smime=openssl requires OpenSSL support])
+  fi
+  AC_DEFINE([USE_SMIME_OPENSSL], 1, [Define to use OpenSSL for S/MIME])
+fi
+
+if test "x$with_smime" = "xapple"; then
+  case "${host}" in
+    *-apple-darwin*)
+      AC_DEFINE([USE_SMIME_APPLE], 1,
+                [Define to use Apple Security.framework for S/MIME])
+      SMIMELIBS="-framework Security -framework CoreFoundation"
+      ;;
+    *)
+      AC_MSG_ERROR([--with-smime=apple is only supported on macOS])
+      ;;
+  esac
+fi
+AC_SUBST(SMIMELIBS)
+
 dnl GNUTLS
 AC_ARG_WITH(gnutls, [AS_HELP_STRING([--with-gnutls[=DIR]], [include GnuTLS support (default=auto)])],
             [], [with_gnutls=no])

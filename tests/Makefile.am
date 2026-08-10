@@ -115,9 +115,9 @@ READMSGCOMMON = readmsg-common.h readmsg-common.c option-parser.h	\
 readmsg_SOURCES = $(READMSGCOMMON) readmsg.c
 
 smime_low_level_test_SOURCES = smime-low-level-test.c
-smime_low_level_test_LDADD = ../src/libetpan.la @SSLLIBS@
+smime_low_level_test_LDADD = ../src/libetpan.la @SSLLIBS@ @SMIMELIBS@
 smime_openssl_interop_test_SOURCES = smime-openssl-interop-test.c
-smime_openssl_interop_test_LDADD = ../src/libetpan.la @SSLLIBS@
+smime_openssl_interop_test_LDADD = ../src/libetpan.la @SSLLIBS@ @SMIMELIBS@
 
 readmsg_simple_SOURCES = $(READMSGCOMMON) readmsg-simple.c
 
