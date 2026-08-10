@@ -37,7 +37,7 @@ jmap_subdir =
 jmap_lib =
 endif
 
-SUBDIRS = activesync gmail $(jmap_subdir) imap imf maildir mbox mh mime nntp pop3 smtp feed
+SUBDIRS = activesync gmail $(jmap_subdir) imap imf maildir mbox mh mime nntp pop3 smtp feed smime
 
 noinst_LTLIBRARIES = liblow-level.la
 liblow_level_la_SOURCES = 
@@ -54,4 +54,5 @@ liblow_level_la_LIBADD = \
 	nntp/libnntp.la \
 	pop3/libpop3.la \
 	smtp/libsmtp.la \
-	feed/libfeed.la
+	feed/libfeed.la \
+	smime/libsmime.la

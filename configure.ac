@@ -856,6 +856,7 @@ AC_CONFIG_FILES(Makefile
 		src/low-level/mime/Makefile
 		src/low-level/nntp/Makefile
 		src/low-level/pop3/Makefile
+		src/low-level/smime/Makefile
 		src/low-level/smtp/Makefile
 		src/driver/Makefile
 		src/driver/implementation/Makefile

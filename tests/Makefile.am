@@ -32,6 +32,7 @@ include $(top_srcdir)/rules.mk
 EXTRA_DIST = README activesync-ms-device-oauth.py activesync-live-sync-test.sh \
 	fastmail-jmap-oauth.py gmail-google-oauth.py gmail-live-smoke-test.sh \
 	jmap-live-smoke-test.sh \
+	smime-openssl-fixture-test.sh \
 	jmap/data/blob/download-message.eml \
 	jmap/data/blob/upload-response.json \
 	jmap/data/email/get-multipart-vendor.json \
@@ -88,9 +89,11 @@ noinst_PROGRAMS = smime decrypt pgp frm frm-tree frm-simple	\
 	readmsg-simple fetch-attachment smtpsend readmsg-uid \
 	readmsg compose-msg imap-sample mime-create mime-parse \
 	pop-sample activesync-sample gmail-http-test gmail-sample \
+	smime-low-level-test smime-openssl-interop-test \
 	$(jmap_test_programs) $(jmap_sample_programs)
 
-TESTS = $(jmap_test_programs) $(jmap_live_tests) $(gmail_live_tests)
+TESTS = smime-low-level-test smime-openssl-fixture-test.sh \
+	$(jmap_test_programs) $(jmap_live_tests) $(gmail_live_tests)
 
 # For W32, reverse the -DLIBETPAN_DLL.  Unfortunately, CFLAGS comes
 # after AM_CPPFLAGS, so we have to frob CFLAGS.
@@ -110,6 +113,11 @@ READMSGCOMMON = readmsg-common.h readmsg-common.c option-parser.h	\
 	option-parser.c
 
 readmsg_SOURCES = $(READMSGCOMMON) readmsg.c
+
+smime_low_level_test_SOURCES = smime-low-level-test.c
+smime_low_level_test_LDADD = ../src/libetpan.la @SSLLIBS@
+smime_openssl_interop_test_SOURCES = smime-openssl-interop-test.c
+smime_openssl_interop_test_LDADD = ../src/libetpan.la @SSLLIBS@
 
 readmsg_simple_SOURCES = $(READMSGCOMMON) readmsg-simple.c
 
