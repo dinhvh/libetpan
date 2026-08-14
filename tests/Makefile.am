@@ -33,6 +33,10 @@ EXTRA_DIST = README activesync-ms-device-oauth.py activesync-live-sync-test.sh \
 	fastmail-jmap-oauth.py gmail-google-oauth.py gmail-live-smoke-test.sh \
 	jmap-live-smoke-test.sh \
 	smime-openssl-fixture-test.sh \
+	mailpgp-gnupg-fixture-test.sh \
+	fixtures/openpgp/hidden-recipient-secret.asc \
+	fixtures/openpgp/hidden-recipient-message.eml \
+	fixtures/openpgp/hidden-recipient-body.txt \
 	jmap/data/blob/download-message.eml \
 	jmap/data/blob/upload-response.json \
 	jmap/data/email/get-multipart-vendor.json \
@@ -90,9 +94,11 @@ noinst_PROGRAMS = smime decrypt pgp frm frm-tree frm-simple	\
 	readmsg compose-msg imap-sample mime-create mime-parse \
 	pop-sample activesync-sample gmail-http-test gmail-sample \
 	smime-low-level-test smime-openssl-interop-test \
+	mailpgp-low-level-test mailpgp-gnupg-interop-test \
 	$(jmap_test_programs) $(jmap_sample_programs)
 
-TESTS = smime-low-level-test smime-openssl-fixture-test.sh \
+TESTS = smime-low-level-test mailpgp-low-level-test \
+	smime-openssl-fixture-test.sh mailpgp-gnupg-fixture-test.sh \
 	$(jmap_test_programs) $(jmap_live_tests) $(gmail_live_tests)
 
 # For W32, reverse the -DLIBETPAN_DLL.  Unfortunately, CFLAGS comes
@@ -118,6 +124,10 @@ smime_low_level_test_SOURCES = smime-low-level-test.c
 smime_low_level_test_LDADD = ../src/libetpan.la @SSLLIBS@ @SMIMELIBS@
 smime_openssl_interop_test_SOURCES = smime-openssl-interop-test.c
 smime_openssl_interop_test_LDADD = ../src/libetpan.la @SSLLIBS@ @SMIMELIBS@
+mailpgp_low_level_test_SOURCES = mailpgp-low-level-test.c
+mailpgp_low_level_test_LDADD = ../src/libetpan.la @RNP_LIBS@
+mailpgp_gnupg_interop_test_SOURCES = mailpgp-gnupg-interop-test.c
+mailpgp_gnupg_interop_test_LDADD = ../src/libetpan.la @RNP_LIBS@
 
 readmsg_simple_SOURCES = $(READMSGCOMMON) readmsg-simple.c
 

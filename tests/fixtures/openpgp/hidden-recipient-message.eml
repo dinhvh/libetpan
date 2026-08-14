@@ -1,0 +1,27 @@
+Content-Type: multipart/encrypted; protocol="application/pgp-encrypted"; boundary="pgp-hidden-fixture"
+
+--pgp-hidden-fixture
+Content-Type: application/pgp-encrypted
+
+Version: 1
+
+--pgp-hidden-fixture
+Content-Type: application/octet-stream; name="encrypted.asc"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment; filename="encrypted.asc"
+
+-----BEGIN PGP MESSAGE-----
+
+hQEMAwAAAAAAAAAAAQf+MGlxgXUBkYjOQoWrqNS7QWgDAoDATF9wAaG3VnstjO43
+7KLLaS5A/58ZRNPGwdHljrMUOaoWON2HfDjVnxBx3hCA9wjPADvL8I/5D0mOBGZy
+gCxL8M6iipfMzyrgg/oYWUCWmUIQiuF7t+dR5DzTmoZODKvA0gpuDLJEItGhKj2v
+cltqzo5Zm+4uzAG1G4pKrlsqUGK6hWUrX6r8+G3D/yz5X1HbXwQDVarIgyVlCkuB
+gxGRrUfoXYNGbCpDqzwMD3Y6FgWwS96PclDCvNNyI+IeDxY9NTDeQefUXaoas/TU
+lM47egvUOplzlrCeB3DY37cpJdpFEV+zTcYtCZywldKCAQ/CnUB75OX+5lpmY1lm
+TTQgiX+1IbYyRoIMqkdEskUy85XDVL+6JBJ0hqqySO6PPwj4s92znqBvBZdkq9R/
+eJrkEhVtNZY3RJ760oGJhzCSr7YsPoCFteK+tHgtT+absr6lE35I9G1qEgrX6++z
+KO4Km9vRRSVZteodIlY9ggIKBg==
+=9mj4
+-----END PGP MESSAGE-----
+
+--pgp-hidden-fixture--

@@ -296,6 +296,28 @@ if test "x$with_smime" = "xapple"; then
 fi
 AC_SUBST(SMIMELIBS)
 
+dnl OpenPGP backend
+AC_ARG_WITH([rnp], [AS_HELP_STRING([--with-rnp[=auto|yes|no]],
+            [include low-level OpenPGP RNP backend support (default=auto)])],
+            [], [with_rnp=auto])
+RNP_CFLAGS=""
+RNP_LIBS=""
+if test "x$with_rnp" != "xno"; then
+  PKG_CHECK_MODULES([RNP], [librnp],
+    [with_rnp=yes],
+    [if test "x$with_rnp" = "xyes"; then
+       AC_MSG_ERROR([RNP support requested but librnp was not found])
+     else
+       with_rnp=no
+     fi])
+  if test "x$with_rnp" = "xyes"; then
+    AC_DEFINE([USE_PGP_RNP], 1, [Define to use RNP for OpenPGP])
+  fi
+fi
+AC_SUBST(RNP_CFLAGS)
+AC_SUBST(RNP_LIBS)
+AM_CONDITIONAL([HAVE_RNP], [test "x$with_rnp" = "xyes"])
+
 dnl GNUTLS
 AC_ARG_WITH(gnutls, [AS_HELP_STRING([--with-gnutls[=DIR]], [include GnuTLS support (default=auto)])],
             [], [with_gnutls=no])
@@ -910,6 +932,7 @@ AC_CONFIG_FILES(Makefile
 		src/low-level/mh/Makefile
 		src/low-level/mime/Makefile
 		src/low-level/nntp/Makefile
+		src/low-level/pgp/Makefile
 		src/low-level/pop3/Makefile
 		src/low-level/smime/Makefile
 		src/low-level/smtp/Makefile
