@@ -213,6 +213,9 @@ int mailpgp_key_export_armored(struct mailpgp_key * key,
 LIBETPAN_EXPORT
 void mailpgp_key_free(struct mailpgp_key * key);
 
+LIBETPAN_EXPORT
+void mailpgp_mime_free(struct mailmime * mime);
+
 #ifdef __cplusplus
 }
 #endif
