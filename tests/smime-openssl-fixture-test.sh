@@ -84,6 +84,15 @@ diff -u "$tmpdir/body.eml" "$tmpdir/verified.eml"
 "$script_dir/smime-openssl-interop-test" verify \
   "$tmpdir/ca.pem" "$tmpdir/signed.eml"
 
+"$script_dir/smime-openssl-interop-test" sign \
+  "$tmpdir/alice.pem" "$tmpdir/alice.key" \
+  "$tmpdir/body.eml" "$tmpdir/signed-libetpan.eml"
+openssl smime -verify -binary \
+  -in "$tmpdir/signed-libetpan.eml" \
+  -CAfile "$tmpdir/ca.pem" \
+  -out "$tmpdir/verified-libetpan.eml" >/dev/null
+diff -u "$tmpdir/body.eml" "$tmpdir/verified-libetpan.eml"
+
 openssl smime -encrypt -binary \
   -in "$tmpdir/body.eml" \
   -out "$tmpdir/encrypted.eml" \
@@ -99,5 +108,15 @@ diff -u "$tmpdir/body.eml" "$tmpdir/decrypted-openssl.eml"
   "$tmpdir/alice.pem" "$tmpdir/alice.key" \
   "$tmpdir/encrypted.eml" "$tmpdir/decrypted-libetpan.eml"
 diff -u "$tmpdir/body.eml" "$tmpdir/decrypted-libetpan.eml"
+
+"$script_dir/smime-openssl-interop-test" encrypt \
+  "$tmpdir/alice.pem" "$tmpdir/body.eml" \
+  "$tmpdir/encrypted-libetpan.eml"
+openssl smime -decrypt \
+  -in "$tmpdir/encrypted-libetpan.eml" \
+  -recip "$tmpdir/alice.pem" \
+  -inkey "$tmpdir/alice.key" \
+  -out "$tmpdir/decrypted-libetpan-openssl.eml"
+diff -u "$tmpdir/body.eml" "$tmpdir/decrypted-libetpan-openssl.eml"
 
 echo "smime-openssl-fixture-test: ok"

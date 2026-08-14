@@ -29,7 +29,8 @@
 
 include $(top_srcdir)/rules.mk
 
-EXTRA_DIST = API.sgml depend.dot DOCUMENTATION layer.fig README.sgml JMAP.md
+EXTRA_DIST = API.sgml depend.dot DOCUMENTATION layer.fig README.sgml JMAP.md \
+	SMIME.md
 
 # DSL = /usr/lib/sgml/stylesheet/dsssl/docbook/nwalsh/html/docbook.dsl
 DSL = /usr/share/sgml/docbook/stylesheet/dsssl/modular/html/docbook.dsl

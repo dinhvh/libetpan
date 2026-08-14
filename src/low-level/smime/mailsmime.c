@@ -93,6 +93,8 @@ struct mailsmime_certificate {
   char * name;
   char * subject;
   char * issuer;
+  char * not_before;
+  char * not_after;
   char * fingerprint_sha256;
 };
 
@@ -398,6 +400,9 @@ struct mailsmime * mailsmime_new(void)
   smime->store = X509_STORE_new();
   if (smime->store == NULL)
     goto err;
+#ifdef X509_V_FLAG_PARTIAL_CHAIN
+  X509_STORE_set_flags(smime->store, X509_V_FLAG_PARTIAL_CHAIN);
+#endif
 #endif
 #ifdef USE_SMIME_APPLE
   smime->trusted_certs = CFArrayCreateMutable(NULL, 0,
@@ -915,15 +920,31 @@ static int write_mime_to_mem(struct mailmime * mime, char ** result,
     size_t * result_len)
 {
   MMAPString * mmapstr;
+  struct mailmime fake_parent;
+  struct mailmime * saved_parent;
+  int saved_parent_type;
   int col;
   int r;
+
+  if ((mime == NULL) || (result == NULL) || (result_len == NULL))
+    return MAILSMIME_ERROR_INVAL;
 
   mmapstr = mmap_string_new("");
   if (mmapstr == NULL)
     return MAILSMIME_ERROR_MEMORY;
 
+  saved_parent = mime->mm_parent;
+  saved_parent_type = mime->mm_parent_type;
+  if ((mime->mm_type != MAILMIME_MESSAGE) && (mime->mm_parent == NULL)) {
+    memset(&fake_parent, 0, sizeof(fake_parent));
+    mime->mm_parent = &fake_parent;
+    mime->mm_parent_type = MAILMIME_MESSAGE;
+  }
+
   col = 0;
   r = mailmime_write_mem(mmapstr, &col, mime);
+  mime->mm_parent = saved_parent;
+  mime->mm_parent_type = saved_parent_type;
   if (r != MAILIMF_NO_ERROR) {
     mmap_string_free(mmapstr);
     return MAILSMIME_ERROR_PARSE;
@@ -932,6 +953,29 @@ static int write_mime_to_mem(struct mailmime * mime, char ** result,
   r = mmap_to_alloc(mmapstr, result, result_len);
   mmap_string_free(mmapstr);
   return r;
+}
+
+static int canonical_mime_to_mem(struct mailmime * mime, char ** result,
+    size_t * result_len)
+{
+  if ((mime == NULL) || (result == NULL) || (result_len == NULL))
+    return MAILSMIME_ERROR_INVAL;
+
+  if ((mime->mm_mime_start != NULL) && (mime->mm_length != 0)) {
+    char * data;
+
+    data = malloc(mime->mm_length + 1);
+    if (data == NULL)
+      return MAILSMIME_ERROR_MEMORY;
+
+    memcpy(data, mime->mm_mime_start, mime->mm_length);
+    data[mime->mm_length] = '\0';
+    * result = data;
+    * result_len = mime->mm_length;
+    return MAILSMIME_NO_ERROR;
+  }
+
+  return write_mime_to_mem(mime, result, result_len);
 }
 
 static int data_to_mem(struct mailmime_data * data, char ** result,
@@ -1286,6 +1330,7 @@ static int copy_mime(struct mailmime * mime, struct mailmime ** result)
   char * data;
   size_t len;
   size_t index;
+  struct mailmime * parsed;
   int r;
 
   r = write_mime_to_mem(mime, &data, &len);
@@ -1293,10 +1338,21 @@ static int copy_mime(struct mailmime * mime, struct mailmime ** result)
     return r;
 
   index = 0;
-  r = mailmime_parse(data, len, &index, result);
+  parsed = NULL;
+  r = mailmime_parse(data, len, &index, &parsed);
   if (r != MAILIMF_NO_ERROR) {
     free(data);
     return MAILSMIME_ERROR_PARSE;
+  }
+
+  if ((parsed->mm_type == MAILMIME_MESSAGE) &&
+      (parsed->mm_data.mm_message.mm_msg_mime != NULL)) {
+    * result = parsed->mm_data.mm_message.mm_msg_mime;
+    parsed->mm_data.mm_message.mm_msg_mime = NULL;
+    mailmime_free(parsed);
+  }
+  else {
+    * result = parsed;
   }
 
   r = mime_register_owned_buffer(* result, data);
@@ -1310,11 +1366,10 @@ static int copy_mime(struct mailmime * mime, struct mailmime ** result)
   return MAILSMIME_NO_ERROR;
 }
 
-static int make_multipart_signed(struct mailmime * original,
+static int make_multipart_signed(struct mailmime * signed_part,
     const char * sig_der, size_t sig_der_len, struct mailmime ** result)
 {
   struct mailmime * multipart;
-  struct mailmime * original_copy;
   struct mailmime * signature;
   int r;
 
@@ -1331,15 +1386,11 @@ static int make_multipart_signed(struct mailmime * original,
   if (r != MAILSMIME_NO_ERROR)
     goto free_multipart;
 
-  r = copy_mime(original, &original_copy);
-  if (r != MAILSMIME_NO_ERROR)
-    goto free_multipart;
-
   r = make_signature_part(sig_der, sig_der_len, &signature);
   if (r != MAILSMIME_NO_ERROR)
-    goto free_original;
+    goto free_signed_part;
 
-  r = mailmime_smart_add_part(multipart, original_copy);
+  r = mailmime_smart_add_part(multipart, signed_part);
   if (r != MAILIMF_NO_ERROR)
     goto free_signature;
 
@@ -1354,8 +1405,8 @@ static int make_multipart_signed(struct mailmime * original,
 
  free_signature:
   mailsmime_mime_free(signature);
- free_original:
-  mailsmime_mime_free(original_copy);
+ free_signed_part:
+  mailsmime_mime_free(signed_part);
  free_multipart:
   mailsmime_mime_free(multipart);
   return MAILSMIME_ERROR_MEMORY;
@@ -1495,6 +1546,31 @@ static char * x509_fingerprint_sha256(X509 * cert)
   return result;
 }
 
+static char * x509_time_to_string(const ASN1_TIME * time)
+{
+  BIO * out;
+  char * result;
+  size_t result_len;
+  int r;
+
+  if (time == NULL)
+    return NULL;
+
+  out = BIO_new(BIO_s_mem());
+  if (out == NULL)
+    return NULL;
+
+  if (ASN1_TIME_print(out, time) != 1) {
+    BIO_free(out);
+    return NULL;
+  }
+
+  r = bio_to_alloc(out, &result, &result_len);
+  (void) result_len;
+  BIO_free(out);
+  return r == MAILSMIME_NO_ERROR ? result : NULL;
+}
+
 static struct mailsmime_certificate * certificate_new_from_x509(X509 * x509)
 {
   struct mailsmime_certificate * cert;
@@ -1513,6 +1589,8 @@ static struct mailsmime_certificate * certificate_new_from_x509(X509 * x509)
     cert->name = strdup(cert->email);
   cert->subject = x509_name_to_string(X509_get_subject_name(x509));
   cert->issuer = x509_name_to_string(X509_get_issuer_name(x509));
+  cert->not_before = x509_time_to_string(X509_get_notBefore(x509));
+  cert->not_after = x509_time_to_string(X509_get_notAfter(x509));
   cert->fingerprint_sha256 = x509_fingerprint_sha256(x509);
 
   return cert;
@@ -1704,6 +1782,58 @@ static void result_set_certificate_verify_error(struct mailsmime * smime,
   result->status = MAILSMIME_VERIFY_INVALID;
   result_set_error(result, default_error);
 }
+
+static void result_set_certificate_verify_status(struct mailsmime * smime,
+    struct mailsmime_result * result, CMS_ContentInfo * cms)
+{
+  STACK_OF(X509) * signers;
+  int i;
+
+  signers = CMS_get0_signers(cms);
+  if (signers == NULL) {
+    result->status = MAILSMIME_VERIFY_INVALID;
+    result_set_error(result, "S/MIME signer certificate missing");
+    return;
+  }
+
+  for (i = 0; i < sk_X509_num(signers); i ++) {
+    X509 * cert;
+    X509_STORE_CTX * store_ctx;
+
+    cert = sk_X509_value(signers, i);
+    store_ctx = X509_STORE_CTX_new();
+    if (store_ctx == NULL) {
+      sk_X509_free(signers);
+      result->status = MAILSMIME_VERIFY_ERROR;
+      result_set_error(result, "S/MIME certificate verification failed");
+      return;
+    }
+
+    if (X509_STORE_CTX_init(store_ctx, smime->store, cert, signers) != 1) {
+      X509_STORE_CTX_free(store_ctx);
+      sk_X509_free(signers);
+      result->status = MAILSMIME_VERIFY_ERROR;
+      result_set_error(result, "S/MIME certificate verification failed");
+      return;
+    }
+
+    if (X509_verify_cert(store_ctx) != 1) {
+      int verify_error;
+
+      verify_error = X509_STORE_CTX_get_error(store_ctx);
+      result->status = verify_error_to_status(verify_error);
+      result_set_error(result, X509_verify_cert_error_string(verify_error));
+      X509_STORE_CTX_free(store_ctx);
+      sk_X509_free(signers);
+      return;
+    }
+
+    X509_STORE_CTX_free(store_ctx);
+  }
+
+  sk_X509_free(signers);
+  result->status = MAILSMIME_VERIFY_VALID;
+}
 #endif
 
 static int parse_mime_from_mem(const char * data, size_t len,
@@ -1746,9 +1876,11 @@ static int verify_smime_entity(struct mailsmime * smime,
   BIO * dcont;
   BIO * out;
   CMS_ContentInfo * cms;
+  int verify_flags;
   int r;
 
-  r = write_mime_to_mem(mime, &data, &data_len);
+  dcont = NULL;
+  r = canonical_mime_to_mem(mime, &data, &data_len);
   if (r != MAILSMIME_NO_ERROR)
     return r;
 
@@ -1758,7 +1890,6 @@ static int verify_smime_entity(struct mailsmime * smime,
     return MAILSMIME_ERROR_MEMORY;
   }
 
-  dcont = NULL;
   cms = SMIME_read_CMS(in, &dcont);
   BIO_free(in);
   free(data);
@@ -1775,8 +1906,12 @@ static int verify_smime_entity(struct mailsmime * smime,
   }
 
   r = MAILSMIME_NO_ERROR;
-  if (CMS_verify(cms, NULL, smime->store, dcont, out, 0) == 1) {
-    result->status = MAILSMIME_VERIFY_VALID;
+  verify_flags = CMS_BINARY;
+#ifdef CMS_NO_SIGNER_CERT_VERIFY
+  verify_flags |= CMS_NO_SIGNER_CERT_VERIFY;
+#endif
+  if (CMS_verify(cms, NULL, smime->store, dcont, out, verify_flags) == 1) {
+    result_set_certificate_verify_status(smime, result, cms);
     if (content_is(mime->mm_content_type, 0, MAILMIME_COMPOSITE_TYPE_MULTIPART,
         "signed")) {
       struct mailmime * signed_part;
@@ -2018,7 +2153,7 @@ static int verify_smime_entity(struct mailsmime * smime,
     if ((signed_part == NULL) || (sig_part == NULL))
       return MAILSMIME_ERROR_PARSE;
 
-    r = write_mime_to_mem(signed_part, &signed_data, &signed_len);
+    r = canonical_mime_to_mem(signed_part, &signed_data, &signed_len);
     if (r != MAILSMIME_NO_ERROR)
       return r;
     r = smime_body_to_mem(sig_part, &cms_data, &cms_len);
@@ -2083,6 +2218,7 @@ int mailsmime_sign(struct mailsmime * smime,
 {
 #ifdef USE_SMIME_OPENSSL
   struct mailsmime_key_entry * key;
+  struct mailmime * signed_part;
   char * data;
   size_t data_len;
   char * der;
@@ -2099,32 +2235,45 @@ int mailsmime_sign(struct mailsmime * smime,
   if (key == NULL)
     return MAILSMIME_ERROR_PRIVATE_KEY;
 
-  r = write_mime_to_mem(mime, &data, &data_len);
+  r = copy_mime(mime, &signed_part);
   if (r != MAILSMIME_NO_ERROR)
     return r;
 
+  r = canonical_mime_to_mem(signed_part, &data, &data_len);
+  if (r != MAILSMIME_NO_ERROR) {
+    mailsmime_mime_free(signed_part);
+    return r;
+  }
+
   in = bio_from_mem(data, data_len);
   if (in == NULL) {
+    mailsmime_mime_free(signed_part);
     free(data);
     return MAILSMIME_ERROR_MEMORY;
   }
 
   cms = CMS_sign(key->cert, key->key, NULL, in, CMS_BINARY | CMS_DETACHED);
   BIO_free(in);
-  free(data);
-  if (cms == NULL)
+  if (cms == NULL) {
+    free(data);
+    mailsmime_mime_free(signed_part);
     return MAILSMIME_ERROR_CRYPTO;
+  }
 
   r = cms_to_der(cms, &der, &der_len);
+  free(data);
   CMS_ContentInfo_free(cms);
-  if (r != MAILSMIME_NO_ERROR)
+  if (r != MAILSMIME_NO_ERROR) {
+    mailsmime_mime_free(signed_part);
     return r;
+  }
 
-  r = make_multipart_signed(mime, der, der_len, result);
+  r = make_multipart_signed(signed_part, der, der_len, result);
   free(der);
   return r;
 #elif defined(USE_SMIME_APPLE)
   struct mailsmime_key_entry * key;
+  struct mailmime * signed_part;
   CMSEncoderRef encoder;
   CFDataRef encoded;
   char * data;
@@ -2141,13 +2290,20 @@ int mailsmime_sign(struct mailsmime * smime,
   if ((key == NULL) || (key->identity == NULL))
     return MAILSMIME_ERROR_PRIVATE_KEY;
 
-  r = write_mime_to_mem(mime, &data, &data_len);
+  r = copy_mime(mime, &signed_part);
   if (r != MAILSMIME_NO_ERROR)
     return r;
+
+  r = canonical_mime_to_mem(signed_part, &data, &data_len);
+  if (r != MAILSMIME_NO_ERROR) {
+    mailsmime_mime_free(signed_part);
+    return r;
+  }
 
   encoder = NULL;
   encoded = NULL;
   if (CMSEncoderCreate(&encoder) != errSecSuccess) {
+    mailsmime_mime_free(signed_part);
     free(data);
     return MAILSMIME_ERROR_MEMORY;
   }
@@ -2159,6 +2315,7 @@ int mailsmime_sign(struct mailsmime * smime,
       (CMSEncoderUpdateContent(encoder, data, data_len) != errSecSuccess) ||
       (CMSEncoderCopyEncodedContent(encoder, &encoded) != errSecSuccess)) {
     CFRelease(encoder);
+    mailsmime_mime_free(signed_part);
     free(data);
     return MAILSMIME_ERROR_CRYPTO;
   }
@@ -2167,10 +2324,12 @@ int mailsmime_sign(struct mailsmime * smime,
   r = cfdata_to_alloc(encoded, &der, &der_len);
   CFRelease(encoded);
   CFRelease(encoder);
-  if (r != MAILSMIME_NO_ERROR)
+  if (r != MAILSMIME_NO_ERROR) {
+    mailsmime_mime_free(signed_part);
     return r;
+  }
 
-  r = make_multipart_signed(mime, der, der_len, result);
+  r = make_multipart_signed(signed_part, der, der_len, result);
   free(der);
   return r;
 #else
@@ -2264,8 +2423,8 @@ int mailsmime_encrypt(struct mailsmime * smime,
   }
 
   in = bio_from_mem(data, data_len);
-  free(data);
   if (in == NULL) {
+    free(data);
     sk_X509_free(certs);
     return MAILSMIME_ERROR_MEMORY;
   }
@@ -2273,10 +2432,13 @@ int mailsmime_encrypt(struct mailsmime * smime,
   cms = CMS_encrypt(certs, in, EVP_aes_256_cbc(), CMS_BINARY);
   BIO_free(in);
   sk_X509_free(certs);
-  if (cms == NULL)
+  if (cms == NULL) {
+    free(data);
     return MAILSMIME_ERROR_CRYPTO;
+  }
 
   r = cms_to_der(cms, &der, &der_len);
+  free(data);
   CMS_ContentInfo_free(cms);
   if (r != MAILSMIME_NO_ERROR)
     return r;
@@ -2515,6 +2677,43 @@ int mailsmime_result_signed_by_address(struct mailsmime_result * result,
   return 0;
 }
 
+int mailsmime_result_signed_by_from(struct mailsmime_result * result,
+    struct mailimf_fields * fields)
+{
+  clistiter * cur;
+
+  if ((result == NULL) || (fields == NULL) || (fields->fld_list == NULL))
+    return 0;
+
+  for (cur = clist_begin(fields->fld_list); cur != NULL;
+      cur = clist_next(cur)) {
+    struct mailimf_field * field;
+    struct mailimf_from * from;
+    clistiter * mb_cur;
+
+    field = clist_content(cur);
+    if ((field == NULL) || (field->fld_type != MAILIMF_FIELD_FROM))
+      continue;
+
+    from = field->fld_data.fld_from;
+    if ((from == NULL) || (from->frm_mb_list == NULL) ||
+        (from->frm_mb_list->mb_list == NULL))
+      continue;
+
+    for (mb_cur = clist_begin(from->frm_mb_list->mb_list); mb_cur != NULL;
+        mb_cur = clist_next(mb_cur)) {
+      struct mailimf_mailbox * mailbox;
+
+      mailbox = clist_content(mb_cur);
+      if ((mailbox != NULL) &&
+          mailsmime_result_signed_by_address(result, mailbox->mb_addr_spec))
+        return 1;
+    }
+  }
+
+  return 0;
+}
+
 struct mailmime * mailsmime_result_get_signed_mime(
     struct mailsmime_result * result)
 {
@@ -2604,6 +2803,22 @@ const char * mailsmime_certificate_issuer(struct mailsmime_certificate * cert)
   if (cert == NULL)
     return NULL;
   return cert->issuer;
+}
+
+const char * mailsmime_certificate_not_before(
+    struct mailsmime_certificate * cert)
+{
+  if (cert == NULL)
+    return NULL;
+  return cert->not_before;
+}
+
+const char * mailsmime_certificate_not_after(
+    struct mailsmime_certificate * cert)
+{
+  if (cert == NULL)
+    return NULL;
+  return cert->not_after;
 }
 
 const char * mailsmime_certificate_fingerprint_sha256(
@@ -2703,6 +2918,8 @@ void mailsmime_certificate_free(struct mailsmime_certificate * cert)
   free(cert->name);
   free(cert->subject);
   free(cert->issuer);
+  free(cert->not_before);
+  free(cert->not_after);
   free(cert->fingerprint_sha256);
   free(cert);
 }

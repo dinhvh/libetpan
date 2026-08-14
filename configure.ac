@@ -279,6 +279,11 @@ if test "x$with_smime" = "xopenssl"; then
   if test "x$with_openssl" != "xyes"; then
     AC_MSG_ERROR([--with-smime=openssl requires OpenSSL support])
   fi
+  AC_CHECK_HEADER([openssl/cms.h], [],
+      [AC_MSG_ERROR([--with-smime=openssl requires OpenSSL CMS headers])])
+  AC_CHECK_LIB([crypto], [CMS_sign], [],
+      [AC_MSG_ERROR([--with-smime=openssl requires OpenSSL CMS APIs])],
+      [$SSLLIBS])
   AC_DEFINE([USE_SMIME_OPENSSL], 1, [Define to use OpenSSL for S/MIME])
 fi
 

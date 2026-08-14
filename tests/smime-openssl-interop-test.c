@@ -91,14 +91,26 @@ static struct mailmime * parse_mime_file(const char * filename)
 static int write_mime_file(const char * filename, struct mailmime * mime)
 {
   FILE * f;
+  struct mailmime fake_parent;
+  struct mailmime * saved_parent;
+  int saved_parent_type;
   int col;
   int r;
 
   f = fopen(filename, "wb");
   if (f == NULL)
     return -1;
+  saved_parent = mime->mm_parent;
+  saved_parent_type = mime->mm_parent_type;
+  if ((mime->mm_type != MAILMIME_MESSAGE) && (mime->mm_parent == NULL)) {
+    memset(&fake_parent, 0, sizeof(fake_parent));
+    mime->mm_parent = &fake_parent;
+    mime->mm_parent_type = MAILMIME_MESSAGE;
+  }
   col = 0;
   r = mailmime_write(f, &col, mime);
+  mime->mm_parent = saved_parent;
+  mime->mm_parent_type = saved_parent_type;
   fclose(f);
   return r == MAILIMF_NO_ERROR ? 0 : -1;
 }
