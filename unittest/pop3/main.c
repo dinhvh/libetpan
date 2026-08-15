@@ -9,6 +9,8 @@
 #include <libetpan/mailpop3.h>
 #include <libetpan/mailstream_socket.h>
 
+#include "pop3_tests.h"
+
 static int write_server_stream(int fd, const char * stream)
 {
   size_t left;
@@ -112,6 +114,7 @@ static int test_list_ignores_zero_message_number(void)
   int list_r;
   int ok;
   int status;
+  unsigned int list_count = 0;
 
   listen_fd = socket(AF_INET, SOCK_STREAM, 0);
   if (listen_fd < 0) {
@@ -202,6 +205,9 @@ static int test_list_ignores_zero_message_number(void)
     ok = ok && (strcmp(msg->msg_uidl, "valid-uid") == 0);
   }
 
+  if (list != NULL)
+    list_count = carray_count(list);
+
   mailpop3_free(pop3);
   if (waitpid(server_pid, &status, 0) < 0)
     ok = 0;
@@ -211,18 +217,34 @@ static int test_list_ignores_zero_message_number(void)
   if (!ok) {
     fprintf(stderr, "connect=%d user=%d pass=%d list=%d count=%u\n",
         connect_r, user_r, pass_r, list_r,
-        list != NULL ? carray_count(list) : 0);
+        list_count);
   }
 
   return ok;
 }
 
-int main(void)
+int pop3_test_run_case(test_failure_callback failure_callback, void * context)
 {
   if (!test_list_ignores_zero_message_number()) {
     fprintf(stderr, "POP3 LIST zero message number regression failed\n");
-    return 1;
+    if (failure_callback != NULL)
+      failure_callback(__FILE__, __LINE__,
+          "test_list_ignores_zero_message_number()",
+          "POP3 LIST must ignore an invalid zero message number", context);
+    return -1;
   }
 
   return 0;
 }
+
+int pop3_test_run(void)
+{
+  return pop3_test_run_case(NULL, NULL);
+}
+
+#ifndef POP3_NO_MAIN
+int main(void)
+{
+  return pop3_test_run() == 0 ? 0 : 1;
+}
+#endif

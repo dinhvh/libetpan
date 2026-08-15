@@ -1,6 +1,8 @@
 #include <assert.h>
 #include <stdbool.h>
+#include <setjmp.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "response_data_test.h"
@@ -14,6 +16,34 @@ struct response_data_case {
   int type;
   int subtype;
 };
+
+static jmp_buf test_abort;
+static test_failure_callback active_failure_callback;
+static void * active_failure_context;
+static const char * active_fixture_root;
+
+static void fail_assertion(const char * file, unsigned line,
+    const char * expression)
+{
+  if (active_failure_callback != NULL)
+    active_failure_callback(file, line, expression, "assertion failed",
+        active_failure_context);
+  longjmp(test_abort, 1);
+}
+
+#undef assert
+#define assert(condition) \
+  do { if (!(condition)) fail_assertion(__FILE__, __LINE__, #condition); } while (0)
+
+static const char * fixture_path(const char * name)
+{
+  static char path[4096];
+  int written = snprintf(path, sizeof(path), "%s/%s", active_fixture_root,
+      name);
+
+  assert(written >= 0 && (size_t) written < sizeof(path));
+  return path;
+}
 
 static void check_case(const struct response_data_case * test_case,
     bool compressed)
@@ -55,7 +85,7 @@ static void check_nested_invalid_flags(bool compressed)
   int r;
 
   r = imap_test_parse_response_data_file(
-      "data/response-data/flags-nested-invalid.imap", compressed, &data);
+      fixture_path("flags-nested-invalid.imap"), compressed, &data);
   assert(r == MAILIMAP_NO_ERROR);
   assert(data != NULL);
   assert(data->rsp_type == MAILIMAP_RESP_DATA_TYPE_MAILBOX_DATA);
@@ -78,7 +108,7 @@ static void check_nested_invalid_permanentflags(bool compressed)
   int r;
 
   r = imap_test_parse_response_data_file(
-      "data/response-data/cond-state-ok-permanentflags-nested-invalid.imap",
+      fixture_path("cond-state-ok-permanentflags-nested-invalid.imap"),
       compressed, &data);
   assert(r == MAILIMAP_NO_ERROR);
   assert(data != NULL);
@@ -107,7 +137,7 @@ static void check_nested_invalid_fetch_flags(bool compressed)
   int r;
 
   r = imap_test_parse_response_data_file(
-      "data/response-data/fetch-flags-nested-invalid.imap", compressed,
+      fixture_path("fetch-flags-nested-invalid.imap"), compressed,
       &data);
   assert(r == MAILIMAP_NO_ERROR);
   assert(data != NULL);
@@ -142,7 +172,7 @@ static void check_icloud_message_id(bool compressed)
   int r;
 
   r = imap_test_parse_response_data_file(
-      "data/response-data/fetch-envelope-icloud-message-id.imap", compressed,
+      fixture_path("fetch-envelope-icloud-message-id.imap"), compressed,
       &data);
   assert(r == MAILIMAP_NO_ERROR);
   assert(data != NULL);
@@ -188,97 +218,154 @@ static void check_number_overflow(bool compressed)
   int r;
 
   r = imap_test_parse_response_data_file(
-      "data/response-data/fetch-literal-overflow.imap", compressed, &data);
+      fixture_path("fetch-literal-overflow.imap"), compressed, &data);
   assert(r == MAILIMAP_ERROR_PARSE);
   assert(data == NULL);
 }
 
+static const struct response_data_case cases[] = {
+    { "cond-state-ok.imap",
+      MAILIMAP_RESP_DATA_TYPE_COND_STATE, MAILIMAP_RESP_COND_STATE_OK },
+    { "cond-state-ok-alert.imap",
+      MAILIMAP_RESP_DATA_TYPE_COND_STATE, MAILIMAP_RESP_COND_STATE_OK },
+    { "cond-state-ok-badcharset.imap",
+      MAILIMAP_RESP_DATA_TYPE_COND_STATE, MAILIMAP_RESP_COND_STATE_OK },
+    { "cond-state-ok-capability-code.imap",
+      MAILIMAP_RESP_DATA_TYPE_COND_STATE, MAILIMAP_RESP_COND_STATE_OK },
+    { "cond-state-ok-read-only.imap",
+      MAILIMAP_RESP_DATA_TYPE_COND_STATE, MAILIMAP_RESP_COND_STATE_OK },
+    { "cond-state-ok-uidnext.imap",
+      MAILIMAP_RESP_DATA_TYPE_COND_STATE, MAILIMAP_RESP_COND_STATE_OK },
+    { "cond-state-ok-uidvalidity.imap",
+      MAILIMAP_RESP_DATA_TYPE_COND_STATE, MAILIMAP_RESP_COND_STATE_OK },
+    { "cond-state-ok-unknown-code.imap",
+      MAILIMAP_RESP_DATA_TYPE_COND_STATE, MAILIMAP_RESP_COND_STATE_OK },
+    { "cond-state-no.imap",
+      MAILIMAP_RESP_DATA_TYPE_COND_STATE, MAILIMAP_RESP_COND_STATE_NO },
+    { "cond-state-bad.imap",
+      MAILIMAP_RESP_DATA_TYPE_COND_STATE, MAILIMAP_RESP_COND_STATE_BAD },
+    { "cond-bye.imap",
+      MAILIMAP_RESP_DATA_TYPE_COND_BYE, 0 },
+    { "capability.imap",
+      MAILIMAP_RESP_DATA_TYPE_CAPABILITY_DATA, 0 },
+    { "flags.imap",
+      MAILIMAP_RESP_DATA_TYPE_MAILBOX_DATA, MAILIMAP_MAILBOX_DATA_FLAGS },
+    { "flags-empty.imap",
+      MAILIMAP_RESP_DATA_TYPE_MAILBOX_DATA, MAILIMAP_MAILBOX_DATA_FLAGS },
+    { "list.imap",
+      MAILIMAP_RESP_DATA_TYPE_MAILBOX_DATA, MAILIMAP_MAILBOX_DATA_LIST },
+    { "list-empty-flag-extension.imap",
+      MAILIMAP_RESP_DATA_TYPE_MAILBOX_DATA, MAILIMAP_MAILBOX_DATA_LIST },
+    { "list-nil-delimiter.imap",
+      MAILIMAP_RESP_DATA_TYPE_MAILBOX_DATA, MAILIMAP_MAILBOX_DATA_LIST },
+    { "lsub.imap",
+      MAILIMAP_RESP_DATA_TYPE_MAILBOX_DATA, MAILIMAP_MAILBOX_DATA_LSUB },
+    { "status.imap",
+      MAILIMAP_RESP_DATA_TYPE_MAILBOX_DATA, MAILIMAP_MAILBOX_DATA_STATUS },
+    { "exists.imap",
+      MAILIMAP_RESP_DATA_TYPE_MAILBOX_DATA, MAILIMAP_MAILBOX_DATA_EXISTS },
+    { "obsolete-search.imap",
+      MAILIMAP_RESP_DATA_TYPE_MAILBOX_DATA, MAILIMAP_MAILBOX_DATA_SEARCH },
+    { "obsolete-search-empty.imap",
+      MAILIMAP_RESP_DATA_TYPE_MAILBOX_DATA, MAILIMAP_MAILBOX_DATA_SEARCH },
+    { "obsolete-recent.imap",
+      MAILIMAP_RESP_DATA_TYPE_MAILBOX_DATA, MAILIMAP_MAILBOX_DATA_RECENT },
+    { "expunge.imap",
+      MAILIMAP_RESP_DATA_TYPE_MESSAGE_DATA, MAILIMAP_MESSAGE_DATA_EXPUNGE },
+    { "fetch-flags.imap",
+      MAILIMAP_RESP_DATA_TYPE_MESSAGE_DATA, MAILIMAP_MESSAGE_DATA_FETCH },
+    { "fetch-literal.imap",
+      MAILIMAP_RESP_DATA_TYPE_MESSAGE_DATA, MAILIMAP_MESSAGE_DATA_FETCH },
+    { "fetch-bodystructure.imap",
+      MAILIMAP_RESP_DATA_TYPE_MESSAGE_DATA, MAILIMAP_MESSAGE_DATA_FETCH },
+    { "fetch-envelope.imap",
+      MAILIMAP_RESP_DATA_TYPE_MESSAGE_DATA, MAILIMAP_MESSAGE_DATA_FETCH },
+    { "fetch-envelope-icloud-message-id.imap",
+      MAILIMAP_RESP_DATA_TYPE_MESSAGE_DATA, MAILIMAP_MESSAGE_DATA_FETCH },
+    { "fetch-rfc822-text.imap",
+      MAILIMAP_RESP_DATA_TYPE_MESSAGE_DATA, MAILIMAP_MESSAGE_DATA_FETCH },
+    { "enabled.imap",
+      MAILIMAP_RESP_DATA_TYPE_EXTENSION_DATA, MAILIMAP_EXTENSION_ENABLE },
+    { "namespace.imap",
+      MAILIMAP_RESP_DATA_TYPE_EXTENSION_DATA, MAILIMAP_EXTENSION_NAMESPACE },
+    { "xlist-empty-flag-extension.imap",
+      MAILIMAP_RESP_DATA_TYPE_EXTENSION_DATA, MAILIMAP_EXTENSION_XLIST }
+};
+
+static const char * special_case_names[] = {
+  "nested-invalid-flags",
+  "nested-invalid-permanentflags",
+  "nested-invalid-fetch-flags",
+  "icloud-message-id",
+  "number-overflow",
+};
+
+size_t imap_response_data_test_count(void)
+{
+  return sizeof(cases) / sizeof(cases[0]) +
+      sizeof(special_case_names) / sizeof(special_case_names[0]);
+}
+
+const char * imap_response_data_test_name(size_t index)
+{
+  size_t regular_count = sizeof(cases) / sizeof(cases[0]);
+  if (index < regular_count)
+    return cases[index].path;
+  index -= regular_count;
+  if (index < sizeof(special_case_names) / sizeof(special_case_names[0]))
+    return special_case_names[index];
+  return NULL;
+}
+
+int imap_response_data_test_run_case(size_t index, int compressed,
+    const char * fixture_root, test_failure_callback failure_callback,
+    void * context)
+{
+  size_t regular_count = sizeof(cases) / sizeof(cases[0]);
+
+  if (index >= imap_response_data_test_count()) {
+    if (failure_callback != NULL)
+      failure_callback(__FILE__, __LINE__,
+          "index < imap_response_data_test_count()",
+          "test case index is out of range", context);
+    return -1;
+  }
+
+  active_failure_callback = failure_callback;
+  active_failure_context = context;
+  active_fixture_root = fixture_root;
+  if (setjmp(test_abort) != 0)
+    return -1;
+
+  if (index < regular_count) {
+    struct response_data_case test_case = cases[index];
+    test_case.path = fixture_path(test_case.path);
+    check_case(&test_case, compressed != 0);
+  }
+  else {
+    switch (index - regular_count) {
+    case 0: check_nested_invalid_flags(compressed != 0); break;
+    case 1: check_nested_invalid_permanentflags(compressed != 0); break;
+    case 2: check_nested_invalid_fetch_flags(compressed != 0); break;
+    case 3: check_icloud_message_id(compressed != 0); break;
+    case 4: check_number_overflow(compressed != 0); break;
+    }
+  }
+  return 0;
+}
+
 int imap_response_data_test_run(void)
 {
-  static const struct response_data_case cases[] = {
-    { "data/response-data/cond-state-ok.imap",
-      MAILIMAP_RESP_DATA_TYPE_COND_STATE, MAILIMAP_RESP_COND_STATE_OK },
-    { "data/response-data/cond-state-ok-alert.imap",
-      MAILIMAP_RESP_DATA_TYPE_COND_STATE, MAILIMAP_RESP_COND_STATE_OK },
-    { "data/response-data/cond-state-ok-badcharset.imap",
-      MAILIMAP_RESP_DATA_TYPE_COND_STATE, MAILIMAP_RESP_COND_STATE_OK },
-    { "data/response-data/cond-state-ok-capability-code.imap",
-      MAILIMAP_RESP_DATA_TYPE_COND_STATE, MAILIMAP_RESP_COND_STATE_OK },
-    { "data/response-data/cond-state-ok-read-only.imap",
-      MAILIMAP_RESP_DATA_TYPE_COND_STATE, MAILIMAP_RESP_COND_STATE_OK },
-    { "data/response-data/cond-state-ok-uidnext.imap",
-      MAILIMAP_RESP_DATA_TYPE_COND_STATE, MAILIMAP_RESP_COND_STATE_OK },
-    { "data/response-data/cond-state-ok-uidvalidity.imap",
-      MAILIMAP_RESP_DATA_TYPE_COND_STATE, MAILIMAP_RESP_COND_STATE_OK },
-    { "data/response-data/cond-state-ok-unknown-code.imap",
-      MAILIMAP_RESP_DATA_TYPE_COND_STATE, MAILIMAP_RESP_COND_STATE_OK },
-    { "data/response-data/cond-state-no.imap",
-      MAILIMAP_RESP_DATA_TYPE_COND_STATE, MAILIMAP_RESP_COND_STATE_NO },
-    { "data/response-data/cond-state-bad.imap",
-      MAILIMAP_RESP_DATA_TYPE_COND_STATE, MAILIMAP_RESP_COND_STATE_BAD },
-    { "data/response-data/cond-bye.imap",
-      MAILIMAP_RESP_DATA_TYPE_COND_BYE, 0 },
-    { "data/response-data/capability.imap",
-      MAILIMAP_RESP_DATA_TYPE_CAPABILITY_DATA, 0 },
-    { "data/response-data/flags.imap",
-      MAILIMAP_RESP_DATA_TYPE_MAILBOX_DATA, MAILIMAP_MAILBOX_DATA_FLAGS },
-    { "data/response-data/flags-empty.imap",
-      MAILIMAP_RESP_DATA_TYPE_MAILBOX_DATA, MAILIMAP_MAILBOX_DATA_FLAGS },
-    { "data/response-data/list.imap",
-      MAILIMAP_RESP_DATA_TYPE_MAILBOX_DATA, MAILIMAP_MAILBOX_DATA_LIST },
-    { "data/response-data/list-empty-flag-extension.imap",
-      MAILIMAP_RESP_DATA_TYPE_MAILBOX_DATA, MAILIMAP_MAILBOX_DATA_LIST },
-    { "data/response-data/list-nil-delimiter.imap",
-      MAILIMAP_RESP_DATA_TYPE_MAILBOX_DATA, MAILIMAP_MAILBOX_DATA_LIST },
-    { "data/response-data/lsub.imap",
-      MAILIMAP_RESP_DATA_TYPE_MAILBOX_DATA, MAILIMAP_MAILBOX_DATA_LSUB },
-    { "data/response-data/status.imap",
-      MAILIMAP_RESP_DATA_TYPE_MAILBOX_DATA, MAILIMAP_MAILBOX_DATA_STATUS },
-    { "data/response-data/exists.imap",
-      MAILIMAP_RESP_DATA_TYPE_MAILBOX_DATA, MAILIMAP_MAILBOX_DATA_EXISTS },
-    { "data/response-data/obsolete-search.imap",
-      MAILIMAP_RESP_DATA_TYPE_MAILBOX_DATA, MAILIMAP_MAILBOX_DATA_SEARCH },
-    { "data/response-data/obsolete-search-empty.imap",
-      MAILIMAP_RESP_DATA_TYPE_MAILBOX_DATA, MAILIMAP_MAILBOX_DATA_SEARCH },
-    { "data/response-data/obsolete-recent.imap",
-      MAILIMAP_RESP_DATA_TYPE_MAILBOX_DATA, MAILIMAP_MAILBOX_DATA_RECENT },
-    { "data/response-data/expunge.imap",
-      MAILIMAP_RESP_DATA_TYPE_MESSAGE_DATA, MAILIMAP_MESSAGE_DATA_EXPUNGE },
-    { "data/response-data/fetch-flags.imap",
-      MAILIMAP_RESP_DATA_TYPE_MESSAGE_DATA, MAILIMAP_MESSAGE_DATA_FETCH },
-    { "data/response-data/fetch-literal.imap",
-      MAILIMAP_RESP_DATA_TYPE_MESSAGE_DATA, MAILIMAP_MESSAGE_DATA_FETCH },
-    { "data/response-data/fetch-bodystructure.imap",
-      MAILIMAP_RESP_DATA_TYPE_MESSAGE_DATA, MAILIMAP_MESSAGE_DATA_FETCH },
-    { "data/response-data/fetch-envelope.imap",
-      MAILIMAP_RESP_DATA_TYPE_MESSAGE_DATA, MAILIMAP_MESSAGE_DATA_FETCH },
-    { "data/response-data/fetch-envelope-icloud-message-id.imap",
-      MAILIMAP_RESP_DATA_TYPE_MESSAGE_DATA, MAILIMAP_MESSAGE_DATA_FETCH },
-    { "data/response-data/fetch-rfc822-text.imap",
-      MAILIMAP_RESP_DATA_TYPE_MESSAGE_DATA, MAILIMAP_MESSAGE_DATA_FETCH },
-    { "data/response-data/enabled.imap",
-      MAILIMAP_RESP_DATA_TYPE_EXTENSION_DATA, MAILIMAP_EXTENSION_ENABLE },
-    { "data/response-data/namespace.imap",
-      MAILIMAP_RESP_DATA_TYPE_EXTENSION_DATA, MAILIMAP_EXTENSION_NAMESPACE },
-    { "data/response-data/xlist-empty-flag-extension.imap",
-      MAILIMAP_RESP_DATA_TYPE_EXTENSION_DATA, MAILIMAP_EXTENSION_XLIST }
-  };
   size_t i;
 
-  for (i = 0; i < sizeof(cases) / sizeof(cases[0]); i++) {
-    check_case(&cases[i], false);
-    check_case(&cases[i], true);
+  for (i = 0; i < imap_response_data_test_count(); i++) {
+    if (imap_response_data_test_run_case(i, false, "data/response-data",
+          NULL, NULL) != 0)
+      abort();
+    if (imap_response_data_test_run_case(i, true, "data/response-data",
+          NULL, NULL) != 0)
+      abort();
   }
-  check_nested_invalid_flags(false);
-  check_nested_invalid_flags(true);
-  check_nested_invalid_permanentflags(false);
-  check_nested_invalid_permanentflags(true);
-  check_nested_invalid_fetch_flags(false);
-  check_nested_invalid_fetch_flags(true);
-  check_icloud_message_id(false);
-  check_icloud_message_id(true);
-  check_number_overflow(false);
-  check_number_overflow(true);
 
   puts("response_data_test: ok");
   return 0;

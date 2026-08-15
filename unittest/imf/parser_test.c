@@ -1,6 +1,7 @@
 #include "imf_tests.h"
 
 #include <assert.h>
+#include <setjmp.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -8,14 +9,35 @@
 #include "mailimf.h"
 #include "mmapstring.h"
 
+static jmp_buf test_abort;
+static test_failure_callback active_failure_callback;
+static void * active_failure_context;
+static const char * active_fixture_root;
+
+static void fail_assertion(const char * file, unsigned line,
+    const char * expression)
+{
+  if (active_failure_callback != NULL)
+    active_failure_callback(file, line, expression, "assertion failed",
+        active_failure_context);
+  longjmp(test_abort, 1);
+}
+
+#undef assert
+#define assert(condition) \
+  do { if (!(condition)) fail_assertion(__FILE__, __LINE__, #condition); } while (0)
+
 static MMAPString * read_fixture(const char * path)
 {
+  char resolved_path[4096];
   FILE * f;
   MMAPString * result;
   int ch;
   int previous = 0;
 
-  f = fopen(path, "rb");
+  assert(snprintf(resolved_path, sizeof(resolved_path), "%s/%s",
+      active_fixture_root, path) < (int) sizeof(resolved_path));
+  f = fopen(resolved_path, "rb");
   assert(f != NULL);
 
   result = mmap_string_new("");
@@ -356,7 +378,7 @@ static void check_all_standard_fields(void)
   size_t i;
   int r;
 
-  input = read_fixture("data/fields/all-standard.imf");
+  input = read_fixture("fields/all-standard.imf");
   fields = NULL;
   r = mailimf_fields_parse(input->str, input->len, &indx, &fields);
   assert(r == MAILIMF_NO_ERROR);
@@ -427,27 +449,77 @@ static void check_message_file(const char * path)
   mmap_string_free(input);
 }
 
-static void check_rfc822_style_messages(void)
+static void check_simple_rfc822_message(void)
 {
-  static const char * paths[] = {
-    "data/messages/simple-rfc822.eml",
-    "data/messages/folded-comments-rfc822.eml",
-    "data/messages/resent-trace-rfc822.eml",
-  };
-  size_t i;
+  check_message_file("messages/simple-rfc822.eml");
+}
 
-  for (i = 0; i < sizeof(paths) / sizeof(paths[0]); i++)
-    check_message_file(paths[i]);
+static void check_folded_comments_rfc822_message(void)
+{
+  check_message_file("messages/folded-comments-rfc822.eml");
+}
+
+static void check_resent_trace_rfc822_message(void)
+{
+  check_message_file("messages/resent-trace-rfc822.eml");
+}
+
+struct imf_parser_case {
+  const char * name;
+  void (* run)(void);
+};
+
+static const struct imf_parser_case parser_cases[] = {
+  { "date time", check_date_time },
+  { "lexical tokens", check_lexical_tokens },
+  { "address forms", check_address_forms },
+  { "identifier fields", check_identifier_fields },
+  { "all standard fields", check_all_standard_fields },
+  { "simple RFC 822 message", check_simple_rfc822_message },
+  { "folded comments RFC 822 message", check_folded_comments_rfc822_message },
+  { "resent trace RFC 822 message", check_resent_trace_rfc822_message },
+};
+
+size_t imf_parser_test_count(void)
+{
+  return sizeof(parser_cases) / sizeof(parser_cases[0]);
+}
+
+const char * imf_parser_test_name(size_t index)
+{
+  if (index >= imf_parser_test_count())
+    return NULL;
+  return parser_cases[index].name;
+}
+
+int imf_parser_test_run_case(size_t index, const char * fixture_root,
+    test_failure_callback failure_callback, void * context)
+{
+  if (index >= imf_parser_test_count()) {
+    if (failure_callback != NULL)
+      failure_callback(__FILE__, __LINE__, "index < imf_parser_test_count()",
+          "test case index is out of range", context);
+    return -1;
+  }
+
+  active_failure_callback = failure_callback;
+  active_failure_context = context;
+  active_fixture_root = fixture_root;
+  if (setjmp(test_abort) != 0)
+    return -1;
+
+  parser_cases[index].run();
+  return 0;
 }
 
 int imf_parser_test_run(void)
 {
-  check_date_time();
-  check_lexical_tokens();
-  check_address_forms();
-  check_identifier_fields();
-  check_all_standard_fields();
-  check_rfc822_style_messages();
+  size_t index;
+
+  for (index = 0; index < imf_parser_test_count(); index++) {
+    if (imf_parser_test_run_case(index, "data", NULL, NULL) != 0)
+      abort();
+  }
 
   puts("parser_test: ok");
   return 0;

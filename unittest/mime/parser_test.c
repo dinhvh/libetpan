@@ -1,6 +1,7 @@
 #include "mime_tests.h"
 
 #include <assert.h>
+#include <setjmp.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -9,14 +10,35 @@
 #include "mailmime.h"
 #include "mmapstring.h"
 
+static jmp_buf test_abort;
+static test_failure_callback active_failure_callback;
+static void * active_failure_context;
+static const char * active_fixture_root;
+
+static void fail_assertion(const char * file, unsigned line,
+    const char * expression)
+{
+  if (active_failure_callback != NULL)
+    active_failure_callback(file, line, expression, "assertion failed",
+        active_failure_context);
+  longjmp(test_abort, 1);
+}
+
+#undef assert
+#define assert(condition) \
+  do { if (!(condition)) fail_assertion(__FILE__, __LINE__, #condition); } while (0)
+
 static MMAPString * read_fixture(const char * path)
 {
+  char resolved_path[4096];
   FILE * f;
   MMAPString * result;
   int ch;
   int previous = 0;
 
-  f = fopen(path, "rb");
+  assert(snprintf(resolved_path, sizeof(resolved_path), "%s/%s",
+      active_fixture_root, path) < (int) sizeof(resolved_path));
+  f = fopen(resolved_path, "rb");
   assert(f != NULL);
 
   result = mmap_string_new("");
@@ -205,7 +227,7 @@ static void check_field_grammar(void)
   size_t indx;
   int r;
 
-  input = read_fixture("data/fields/rfc2045-headers.eml");
+  input = read_fixture("fields/rfc2045-headers.eml");
   indx = 0;
   imf_fields = NULL;
   r = mailimf_fields_parse(input->str, input->len, &indx, &imf_fields);
@@ -536,10 +558,7 @@ static void check_full_rfc822_multipart(void)
   size_t indx;
   int r;
 
-  check_message_file("data/messages/rfc822-multipart.eml", 3);
-  check_message_file("data/messages/rfc822-alternative.eml", 2);
-
-  input = read_fixture("data/messages/rfc822-multipart.eml");
+  input = read_fixture("messages/rfc822-multipart.eml");
   indx = 0;
   mime = NULL;
   r = mailmime_parse(input->str, input->len, &indx, &mime);
@@ -590,6 +609,16 @@ static void check_full_rfc822_multipart(void)
   mmap_string_free(input);
 }
 
+static void check_rfc822_multipart_file(void)
+{
+  check_message_file("messages/rfc822-multipart.eml", 3);
+}
+
+static void check_rfc822_alternative_file(void)
+{
+  check_message_file("messages/rfc822-alternative.eml", 2);
+}
+
 static void check_boundary_quoted_pair_quote(void)
 {
   const char * input = "multipart/mixed; boundary=\"\\\"\"";
@@ -615,18 +644,66 @@ static void check_boundary_quoted_pair_quote(void)
   mailmime_content_free(content);
 }
 
+struct mime_parser_case {
+  const char * name;
+  void (* run)(void);
+};
+
+static const struct mime_parser_case parser_cases[] = {
+  { "content type grammar", check_content_type_grammar },
+  { "encoding grammar", check_encoding_grammar },
+  { "field grammar", check_field_grammar },
+  { "encoded structured field recovery", check_encoded_structured_field_recovery },
+  { "RFC 2231 content type parameters", check_rfc2231_content_type_parameters },
+  { "RFC 2231 disposition filename", check_rfc2231_content_disposition_filename },
+  { "transfer decoders", check_transfer_decoders },
+  { "RFC 2047 encoded words", check_rfc2047_encoded_words },
+  { "RFC 822 multipart file", check_rfc822_multipart_file },
+  { "RFC 822 alternative file", check_rfc822_alternative_file },
+  { "full RFC 822 multipart", check_full_rfc822_multipart },
+  { "quoted-pair boundary quote", check_boundary_quoted_pair_quote },
+};
+
+size_t mime_parser_test_count(void)
+{
+  return sizeof(parser_cases) / sizeof(parser_cases[0]);
+}
+
+const char * mime_parser_test_name(size_t index)
+{
+  if (index >= mime_parser_test_count())
+    return NULL;
+  return parser_cases[index].name;
+}
+
+int mime_parser_test_run_case(size_t index, const char * fixture_root,
+    test_failure_callback failure_callback, void * context)
+{
+  if (index >= mime_parser_test_count()) {
+    if (failure_callback != NULL)
+      failure_callback(__FILE__, __LINE__, "index < mime_parser_test_count()",
+          "test case index is out of range", context);
+    return -1;
+  }
+
+  active_failure_callback = failure_callback;
+  active_failure_context = context;
+  active_fixture_root = fixture_root;
+  if (setjmp(test_abort) != 0)
+    return -1;
+
+  parser_cases[index].run();
+  return 0;
+}
+
 int mime_parser_test_run(void)
 {
-  check_content_type_grammar();
-  check_encoding_grammar();
-  check_field_grammar();
-  check_encoded_structured_field_recovery();
-  check_rfc2231_content_type_parameters();
-  check_rfc2231_content_disposition_filename();
-  check_transfer_decoders();
-  check_rfc2047_encoded_words();
-  check_full_rfc822_multipart();
-  check_boundary_quoted_pair_quote();
+  size_t index;
+
+  for (index = 0; index < mime_parser_test_count(); index++) {
+    if (mime_parser_test_run_case(index, "data", NULL, NULL) != 0)
+      abort();
+  }
 
   puts("parser_test: ok");
   return 0;

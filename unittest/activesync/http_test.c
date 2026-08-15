@@ -17,6 +17,8 @@
 #include <string.h>
 #include <strings.h>
 
+#include "activesync_tests.h"
+
 static const unsigned char test_conversation_id[] = { 0x01, 0x02, 0x03, 0x04 };
 static const unsigned char test_conversation_index[] = { 0x05, 0x06, 0x07 };
 
@@ -8654,104 +8656,105 @@ static int test_active_sync_public_bad_state(void)
   return 1;
 }
 
-int main(void)
-{
-  if (!test_response_header_lookup())
-    return 1;
-  if (!test_request_body_copy())
-    return 1;
-  if (!test_options_success())
-    return 1;
-  if (!test_options_trims_empty_list_items())
-    return 1;
-  if (!test_options_missing_headers())
-    return 1;
-  if (!test_options_unauthorized())
-    return 1;
-  if (!test_options_status_mapping())
-    return 1;
-  if (!test_options_advertised_command_enforcement())
-    return 1;
-  if (!test_oauth2_token_replacement())
-    return 1;
-  if (!test_active_sync_status_mapping())
-    return 1;
-  if (!test_version_specific_email_restrictions())
-    return 1;
-  if (!test_provision_success())
-    return 1;
-  if (!test_settings_device_information_success())
-    return 1;
-  if (!test_get_item_estimate_success_and_empty_response())
-    return 1;
-  if (!test_get_item_estimate_multi_success())
-    return 1;
-  if (!test_item_operations_fetch_success())
-    return 1;
-  if (!test_item_operations_fetch_multi_success())
-    return 1;
-  if (!test_item_operations_fetch_body_part_success())
-    return 1;
-  if (!test_item_operations_fetch_attachment_success_and_status())
-    return 1;
-  if (!test_mail_search_success_and_status())
-    return 1;
-  if (!test_mail_find_success_and_status())
-    return 1;
-  if (!test_validate_cert_success_and_status())
-    return 1;
-  if (!test_resolve_recipients_success_and_status())
-    return 1;
-  if (!test_outlook_anchor_mailbox_cookie())
-    return 1;
-  if (!test_anchor_mailbox_cookie_not_sent_to_office365())
-    return 1;
-  if (!test_command_post_request())
-    return 1;
-  if (!test_command_post_basic_auth())
-    return 1;
-  if (!test_folder_sync_success())
-    return 1;
-  if (!test_folder_mutation_success_and_status())
-    return 1;
-  if (!test_folder_sync_response_errors())
-    return 1;
-  if (!test_sync_success())
-    return 1;
-  if (!test_sync_multi_collection_success())
-    return 1;
-  if (!test_sync_empty_response_and_request_defaults())
-    return 1;
-  if (!test_sync_activesync_25_collection_class_shape())
-    return 1;
-  if (!test_sync_wait_and_heartbeat_request_shape())
-    return 1;
-  if (!test_sync_conversation_mode_request_shape())
-    return 1;
-  if (!test_sync_top_level_status_response())
-    return 1;
-  if (!test_sync_empty_http_response_is_no_change())
-    return 1;
-  if (!test_sync_change_softdelete_and_html_body())
-    return 1;
-  if (!test_sync_response_errors())
-    return 1;
-  if (!test_sync_client_command_request_and_responses())
-    return 1;
-  if (!test_sync_mail_mutation_helpers())
-    return 1;
-  if (!test_sync_draft_helpers())
-    return 1;
-  if (!test_move_items_success())
-    return 1;
-  if (!test_ping_success_and_statuses())
-    return 1;
-  if (!test_composemail_send_mail_success_and_error())
-    return 1;
-  if (!test_composemail_smart_reply_forward_success())
-    return 1;
-  if (!test_active_sync_public_bad_state())
-    return 1;
+struct activesync_http_test_case {
+  const char * name;
+  int (* run)(void);
+};
 
+#define HTTP_TEST(function) { #function, function }
+
+static const struct activesync_http_test_case http_tests[] = {
+  HTTP_TEST(test_response_header_lookup),
+  HTTP_TEST(test_request_body_copy),
+  HTTP_TEST(test_options_success),
+  HTTP_TEST(test_options_trims_empty_list_items),
+  HTTP_TEST(test_options_missing_headers),
+  HTTP_TEST(test_options_unauthorized),
+  HTTP_TEST(test_options_status_mapping),
+  HTTP_TEST(test_options_advertised_command_enforcement),
+  HTTP_TEST(test_oauth2_token_replacement),
+  HTTP_TEST(test_active_sync_status_mapping),
+  HTTP_TEST(test_version_specific_email_restrictions),
+  HTTP_TEST(test_provision_success),
+  HTTP_TEST(test_settings_device_information_success),
+  HTTP_TEST(test_get_item_estimate_success_and_empty_response),
+  HTTP_TEST(test_get_item_estimate_multi_success),
+  HTTP_TEST(test_item_operations_fetch_success),
+  HTTP_TEST(test_item_operations_fetch_multi_success),
+  HTTP_TEST(test_item_operations_fetch_body_part_success),
+  HTTP_TEST(test_item_operations_fetch_attachment_success_and_status),
+  HTTP_TEST(test_mail_search_success_and_status),
+  HTTP_TEST(test_mail_find_success_and_status),
+  HTTP_TEST(test_validate_cert_success_and_status),
+  HTTP_TEST(test_resolve_recipients_success_and_status),
+  HTTP_TEST(test_outlook_anchor_mailbox_cookie),
+  HTTP_TEST(test_anchor_mailbox_cookie_not_sent_to_office365),
+  HTTP_TEST(test_command_post_request),
+  HTTP_TEST(test_command_post_basic_auth),
+  HTTP_TEST(test_folder_sync_success),
+  HTTP_TEST(test_folder_mutation_success_and_status),
+  HTTP_TEST(test_folder_sync_response_errors),
+  HTTP_TEST(test_sync_success),
+  HTTP_TEST(test_sync_multi_collection_success),
+  HTTP_TEST(test_sync_empty_response_and_request_defaults),
+  HTTP_TEST(test_sync_activesync_25_collection_class_shape),
+  HTTP_TEST(test_sync_wait_and_heartbeat_request_shape),
+  HTTP_TEST(test_sync_conversation_mode_request_shape),
+  HTTP_TEST(test_sync_top_level_status_response),
+  HTTP_TEST(test_sync_empty_http_response_is_no_change),
+  HTTP_TEST(test_sync_change_softdelete_and_html_body),
+  HTTP_TEST(test_sync_response_errors),
+  HTTP_TEST(test_sync_client_command_request_and_responses),
+  HTTP_TEST(test_sync_mail_mutation_helpers),
+  HTTP_TEST(test_sync_draft_helpers),
+  HTTP_TEST(test_move_items_success),
+  HTTP_TEST(test_ping_success_and_statuses),
+  HTTP_TEST(test_composemail_send_mail_success_and_error),
+  HTTP_TEST(test_composemail_smart_reply_forward_success),
+  HTTP_TEST(test_active_sync_public_bad_state),
+};
+
+#undef HTTP_TEST
+
+size_t activesync_http_test_count(void)
+{
+  return sizeof(http_tests) / sizeof(http_tests[0]);
+}
+
+const char * activesync_http_test_name(size_t index)
+{
+  if (index >= activesync_http_test_count())
+    return NULL;
+  return http_tests[index].name;
+}
+
+int activesync_http_test_run_case(size_t index,
+    test_failure_callback failure_callback, void * context)
+{
+  if (index >= activesync_http_test_count())
+    return -1;
+  if (!http_tests[index].run()) {
+    if (failure_callback != NULL)
+      failure_callback(__FILE__, __LINE__, http_tests[index].name,
+          "ActiveSync HTTP test failed", context);
+    return -1;
+  }
   return 0;
 }
+
+int activesync_http_test_run(void)
+{
+  size_t index;
+  for (index = 0; index < activesync_http_test_count(); index++) {
+    if (activesync_http_test_run_case(index, NULL, NULL) != 0)
+      return -1;
+  }
+  return 0;
+}
+
+#ifndef ACTIVESYNC_HTTP_NO_MAIN
+int main(void)
+{
+  return activesync_http_test_run() == 0 ? 0 : 1;
+}
+#endif

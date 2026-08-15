@@ -465,10 +465,19 @@ int imap_test_parse_response_data_file(const char * path, bool compressed,
 void imap_test_expect_send_file(const char * path, imap_test_sender * sender,
     void * context)
 {
+  assert(imap_test_expect_send_file_result(path, sender, context, NULL, NULL)
+      == 0);
+}
+
+int imap_test_expect_send_file_result(const char * path,
+    imap_test_sender * sender, void * sender_context,
+    test_failure_callback failure_callback, void * failure_context)
+{
   MMAPString * expected;
   struct capture_stream * data;
   mailstream_low * low;
   mailstream * stream;
+  int result = 0;
   int r;
 
   printf("testing %s\n", path);
@@ -485,18 +494,33 @@ void imap_test_expect_send_file(const char * path, imap_test_sender * sender,
   stream = mailstream_new(low, 128);
   assert(stream != NULL);
 
-  r = sender(stream, context);
-  assert(r == MAILIMAP_NO_ERROR);
-  assert(mailstream_flush(stream) == 0);
+  r = sender(stream, sender_context);
+  if (r != MAILIMAP_NO_ERROR) {
+    if (failure_callback != NULL)
+      failure_callback(__FILE__, __LINE__, "r == MAILIMAP_NO_ERROR",
+          "IMAP sender returned an error", failure_context);
+    result = -1;
+  }
+  else if (mailstream_flush(stream) != 0) {
+    if (failure_callback != NULL)
+      failure_callback(__FILE__, __LINE__, "mailstream_flush(stream) == 0",
+          "could not flush sender output", failure_context);
+    result = -1;
+  }
 
-  if ((data->output->len != expected->len) ||
-      (memcmp(data->output->str, expected->str, expected->len) != 0)) {
+  if (result == 0 && ((data->output->len != expected->len) ||
+      (memcmp(data->output->str, expected->str, expected->len) != 0))) {
     fprintf(stderr, "sender output mismatch for %s\n", path);
     fprintf(stderr, "expected: %s\n", expected->str);
     fprintf(stderr, "actual:   %s\n", data->output->str);
-    assert(0);
+    if (failure_callback != NULL)
+      failure_callback(__FILE__, __LINE__,
+          "sender output matches expected fixture",
+          "sender output mismatch", failure_context);
+    result = -1;
   }
 
   mailstream_close(stream);
   mmap_string_free(expected);
+  return result;
 }

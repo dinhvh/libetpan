@@ -35,6 +35,59 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		A10000000000000000000001 /* IMAPResponseDoneTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000011 /* IMAPResponseDoneTests.m */; };
+		A10000000000000000000002 /* response_done_test.c in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000012 /* response_done_test.c */; };
+		A10000000000000000000003 /* imap_test_utils.c in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000013 /* imap_test_utils.c */; };
+		A10000000000000000000004 /* response-done in Resources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000014 /* response-done */; };
+		A10000000000000000000005 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A10000000000000000000015 /* XCTest.framework */; };
+		A10000000000000000000006 /* libetpan.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A10000000000000000000016 /* libetpan.framework */; };
+		A10000000000000000000007 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 8568A3DE1C609B8500FF4470 /* libz.tbd */; };
+		A20000000000000000000001 /* IMAPUTF7Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000011 /* IMAPUTF7Tests.m */; };
+		A20000000000000000000002 /* imap_utf7_tests.c in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000012 /* imap_utf7_tests.c */; };
+		A30000000000000000000001 /* IMFParserTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A30000000000000000000011 /* IMFParserTests.m */; };
+		A30000000000000000000002 /* parser_test.c in Sources */ = {isa = PBXBuildFile; fileRef = A30000000000000000000012 /* parser_test.c */; };
+		A30000000000000000000003 /* imf-data in Resources */ = {isa = PBXBuildFile; fileRef = A30000000000000000000013 /* imf-data */; };
+		A40000000000000000000001 /* MIMEParserTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A40000000000000000000011 /* MIMEParserTests.m */; };
+		A40000000000000000000002 /* MIME parser_test.c in Sources */ = {isa = PBXBuildFile; fileRef = A40000000000000000000012 /* MIME parser_test.c */; };
+		A50000000000000000000001 /* DataTypesTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A50000000000000000000011 /* DataTypesTests.m */; };
+		A50000000000000000000002 /* md5_test.c in Sources */ = {isa = PBXBuildFile; fileRef = A50000000000000000000012 /* md5_test.c */; };
+		A50000000000000000000003 /* CharsetDetectionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A50000000000000000000013 /* CharsetDetectionTests.m */; };
+		A50000000000000000000004 /* charset_detection_tests.c in Sources */ = {isa = PBXBuildFile; fileRef = A50000000000000000000014 /* charset_detection_tests.c */; };
+		A50000000000000000000005 /* test_utils.c in Sources */ = {isa = PBXBuildFile; fileRef = A50000000000000000000015 /* test_utils.c */; };
+		A60000000000000000000001 /* IMAPResponseDataTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A60000000000000000000011 /* IMAPResponseDataTests.m */; };
+		A60000000000000000000002 /* response_data_test.c in Sources */ = {isa = PBXBuildFile; fileRef = A60000000000000000000012 /* response_data_test.c */; };
+		A60000000000000000000003 /* response-data in Resources */ = {isa = PBXBuildFile; fileRef = A60000000000000000000013 /* response-data */; };
+		A70000000000000000000001 /* IMAPUnsupportedResponseTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A70000000000000000000011 /* IMAPUnsupportedResponseTests.m */; };
+		A70000000000000000000002 /* unsupported_response_test.c in Sources */ = {isa = PBXBuildFile; fileRef = A70000000000000000000012 /* unsupported_response_test.c */; };
+		A70000000000000000000003 /* unsupported in Resources */ = {isa = PBXBuildFile; fileRef = A70000000000000000000013 /* unsupported */; };
+		A80000000000000000000001 /* IMAPCommandSenderTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A80000000000000000000011 /* IMAPCommandSenderTests.m */; };
+		A80000000000000000000002 /* command_sender_test.c in Sources */ = {isa = PBXBuildFile; fileRef = A80000000000000000000012 /* command_sender_test.c */; };
+		A80000000000000000000003 /* command-sender in Resources */ = {isa = PBXBuildFile; fileRef = A80000000000000000000013 /* command-sender */; };
+		A90000000000000000000001 /* IMAPCommandParameterSenderTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A90000000000000000000011 /* IMAPCommandParameterSenderTests.m */; };
+		A90000000000000000000002 /* command_parameter_sender_test.c in Sources */ = {isa = PBXBuildFile; fileRef = A90000000000000000000012 /* command_parameter_sender_test.c */; };
+		A90000000000000000000003 /* command-parameters in Resources */ = {isa = PBXBuildFile; fileRef = A90000000000000000000013 /* command-parameters */; };
+		AA0000000000000000000001 /* IMAPIdleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000011 /* IMAPIdleTests.m */; };
+		AA0000000000000000000002 /* idle_test.c in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000012 /* idle_test.c */; };
+		AB0000000000000000000001 /* MIMEBuilderTests.m in Sources */ = {isa = PBXBuildFile; fileRef = AB0000000000000000000011 /* MIMEBuilderTests.m */; };
+		AB0000000000000000000002 /* MIME builder main.c in Sources */ = {isa = PBXBuildFile; fileRef = AB0000000000000000000012 /* MIME builder main.c */; settings = {COMPILER_FLAGS = "-DMIME_BUILDER_NO_MAIN"; }; };
+		AB0000000000000000000003 /* mime_builder_helpers.c in Sources */ = {isa = PBXBuildFile; fileRef = AB0000000000000000000013 /* mime_builder_helpers.c */; };
+		AC0000000000000000000001 /* MIMEParserSerializationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = AC0000000000000000000011 /* MIMEParserSerializationTests.m */; };
+		AC0000000000000000000002 /* MIME parser serialization main.c in Sources */ = {isa = PBXBuildFile; fileRef = AC0000000000000000000012 /* MIME parser serialization main.c */; settings = {COMPILER_FLAGS = "-DMIME_PARSER_SERIALIZATION_NO_MAIN"; }; };
+		AC0000000000000000000003 /* mime_serializer.c in Sources */ = {isa = PBXBuildFile; fileRef = AC0000000000000000000013 /* mime_serializer.c */; };
+		AC0000000000000000000004 /* json_writer.c in Sources */ = {isa = PBXBuildFile; fileRef = AC0000000000000000000014 /* json_writer.c */; };
+		AD0000000000000000000001 /* PlaintextRenderingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = AD0000000000000000000011 /* PlaintextRenderingTests.m */; };
+		AD0000000000000000000002 /* plaintext rendering main.c in Sources */ = {isa = PBXBuildFile; fileRef = AD0000000000000000000012 /* plaintext rendering main.c */; settings = {COMPILER_FLAGS = "-DPLAINTEXT_RENDERING_NO_MAIN"; }; };
+		AD0000000000000000000003 /* html_cleaner.c in Sources */ = {isa = PBXBuildFile; fileRef = AD0000000000000000000013 /* html_cleaner.c */; };
+		AD0000000000000000000004 /* html_flattener.c in Sources */ = {isa = PBXBuildFile; fileRef = AD0000000000000000000014 /* html_flattener.c */; };
+		AD0000000000000000000005 /* html_renderer.c in Sources */ = {isa = PBXBuildFile; fileRef = AD0000000000000000000015 /* html_renderer.c */; };
+		AE0000000000000000000001 /* POP3Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = AE0000000000000000000011 /* POP3Tests.m */; };
+		AE0000000000000000000002 /* POP3 main.c in Sources */ = {isa = PBXBuildFile; fileRef = AE0000000000000000000012 /* POP3 main.c */; settings = {COMPILER_FLAGS = "-DPOP3_NO_MAIN"; }; };
+		AF0000000000000000000001 /* ActiveSyncWBXMLTests.m in Sources */ = {isa = PBXBuildFile; fileRef = AF0000000000000000000011 /* ActiveSyncWBXMLTests.m */; };
+		AF0000000000000000000002 /* wbxml_test.c in Sources */ = {isa = PBXBuildFile; fileRef = AF0000000000000000000012 /* wbxml_test.c */; settings = {COMPILER_FLAGS = "-DACTIVESYNC_WBXML_NO_MAIN"; }; };
+		AG0000000000000000000001 /* ActiveSyncHTTPTests.m in Sources */ = {isa = PBXBuildFile; fileRef = AG0000000000000000000011 /* ActiveSyncHTTPTests.m */; };
+		AG0000000000000000000002 /* http_test.c in Sources */ = {isa = PBXBuildFile; fileRef = AG0000000000000000000012 /* http_test.c */; settings = {COMPILER_FLAGS = "-DACTIVESYNC_HTTP_NO_MAIN"; }; };
+		AH0000000000000000000001 /* ActiveSyncSampleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = AH0000000000000000000011 /* ActiveSyncSampleTests.m */; };
+		AH0000000000000000000002 /* sample_test.c in Sources */ = {isa = PBXBuildFile; fileRef = AH0000000000000000000012 /* sample_test.c */; settings = {COMPILER_FLAGS = "-DACTIVESYNC_SAMPLE_NO_MAIN"; }; };
 		3678611516AB3995002F2B96 /* imap-sample.c in Sources */ = {isa = PBXBuildFile; fileRef = 367860E416AB36DF002F2B96 /* imap-sample.c */; };
 		3678611F16AB410C002F2B96 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678611E16AB410C002F2B96 /* CoreFoundation.framework */; };
 		3678612116AB411F002F2B96 /* libssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678612016AB411F002F2B96 /* libssl.dylib */; };
@@ -439,6 +492,59 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		A10000000000000000000010 /* libetpan-unit-tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "libetpan-unit-tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A10000000000000000000011 /* IMAPResponseDoneTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = IMAPResponseDoneTests.m; path = ../unittest/xctest/IMAPResponseDoneTests.m; sourceTree = SOURCE_ROOT; };
+		A10000000000000000000012 /* response_done_test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = response_done_test.c; path = ../unittest/imap/response_done_test.c; sourceTree = SOURCE_ROOT; };
+		A10000000000000000000013 /* imap_test_utils.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = imap_test_utils.c; path = ../unittest/imap/imap_test_utils.c; sourceTree = SOURCE_ROOT; };
+		A10000000000000000000014 /* response-done */ = {isa = PBXFileReference; lastKnownFileType = folder; name = response-done; path = ../unittest/imap/data/response-done; sourceTree = SOURCE_ROOT; };
+		A10000000000000000000015 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = System/Library/Frameworks/XCTest.framework; sourceTree = SDKROOT; };
+		A10000000000000000000016 /* libetpan.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = libetpan.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A20000000000000000000011 /* IMAPUTF7Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = IMAPUTF7Tests.m; path = ../unittest/xctest/IMAPUTF7Tests.m; sourceTree = SOURCE_ROOT; };
+		A20000000000000000000012 /* imap_utf7_tests.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = imap_utf7_tests.c; path = ../unittest/imap-utf7/imap_utf7_tests.c; sourceTree = SOURCE_ROOT; };
+		A30000000000000000000011 /* IMFParserTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = IMFParserTests.m; path = ../unittest/xctest/IMFParserTests.m; sourceTree = SOURCE_ROOT; };
+		A30000000000000000000012 /* parser_test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = parser_test.c; path = ../unittest/imf/parser_test.c; sourceTree = SOURCE_ROOT; };
+		A30000000000000000000013 /* imf-data */ = {isa = PBXFileReference; lastKnownFileType = folder; name = imf-data; path = ../unittest/imf/data; sourceTree = SOURCE_ROOT; };
+		A40000000000000000000011 /* MIMEParserTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = MIMEParserTests.m; path = ../unittest/xctest/MIMEParserTests.m; sourceTree = SOURCE_ROOT; };
+		A40000000000000000000012 /* MIME parser_test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = parser_test.c; path = ../unittest/mime/parser_test.c; sourceTree = SOURCE_ROOT; };
+		A50000000000000000000011 /* DataTypesTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = DataTypesTests.m; path = ../unittest/xctest/DataTypesTests.m; sourceTree = SOURCE_ROOT; };
+		A50000000000000000000012 /* md5_test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = md5_test.c; path = ../unittest/data-types/md5_test.c; sourceTree = SOURCE_ROOT; };
+		A50000000000000000000013 /* CharsetDetectionTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = CharsetDetectionTests.m; path = ../unittest/xctest/CharsetDetectionTests.m; sourceTree = SOURCE_ROOT; };
+		A50000000000000000000014 /* charset_detection_tests.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = charset_detection_tests.c; path = ../unittest/charset-detection/charset_detection_tests.c; sourceTree = SOURCE_ROOT; };
+		A50000000000000000000015 /* test_utils.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = test_utils.c; path = ../unittest/common/test_utils.c; sourceTree = SOURCE_ROOT; };
+		A60000000000000000000011 /* IMAPResponseDataTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = IMAPResponseDataTests.m; path = ../unittest/xctest/IMAPResponseDataTests.m; sourceTree = SOURCE_ROOT; };
+		A60000000000000000000012 /* response_data_test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = response_data_test.c; path = ../unittest/imap/response_data_test.c; sourceTree = SOURCE_ROOT; };
+		A60000000000000000000013 /* response-data */ = {isa = PBXFileReference; lastKnownFileType = folder; name = response-data; path = ../unittest/imap/data/response-data; sourceTree = SOURCE_ROOT; };
+		A70000000000000000000011 /* IMAPUnsupportedResponseTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = IMAPUnsupportedResponseTests.m; path = ../unittest/xctest/IMAPUnsupportedResponseTests.m; sourceTree = SOURCE_ROOT; };
+		A70000000000000000000012 /* unsupported_response_test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = unsupported_response_test.c; path = ../unittest/imap/unsupported_response_test.c; sourceTree = SOURCE_ROOT; };
+		A70000000000000000000013 /* unsupported */ = {isa = PBXFileReference; lastKnownFileType = folder; name = unsupported; path = ../unittest/imap/data/unsupported; sourceTree = SOURCE_ROOT; };
+		A80000000000000000000011 /* IMAPCommandSenderTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = IMAPCommandSenderTests.m; path = ../unittest/xctest/IMAPCommandSenderTests.m; sourceTree = SOURCE_ROOT; };
+		A80000000000000000000012 /* command_sender_test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = command_sender_test.c; path = ../unittest/imap/command_sender_test.c; sourceTree = SOURCE_ROOT; };
+		A80000000000000000000013 /* command-sender */ = {isa = PBXFileReference; lastKnownFileType = folder; name = command-sender; path = ../unittest/imap/data/command-sender; sourceTree = SOURCE_ROOT; };
+		A90000000000000000000011 /* IMAPCommandParameterSenderTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = IMAPCommandParameterSenderTests.m; path = ../unittest/xctest/IMAPCommandParameterSenderTests.m; sourceTree = SOURCE_ROOT; };
+		A90000000000000000000012 /* command_parameter_sender_test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = command_parameter_sender_test.c; path = ../unittest/imap/command_parameter_sender_test.c; sourceTree = SOURCE_ROOT; };
+		A90000000000000000000013 /* command-parameters */ = {isa = PBXFileReference; lastKnownFileType = folder; name = command-parameters; path = ../unittest/imap/data/command-parameters; sourceTree = SOURCE_ROOT; };
+		AA0000000000000000000011 /* IMAPIdleTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = IMAPIdleTests.m; path = ../unittest/xctest/IMAPIdleTests.m; sourceTree = SOURCE_ROOT; };
+		AA0000000000000000000012 /* idle_test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = idle_test.c; path = ../unittest/imap/idle_test.c; sourceTree = SOURCE_ROOT; };
+		AB0000000000000000000011 /* MIMEBuilderTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = MIMEBuilderTests.m; path = ../unittest/xctest/MIMEBuilderTests.m; sourceTree = SOURCE_ROOT; };
+		AB0000000000000000000012 /* MIME builder main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = main.c; path = ../unittest/mime-builder/main.c; sourceTree = SOURCE_ROOT; };
+		AB0000000000000000000013 /* mime_builder_helpers.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = mime_builder_helpers.c; path = ../unittest/mime-builder/mime_builder_helpers.c; sourceTree = SOURCE_ROOT; };
+		AC0000000000000000000011 /* MIMEParserSerializationTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = MIMEParserSerializationTests.m; path = ../unittest/xctest/MIMEParserSerializationTests.m; sourceTree = SOURCE_ROOT; };
+		AC0000000000000000000012 /* MIME parser serialization main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = main.c; path = ../unittest/mime-parser/main.c; sourceTree = SOURCE_ROOT; };
+		AC0000000000000000000013 /* mime_serializer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = mime_serializer.c; path = ../unittest/mime-parser/mime_serializer.c; sourceTree = SOURCE_ROOT; };
+		AC0000000000000000000014 /* json_writer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = json_writer.c; path = ../unittest/mime-parser/json_writer.c; sourceTree = SOURCE_ROOT; };
+		AD0000000000000000000011 /* PlaintextRenderingTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = PlaintextRenderingTests.m; path = ../unittest/xctest/PlaintextRenderingTests.m; sourceTree = SOURCE_ROOT; };
+		AD0000000000000000000012 /* plaintext rendering main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = main.c; path = ../unittest/plaintext-rendering/main.c; sourceTree = SOURCE_ROOT; };
+		AD0000000000000000000013 /* html_cleaner.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = html_cleaner.c; path = ../unittest/plaintext-rendering/html_cleaner.c; sourceTree = SOURCE_ROOT; };
+		AD0000000000000000000014 /* html_flattener.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = html_flattener.c; path = ../unittest/plaintext-rendering/html_flattener.c; sourceTree = SOURCE_ROOT; };
+		AD0000000000000000000015 /* html_renderer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = html_renderer.c; path = ../unittest/plaintext-rendering/html_renderer.c; sourceTree = SOURCE_ROOT; };
+		AE0000000000000000000011 /* POP3Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = POP3Tests.m; path = ../unittest/xctest/POP3Tests.m; sourceTree = SOURCE_ROOT; };
+		AE0000000000000000000012 /* POP3 main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = main.c; path = ../unittest/pop3/main.c; sourceTree = SOURCE_ROOT; };
+		AF0000000000000000000011 /* ActiveSyncWBXMLTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = ActiveSyncWBXMLTests.m; path = ../unittest/xctest/ActiveSyncWBXMLTests.m; sourceTree = SOURCE_ROOT; };
+		AF0000000000000000000012 /* wbxml_test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = wbxml_test.c; path = ../unittest/activesync/wbxml_test.c; sourceTree = SOURCE_ROOT; };
+		AG0000000000000000000011 /* ActiveSyncHTTPTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = ActiveSyncHTTPTests.m; path = ../unittest/xctest/ActiveSyncHTTPTests.m; sourceTree = SOURCE_ROOT; };
+		AG0000000000000000000012 /* http_test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = http_test.c; path = ../unittest/activesync/http_test.c; sourceTree = SOURCE_ROOT; };
+		AH0000000000000000000011 /* ActiveSyncSampleTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = ActiveSyncSampleTests.m; path = ../unittest/xctest/ActiveSyncSampleTests.m; sourceTree = SOURCE_ROOT; };
+		AH0000000000000000000012 /* sample_test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = sample_test.c; path = ../unittest/activesync/sample_test.c; sourceTree = SOURCE_ROOT; };
 		367860DC16AB36DF002F2B96 /* compose-msg.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "compose-msg.c"; sourceTree = "<group>"; };
 		367860DD16AB36DF002F2B96 /* decrypt.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = decrypt.c; sourceTree = "<group>"; };
 		367860DE16AB36DF002F2B96 /* fetch-attachment.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "fetch-attachment.c"; sourceTree = "<group>"; };
@@ -488,6 +594,16 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		A10000000000000000000020 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A10000000000000000000005 /* XCTest.framework in Frameworks */,
+				A10000000000000000000006 /* libetpan.framework in Frameworks */,
+				A10000000000000000000007 /* libz.tbd in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		3678610816AB3964002F2B96 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -728,6 +844,7 @@
 		367860B016AB35BC002F2B96 = {
 			isa = PBXGroup;
 			children = (
+				A10000000000000000000030 /* XCTest */,
 				367860BE16AB35BC002F2B96 /* libetpan Tests */,
 				367860F616AB38D3002F2B96 /* External Frameworks and Libraries */,
 				367860BC16AB35BC002F2B96 /* Products */,
@@ -740,6 +857,7 @@
 		367860BC16AB35BC002F2B96 /* Products */ = {
 			isa = PBXGroup;
 			children = (
+				A10000000000000000000010 /* libetpan-unit-tests.xctest */,
 				3678610B16AB3964002F2B96 /* imap-sample */,
 				3678613616AB4314002F2B96 /* mime-parse */,
 				3678614816AB4411002F2B96 /* mime-create */,
@@ -813,9 +931,90 @@
 			name = "External Frameworks and Libraries";
 			sourceTree = "<group>";
 		};
+		A10000000000000000000030 /* XCTest */ = {
+			isa = PBXGroup;
+			children = (
+				A10000000000000000000011 /* IMAPResponseDoneTests.m */,
+				A20000000000000000000011 /* IMAPUTF7Tests.m */,
+				A20000000000000000000012 /* imap_utf7_tests.c */,
+				A30000000000000000000011 /* IMFParserTests.m */,
+				A30000000000000000000012 /* parser_test.c */,
+				A30000000000000000000013 /* imf-data */,
+				A40000000000000000000011 /* MIMEParserTests.m */,
+				A40000000000000000000012 /* MIME parser_test.c */,
+				A50000000000000000000011 /* DataTypesTests.m */,
+				A50000000000000000000012 /* md5_test.c */,
+				A50000000000000000000013 /* CharsetDetectionTests.m */,
+				A50000000000000000000014 /* charset_detection_tests.c */,
+				A50000000000000000000015 /* test_utils.c */,
+				A60000000000000000000011 /* IMAPResponseDataTests.m */,
+				A60000000000000000000012 /* response_data_test.c */,
+				A60000000000000000000013 /* response-data */,
+				A70000000000000000000011 /* IMAPUnsupportedResponseTests.m */,
+				A70000000000000000000012 /* unsupported_response_test.c */,
+				A70000000000000000000013 /* unsupported */,
+				A80000000000000000000011 /* IMAPCommandSenderTests.m */,
+				A80000000000000000000012 /* command_sender_test.c */,
+				A80000000000000000000013 /* command-sender */,
+				A90000000000000000000011 /* IMAPCommandParameterSenderTests.m */,
+				A90000000000000000000012 /* command_parameter_sender_test.c */,
+				A90000000000000000000013 /* command-parameters */,
+				AA0000000000000000000011 /* IMAPIdleTests.m */,
+				AA0000000000000000000012 /* idle_test.c */,
+				AB0000000000000000000011 /* MIMEBuilderTests.m */,
+				AB0000000000000000000012 /* MIME builder main.c */,
+				AB0000000000000000000013 /* mime_builder_helpers.c */,
+				AC0000000000000000000011 /* MIMEParserSerializationTests.m */,
+				AC0000000000000000000012 /* MIME parser serialization main.c */,
+				AC0000000000000000000013 /* mime_serializer.c */,
+				AC0000000000000000000014 /* json_writer.c */,
+				AD0000000000000000000011 /* PlaintextRenderingTests.m */,
+				AD0000000000000000000012 /* plaintext rendering main.c */,
+				AD0000000000000000000013 /* html_cleaner.c */,
+				AD0000000000000000000014 /* html_flattener.c */,
+				AD0000000000000000000015 /* html_renderer.c */,
+				AE0000000000000000000011 /* POP3Tests.m */,
+				AE0000000000000000000012 /* POP3 main.c */,
+				AF0000000000000000000011 /* ActiveSyncWBXMLTests.m */,
+				AF0000000000000000000012 /* wbxml_test.c */,
+				AG0000000000000000000011 /* ActiveSyncHTTPTests.m */,
+				AG0000000000000000000012 /* http_test.c */,
+				AH0000000000000000000011 /* ActiveSyncSampleTests.m */,
+				AH0000000000000000000012 /* sample_test.c */,
+				A10000000000000000000012 /* response_done_test.c */,
+				A10000000000000000000013 /* imap_test_utils.c */,
+				A10000000000000000000014 /* response-done */,
+				A10000000000000000000015 /* XCTest.framework */,
+				A10000000000000000000016 /* libetpan.framework */,
+			);
+			name = XCTest;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		A10000000000000000000040 /* libetpan-unit-tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A10000000000000000000050 /* Build configuration list for PBXNativeTarget "libetpan-unit-tests" */;
+			buildPhases = (
+				A10000000000000000000021 /* Sources */,
+				A10000000000000000000020 /* Frameworks */,
+				A10000000000000000000022 /* Resources */,
+				A40000000000000000000020 /* Copy MIME Fixtures */,
+				A50000000000000000000020 /* Copy Charset Fixtures */,
+				AB0000000000000000000020 /* Copy MIME Builder Fixtures */,
+				AC0000000000000000000020 /* Copy MIME Parser Serialization Fixtures */,
+				AD0000000000000000000020 /* Copy Plaintext Rendering Fixtures */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "libetpan-unit-tests";
+			productName = "libetpan-unit-tests";
+			productReference = A10000000000000000000010 /* libetpan-unit-tests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		3678610A16AB3964002F2B96 /* imap-sample */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 3678611216AB3964002F2B96 /* Build configuration list for PBXNativeTarget "imap-sample" */;
@@ -1091,6 +1290,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
+				A10000000000000000000040 /* libetpan-unit-tests */,
 				3678610A16AB3964002F2B96 /* imap-sample */,
 				3678612816AB4314002F2B96 /* mime-parse */,
 				3678613A16AB4411002F2B96 /* mime-create */,
@@ -1111,7 +1311,162 @@
 		};
 /* End PBXProject section */
 
+/* Begin PBXResourcesBuildPhase section */
+		A10000000000000000000022 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A10000000000000000000004 /* response-done in Resources */,
+				A30000000000000000000003 /* imf-data in Resources */,
+				A60000000000000000000003 /* response-data in Resources */,
+				A70000000000000000000003 /* unsupported in Resources */,
+				A80000000000000000000003 /* command-sender in Resources */,
+				A90000000000000000000003 /* command-parameters in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		A40000000000000000000020 /* Copy MIME Fixtures */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/../unittest/mime/data",
+			);
+			name = "Copy MIME Fixtures";
+			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/mime-data",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/usr/bin/ditto \"$SCRIPT_INPUT_FILE_0\" \"$SCRIPT_OUTPUT_FILE_0\"\n";
+		};
+		A50000000000000000000020 /* Copy Charset Fixtures */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/../unittest/charset-detection/data/input",
+			);
+			name = "Copy Charset Fixtures";
+			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/charset-data",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/usr/bin/ditto \"$SCRIPT_INPUT_FILE_0\" \"$SCRIPT_OUTPUT_FILE_0\"\n";
+		};
+		AB0000000000000000000020 /* Copy MIME Builder Fixtures */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/../unittest/mime-builder/data",
+			);
+			name = "Copy MIME Builder Fixtures";
+			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/mime-builder-data",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/usr/bin/ditto \"$SCRIPT_INPUT_FILE_0\" \"$SCRIPT_OUTPUT_FILE_0\"\n";
+		};
+		AC0000000000000000000020 /* Copy MIME Parser Serialization Fixtures */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/../unittest/mime-parser/data",
+			);
+			name = "Copy MIME Parser Serialization Fixtures";
+			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/mime-parser-serialization-data",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/usr/bin/ditto \"$SCRIPT_INPUT_FILE_0\" \"$SCRIPT_OUTPUT_FILE_0\"\n";
+		};
+		AD0000000000000000000020 /* Copy Plaintext Rendering Fixtures */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/../unittest/plaintext-rendering/data",
+			);
+			name = "Copy Plaintext Rendering Fixtures";
+			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/plaintext-rendering-data",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/usr/bin/ditto \"$SCRIPT_INPUT_FILE_0\" \"$SCRIPT_OUTPUT_FILE_0\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
+		A10000000000000000000021 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A10000000000000000000001 /* IMAPResponseDoneTests.m in Sources */,
+				A10000000000000000000002 /* response_done_test.c in Sources */,
+				A10000000000000000000003 /* imap_test_utils.c in Sources */,
+				A20000000000000000000001 /* IMAPUTF7Tests.m in Sources */,
+				A20000000000000000000002 /* imap_utf7_tests.c in Sources */,
+				A30000000000000000000001 /* IMFParserTests.m in Sources */,
+				A30000000000000000000002 /* parser_test.c in Sources */,
+				A40000000000000000000001 /* MIMEParserTests.m in Sources */,
+				A40000000000000000000002 /* MIME parser_test.c in Sources */,
+				A50000000000000000000001 /* DataTypesTests.m in Sources */,
+				A50000000000000000000002 /* md5_test.c in Sources */,
+				A50000000000000000000003 /* CharsetDetectionTests.m in Sources */,
+				A50000000000000000000004 /* charset_detection_tests.c in Sources */,
+				A50000000000000000000005 /* test_utils.c in Sources */,
+				A60000000000000000000001 /* IMAPResponseDataTests.m in Sources */,
+				A60000000000000000000002 /* response_data_test.c in Sources */,
+				A70000000000000000000001 /* IMAPUnsupportedResponseTests.m in Sources */,
+				A70000000000000000000002 /* unsupported_response_test.c in Sources */,
+				A80000000000000000000001 /* IMAPCommandSenderTests.m in Sources */,
+				A80000000000000000000002 /* command_sender_test.c in Sources */,
+				A90000000000000000000001 /* IMAPCommandParameterSenderTests.m in Sources */,
+				A90000000000000000000002 /* command_parameter_sender_test.c in Sources */,
+				AA0000000000000000000001 /* IMAPIdleTests.m in Sources */,
+				AA0000000000000000000002 /* idle_test.c in Sources */,
+				AB0000000000000000000001 /* MIMEBuilderTests.m in Sources */,
+				AB0000000000000000000002 /* MIME builder main.c in Sources */,
+				AB0000000000000000000003 /* mime_builder_helpers.c in Sources */,
+				AC0000000000000000000001 /* MIMEParserSerializationTests.m in Sources */,
+				AC0000000000000000000002 /* MIME parser serialization main.c in Sources */,
+				AC0000000000000000000003 /* mime_serializer.c in Sources */,
+				AC0000000000000000000004 /* json_writer.c in Sources */,
+				AD0000000000000000000001 /* PlaintextRenderingTests.m in Sources */,
+				AD0000000000000000000002 /* plaintext rendering main.c in Sources */,
+				AD0000000000000000000003 /* html_cleaner.c in Sources */,
+				AD0000000000000000000004 /* html_flattener.c in Sources */,
+				AD0000000000000000000005 /* html_renderer.c in Sources */,
+				AE0000000000000000000001 /* POP3Tests.m in Sources */,
+				AE0000000000000000000002 /* POP3 main.c in Sources */,
+				AF0000000000000000000001 /* ActiveSyncWBXMLTests.m in Sources */,
+				AF0000000000000000000002 /* wbxml_test.c in Sources */,
+				AG0000000000000000000001 /* ActiveSyncHTTPTests.m in Sources */,
+				AG0000000000000000000002 /* http_test.c in Sources */,
+				AH0000000000000000000001 /* ActiveSyncSampleTests.m in Sources */,
+				AH0000000000000000000002 /* sample_test.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		3678610716AB3964002F2B96 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1324,6 +1679,96 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		A10000000000000000000051 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGNING_ALLOWED = NO;
+				FRAMEWORK_SEARCH_PATHS = "$(BUILT_PRODUCTS_DIR)";
+				GENERATE_INFOPLIST_FILE = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/../include/libetpan",
+					"$(SRCROOT)/../src/data-types",
+					"$(SRCROOT)/../src/low-level/imap",
+					"$(SRCROOT)/../unittest/common",
+					"$(SRCROOT)/../unittest/imap",
+					"$(SRCROOT)/../unittest/imap-utf7",
+					"$(SRCROOT)/../unittest/imf",
+					"$(SRCROOT)/../unittest/mime",
+					"$(SRCROOT)/../unittest/data-types",
+					"$(SRCROOT)/../unittest/charset-detection",
+					"$(SRCROOT)/../unittest/mime-builder",
+					"$(SRCROOT)/../unittest/mime-parser",
+					"$(SRCROOT)/../unittest/plaintext-rendering",
+					"$(SDKROOT)/usr/include/libxml2",
+					/opt/homebrew/opt/tidy-html5/include,
+					"$(SRCROOT)/../unittest/pop3",
+					"$(SRCROOT)/../unittest/activesync",
+				);
+				LIBRARY_SEARCH_PATHS = /opt/homebrew/opt/tidy-html5/lib;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @loader_path/../Frameworks @loader_path/Frameworks $(BUILT_PRODUCTS_DIR)";
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-lxml2",
+					"-ltidy",
+					"-lm",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.libetpan.unit-tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				TEST_HOST = "";
+			};
+			name = Debug;
+		};
+		A10000000000000000000052 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGNING_ALLOWED = NO;
+				FRAMEWORK_SEARCH_PATHS = "$(BUILT_PRODUCTS_DIR)";
+				GENERATE_INFOPLIST_FILE = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/../include/libetpan",
+					"$(SRCROOT)/../src/data-types",
+					"$(SRCROOT)/../src/low-level/imap",
+					"$(SRCROOT)/../unittest/common",
+					"$(SRCROOT)/../unittest/imap",
+					"$(SRCROOT)/../unittest/imap-utf7",
+					"$(SRCROOT)/../unittest/imf",
+					"$(SRCROOT)/../unittest/mime",
+					"$(SRCROOT)/../unittest/data-types",
+					"$(SRCROOT)/../unittest/charset-detection",
+					"$(SRCROOT)/../unittest/mime-builder",
+					"$(SRCROOT)/../unittest/mime-parser",
+					"$(SRCROOT)/../unittest/plaintext-rendering",
+					"$(SDKROOT)/usr/include/libxml2",
+					/opt/homebrew/opt/tidy-html5/include,
+					"$(SRCROOT)/../unittest/pop3",
+					"$(SRCROOT)/../unittest/activesync",
+				);
+				LIBRARY_SEARCH_PATHS = /opt/homebrew/opt/tidy-html5/lib;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @loader_path/../Frameworks @loader_path/Frameworks $(BUILT_PRODUCTS_DIR)";
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-lxml2",
+					"-ltidy",
+					"-lm",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.libetpan.unit-tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				TEST_HOST = "";
+			};
+			name = Release;
+		};
 		367860C316AB35BC002F2B96 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1606,6 +2051,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		A10000000000000000000050 /* Build configuration list for PBXNativeTarget "libetpan-unit-tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A10000000000000000000051 /* Debug */,
+				A10000000000000000000052 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		367860B516AB35BC002F2B96 /* Build configuration list for PBXProject "libetpan Tests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

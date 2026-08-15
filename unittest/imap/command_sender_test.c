@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <setjmp.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -9,6 +10,23 @@
 #include "mailimap_sender.h"
 #include "mailimap_types.h"
 #include "namespace_sender.h"
+
+static jmp_buf test_abort;
+static test_failure_callback active_failure_callback;
+static void * active_failure_context;
+
+static void fail_assertion(const char * file, unsigned line,
+    const char * expression)
+{
+  if (active_failure_callback != NULL)
+    active_failure_callback(file, line, expression, "assertion failed",
+        active_failure_context);
+  longjmp(test_abort, 1);
+}
+
+#undef assert
+#define assert(condition) \
+  do { if (!(condition)) fail_assertion(__FILE__, __LINE__, #condition); } while (0)
 
 static struct mailimap_set * make_set(uint32_t first, uint32_t last)
 {
@@ -349,49 +367,65 @@ static int send_uid_move(mailstream * stream, void * context)
   return send_crlf(stream, r);
 }
 
-int imap_command_sender_test_run(void)
-{
-  static const struct {
+static const struct {
     const char * expected;
     imap_test_sender * sender;
-  } cases[] = {
-    { "data/command-sender/capability.imap", send_capability },
-    { "data/command-sender/noop.imap", send_noop },
-    { "data/command-sender/logout.imap", send_logout },
-    { "data/command-sender/starttls.imap", send_starttls },
-    { "data/command-sender/authenticate.imap", send_authenticate },
-    { "data/command-sender/login.imap", send_login },
-    { "data/command-sender/select.imap", send_select },
-    { "data/command-sender/select-condstore.imap", send_select_condstore },
-    { "data/command-sender/examine.imap", send_examine },
-    { "data/command-sender/create.imap", send_create },
-    { "data/command-sender/delete.imap", send_delete },
-    { "data/command-sender/rename.imap", send_rename },
-    { "data/command-sender/subscribe.imap", send_subscribe },
-    { "data/command-sender/unsubscribe.imap", send_unsubscribe },
-    { "data/command-sender/list.imap", send_list },
-    { "data/command-sender/lsub.imap", send_lsub },
-    { "data/command-sender/namespace.imap", send_namespace },
-    { "data/command-sender/status.imap", send_status },
-    { "data/command-sender/append.imap", send_append },
-    { "data/command-sender/check.imap", send_check },
-    { "data/command-sender/close.imap", send_close },
-    { "data/command-sender/expunge.imap", send_expunge },
-    { "data/command-sender/search.imap", send_search },
-    { "data/command-sender/uid-search.imap", send_uid_search },
-    { "data/command-sender/fetch.imap", send_fetch },
-    { "data/command-sender/uid-fetch.imap", send_uid_fetch },
-    { "data/command-sender/store.imap", send_store },
-    { "data/command-sender/uid-store.imap", send_uid_store },
-    { "data/command-sender/copy.imap", send_copy },
-    { "data/command-sender/uid-copy.imap", send_uid_copy },
-    { "data/command-sender/move.imap", send_move },
-    { "data/command-sender/uid-move.imap", send_uid_move }
-  };
+} cases[] = {
+    { "capability.imap", send_capability }, { "noop.imap", send_noop },
+    { "logout.imap", send_logout }, { "starttls.imap", send_starttls },
+    { "authenticate.imap", send_authenticate }, { "login.imap", send_login },
+    { "select.imap", send_select }, { "select-condstore.imap", send_select_condstore },
+    { "examine.imap", send_examine }, { "create.imap", send_create },
+    { "delete.imap", send_delete }, { "rename.imap", send_rename },
+    { "subscribe.imap", send_subscribe }, { "unsubscribe.imap", send_unsubscribe },
+    { "list.imap", send_list }, { "lsub.imap", send_lsub },
+    { "namespace.imap", send_namespace }, { "status.imap", send_status },
+    { "append.imap", send_append }, { "check.imap", send_check },
+    { "close.imap", send_close }, { "expunge.imap", send_expunge },
+    { "search.imap", send_search }, { "uid-search.imap", send_uid_search },
+    { "fetch.imap", send_fetch }, { "uid-fetch.imap", send_uid_fetch },
+    { "store.imap", send_store }, { "uid-store.imap", send_uid_store },
+    { "copy.imap", send_copy }, { "uid-copy.imap", send_uid_copy },
+    { "move.imap", send_move }, { "uid-move.imap", send_uid_move }
+};
+
+size_t imap_command_sender_test_count(void)
+{
+  return sizeof(cases) / sizeof(cases[0]);
+}
+
+const char * imap_command_sender_test_name(size_t index)
+{
+  if (index >= imap_command_sender_test_count()) return NULL;
+  return cases[index].expected;
+}
+
+int imap_command_sender_test_run_case(size_t index, const char * fixture_root,
+    test_failure_callback failure_callback, void * context)
+{
+  char path[4096];
+  int written;
+
+  if (index >= imap_command_sender_test_count()) return -1;
+  active_failure_callback = failure_callback;
+  active_failure_context = context;
+  if (setjmp(test_abort) != 0) return -1;
+  written = snprintf(path, sizeof(path), "%s/%s", fixture_root,
+      cases[index].expected);
+  assert(written >= 0 && (size_t) written < sizeof(path));
+  return imap_test_expect_send_file_result(path, cases[index].sender, NULL,
+      failure_callback, context);
+}
+
+int imap_command_sender_test_run(void)
+{
   size_t i;
 
-  for (i = 0; i < sizeof(cases) / sizeof(cases[0]); i++)
-    imap_test_expect_send_file(cases[i].expected, cases[i].sender, NULL);
+  for (i = 0; i < imap_command_sender_test_count(); i++) {
+    if (imap_command_sender_test_run_case(i, "data/command-sender", NULL,
+          NULL) != 0)
+      abort();
+  }
 
   puts("command_sender_test: ok");
   return 0;

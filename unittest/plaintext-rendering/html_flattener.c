@@ -366,16 +366,9 @@ static void comment_parsed(void * ctx, const xmlChar * value)
   (void) value;
 }
 
-static void structured_error(void * user_data, const xmlError * error)
-{
-  (void) user_data;
-  (void) error;
-}
-
 char * plaintext_rendering_flatten_html(const char * html)
 {
   xmlSAXHandler handler;
-  htmlParserCtxtPtr parser_context;
   htmlDocPtr parsed_doc;
   struct flatten_state state;
   char * cleaned_html;
@@ -393,15 +386,11 @@ char * plaintext_rendering_flatten_html(const char * html)
   state.show_blockquote = 1;
   state.show_link = 1;
   state.last_char_is_whitespace = 1;
-  parser_context = htmlNewSAXParserCtxt(&handler, &state);
-  assert(parser_context != NULL);
-  xmlCtxtSetErrorHandler(parser_context, structured_error, NULL);
   cleaned_html = plaintext_rendering_cleaned_html(html);
-  parsed_doc = htmlCtxtReadDoc(parser_context, (xmlChar *) cleaned_html, NULL,
-      "utf-8", 0);
+  parsed_doc = htmlSAXParseDoc((xmlChar *) cleaned_html, "utf-8", &handler,
+      &state);
   if (parsed_doc != NULL)
     xmlFreeDoc(parsed_doc);
-  htmlFreeParserCtxt(parser_context);
   free(cleaned_html);
   clean_terminal_space(state.result);
   for (i = 0; i < state.link_count; i++)

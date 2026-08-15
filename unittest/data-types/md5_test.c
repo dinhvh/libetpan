@@ -1,4 +1,7 @@
+#include "data_types_tests.h"
+
 #include <assert.h>
+#include <setjmp.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -6,6 +9,23 @@
 #include "base64.h"
 #include "md5.h"
 #include "hmac-md5.h"
+
+static jmp_buf test_abort;
+static test_failure_callback active_failure_callback;
+static void * active_failure_context;
+
+static void fail_assertion(const char * file, unsigned line,
+    const char * expression)
+{
+  if (active_failure_callback != NULL)
+    active_failure_callback(file, line, expression, "assertion failed",
+        active_failure_context);
+  longjmp(test_abort, 1);
+}
+
+#undef assert
+#define assert(condition) \
+  do { if (!(condition)) fail_assertion(__FILE__, __LINE__, #condition); } while (0)
 
 static unsigned char hex_value(char ch)
 {
@@ -200,16 +220,62 @@ static void check_base64_codec(void)
   free(decoded);
 }
 
-int main(void)
+static void check_uint4_size(void)
 {
   assert(sizeof(UINT4) == 4);
+}
 
-  check_md5_vectors();
-  check_md5_chunked_updates();
-  check_hmac_md5_vectors();
-  check_hmac_md5_streaming();
-  check_base64_codec();
+struct data_types_case {
+  const char * name;
+  void (* run)(void);
+};
 
-  puts("data_types_test: ok");
+static const struct data_types_case cases[] = {
+  { "UINT4 size", check_uint4_size },
+  { "MD5 vectors", check_md5_vectors },
+  { "MD5 chunked updates", check_md5_chunked_updates },
+  { "HMAC-MD5 vectors", check_hmac_md5_vectors },
+  { "HMAC-MD5 streaming", check_hmac_md5_streaming },
+  { "Base64 codec", check_base64_codec },
+};
+
+size_t data_types_test_count(void)
+{
+  return sizeof(cases) / sizeof(cases[0]);
+}
+
+const char * data_types_test_name(size_t index)
+{
+  if (index >= data_types_test_count())
+    return NULL;
+  return cases[index].name;
+}
+
+int data_types_test_run_case(size_t index,
+    test_failure_callback failure_callback, void * context)
+{
+  if (index >= data_types_test_count()) {
+    if (failure_callback != NULL)
+      failure_callback(__FILE__, __LINE__, "index < data_types_test_count()",
+          "test case index is out of range", context);
+    return -1;
+  }
+
+  active_failure_callback = failure_callback;
+  active_failure_context = context;
+  if (setjmp(test_abort) != 0)
+    return -1;
+  cases[index].run();
+  return 0;
+}
+
+int data_types_test_run(void)
+{
+  size_t index;
+
+  for (index = 0; index < data_types_test_count(); index++) {
+    if (data_types_test_run_case(index, NULL, NULL) != 0)
+      return -1;
+  }
   return 0;
 }

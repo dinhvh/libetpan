@@ -1,0 +1,33 @@
+name: Unit tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  macos:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install test dependencies
+        run: brew install tidy-html5
+
+      - name: Run XCTest
+        run: |
+          xcodebuild test \
+            -workspace build-mac/libetpan.xcworkspace \
+            -scheme libetpan-unit-tests \
+            -destination 'platform=macOS' \
+            -derivedDataPath "$GITHUB_WORKSPACE/.build/xcode" \
+            CODE_SIGNING_ALLOWED=NO
+
+      - name: Build and run Unix test executables
+        run: |
+          framework_dir="$GITHUB_WORKSPACE/.build/xcode/Build/Products/Debug"
+          mkdir -p unittest/Frameworks
+          ditto "$framework_dir/libetpan.framework" \
+            unittest/Frameworks/libetpan.framework
+          make -C unittest check \
+            LIBETPAN_TEST_DEPENDENCY= \
+            LIBETPAN_TEST_LDLIBS="-F$framework_dir -framework libetpan"

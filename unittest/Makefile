@@ -13,7 +13,9 @@ CPPFLAGS += \
 	-Icommon
 
 CFLAGS += -Wall -Wextra -Werror -g
-LDLIBS += $(TOP)/src/.libs/libetpan.a -lz -lcurl -lsasl2 -lpthread
+LIBETPAN_TEST_DEPENDENCY ?= libetpan
+LIBETPAN_TEST_LDLIBS ?= $(TOP)/src/.libs/libetpan.a
+LDLIBS += $(LIBETPAN_TEST_LDLIBS) -lz -lcurl -lsasl2 -lpthread
 LDLIBS += $(shell pkg-config --libs icu-uc 2>/dev/null)
 XML2_CPPFLAGS := -I$(shell xcrun --show-sdk-path)/usr/include/libxml2
 XML2_LDLIBS := -lxml2
@@ -54,7 +56,8 @@ IMF_TEST_FIXTURES = \
 	imf/data/messages/folded-comments-rfc822.eml \
 	imf/data/messages/resent-trace-rfc822.eml \
 	imf/data/messages/simple-rfc822.eml
-IMF_TEST_DEPS = $(IMF_TEST_SRCS) imf/*.h $(IMF_TEST_FIXTURES)
+IMF_TEST_DEPS = $(IMF_TEST_SRCS) imf/*.h common/test_case.h \
+	$(IMF_TEST_FIXTURES)
 MIME_TEST_SRCS = \
 	mime/main.c \
 	mime/parser_test.c
@@ -62,7 +65,8 @@ MIME_TEST_FIXTURES = \
 	mime/data/fields/rfc2045-headers.eml \
 	mime/data/messages/rfc822-alternative.eml \
 	mime/data/messages/rfc822-multipart.eml
-MIME_TEST_DEPS = $(MIME_TEST_SRCS) mime/*.h $(MIME_TEST_FIXTURES)
+MIME_TEST_DEPS = $(MIME_TEST_SRCS) mime/*.h common/test_case.h \
+	$(MIME_TEST_FIXTURES)
 MIME_BUILDER_TEST_SRCS = \
 	mime-builder/main.c \
 	mime-builder/mime_builder_helpers.c \
@@ -74,6 +78,7 @@ MIME_PARSER_SERIALIZATION_TEST_SRCS = \
 	$(COMMON_TEST_SRCS)
 CHARSET_DETECTION_TEST_SRCS = \
 	charset-detection/main.c \
+	charset-detection/charset_detection_tests.c \
 	$(COMMON_TEST_SRCS)
 PLAINTEXT_RENDERING_TEST_SRCS = \
 	plaintext-rendering/main.c \
@@ -82,8 +87,10 @@ PLAINTEXT_RENDERING_TEST_SRCS = \
 	plaintext-rendering/html_renderer.c \
 	$(COMMON_TEST_SRCS)
 IMAP_UTF7_TEST_SRCS = \
-	imap-utf7/main.c
+	imap-utf7/main.c \
+	imap-utf7/imap_utf7_tests.c
 DATA_TYPES_TEST_SRCS = \
+	data-types/main.c \
 	data-types/md5_test.c \
 	$(TOP)/src/data-types/base64.c \
 	$(TOP)/src/data-types/md5.c
@@ -96,28 +103,36 @@ ACTIVESYNC_SAMPLE_TEST_SRCS = \
 POP3_TEST_SRCS = \
 	pop3/main.c
 MIME_BUILDER_TEST_DEPS = $(MIME_BUILDER_TEST_SRCS) common/*.h \
+	mime-builder/*.h \
 	mime-builder/data/input/photo.jpg \
 	mime-builder/data/input/photo2.jpg \
 	mime-builder/data/output/builder1.eml \
 	mime-builder/data/output/builder2.eml \
 	mime-builder/data/output/builder3.eml
 MIME_PARSER_SERIALIZATION_TEST_DEPS = \
-	$(MIME_PARSER_SERIALIZATION_TEST_SRCS) common/*.h
-CHARSET_DETECTION_TEST_DEPS = $(CHARSET_DETECTION_TEST_SRCS) common/*.h
-PLAINTEXT_RENDERING_TEST_DEPS = $(PLAINTEXT_RENDERING_TEST_SRCS) common/*.h
-IMAP_UTF7_TEST_DEPS = $(IMAP_UTF7_TEST_SRCS)
+	$(MIME_PARSER_SERIALIZATION_TEST_SRCS) mime-parser/*.h common/*.h
+CHARSET_DETECTION_TEST_DEPS = $(CHARSET_DETECTION_TEST_SRCS) \
+	charset-detection/*.h common/*.h charset-detection/data/input/*
+PLAINTEXT_RENDERING_TEST_DEPS = $(PLAINTEXT_RENDERING_TEST_SRCS) \
+	plaintext-rendering/*.h common/*.h plaintext-rendering/data/input/* \
+	plaintext-rendering/data/output/*
+IMAP_UTF7_TEST_DEPS = $(IMAP_UTF7_TEST_SRCS) imap-utf7/*.h common/test_case.h
 DATA_TYPES_TEST_DEPS = $(DATA_TYPES_TEST_SRCS) \
+	data-types/data_types_tests.h common/test_case.h \
         $(TOP)/src/data-types/base64.h \
         $(TOP)/src/data-types/md5.h \
         $(TOP)/src/data-types/md5global.h \
         $(TOP)/src/data-types/hmac-md5.h
-ACTIVESYNC_WBXML_TEST_DEPS = $(ACTIVESYNC_WBXML_TEST_SRCS)
+ACTIVESYNC_WBXML_TEST_DEPS = $(ACTIVESYNC_WBXML_TEST_SRCS) \
+	activesync/*.h common/test_case.h
 ACTIVESYNC_HTTP_TEST_DEPS = $(ACTIVESYNC_HTTP_TEST_SRCS) \
+	activesync/*.h common/test_case.h \
 	$(TOP)/src/low-level/activesync/mailactivesync_command.h
 ACTIVESYNC_SAMPLE_TEST_DEPS = $(ACTIVESYNC_SAMPLE_TEST_SRCS) \
+	activesync/*.h common/test_case.h \
 	$(TOP)/tests/activesync-sample.c \
 	$(TOP)/src/low-level/activesync/mailactivesync_command.h
-POP3_TEST_DEPS = $(POP3_TEST_SRCS)
+POP3_TEST_DEPS = $(POP3_TEST_SRCS) pop3/*.h common/test_case.h
 
 
 .PHONY: all check clean
@@ -146,43 +161,43 @@ check: all
 	@cd activesync && ./sample_test
 	@cd pop3 && ./pop3_test
 
-$(IMAP_TEST): $(IMAP_TEST_DEPS) libetpan
+$(IMAP_TEST): $(IMAP_TEST_DEPS) $(LIBETPAN_TEST_DEPENDENCY)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(IMAP_TEST_SRCS) $(LDLIBS) -o $@
 
-$(IMF_TEST): $(IMF_TEST_DEPS) libetpan
+$(IMF_TEST): $(IMF_TEST_DEPS) $(LIBETPAN_TEST_DEPENDENCY)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(IMF_TEST_SRCS) $(LDLIBS) -o $@
 
-$(MIME_TEST): $(MIME_TEST_DEPS) libetpan
+$(MIME_TEST): $(MIME_TEST_DEPS) $(LIBETPAN_TEST_DEPENDENCY)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(MIME_TEST_SRCS) $(LDLIBS) -o $@
 
-$(MIME_BUILDER_TEST): $(MIME_BUILDER_TEST_DEPS) libetpan
+$(MIME_BUILDER_TEST): $(MIME_BUILDER_TEST_DEPS) $(LIBETPAN_TEST_DEPENDENCY)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(MIME_BUILDER_TEST_SRCS) $(LDLIBS) -o $@
 
-$(MIME_PARSER_SERIALIZATION_TEST): $(MIME_PARSER_SERIALIZATION_TEST_DEPS) libetpan
+$(MIME_PARSER_SERIALIZATION_TEST): $(MIME_PARSER_SERIALIZATION_TEST_DEPS) $(LIBETPAN_TEST_DEPENDENCY)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(MIME_PARSER_SERIALIZATION_TEST_SRCS) $(LDLIBS) -o $@
 
-$(CHARSET_DETECTION_TEST): $(CHARSET_DETECTION_TEST_DEPS) libetpan
+$(CHARSET_DETECTION_TEST): $(CHARSET_DETECTION_TEST_DEPS) $(LIBETPAN_TEST_DEPENDENCY)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(CHARSET_DETECTION_TEST_SRCS) $(LDLIBS) -o $@
 
-$(PLAINTEXT_RENDERING_TEST): $(PLAINTEXT_RENDERING_TEST_DEPS) libetpan
+$(PLAINTEXT_RENDERING_TEST): $(PLAINTEXT_RENDERING_TEST_DEPS) $(LIBETPAN_TEST_DEPENDENCY)
 	$(CC) $(CPPFLAGS) $(XML2_CPPFLAGS) $(TIDY_CPPFLAGS) $(CFLAGS) $(PLAINTEXT_RENDERING_TEST_SRCS) $(LDLIBS) $(XML2_LDLIBS) $(TIDY_LDLIBS) $(MATH_LDLIBS) -o $@
 
-$(IMAP_UTF7_TEST): $(IMAP_UTF7_TEST_DEPS) libetpan
+$(IMAP_UTF7_TEST): $(IMAP_UTF7_TEST_DEPS) $(LIBETPAN_TEST_DEPENDENCY)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(IMAP_UTF7_TEST_SRCS) $(LDLIBS) -o $@
 
 $(DATA_TYPES_TEST): $(DATA_TYPES_TEST_DEPS)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(DATA_TYPES_TEST_SRCS) -o $@
 
-$(ACTIVESYNC_WBXML_TEST): $(ACTIVESYNC_WBXML_TEST_DEPS) libetpan
+$(ACTIVESYNC_WBXML_TEST): $(ACTIVESYNC_WBXML_TEST_DEPS) $(LIBETPAN_TEST_DEPENDENCY)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(ACTIVESYNC_WBXML_TEST_SRCS) $(LDLIBS) -o $@
 
-$(ACTIVESYNC_HTTP_TEST): $(ACTIVESYNC_HTTP_TEST_DEPS) libetpan
+$(ACTIVESYNC_HTTP_TEST): $(ACTIVESYNC_HTTP_TEST_DEPS) $(LIBETPAN_TEST_DEPENDENCY)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(ACTIVESYNC_HTTP_TEST_SRCS) $(LDLIBS) -o $@
 
-$(ACTIVESYNC_SAMPLE_TEST): $(ACTIVESYNC_SAMPLE_TEST_DEPS) libetpan
+$(ACTIVESYNC_SAMPLE_TEST): $(ACTIVESYNC_SAMPLE_TEST_DEPS) $(LIBETPAN_TEST_DEPENDENCY)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(ACTIVESYNC_SAMPLE_TEST_SRCS) $(LDLIBS) -o $@
 
-$(POP3_TEST): $(POP3_TEST_DEPS) libetpan
+$(POP3_TEST): $(POP3_TEST_DEPS) $(LIBETPAN_TEST_DEPENDENCY)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(POP3_TEST_SRCS) $(LDLIBS) -o $@
 
 clean:

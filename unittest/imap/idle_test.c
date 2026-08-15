@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <setjmp.h>
 #include <string.h>
 #include <stdio.h>
 
@@ -8,6 +9,23 @@
 #include "imap_test_utils.h"
 #include "mailimap.h"
 #include "mailimap_types.h"
+
+static jmp_buf test_abort;
+static test_failure_callback active_failure_callback;
+static void * active_failure_context;
+
+static void fail_assertion(const char * file, unsigned line,
+    const char * expression)
+{
+  if (active_failure_callback != NULL)
+    active_failure_callback(file, line, expression, "assertion failed",
+        active_failure_context);
+  longjmp(test_abort, 1);
+}
+
+#undef assert
+#define assert(condition) \
+  do { if (!(condition)) fail_assertion(__FILE__, __LINE__, #condition); } while (0)
 
 static mailimap * idle_session_new(const char * input, MMAPString ** output)
 {
@@ -109,37 +127,77 @@ static void check_idle_done_accepts_queued_updates_before_tagged_ok(void)
   mmap_string_free(output);
 }
 
-static void check_idle_fails_when_server_rejects_command(void)
+static void check_idle_rejection(const char * response)
 {
-  static const char * const responses[] = {
-    "1 NO IDLE not allowed now\r\n",
-    "1 BAD unknown command\r\n"
-  };
-  size_t i;
+  MMAPString * output;
+  mailimap * session;
+  int r;
 
-  for (i = 0; i < sizeof(responses) / sizeof(responses[0]); i++) {
-    MMAPString * output;
-    mailimap * session;
-    int r;
+  session = idle_session_new(response, &output);
+  r = mailimap_idle(session);
+  assert(r != MAILIMAP_NO_ERROR);
+  assert_output_equals(output, "1 IDLE\r\n");
 
-    session = idle_session_new(responses[i], &output);
+  mailimap_free(session);
+  mmap_string_free(output);
+}
 
-    r = mailimap_idle(session);
-    assert(r != MAILIMAP_NO_ERROR);
-    assert_output_equals(output, "1 IDLE\r\n");
+static void check_idle_no_rejection(void)
+{
+  check_idle_rejection("1 NO IDLE not allowed now\r\n");
+}
 
-    mailimap_free(session);
-    mmap_string_free(output);
-  }
+static void check_idle_bad_rejection(void)
+{
+  check_idle_rejection("1 BAD unknown command\r\n");
+}
+
+struct idle_case {
+  const char * name;
+  void (* run)(void);
+};
+
+static const struct idle_case cases[] = {
+  { "immediate continuation", check_idle_accepts_immediate_continuation },
+  { "updates before continuation",
+    check_idle_accepts_rfc2177_updates_before_continuation },
+  { "flags before continuation", check_idle_accepts_flags_before_continuation },
+  { "queued updates before tagged OK",
+    check_idle_done_accepts_queued_updates_before_tagged_ok },
+  { "NO rejection", check_idle_no_rejection },
+  { "BAD rejection", check_idle_bad_rejection },
+};
+
+size_t imap_idle_test_count(void)
+{
+  return sizeof(cases) / sizeof(cases[0]);
+}
+
+const char * imap_idle_test_name(size_t index)
+{
+  if (index >= imap_idle_test_count()) return NULL;
+  return cases[index].name;
+}
+
+int imap_idle_test_run_case(size_t index,
+    test_failure_callback failure_callback, void * context)
+{
+  if (index >= imap_idle_test_count()) return -1;
+  active_failure_callback = failure_callback;
+  active_failure_context = context;
+  if (setjmp(test_abort) != 0) return -1;
+  cases[index].run();
+  return 0;
 }
 
 int imap_idle_test_run(void)
 {
-  check_idle_accepts_immediate_continuation();
-  check_idle_accepts_rfc2177_updates_before_continuation();
-  check_idle_accepts_flags_before_continuation();
-  check_idle_done_accepts_queued_updates_before_tagged_ok();
-  check_idle_fails_when_server_rejects_command();
+  size_t index;
+
+  for (index = 0; index < imap_idle_test_count(); index++) {
+    if (imap_idle_test_run_case(index, NULL, NULL) != 0)
+      return -1;
+  }
 
   puts("idle_test: ok");
   return 0;

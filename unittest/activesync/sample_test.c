@@ -18,6 +18,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "activesync_tests.h"
 #ifndef _WIN32
 #include <unistd.h>
 #endif
@@ -681,16 +682,59 @@ static int test_sample_settings_and_get_item_estimate(void)
   return 0;
 }
 
-int main(void)
-{
-  if (!test_sample_more_available_loop())
-    return 1;
-  if (!test_sample_sync_state_invalidation())
-    return 1;
-  if (!test_sample_provision_persists_policy_key())
-    return 1;
-  if (!test_sample_settings_and_get_item_estimate())
-    return 1;
+static int (* const sample_tests[])(void) = {
+  test_sample_more_available_loop,
+  test_sample_sync_state_invalidation,
+  test_sample_provision_persists_policy_key,
+  test_sample_settings_and_get_item_estimate,
+};
 
+static const char * const sample_test_names[] = {
+  "MoreAvailableLoop",
+  "SyncStateInvalidation",
+  "ProvisionPersistsPolicyKey",
+  "SettingsAndGetItemEstimate",
+};
+
+size_t activesync_sample_test_count(void)
+{
+  return sizeof(sample_tests) / sizeof(sample_tests[0]);
+}
+
+const char * activesync_sample_test_name(size_t index)
+{
+  if (index >= activesync_sample_test_count())
+    return NULL;
+  return sample_test_names[index];
+}
+
+int activesync_sample_test_run_case(size_t index,
+    test_failure_callback failure_callback, void * context)
+{
+  if (index >= activesync_sample_test_count())
+    return -1;
+  if (!sample_tests[index]()) {
+    if (failure_callback != NULL)
+      failure_callback(__FILE__, __LINE__, sample_test_names[index],
+          "ActiveSync sample-flow test failed", context);
+    return -1;
+  }
   return 0;
 }
+
+int activesync_sample_test_run(void)
+{
+  size_t index;
+  for (index = 0; index < activesync_sample_test_count(); index++) {
+    if (activesync_sample_test_run_case(index, NULL, NULL) != 0)
+      return -1;
+  }
+  return 0;
+}
+
+#ifndef ACTIVESYNC_SAMPLE_NO_MAIN
+int main(void)
+{
+  return activesync_sample_test_run() == 0 ? 0 : 1;
+}
+#endif

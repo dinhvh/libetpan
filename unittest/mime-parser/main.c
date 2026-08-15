@@ -5,11 +5,13 @@
 #include "mailimf.h"
 #include "mailmime.h"
 #include "mmapstring.h"
+#include "mime_parser_serialization_tests.h"
 #include "mime_serializer.h"
 #include "test_utils.h"
 
-static void compare_json(const char * input_path, const char * expected_path,
-    const char * generated)
+static int compare_json(const char * input_path, const char * expected_path,
+    const char * generated, test_failure_callback failure_callback,
+    void * context)
 {
   char * expected;
   size_t expected_len;
@@ -37,17 +39,23 @@ static void compare_json(const char * input_path, const char * expected_path,
         fclose(f);
       }
     }
-    abort();
+    if (failure_callback != NULL)
+      failure_callback(__FILE__, __LINE__, "generated JSON matches fixture",
+          "serialized MIME JSON differs from the expected fixture", context);
+    free(expected);
+    return -1;
   }
   free(expected);
+  return 0;
 }
 
-static void check_message_fixture(const char * input_path,
-    const char * input_root, const char * output_root)
+static int check_message_fixture(const char * input_path,
+    const char * input_root, const char * output_root,
+    test_failure_callback failure_callback, void * context)
 {
   char * data;
   char * original_data;
-  char * expected_path;
+  char * expected_path = NULL;
   char * expected_json;
   MMAPString * generated;
   size_t expected_len;
@@ -57,6 +65,7 @@ static void check_message_fixture(const char * input_path,
   struct mailimf_fields * header_fields = NULL;
   struct mailmime * mime = NULL;
   int r;
+  int result = -1;
 
   data = test_read_file(input_path, &length);
   original_data = data;
@@ -72,14 +81,21 @@ static void check_message_fixture(const char * input_path,
   if (r != MAILIMF_NO_ERROR || header_fields == NULL) {
     fprintf(stderr, "mime-parser: failed to parse headers for %s (error %d)\n",
         input_path, r);
-    abort();
+    if (failure_callback != NULL)
+      failure_callback(__FILE__, __LINE__,
+          "mailimf_envelope_and_optional_fields_parse",
+          "failed to parse message headers", context);
+    goto cleanup;
   }
 
   r = mailmime_parse(data, length, &index, &mime);
   if (r != MAILIMF_NO_ERROR || mime == NULL) {
     fprintf(stderr, "mime-parser: failed to parse %s (error %d)\n",
         input_path, r);
-    abort();
+    if (failure_callback != NULL)
+      failure_callback(__FILE__, __LINE__, "mailmime_parse",
+          "failed to parse MIME message", context);
+    goto cleanup;
   }
 
   expected_path = test_replace_prefix(input_path, input_root, output_root);
@@ -90,38 +106,74 @@ static void check_message_fixture(const char * input_path,
         "generated JSON for %s:\n%s\n",
         expected_path, input_path, generated->str);
     mmap_string_free(generated);
-    abort();
+    if (failure_callback != NULL)
+      failure_callback(__FILE__, __LINE__, "expected fixture exists",
+          "missing expected serialization fixture", context);
+    mmap_string_free(generated);
+    goto cleanup;
   }
 
   expected_json = test_read_file(expected_path, &expected_len);
   mime_serializer_set_context(expected_json, header_fields);
   generated = mime_serializer_serialize_message(mime);
-  compare_json(input_path, expected_path, generated->str);
+  result = compare_json(input_path, expected_path, generated->str,
+      failure_callback, context);
 
   mmap_string_free(generated);
   free(expected_json);
+cleanup:
   mailimf_fields_free(header_fields);
   mailmime_free(mime);
   free(expected_path);
   free(original_data);
+  return result;
 }
 
-int main(void)
+int mime_parser_serialization_test_run_case(const char * relative_path,
+    const char * fixture_root, test_failure_callback failure_callback,
+    void * context)
 {
-  const char * input_root = "data/input";
-  const char * output_root = "data/output";
+  char * input_root = test_path_join(fixture_root, "input");
+  char * output_root = test_path_join(fixture_root, "output");
+  char * input_path = test_path_join(input_root, relative_path);
+  int result = check_message_fixture(input_path, input_root, output_root,
+      failure_callback, context);
+
+  free(input_path);
+  free(output_root);
+  free(input_root);
+  return result;
+}
+
+int mime_parser_serialization_test_run(const char * fixture_root)
+{
+  char * input_root = test_path_join(fixture_root, "input");
   struct test_file * files;
   struct test_file * cur;
   unsigned int count = 0;
+  int result = 0;
 
   files = test_list_files(input_root);
   for (cur = files; cur != NULL; cur = cur->next) {
+    const char * relative_path = cur->path + strlen(input_root) + 1;
     printf("mime-parser: running %s\n", cur->path);
-    check_message_fixture(cur->path, input_root, output_root);
+    if (mime_parser_serialization_test_run_case(relative_path, fixture_root,
+            NULL, NULL) != 0) {
+      result = -1;
+      break;
+    }
     count++;
   }
   test_free_files(files);
+  free(input_root);
 
   printf("mime_parser_serialization_test: %u fixtures matched JSON\n", count);
-  return 0;
+  return result;
 }
+
+#ifndef MIME_PARSER_SERIALIZATION_NO_MAIN
+int main(void)
+{
+  return mime_parser_serialization_test_run("data") == 0 ? 0 : 1;
+}
+#endif

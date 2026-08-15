@@ -6,6 +6,7 @@
 #include "mailimap_types.h"
 #include "mailstream.h"
 #include "mmapstring.h"
+#include "test_case.h"
 
 typedef int imap_test_sender(mailstream * stream, void * context);
 
@@ -17,6 +18,9 @@ int imap_test_parse_response_data_file(const char * path, bool compressed,
 
 void imap_test_expect_send_file(const char * path, imap_test_sender * sender,
     void * context);
+int imap_test_expect_send_file_result(const char * path,
+    imap_test_sender * sender, void * sender_context,
+    test_failure_callback failure_callback, void * failure_context);
 
 mailstream * imap_test_stream_from_string(const char * input);
 mailstream * imap_test_stream_from_string_with_output(const char * input,

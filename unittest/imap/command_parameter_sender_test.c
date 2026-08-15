@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <setjmp.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -9,6 +10,23 @@
 #include "imap_test_utils.h"
 #include "mailimap_sender.h"
 #include "mailimap_types.h"
+
+static jmp_buf test_abort;
+static test_failure_callback active_failure_callback;
+static void * active_failure_context;
+
+static void fail_assertion(const char * file, unsigned line,
+    const char * expression)
+{
+  if (active_failure_callback != NULL)
+    active_failure_callback(file, line, expression, "assertion failed",
+        active_failure_context);
+  longjmp(test_abort, 1);
+}
+
+#undef assert
+#define assert(condition) \
+  do { if (!(condition)) fail_assertion(__FILE__, __LINE__, #condition); } while (0)
 
 static char * copy_string(const char * str)
 {
@@ -511,42 +529,75 @@ static int send_search_all_flag_keys(mailstream * stream, void * context)
   return send_crlf(stream, r);
 }
 
-int imap_command_parameter_sender_test_run(void)
-{
-  static const struct {
+static const struct {
     const char * expected;
     imap_test_sender * sender;
-  } cases[] = {
-    { "data/command-parameters/select-quoted-mailbox.imap",
+} cases[] = {
+    { "select-quoted-mailbox.imap",
       send_select_quoted_mailbox },
-    { "data/command-parameters/login-quoted-credentials.imap",
+    { "login-quoted-credentials.imap",
       send_login_quoted_credentials },
-    { "data/command-parameters/append-minimal.imap", send_append_minimal },
-    { "data/command-parameters/copy-wildcard-set.imap",
+    { "append-minimal.imap", send_append_minimal },
+    { "copy-wildcard-set.imap",
       send_copy_wildcard_set },
-    { "data/command-parameters/uid-copy-open-range.imap",
+    { "uid-copy-open-range.imap",
       send_uid_copy_open_range },
-    { "data/command-parameters/fetch-sections.imap", send_fetch_sections },
-    { "data/command-parameters/fetch-static-attrs.imap",
+    { "fetch-sections.imap", send_fetch_sections },
+    { "fetch-static-attrs.imap",
       send_fetch_static_attrs },
-    { "data/command-parameters/store-all-flags.imap", send_store_all_flags },
-    { "data/command-parameters/status-all-attrs.imap", send_status_all_attrs },
-    { "data/command-parameters/search-strings.imap", send_search_strings },
-    { "data/command-parameters/search-dates-and-sizes.imap",
+    { "store-all-flags.imap", send_store_all_flags },
+    { "status-all-attrs.imap", send_status_all_attrs },
+    { "search-strings.imap", send_search_strings },
+    { "search-dates-and-sizes.imap",
       send_search_dates_and_sizes },
-    { "data/command-parameters/search-boolean-and-sets.imap",
+    { "search-boolean-and-sets.imap",
       send_search_boolean_and_sets },
-    { "data/command-parameters/search-all-string-keys.imap",
+    { "search-all-string-keys.imap",
       send_search_all_string_keys },
-    { "data/command-parameters/search-keyword-header-dates.imap",
+    { "search-keyword-header-dates.imap",
       send_search_keyword_header_dates },
-    { "data/command-parameters/search-all-flag-keys.imap",
+    { "search-all-flag-keys.imap",
       send_search_all_flag_keys }
-  };
+};
+
+size_t imap_command_parameter_sender_test_count(void)
+{
+  return sizeof(cases) / sizeof(cases[0]);
+}
+
+const char * imap_command_parameter_sender_test_name(size_t index)
+{
+  if (index >= imap_command_parameter_sender_test_count()) return NULL;
+  return cases[index].expected;
+}
+
+int imap_command_parameter_sender_test_run_case(size_t index,
+    const char * fixture_root, test_failure_callback failure_callback,
+    void * context)
+{
+  char path[4096];
+  int written;
+
+  if (index >= imap_command_parameter_sender_test_count()) return -1;
+  active_failure_callback = failure_callback;
+  active_failure_context = context;
+  if (setjmp(test_abort) != 0) return -1;
+  written = snprintf(path, sizeof(path), "%s/%s", fixture_root,
+      cases[index].expected);
+  assert(written >= 0 && (size_t) written < sizeof(path));
+  return imap_test_expect_send_file_result(path, cases[index].sender, NULL,
+      failure_callback, context);
+}
+
+int imap_command_parameter_sender_test_run(void)
+{
   size_t i;
 
-  for (i = 0; i < sizeof(cases) / sizeof(cases[0]); i++)
-    imap_test_expect_send_file(cases[i].expected, cases[i].sender, NULL);
+  for (i = 0; i < imap_command_parameter_sender_test_count(); i++) {
+    if (imap_command_parameter_sender_test_run_case(i,
+          "data/command-parameters", NULL, NULL) != 0)
+      abort();
+  }
 
   puts("command_parameter_sender_test: ok");
   return 0;
