@@ -6,6 +6,20 @@
 	objectVersion = 46;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		D20000000000000000000001 /* libetpan xcframework */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = D20000000000000000000002 /* Build configuration list for PBXAggregateTarget "libetpan xcframework" */;
+			buildPhases = (
+				D20000000000000000000003 /* Build XCFramework */,
+			);
+			dependencies = (
+			);
+			name = "libetpan xcframework";
+			productName = "libetpan xcframework";
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		2307A00C170AAA5500C43C59 /* mailstream_compress.c in Sources */ = {isa = PBXBuildFile; fileRef = 2307A00A170AAA5500C43C59 /* mailstream_compress.c */; };
 		365DFFD215D1C93100F2DD85 /* xgmmsgid.c in Sources */ = {isa = PBXBuildFile; fileRef = 365DFFD115D1C93100F2DD85 /* xgmmsgid.c */; };
@@ -389,6 +403,7 @@
 		C6EFB8781433F1F300F805C0 /* mailstream_cfstream.c in Sources */ = {isa = PBXBuildFile; fileRef = C6EFB8761433F1F300F805C0 /* mailstream_cfstream.c */; };
 		C6EFB87A1433F1F300F805C0 /* mailstream_cfstream.c in Sources */ = {isa = PBXBuildFile; fileRef = C6EFB8761433F1F300F805C0 /* mailstream_cfstream.c */; };
 		C6EFB8AE1433F58500F805C0 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6EFB8AD1433F58500F805C0 /* CoreFoundation.framework */; };
+		F10000000000000000000001 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F00000000000000000000001 /* Foundation.framework */; };
 		C6EFB8B41433F5A400F805C0 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6EFB8B31433F5A400F805C0 /* CoreServices.framework */; };
 		C6F61F741701409B0073032E /* xgmthrid.c in Sources */ = {isa = PBXBuildFile; fileRef = C6F61F721701409B0073032E /* xgmthrid.c */; };
 		C6F61F751701409B0073032E /* xgmthrid.c in Sources */ = {isa = PBXBuildFile; fileRef = C6F61F721701409B0073032E /* xgmthrid.c */; };
@@ -542,35 +557,94 @@
 		C6F9ED2D105335BD0059C3BA /* mailsmtp_socket.c in Sources */ = {isa = PBXBuildFile; fileRef = C6F9EAB4105335BC0059C3BA /* mailsmtp_socket.c */; };
 		C6F9ED2F105335BD0059C3BA /* mailsmtp_ssl.c in Sources */ = {isa = PBXBuildFile; fileRef = C6F9EAB6105335BC0059C3BA /* mailsmtp_ssl.c */; };
 		C6F9ED39105335BD0059C3BA /* libetpan_version.c in Sources */ = {isa = PBXBuildFile; fileRef = C6F9EAC2105335BD0059C3BA /* libetpan_version.c */; };
-		C6F9EDA6105339380059C3BA /* libsasl2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C6F9EDA5105339380059C3BA /* libsasl2.dylib */; };
+		D10000010000000000000001 /* CyrusSASL.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = D10000000000000000000001 /* CyrusSASL.xcframework */; };
+		D10000010000000000000002 /* Jansson.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = D10000000000000000000002 /* Jansson.xcframework */; };
+		D10000010000000000000003 /* CyrusSASL.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = D10000000000000000000001 /* CyrusSASL.xcframework */; };
+		D10000010000000000000004 /* Jansson.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = D10000000000000000000002 /* Jansson.xcframework */; };
+		D10000010000000000000005 /* CyrusSASL.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = D10000000000000000000001 /* CyrusSASL.xcframework */; };
+		D10000010000000000000006 /* Jansson.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = D10000000000000000000002 /* Jansson.xcframework */; };
+		E10000000000000000000001 /* mailjson.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000001 /* mailjson.c */; };
+		E10000000000000000000002 /* mailactivesync.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000002 /* mailactivesync.c */; };
+		E10000000000000000000003 /* mailactivesync_codes.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000003 /* mailactivesync_codes.c */; };
+		E10000000000000000000004 /* mailactivesync_command.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000004 /* mailactivesync_command.c */; };
+		E10000000000000000000005 /* mailactivesync_http.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000005 /* mailactivesync_http.c */; };
+		E10000000000000000000006 /* mailactivesync_types.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000006 /* mailactivesync_types.c */; };
+		E10000000000000000000007 /* mailactivesync_wbxml.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000007 /* mailactivesync_wbxml.c */; };
+		E10000000000000000000008 /* mailgmail.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000008 /* mailgmail.c */; };
+		E10000000000000000000009 /* mailgmail_http.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000009 /* mailgmail_http.c */; };
+		E1000000000000000000000A /* mailgmail_http_curl.c in Sources */ = {isa = PBXBuildFile; fileRef = E0000000000000000000000A /* mailgmail_http_curl.c */; };
+		E1000000000000000000000B /* mailgmail_http_nsurlsession.m in Sources */ = {isa = PBXBuildFile; fileRef = E0000000000000000000000B /* mailgmail_http_nsurlsession.m */; };
+		E1000000000000000000000C /* mailgmail_parser.c in Sources */ = {isa = PBXBuildFile; fileRef = E0000000000000000000000C /* mailgmail_parser.c */; };
+		E1000000000000000000000D /* mailgmail_types.c in Sources */ = {isa = PBXBuildFile; fileRef = E0000000000000000000000D /* mailgmail_types.c */; };
+		E1000000000000000000000E /* mailgmail_url.c in Sources */ = {isa = PBXBuildFile; fileRef = E0000000000000000000000E /* mailgmail_url.c */; };
+		E1000000000000000000000F /* mailjmap.c in Sources */ = {isa = PBXBuildFile; fileRef = E0000000000000000000000F /* mailjmap.c */; };
+		E10000000000000000000010 /* mailjmap_blob.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000010 /* mailjmap_blob.c */; };
+		E10000000000000000000011 /* mailjmap_http.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000011 /* mailjmap_http.c */; };
+		E10000000000000000000012 /* mailjmap_http_curl.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000012 /* mailjmap_http_curl.c */; };
+		E10000000000000000000013 /* mailjmap_mail.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000013 /* mailjmap_mail.c */; };
+		E10000000000000000000014 /* mailjmap_request.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000014 /* mailjmap_request.c */; };
+		E10000000000000000000015 /* mailjmap_response.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000015 /* mailjmap_response.c */; };
+		E10000000000000000000016 /* mailjmap_types.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000016 /* mailjmap_types.c */; };
+		E10000000000000000000017 /* mailmime_rfc2231.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000017 /* mailmime_rfc2231.c */; };
+		E10000000000000000000018 /* mailpgp.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000018 /* mailpgp.c */; };
+		E10000000000000000000019 /* mailpgp_rnp.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000019 /* mailpgp_rnp.c */; };
+		E1000000000000000000001A /* mailsmime.c in Sources */ = {isa = PBXBuildFile; fileRef = E0000000000000000000001A /* mailsmime.c */; };
+		E20000000000000000000001 /* mailjson.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000001 /* mailjson.c */; };
+		E20000000000000000000002 /* mailactivesync.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000002 /* mailactivesync.c */; };
+		E20000000000000000000003 /* mailactivesync_codes.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000003 /* mailactivesync_codes.c */; };
+		E20000000000000000000004 /* mailactivesync_command.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000004 /* mailactivesync_command.c */; };
+		E20000000000000000000005 /* mailactivesync_http.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000005 /* mailactivesync_http.c */; };
+		E20000000000000000000006 /* mailactivesync_types.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000006 /* mailactivesync_types.c */; };
+		E20000000000000000000007 /* mailactivesync_wbxml.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000007 /* mailactivesync_wbxml.c */; };
+		E20000000000000000000008 /* mailgmail.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000008 /* mailgmail.c */; };
+		E20000000000000000000009 /* mailgmail_http.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000009 /* mailgmail_http.c */; };
+		E2000000000000000000000A /* mailgmail_http_curl.c in Sources */ = {isa = PBXBuildFile; fileRef = E0000000000000000000000A /* mailgmail_http_curl.c */; };
+		E2000000000000000000000B /* mailgmail_http_nsurlsession.m in Sources */ = {isa = PBXBuildFile; fileRef = E0000000000000000000000B /* mailgmail_http_nsurlsession.m */; };
+		E2000000000000000000000C /* mailgmail_parser.c in Sources */ = {isa = PBXBuildFile; fileRef = E0000000000000000000000C /* mailgmail_parser.c */; };
+		E2000000000000000000000D /* mailgmail_types.c in Sources */ = {isa = PBXBuildFile; fileRef = E0000000000000000000000D /* mailgmail_types.c */; };
+		E2000000000000000000000E /* mailgmail_url.c in Sources */ = {isa = PBXBuildFile; fileRef = E0000000000000000000000E /* mailgmail_url.c */; };
+		E2000000000000000000000F /* mailjmap.c in Sources */ = {isa = PBXBuildFile; fileRef = E0000000000000000000000F /* mailjmap.c */; };
+		E20000000000000000000010 /* mailjmap_blob.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000010 /* mailjmap_blob.c */; };
+		E20000000000000000000011 /* mailjmap_http.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000011 /* mailjmap_http.c */; };
+		E20000000000000000000012 /* mailjmap_http_curl.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000012 /* mailjmap_http_curl.c */; };
+		E20000000000000000000013 /* mailjmap_mail.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000013 /* mailjmap_mail.c */; };
+		E20000000000000000000014 /* mailjmap_request.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000014 /* mailjmap_request.c */; };
+		E20000000000000000000015 /* mailjmap_response.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000015 /* mailjmap_response.c */; };
+		E20000000000000000000016 /* mailjmap_types.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000016 /* mailjmap_types.c */; };
+		E20000000000000000000017 /* mailmime_rfc2231.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000017 /* mailmime_rfc2231.c */; };
+		E20000000000000000000018 /* mailpgp.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000018 /* mailpgp.c */; };
+		E20000000000000000000019 /* mailpgp_rnp.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000019 /* mailpgp_rnp.c */; };
+		E2000000000000000000001A /* mailsmime.c in Sources */ = {isa = PBXBuildFile; fileRef = E0000000000000000000001A /* mailsmime.c */; };
+		E30000000000000000000001 /* mailjson.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000001 /* mailjson.c */; };
+		E30000000000000000000002 /* mailactivesync.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000002 /* mailactivesync.c */; };
+		E30000000000000000000003 /* mailactivesync_codes.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000003 /* mailactivesync_codes.c */; };
+		E30000000000000000000004 /* mailactivesync_command.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000004 /* mailactivesync_command.c */; };
+		E30000000000000000000005 /* mailactivesync_http.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000005 /* mailactivesync_http.c */; };
+		E30000000000000000000006 /* mailactivesync_types.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000006 /* mailactivesync_types.c */; };
+		E30000000000000000000007 /* mailactivesync_wbxml.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000007 /* mailactivesync_wbxml.c */; };
+		E30000000000000000000008 /* mailgmail.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000008 /* mailgmail.c */; };
+		E30000000000000000000009 /* mailgmail_http.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000009 /* mailgmail_http.c */; };
+		E3000000000000000000000A /* mailgmail_http_curl.c in Sources */ = {isa = PBXBuildFile; fileRef = E0000000000000000000000A /* mailgmail_http_curl.c */; };
+		E3000000000000000000000B /* mailgmail_http_nsurlsession.m in Sources */ = {isa = PBXBuildFile; fileRef = E0000000000000000000000B /* mailgmail_http_nsurlsession.m */; };
+		E3000000000000000000000C /* mailgmail_parser.c in Sources */ = {isa = PBXBuildFile; fileRef = E0000000000000000000000C /* mailgmail_parser.c */; };
+		E3000000000000000000000D /* mailgmail_types.c in Sources */ = {isa = PBXBuildFile; fileRef = E0000000000000000000000D /* mailgmail_types.c */; };
+		E3000000000000000000000E /* mailgmail_url.c in Sources */ = {isa = PBXBuildFile; fileRef = E0000000000000000000000E /* mailgmail_url.c */; };
+		E3000000000000000000000F /* mailjmap.c in Sources */ = {isa = PBXBuildFile; fileRef = E0000000000000000000000F /* mailjmap.c */; };
+		E30000000000000000000010 /* mailjmap_blob.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000010 /* mailjmap_blob.c */; };
+		E30000000000000000000011 /* mailjmap_http.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000011 /* mailjmap_http.c */; };
+		E30000000000000000000012 /* mailjmap_http_curl.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000012 /* mailjmap_http_curl.c */; };
+		E30000000000000000000013 /* mailjmap_mail.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000013 /* mailjmap_mail.c */; };
+		E30000000000000000000014 /* mailjmap_request.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000014 /* mailjmap_request.c */; };
+		E30000000000000000000015 /* mailjmap_response.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000015 /* mailjmap_response.c */; };
+		E30000000000000000000016 /* mailjmap_types.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000016 /* mailjmap_types.c */; };
+		E30000000000000000000017 /* mailmime_rfc2231.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000017 /* mailmime_rfc2231.c */; };
+		E30000000000000000000018 /* mailpgp.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000018 /* mailpgp.c */; };
+		E30000000000000000000019 /* mailpgp_rnp.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000019 /* mailpgp_rnp.c */; };
+		E3000000000000000000001A /* mailsmime.c in Sources */ = {isa = PBXBuildFile; fileRef = E0000000000000000000001A /* mailsmime.c */; };
 		C6F9EDAB1053394C0059C3BA /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C6F9EDAA1053394C0059C3BA /* libiconv.dylib */; };
 		C6F9EDAD1053395A0059C3BA /* libexpat.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C6F9EDAC1053395A0059C3BA /* libexpat.dylib */; };
 		C6F9EDB2105339650059C3BA /* libcurl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C6F9EDB1105339650059C3BA /* libcurl.dylib */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		C6635C4716E000310066276E /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = C6635C4316DFFE6E0066276E;
-			remoteInfo = "libetpan-prepare";
-		};
-		C6635C4916E000340066276E /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = C6635C4316DFFE6E0066276E;
-			remoteInfo = "libetpan-prepare";
-		};
-		C6635C5116E0027B0066276E /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = C6635C4D16E002340066276E;
-			remoteInfo = "libetpan-prepare-ios";
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		2307A00A170AAA5500C43C59 /* mailstream_compress.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mailstream_compress.c; sourceTree = "<group>"; };
@@ -638,6 +712,7 @@
 		C6EFB8761433F1F300F805C0 /* mailstream_cfstream.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mailstream_cfstream.c; sourceTree = "<group>"; };
 		C6EFB8771433F1F300F805C0 /* mailstream_cfstream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mailstream_cfstream.h; sourceTree = "<group>"; };
 		C6EFB8AD1433F58500F805C0 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
+		F00000000000000000000001 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		C6EFB8B31433F5A400F805C0 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = System/Library/Frameworks/CoreServices.framework; sourceTree = SDKROOT; };
 		C6F61F721701409B0073032E /* xgmthrid.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = xgmthrid.c; sourceTree = "<group>"; };
 		C6F61F731701409B0073032E /* xgmthrid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = xgmthrid.h; sourceTree = "<group>"; };
@@ -970,7 +1045,61 @@
 		C6F9EAC1105335BD0059C3BA /* libetpan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = libetpan.h; sourceTree = "<group>"; };
 		C6F9EAC2105335BD0059C3BA /* libetpan_version.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = libetpan_version.c; sourceTree = "<group>"; };
 		C6F9ED9D105339200059C3BA /* libssl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libssl.dylib; path = /usr/lib/libssl.dylib; sourceTree = "<absolute>"; };
-		C6F9EDA5105339380059C3BA /* libsasl2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsasl2.dylib; path = /usr/lib/libsasl2.dylib; sourceTree = "<absolute>"; };
+		D10000000000000000000001 /* CyrusSASL.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = CyrusSASL.xcframework; path = dependencies/build/CyrusSASL.xcframework; sourceTree = "<group>"; };
+		D10000000000000000000002 /* Jansson.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = Jansson.xcframework; path = dependencies/build/Jansson.xcframework; sourceTree = "<group>"; };
+		E00000000000000000000001 /* mailjson.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = mailjson.c; path = "../src/data-types/mailjson.c"; sourceTree = "<group>"; };
+		E00000000000000000000002 /* mailactivesync.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = mailactivesync.c; path = "../src/low-level/activesync/mailactivesync.c"; sourceTree = "<group>"; };
+		E00000000000000000000003 /* mailactivesync_codes.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = mailactivesync_codes.c; path = "../src/low-level/activesync/mailactivesync_codes.c"; sourceTree = "<group>"; };
+		E00000000000000000000004 /* mailactivesync_command.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = mailactivesync_command.c; path = "../src/low-level/activesync/mailactivesync_command.c"; sourceTree = "<group>"; };
+		E00000000000000000000005 /* mailactivesync_http.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = mailactivesync_http.c; path = "../src/low-level/activesync/mailactivesync_http.c"; sourceTree = "<group>"; };
+		E00000000000000000000006 /* mailactivesync_types.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = mailactivesync_types.c; path = "../src/low-level/activesync/mailactivesync_types.c"; sourceTree = "<group>"; };
+		E00000000000000000000007 /* mailactivesync_wbxml.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = mailactivesync_wbxml.c; path = "../src/low-level/activesync/mailactivesync_wbxml.c"; sourceTree = "<group>"; };
+		E00000000000000000000008 /* mailgmail.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = mailgmail.c; path = "../src/low-level/gmail/mailgmail.c"; sourceTree = "<group>"; };
+		E00000000000000000000009 /* mailgmail_http.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = mailgmail_http.c; path = "../src/low-level/gmail/mailgmail_http.c"; sourceTree = "<group>"; };
+		E0000000000000000000000A /* mailgmail_http_curl.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = mailgmail_http_curl.c; path = "../src/low-level/gmail/mailgmail_http_curl.c"; sourceTree = "<group>"; };
+		E0000000000000000000000B /* mailgmail_http_nsurlsession.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = mailgmail_http_nsurlsession.m; path = "../src/low-level/gmail/mailgmail_http_nsurlsession.m"; sourceTree = "<group>"; };
+		E0000000000000000000000C /* mailgmail_parser.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = mailgmail_parser.c; path = "../src/low-level/gmail/mailgmail_parser.c"; sourceTree = "<group>"; };
+		E0000000000000000000000D /* mailgmail_types.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = mailgmail_types.c; path = "../src/low-level/gmail/mailgmail_types.c"; sourceTree = "<group>"; };
+		E0000000000000000000000E /* mailgmail_url.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = mailgmail_url.c; path = "../src/low-level/gmail/mailgmail_url.c"; sourceTree = "<group>"; };
+		E0000000000000000000000F /* mailjmap.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = mailjmap.c; path = "../src/low-level/jmap/mailjmap.c"; sourceTree = "<group>"; };
+		E00000000000000000000010 /* mailjmap_blob.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = mailjmap_blob.c; path = "../src/low-level/jmap/mailjmap_blob.c"; sourceTree = "<group>"; };
+		E00000000000000000000011 /* mailjmap_http.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = mailjmap_http.c; path = "../src/low-level/jmap/mailjmap_http.c"; sourceTree = "<group>"; };
+		E00000000000000000000012 /* mailjmap_http_curl.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = mailjmap_http_curl.c; path = "../src/low-level/jmap/mailjmap_http_curl.c"; sourceTree = "<group>"; };
+		E00000000000000000000013 /* mailjmap_mail.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = mailjmap_mail.c; path = "../src/low-level/jmap/mailjmap_mail.c"; sourceTree = "<group>"; };
+		E00000000000000000000014 /* mailjmap_request.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = mailjmap_request.c; path = "../src/low-level/jmap/mailjmap_request.c"; sourceTree = "<group>"; };
+		E00000000000000000000015 /* mailjmap_response.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = mailjmap_response.c; path = "../src/low-level/jmap/mailjmap_response.c"; sourceTree = "<group>"; };
+		E00000000000000000000016 /* mailjmap_types.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = mailjmap_types.c; path = "../src/low-level/jmap/mailjmap_types.c"; sourceTree = "<group>"; };
+		E00000000000000000000017 /* mailmime_rfc2231.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = mailmime_rfc2231.c; path = "../src/low-level/mime/mailmime_rfc2231.c"; sourceTree = "<group>"; };
+		E00000000000000000000018 /* mailpgp.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = mailpgp.c; path = "../src/low-level/pgp/mailpgp.c"; sourceTree = "<group>"; };
+		E00000000000000000000019 /* mailpgp_rnp.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = mailpgp_rnp.c; path = "../src/low-level/pgp/mailpgp_rnp.c"; sourceTree = "<group>"; };
+		E0000000000000000000001A /* mailsmime.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = mailsmime.c; path = "../src/low-level/smime/mailsmime.c"; sourceTree = "<group>"; };
+		E50000000000000000000001 /* mailjson.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = mailjson.h; path = "../src/data-types/mailjson.h"; sourceTree = "<group>"; };
+		E50000000000000000000002 /* mailactivesync.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = mailactivesync.h; path = "../src/low-level/activesync/mailactivesync.h"; sourceTree = "<group>"; };
+		E50000000000000000000003 /* mailactivesync_codes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = mailactivesync_codes.h; path = "../src/low-level/activesync/mailactivesync_codes.h"; sourceTree = "<group>"; };
+		E50000000000000000000004 /* mailactivesync_command.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = mailactivesync_command.h; path = "../src/low-level/activesync/mailactivesync_command.h"; sourceTree = "<group>"; };
+		E50000000000000000000005 /* mailactivesync_http.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = mailactivesync_http.h; path = "../src/low-level/activesync/mailactivesync_http.h"; sourceTree = "<group>"; };
+		E50000000000000000000006 /* mailactivesync_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = mailactivesync_types.h; path = "../src/low-level/activesync/mailactivesync_types.h"; sourceTree = "<group>"; };
+		E50000000000000000000007 /* mailactivesync_wbxml.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = mailactivesync_wbxml.h; path = "../src/low-level/activesync/mailactivesync_wbxml.h"; sourceTree = "<group>"; };
+		E50000000000000000000008 /* mailgmail.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = mailgmail.h; path = "../src/low-level/gmail/mailgmail.h"; sourceTree = "<group>"; };
+		E50000000000000000000009 /* mailgmail_http.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = mailgmail_http.h; path = "../src/low-level/gmail/mailgmail_http.h"; sourceTree = "<group>"; };
+		E5000000000000000000000A /* mailgmail_parser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = mailgmail_parser.h; path = "../src/low-level/gmail/mailgmail_parser.h"; sourceTree = "<group>"; };
+		E5000000000000000000000B /* mailgmail_private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = mailgmail_private.h; path = "../src/low-level/gmail/mailgmail_private.h"; sourceTree = "<group>"; };
+		E5000000000000000000000C /* mailgmail_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = mailgmail_types.h; path = "../src/low-level/gmail/mailgmail_types.h"; sourceTree = "<group>"; };
+		E5000000000000000000000D /* mailgmail_url.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = mailgmail_url.h; path = "../src/low-level/gmail/mailgmail_url.h"; sourceTree = "<group>"; };
+		E5000000000000000000000E /* mailjmap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = mailjmap.h; path = "../src/low-level/jmap/mailjmap.h"; sourceTree = "<group>"; };
+		E5000000000000000000000F /* mailjmap_blob.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = mailjmap_blob.h; path = "../src/low-level/jmap/mailjmap_blob.h"; sourceTree = "<group>"; };
+		E50000000000000000000010 /* mailjmap_http.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = mailjmap_http.h; path = "../src/low-level/jmap/mailjmap_http.h"; sourceTree = "<group>"; };
+		E50000000000000000000011 /* mailjmap_mail.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = mailjmap_mail.h; path = "../src/low-level/jmap/mailjmap_mail.h"; sourceTree = "<group>"; };
+		E50000000000000000000012 /* mailjmap_private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = mailjmap_private.h; path = "../src/low-level/jmap/mailjmap_private.h"; sourceTree = "<group>"; };
+		E50000000000000000000013 /* mailjmap_request.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = mailjmap_request.h; path = "../src/low-level/jmap/mailjmap_request.h"; sourceTree = "<group>"; };
+		E50000000000000000000014 /* mailjmap_response.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = mailjmap_response.h; path = "../src/low-level/jmap/mailjmap_response.h"; sourceTree = "<group>"; };
+		E50000000000000000000015 /* mailjmap_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = mailjmap_types.h; path = "../src/low-level/jmap/mailjmap_types.h"; sourceTree = "<group>"; };
+		E50000000000000000000016 /* mailmime_rfc2231.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = mailmime_rfc2231.h; path = "../src/low-level/mime/mailmime_rfc2231.h"; sourceTree = "<group>"; };
+		E50000000000000000000017 /* mailpgp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = mailpgp.h; path = "../src/low-level/pgp/mailpgp.h"; sourceTree = "<group>"; };
+		E50000000000000000000018 /* mailpgp_private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = mailpgp_private.h; path = "../src/low-level/pgp/mailpgp_private.h"; sourceTree = "<group>"; };
+		E50000000000000000000019 /* mailpgp_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = mailpgp_types.h; path = "../src/low-level/pgp/mailpgp_types.h"; sourceTree = "<group>"; };
+		E5000000000000000000001A /* mailsmime.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = mailsmime.h; path = "../src/low-level/smime/mailsmime.h"; sourceTree = "<group>"; };
+		E5000000000000000000001B /* mailsmime_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = mailsmime_types.h; path = "../src/low-level/smime/mailsmime_types.h"; sourceTree = "<group>"; };
 		C6F9EDAA1053394C0059C3BA /* libiconv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libiconv.dylib; path = /usr/lib/libiconv.dylib; sourceTree = "<absolute>"; };
 		C6F9EDAC1053395A0059C3BA /* libexpat.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libexpat.dylib; path = /usr/lib/libexpat.dylib; sourceTree = "<absolute>"; };
 		C6F9EDB1105339650059C3BA /* libcurl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcurl.dylib; path = /usr/lib/libcurl.dylib; sourceTree = "<absolute>"; };
@@ -983,11 +1112,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				C69BA86017DF63CA00D601B7 /* libz.dylib in Frameworks */,
-				C6F9EDA6105339380059C3BA /* libsasl2.dylib in Frameworks */,
+				D10000010000000000000001 /* CyrusSASL.xcframework in Frameworks */,
+				D10000010000000000000002 /* Jansson.xcframework in Frameworks */,
 				C6F9EDAB1053394C0059C3BA /* libiconv.dylib in Frameworks */,
 				C6F9EDAD1053395A0059C3BA /* libexpat.dylib in Frameworks */,
 				C6F9EDB2105339650059C3BA /* libcurl.dylib in Frameworks */,
 				C6EFB8AE1433F58500F805C0 /* CoreFoundation.framework in Frameworks */,
+				F10000000000000000000001 /* Foundation.framework in Frameworks */,
 				C6EFB8B41433F5A400F805C0 /* CoreServices.framework in Frameworks */,
 				C6ED6CF717A185FD00A4A14C /* Security.framework in Frameworks */,
 			);
@@ -997,6 +1128,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D10000010000000000000003 /* CyrusSASL.xcframework in Frameworks */,
+				D10000010000000000000004 /* Jansson.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1004,6 +1137,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D10000010000000000000005 /* CyrusSASL.xcframework in Frameworks */,
+				D10000010000000000000006 /* Jansson.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1023,6 +1158,7 @@
 		0867D691FE84028FC02AAC07 /* libetpan */ = {
 			isa = PBXGroup;
 			children = (
+				E40000000000000000000001 /* Sources added since May 2026 */,
 				08FB77AEFE84172EC02AAC07 /* libetpan */,
 				089C1665FE841158C02AAC07 /* Resources */,
 				0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */,
@@ -1034,11 +1170,72 @@
 			tabWidth = 2;
 			usesTabs = 0;
 		};
+		E40000000000000000000001 /* Sources added since May 2026 */ = {
+			isa = PBXGroup;
+			children = (
+				E00000000000000000000001 /* mailjson.c */,
+				E00000000000000000000002 /* mailactivesync.c */,
+				E00000000000000000000003 /* mailactivesync_codes.c */,
+				E00000000000000000000004 /* mailactivesync_command.c */,
+				E00000000000000000000005 /* mailactivesync_http.c */,
+				E00000000000000000000006 /* mailactivesync_types.c */,
+				E00000000000000000000007 /* mailactivesync_wbxml.c */,
+				E00000000000000000000008 /* mailgmail.c */,
+				E00000000000000000000009 /* mailgmail_http.c */,
+				E0000000000000000000000A /* mailgmail_http_curl.c */,
+				E0000000000000000000000B /* mailgmail_http_nsurlsession.m */,
+				E0000000000000000000000C /* mailgmail_parser.c */,
+				E0000000000000000000000D /* mailgmail_types.c */,
+				E0000000000000000000000E /* mailgmail_url.c */,
+				E0000000000000000000000F /* mailjmap.c */,
+				E00000000000000000000010 /* mailjmap_blob.c */,
+				E00000000000000000000011 /* mailjmap_http.c */,
+				E00000000000000000000012 /* mailjmap_http_curl.c */,
+				E00000000000000000000013 /* mailjmap_mail.c */,
+				E00000000000000000000014 /* mailjmap_request.c */,
+				E00000000000000000000015 /* mailjmap_response.c */,
+				E00000000000000000000016 /* mailjmap_types.c */,
+				E00000000000000000000017 /* mailmime_rfc2231.c */,
+				E00000000000000000000018 /* mailpgp.c */,
+				E00000000000000000000019 /* mailpgp_rnp.c */,
+				E0000000000000000000001A /* mailsmime.c */,
+				E50000000000000000000001 /* mailjson.h */,
+				E50000000000000000000002 /* mailactivesync.h */,
+				E50000000000000000000003 /* mailactivesync_codes.h */,
+				E50000000000000000000004 /* mailactivesync_command.h */,
+				E50000000000000000000005 /* mailactivesync_http.h */,
+				E50000000000000000000006 /* mailactivesync_types.h */,
+				E50000000000000000000007 /* mailactivesync_wbxml.h */,
+				E50000000000000000000008 /* mailgmail.h */,
+				E50000000000000000000009 /* mailgmail_http.h */,
+				E5000000000000000000000A /* mailgmail_parser.h */,
+				E5000000000000000000000B /* mailgmail_private.h */,
+				E5000000000000000000000C /* mailgmail_types.h */,
+				E5000000000000000000000D /* mailgmail_url.h */,
+				E5000000000000000000000E /* mailjmap.h */,
+				E5000000000000000000000F /* mailjmap_blob.h */,
+				E50000000000000000000010 /* mailjmap_http.h */,
+				E50000000000000000000011 /* mailjmap_mail.h */,
+				E50000000000000000000012 /* mailjmap_private.h */,
+				E50000000000000000000013 /* mailjmap_request.h */,
+				E50000000000000000000014 /* mailjmap_response.h */,
+				E50000000000000000000015 /* mailjmap_types.h */,
+				E50000000000000000000016 /* mailmime_rfc2231.h */,
+				E50000000000000000000017 /* mailpgp.h */,
+				E50000000000000000000018 /* mailpgp_private.h */,
+				E50000000000000000000019 /* mailpgp_types.h */,
+				E5000000000000000000001A /* mailsmime.h */,
+				E5000000000000000000001B /* mailsmime_types.h */,
+			);
+			name = "Sources added since May 2026";
+			sourceTree = "<group>";
+		};
 		0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */ = {
 			isa = PBXGroup;
 			children = (
 				C6F9ED9A105338F60059C3BA /* Libraries */,
 				C6EFB8AD1433F58500F805C0 /* CoreFoundation.framework */,
+				F00000000000000000000001 /* Foundation.framework */,
 				C6EFB8B31433F5A400F805C0 /* CoreServices.framework */,
 				C6ED6CF617A185FD00A4A14C /* Security.framework */,
 			);
@@ -1692,11 +1889,12 @@
 		C6F9ED9A105338F60059C3BA /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				D10000000000000000000001 /* CyrusSASL.xcframework */,
+				D10000000000000000000002 /* Jansson.xcframework */,
 				C6F9EDBD105339EA0059C3BA /* libcrypto.dylib */,
 				C6F9EDB1105339650059C3BA /* libcurl.dylib */,
 				C6F9EDAC1053395A0059C3BA /* libexpat.dylib */,
 				C6F9EDAA1053394C0059C3BA /* libiconv.dylib */,
-				C6F9EDA5105339380059C3BA /* libsasl2.dylib */,
 				C6F9ED9D105339200059C3BA /* libssl.dylib */,
 				C69BA85F17DF63C900D601B7 /* libz.dylib */,
 			);
@@ -1704,37 +1902,6 @@
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
-
-/* Begin PBXLegacyTarget section */
-		C6635C4316DFFE6E0066276E /* libetpan-prepare */ = {
-			isa = PBXLegacyTarget;
-			buildArgumentsString = ./update.sh;
-			buildConfigurationList = C6635C4416DFFE6E0066276E /* Build configuration list for PBXLegacyTarget "libetpan-prepare" */;
-			buildPhases = (
-			);
-			buildToolPath = /bin/sh;
-			buildWorkingDirectory = "$(SRCROOT)";
-			dependencies = (
-			);
-			name = "libetpan-prepare";
-			passBuildSettingsInEnvironment = 1;
-			productName = "libetpan-prepare";
-		};
-		C6635C4D16E002340066276E /* libetpan-prepare-ios */ = {
-			isa = PBXLegacyTarget;
-			buildArgumentsString = ./update.sh;
-			buildConfigurationList = C6635C4E16E002340066276E /* Build configuration list for PBXLegacyTarget "libetpan-prepare-ios" */;
-			buildPhases = (
-			);
-			buildToolPath = /bin/sh;
-			buildWorkingDirectory = "$(SRCROOT)";
-			dependencies = (
-			);
-			name = "libetpan-prepare-ios";
-			passBuildSettingsInEnvironment = 1;
-			productName = "libetpan-prepare";
-		};
-/* End PBXLegacyTarget section */
 
 /* Begin PBXNativeTarget section */
 		8DC2EF4F0486A6940098B216 /* libetpan */ = {
@@ -1749,7 +1916,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				C6635C4816E000310066276E /* PBXTargetDependency */,
 			);
 			name = libetpan;
 			productInstallPath = "$(HOME)/Library/Frameworks";
@@ -1764,12 +1930,10 @@
 				C6635C3416DFF0030066276E /* ShellScript */,
 				C682E21B15B315EF00BE9DA7 /* Sources */,
 				C682E2BC15B315EF00BE9DA7 /* Frameworks */,
-				C6740DB515B384FB00D4A16B /* ShellScript */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				C6635C5216E0027B0066276E /* PBXTargetDependency */,
 			);
 			name = "libetpan ios";
 			productName = "static libetpan";
@@ -1787,7 +1951,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				C6635C4A16E000340066276E /* PBXTargetDependency */,
 			);
 			name = "static libetpan";
 			productName = "static libetpan";
@@ -1820,8 +1983,7 @@
 				8DC2EF4F0486A6940098B216 /* libetpan */,
 				C69AB10910546FE500F32FBD /* static libetpan */,
 				C682E21815B315EF00BE9DA7 /* libetpan ios */,
-				C6635C4316DFFE6E0066276E /* libetpan-prepare */,
-				C6635C4D16E002340066276E /* libetpan-prepare-ios */,
+				D20000000000000000000001 /* libetpan xcframework */,
 			);
 		};
 /* End PBXProject section */
@@ -1837,6 +1999,21 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		D20000000000000000000003 /* Build XCFramework */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Build XCFramework";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "\"$SRCROOT/build-libetpan-xcframework.sh\"\n";
+		};
 		C6635C3316DFEFE00066276E /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1876,19 +2053,6 @@
 			shellPath = /bin/sh;
 			shellScript = "mkdir -p \"$BUILT_PRODUCTS_DIR/$PUBLIC_HEADERS_FOLDER_PATH\"\nmkdir -p \"$BUILT_PRODUCTS_DIR/include/libetpan\"\nln -sf \"Versions/Current/Headers\" \"$BUILT_PRODUCTS_DIR/$FULL_PRODUCT_NAME/Headers\"\nrsync -aL \"$SRCROOT/../include/libetpan/\" \"$BUILT_PRODUCTS_DIR/include/libetpan/\"\nrsync -aL \"$SRCROOT/../include/libetpan/\" \"$BUILT_PRODUCTS_DIR/$PUBLIC_HEADERS_FOLDER_PATH/\"\n";
 		};
-		C6740DB515B384FB00D4A16B /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "cp \"$SRCROOT/libsasl-ios/lib/$PLATFORM_NAME/libsasl2.a\" \"$BUILT_PRODUCTS_DIR\"\n";
-		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -1896,6 +2060,32 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E10000000000000000000001 /* mailjson.c in Sources */,
+				E10000000000000000000002 /* mailactivesync.c in Sources */,
+				E10000000000000000000003 /* mailactivesync_codes.c in Sources */,
+				E10000000000000000000004 /* mailactivesync_command.c in Sources */,
+				E10000000000000000000005 /* mailactivesync_http.c in Sources */,
+				E10000000000000000000006 /* mailactivesync_types.c in Sources */,
+				E10000000000000000000007 /* mailactivesync_wbxml.c in Sources */,
+				E10000000000000000000008 /* mailgmail.c in Sources */,
+				E10000000000000000000009 /* mailgmail_http.c in Sources */,
+				E1000000000000000000000A /* mailgmail_http_curl.c in Sources */,
+				E1000000000000000000000B /* mailgmail_http_nsurlsession.m in Sources */,
+				E1000000000000000000000C /* mailgmail_parser.c in Sources */,
+				E1000000000000000000000D /* mailgmail_types.c in Sources */,
+				E1000000000000000000000E /* mailgmail_url.c in Sources */,
+				E1000000000000000000000F /* mailjmap.c in Sources */,
+				E10000000000000000000010 /* mailjmap_blob.c in Sources */,
+				E10000000000000000000011 /* mailjmap_http.c in Sources */,
+				E10000000000000000000012 /* mailjmap_http_curl.c in Sources */,
+				E10000000000000000000013 /* mailjmap_mail.c in Sources */,
+				E10000000000000000000014 /* mailjmap_request.c in Sources */,
+				E10000000000000000000015 /* mailjmap_response.c in Sources */,
+				E10000000000000000000016 /* mailjmap_types.c in Sources */,
+				E10000000000000000000017 /* mailmime_rfc2231.c in Sources */,
+				E10000000000000000000018 /* mailpgp.c in Sources */,
+				E10000000000000000000019 /* mailpgp_rnp.c in Sources */,
+				E1000000000000000000001A /* mailsmime.c in Sources */,
 				C6F9EAFB105335BD0059C3BA /* base64.c in Sources */,
 				C6F9EAFD105335BD0059C3BA /* carray.c in Sources */,
 				C6F9EAFF105335BD0059C3BA /* charconv.c in Sources */,
@@ -2080,6 +2270,32 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E20000000000000000000001 /* mailjson.c in Sources */,
+				E20000000000000000000002 /* mailactivesync.c in Sources */,
+				E20000000000000000000003 /* mailactivesync_codes.c in Sources */,
+				E20000000000000000000004 /* mailactivesync_command.c in Sources */,
+				E20000000000000000000005 /* mailactivesync_http.c in Sources */,
+				E20000000000000000000006 /* mailactivesync_types.c in Sources */,
+				E20000000000000000000007 /* mailactivesync_wbxml.c in Sources */,
+				E20000000000000000000008 /* mailgmail.c in Sources */,
+				E20000000000000000000009 /* mailgmail_http.c in Sources */,
+				E2000000000000000000000A /* mailgmail_http_curl.c in Sources */,
+				E2000000000000000000000B /* mailgmail_http_nsurlsession.m in Sources */,
+				E2000000000000000000000C /* mailgmail_parser.c in Sources */,
+				E2000000000000000000000D /* mailgmail_types.c in Sources */,
+				E2000000000000000000000E /* mailgmail_url.c in Sources */,
+				E2000000000000000000000F /* mailjmap.c in Sources */,
+				E20000000000000000000010 /* mailjmap_blob.c in Sources */,
+				E20000000000000000000011 /* mailjmap_http.c in Sources */,
+				E20000000000000000000012 /* mailjmap_http_curl.c in Sources */,
+				E20000000000000000000013 /* mailjmap_mail.c in Sources */,
+				E20000000000000000000014 /* mailjmap_request.c in Sources */,
+				E20000000000000000000015 /* mailjmap_response.c in Sources */,
+				E20000000000000000000016 /* mailjmap_types.c in Sources */,
+				E20000000000000000000017 /* mailmime_rfc2231.c in Sources */,
+				E20000000000000000000018 /* mailpgp.c in Sources */,
+				E20000000000000000000019 /* mailpgp_rnp.c in Sources */,
+				E2000000000000000000001A /* mailsmime.c in Sources */,
 				C682E21C15B315EF00BE9DA7 /* acl.c in Sources */,
 				C682E21D15B315EF00BE9DA7 /* acl_parser.c in Sources */,
 				C682E21E15B315EF00BE9DA7 /* acl_sender.c in Sources */,
@@ -2264,6 +2480,32 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E30000000000000000000001 /* mailjson.c in Sources */,
+				E30000000000000000000002 /* mailactivesync.c in Sources */,
+				E30000000000000000000003 /* mailactivesync_codes.c in Sources */,
+				E30000000000000000000004 /* mailactivesync_command.c in Sources */,
+				E30000000000000000000005 /* mailactivesync_http.c in Sources */,
+				E30000000000000000000006 /* mailactivesync_types.c in Sources */,
+				E30000000000000000000007 /* mailactivesync_wbxml.c in Sources */,
+				E30000000000000000000008 /* mailgmail.c in Sources */,
+				E30000000000000000000009 /* mailgmail_http.c in Sources */,
+				E3000000000000000000000A /* mailgmail_http_curl.c in Sources */,
+				E3000000000000000000000B /* mailgmail_http_nsurlsession.m in Sources */,
+				E3000000000000000000000C /* mailgmail_parser.c in Sources */,
+				E3000000000000000000000D /* mailgmail_types.c in Sources */,
+				E3000000000000000000000E /* mailgmail_url.c in Sources */,
+				E3000000000000000000000F /* mailjmap.c in Sources */,
+				E30000000000000000000010 /* mailjmap_blob.c in Sources */,
+				E30000000000000000000011 /* mailjmap_http.c in Sources */,
+				E30000000000000000000012 /* mailjmap_http_curl.c in Sources */,
+				E30000000000000000000013 /* mailjmap_mail.c in Sources */,
+				E30000000000000000000014 /* mailjmap_request.c in Sources */,
+				E30000000000000000000015 /* mailjmap_response.c in Sources */,
+				E30000000000000000000016 /* mailjmap_types.c in Sources */,
+				E30000000000000000000017 /* mailmime_rfc2231.c in Sources */,
+				E30000000000000000000018 /* mailpgp.c in Sources */,
+				E30000000000000000000019 /* mailpgp_rnp.c in Sources */,
+				E3000000000000000000001A /* mailsmime.c in Sources */,
 				C69AB1981054704000F32FBD /* acl.c in Sources */,
 				C69AB19A1054704000F32FBD /* acl_parser.c in Sources */,
 				C69AB19C1054704000F32FBD /* acl_sender.c in Sources */,
@@ -2446,25 +2688,21 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
-/* Begin PBXTargetDependency section */
-		C6635C4816E000310066276E /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = C6635C4316DFFE6E0066276E /* libetpan-prepare */;
-			targetProxy = C6635C4716E000310066276E /* PBXContainerItemProxy */;
-		};
-		C6635C4A16E000340066276E /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = C6635C4316DFFE6E0066276E /* libetpan-prepare */;
-			targetProxy = C6635C4916E000340066276E /* PBXContainerItemProxy */;
-		};
-		C6635C5216E0027B0066276E /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = C6635C4D16E002340066276E /* libetpan-prepare-ios */;
-			targetProxy = C6635C5116E0027B0066276E /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
-
 /* Begin XCBuildConfiguration section */
+		D20000000000000000000004 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+			};
+			name = Debug;
+		};
+		D20000000000000000000005 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+			};
+			name = Release;
+		};
 		1DEB91AE08733DA50010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -2474,12 +2712,17 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"HAVE_JMAP=1",
+					"USE_SMIME_APPLE=1",
+				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@loader_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				PRODUCT_NAME = libetpan;
 				SDKROOT = macosx;
 				WRAPPER_EXTENSION = framework;
@@ -2495,10 +2738,15 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"HAVE_JMAP=1",
+					"USE_SMIME_APPLE=1",
+				);
 				GCC_MODEL_TUNING = G5;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@loader_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				PRODUCT_NAME = libetpan;
 				SDKROOT = macosx;
 				STRIP_INSTALLED_PRODUCT = YES;
@@ -2517,6 +2765,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/..",
 					"$(SRCROOT)/include",
+					"$(SRCROOT)/../build-spm/include",
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (
@@ -2537,42 +2786,13 @@
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/..",
 					"$(SRCROOT)/include",
+					"$(SRCROOT)/../build-spm/include",
 				);
 				OTHER_CFLAGS = (
 					"-DHAVE_CFNETWORK=1",
 					"-DHAVE_CONFIG_H=1",
 					"-DLIBETPAN_IOS_DISABLE_SSL=1",
 				);
-			};
-			name = Release;
-		};
-		C6635C4516DFFE6E0066276E /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				SDKROOT = macosx;
-			};
-			name = Debug;
-		};
-		C6635C4616DFFE6E0066276E /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				SDKROOT = macosx;
-			};
-			name = Release;
-		};
-		C6635C4F16E002340066276E /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PLATFORM_NAME = iphoneos;
-				SDKROOT = iphoneos;
-			};
-			name = Debug;
-		};
-		C6635C5016E002340066276E /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PLATFORM_NAME = iphoneos;
-				SDKROOT = iphoneos;
 			};
 			name = Release;
 		};
@@ -2585,13 +2805,12 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				HEADER_SEARCH_PATHS = (
+				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
-					"$(SRCROOT)/libsasl-ios/include",
+					"HAVE_JMAP=1",
 				);
 				INSTALL_PATH = /usr/local/lib;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
-				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/libsasl-ios/lib";
 				PRODUCT_NAME = "etpan-ios";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -2606,13 +2825,12 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_BITCODE = YES;
 				GCC_MODEL_TUNING = G5;
-				HEADER_SEARCH_PATHS = (
+				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
-					"$(SRCROOT)/libsasl-ios/include",
+					"HAVE_JMAP=1",
 				);
 				INSTALL_PATH = /usr/local/lib;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
-				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/libsasl-ios/lib";
 				PRODUCT_NAME = "etpan-ios";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -2629,8 +2847,13 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"HAVE_JMAP=1",
+					"USE_SMIME_APPLE=1",
+				);
 				INSTALL_PATH = /usr/local/lib;
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				PRODUCT_NAME = etpan;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
@@ -2645,8 +2868,13 @@
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_MODEL_TUNING = G5;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"HAVE_JMAP=1",
+					"USE_SMIME_APPLE=1",
+				);
 				INSTALL_PATH = /usr/local/lib;
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				PRODUCT_NAME = etpan;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
@@ -2657,6 +2885,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		D20000000000000000000002 /* Build configuration list for PBXAggregateTarget "libetpan xcframework" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D20000000000000000000004 /* Debug */,
+				D20000000000000000000005 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "libetpan" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -2671,24 +2908,6 @@
 			buildConfigurations = (
 				1DEB91B208733DA50010E9CD /* Debug */,
 				1DEB91B308733DA50010E9CD /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		C6635C4416DFFE6E0066276E /* Build configuration list for PBXLegacyTarget "libetpan-prepare" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				C6635C4516DFFE6E0066276E /* Debug */,
-				C6635C4616DFFE6E0066276E /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		C6635C4E16E002340066276E /* Build configuration list for PBXLegacyTarget "libetpan-prepare-ios" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				C6635C4F16E002340066276E /* Debug */,
-				C6635C5016E002340066276E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

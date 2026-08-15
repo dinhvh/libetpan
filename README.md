@@ -35,21 +35,27 @@ You can use flag --with-poll for using poll() instead of select() for checking c
 
 ### Mac / iOS
 
-- Download Xcode
+- Install Xcode, CMake, Autoconf, Automake and Libtool.
+- Initialize the dependency submodules and build their XCFrameworks:
+
+      $ ./build-mac/dependencies/bootstrap.sh
+
 - Open `build-mac/libetpan.xcodeproj`
 - Choose the correct target "static libetpan" for Mac or "libetpan ios" for iOS.
+- To build all supported slices, choose the "libetpan xcframework" target. The result is written to `build-mac/build/LibEtPan.xcframework`.
 - Build
 
 ### Setup a Mac project
 
 - Add `libetpan.xcodeproj` as sub-project
 - Link with libetpan.a
+- Link with `build-mac/dependencies/build/Jansson.xcframework` and `build-mac/dependencies/build/CyrusSASL.xcframework`
 
 ### Setup an iOS project
 
 - Add `libetpan.xcodeproj` as sub-project
 - Link with libetpan-ios.a
-- Set "Other Linker Flags": `-lsasl2`
+- Link with `build-mac/dependencies/build/Jansson.xcframework` and `build-mac/dependencies/build/CyrusSASL.xcframework`
 
 ### Build on Windows
 

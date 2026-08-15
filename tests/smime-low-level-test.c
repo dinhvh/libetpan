@@ -13,6 +13,10 @@
 #include <string.h>
 #include <unistd.h>
 
+#if defined(__APPLE__) && !defined(USE_SMIME_APPLE)
+#error "macOS S/MIME tests must use the Apple Security framework backend"
+#endif
+
 #ifdef USE_SSL
 #include <openssl/evp.h>
 #include <openssl/pem.h>

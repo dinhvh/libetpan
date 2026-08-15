@@ -234,6 +234,8 @@ let package = Package(
                 .define("HAVE_CFNETWORK", to: "1"),
                 .define("HAVE_JMAP", to: "1"),
                 .define("LIBETPAN_IOS_DISABLE_SSL", to: "1"),
+                .define("USE_SMIME_APPLE", to: "1",
+                    .when(platforms: [.macOS])),
                 .headerSearchPath("build-spm/config"),
                 .headerSearchPath("build-spm/include"),
                 .headerSearchPath("build-spm/include/libetpan"),
