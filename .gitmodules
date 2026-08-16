@@ -4,3 +4,6 @@
 [submodule "build-mac/dependencies/submodules/cyrus-sasl"]
 	path = build-mac/dependencies/submodules/cyrus-sasl
 	url = https://github.com/cyrusimap/cyrus-sasl.git
+[submodule "build-mac/dependencies/submodules/openssl"]
+	path = build-mac/dependencies/submodules/openssl
+	url = https://github.com/openssl/openssl.git

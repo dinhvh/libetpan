@@ -20,4 +20,7 @@ echo "Building Jansson XCFramework"
 echo "Building Cyrus SASL XCFramework"
 "$script_dir/build-cyrus-sasl-xcframework.sh"
 
+echo "Building OpenSSL libcrypto XCFramework"
+"$script_dir/build-openssl-xcframework.sh"
+
 echo "Dependencies are ready in $script_dir/build"
