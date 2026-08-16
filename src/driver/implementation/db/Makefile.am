@@ -30,8 +30,6 @@
 include $(top_srcdir)/rules.mk
 
 etpaninclude_HEADERS = \
-	dbdriver.h \
-	dbdriver_message.h \
 	dbdriver_types.h \
 	dbstorage.h
 
@@ -48,3 +46,7 @@ libdb_la_SOURCES = \
 	dbdriver.c \
 	dbdriver_message.c \
 	dbstorage.c
+
+noinst_HEADERS = \
+	dbdriver.h \
+	dbdriver_message.h

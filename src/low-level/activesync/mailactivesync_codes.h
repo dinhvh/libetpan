@@ -369,11 +369,9 @@ struct mailactivesync_wbxml_token_info {
   const char * name;
 };
 
-LIBETPAN_EXPORT
 const char * mailactivesync_wbxml_tag_name(uint8_t code_page,
     uint8_t token);
 
-LIBETPAN_EXPORT
 int mailactivesync_wbxml_tag_lookup(const char * name,
     uint8_t * code_page,
     uint8_t * token);

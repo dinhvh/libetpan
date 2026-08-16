@@ -30,14 +30,8 @@
 include $(top_srcdir)/rules.mk
 
 etpaninclude_HEADERS = \
-	imapdriver.h \
-	imapdriver_message.h \
-	imapdriver_cached.h \
-	imapdriver_cached_message.h \
 	imapdriver_types.h \
-	imapstorage.h \
-	imapdriver_tools.h \
-	imapdriver_tools_private.h
+	imapstorage.h
 
 AM_CPPFLAGS = -I$(top_builddir)/include \
 	-I$(top_srcdir)/src/driver/interface \
@@ -56,3 +50,11 @@ libimap_la_SOURCES = \
 	imapdriver_message.c \
 	imapdriver_tools.h imapdriver_tools.c \
 	imapstorage.c
+
+noinst_HEADERS = \
+	imapdriver.h \
+	imapdriver_cached.h \
+	imapdriver_cached_message.h \
+	imapdriver_message.h \
+	imapdriver_tools.h \
+	imapdriver_tools_private.h

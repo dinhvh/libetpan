@@ -3,11 +3,14 @@
 include $(top_srcdir)/rules.mk
 
 etpaninclude_HEADERS = \
-	mailactivesync.h mailactivesync_codes.h \
-	mailactivesync_http.h mailactivesync_types.h \
-	mailactivesync_wbxml.h
+	mailactivesync.h \
+	mailactivesync_http.h mailactivesync_types.h
 
-noinst_HEADERS = mailactivesync_command.h
+
+noinst_HEADERS = \
+	mailactivesync_codes.h \
+	mailactivesync_command.h \
+	mailactivesync_wbxml.h
 
 AM_CPPFLAGS = -I$(top_builddir)/include \
 	-I$(top_srcdir)/src/data-types

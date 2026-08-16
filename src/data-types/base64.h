@@ -48,14 +48,12 @@ extern "C" {
  * creates (malloc) a new base64 encoded string from a standard 8bit string 
  * don't forget to free it when time comes ;)
  */
-LIBETPAN_EXPORT
 char * encode_base64(const char * in, int len);
 
 /**
  * creates (malloc) a new standard 8bit string from an base64 encoded string
  * don't forget to free it when time comes ;)
  */
-LIBETPAN_EXPORT
 char * decode_base64(const char * in, int len);
     
 #ifdef __cplusplus

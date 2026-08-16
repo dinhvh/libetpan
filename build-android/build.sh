@@ -7,10 +7,6 @@ iconv_build_version=1
 package_name=libetpan-android
 
 current_dir="`pwd`"
-#find ../src -name *.h | xargs -0 cp --target-directory=./include/libetpan
-
-mkdir -p ./include/libetpan
-find ../src -name "*.h" -type file -exec cp {} ./include/libetpan \;
 
 
 if test "x$ANDROID_NDK" = x ; then
@@ -84,10 +80,14 @@ tar xzf "$current_dir/../build-mac/autogen-result.tar.gz"
 # resolves and the headers copy below succeeds.
 make prepare libetpan-config.h
 
-# Copy public headers to include
-cp -r include/libetpan "$current_dir/include"
+# Copy the exact public header set rather than flattening every src header.
+python3 "$current_dir/../tools/public_headers.py" \
+  --source-root "$current_dir/.." \
+  --build-root "$current_dir/.." \
+  export-android --destination "$current_dir/include/libetpan"
 mkdir -p "$current_dir/$package_name-$build_version/include"
-cp -r include/libetpan "$current_dir/$package_name-$build_version/include"
+cp -r "$current_dir/include/libetpan" \
+  "$current_dir/$package_name-$build_version/include"
 
 # Start building.
 ANDROID_PLATFORM=android-23

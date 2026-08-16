@@ -1,7 +1,7 @@
 /*
  * libEtPan! -- a mail stuff library
  *
- * Copyright (C) 2001, 2005 - DINH Viet Hoa
+ * Copyright (C) 2018, 2019 - LinuxMagic
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,22 +29,35 @@
  * SUCH DAMAGE.
  */
 
-/*
- * $Id: maildirdriver.h,v 1.4 2004/11/21 21:53:32 hoa Exp $
- */
+#ifndef CLIENTID_H
 
-#ifndef MAILDIRDRIVER_H
-
-#define MAILDIRDRIVER_H
-
-#include <libetpan/maildriver.h>
-#include <libetpan/maildirdriver_types.h>
+#define CLIENTID_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-extern mailsession_driver * maildir_session_driver;
+#include "mailimap.h"
+
+/*
+   mailimap_clientid()
+
+   This function will perform the clientid command.
+
+   @param session   IMAP session
+   @param type      the clientid type
+   @param clientid  the client identifier
+
+   @return the return code is one of MAILIMAP_ERROR_XXX or
+    MAILIMAP_NO_ERROR codes
+*/
+
+LIBETPAN_EXPORT
+int mailimap_clientid(mailimap * session,
+    const char * type, const char * clientid);
+
+LIBETPAN_EXPORT
+int mailimap_has_clientid(mailimap * session);
 
 #ifdef __cplusplus
 }

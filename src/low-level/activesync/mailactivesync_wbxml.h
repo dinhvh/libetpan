@@ -13,7 +13,7 @@ extern "C" {
 #include <libetpan/libetpan-config.h>
 #include <libetpan/clist.h>
 #include <libetpan/mailactivesync_types.h>
-#include <libetpan/mailactivesync_codes.h>
+#include "mailactivesync_codes.h"
 
 #include <stddef.h>
 #include <stdint.h>
@@ -41,44 +41,35 @@ struct mailactivesync_wbxml_document {
   struct mailactivesync_wbxml_node * root;
 };
 
-LIBETPAN_EXPORT
 struct mailactivesync_wbxml_document *
 mailactivesync_wbxml_document_new(void);
 
-LIBETPAN_EXPORT
 void mailactivesync_wbxml_document_free(
     struct mailactivesync_wbxml_document * document);
 
-LIBETPAN_EXPORT
 struct mailactivesync_wbxml_node *
 mailactivesync_wbxml_node_new(uint8_t code_page, uint8_t token);
 
-LIBETPAN_EXPORT
 struct mailactivesync_wbxml_node *
 mailactivesync_wbxml_node_new_text(uint8_t code_page, uint8_t token,
     const char * text);
 
-LIBETPAN_EXPORT
 struct mailactivesync_wbxml_node *
 mailactivesync_wbxml_node_new_opaque(uint8_t code_page, uint8_t token,
     const unsigned char * data, size_t len);
 
-LIBETPAN_EXPORT
 void mailactivesync_wbxml_node_free(
     struct mailactivesync_wbxml_node * node);
 
-LIBETPAN_EXPORT
 int mailactivesync_wbxml_node_add_child(
     struct mailactivesync_wbxml_node * parent,
     struct mailactivesync_wbxml_node * child);
 
-LIBETPAN_EXPORT
 int mailactivesync_wbxml_encode(
     struct mailactivesync_wbxml_document * document,
     unsigned char ** result,
     size_t * result_len);
 
-LIBETPAN_EXPORT
 int mailactivesync_wbxml_decode(
     const unsigned char * data,
     size_t data_len,

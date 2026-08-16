@@ -30,8 +30,6 @@
 include $(top_srcdir)/rules.mk
 
 etpaninclude_HEADERS = \
-	feeddriver.h \
-	feeddriver_message.h \
 	feeddriver_types.h \
 	feedstorage.h
 
@@ -49,3 +47,7 @@ libfeed_la_SOURCES = \
 	feeddriver.c \
 	feeddriver_message.c \
 	feedstorage.c
+
+noinst_HEADERS = \
+	feeddriver.h \
+	feeddriver_message.h

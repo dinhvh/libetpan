@@ -30,13 +30,20 @@
 include $(top_srcdir)/rules.mk
 
 etpaninclude_HEADERS = \
-	mmapstring.h mailstream.h mailstream_helper.h mail.h \
-        mailstream_low.h \
-        mailstream_socket.h mailstream_ssl.h mailstream_cfstream.h \
-        mailstream_compress.h \
+	carray.h \
+	charconv.h \
+	chash.h \
+	clist.h \
+	mailjson.h \
+	mailsem.h \
+	mailstream.h \
+	mailstream_cfstream.h \
+	mailstream_helper.h \
+	mailstream_low.h \
+	mailstream_socket.h \
+	mailstream_ssl.h \
 	mailstream_types.h \
-	carray.h clist.h chash.h \
-	charconv.h mailsem.h maillock.h mailjson.h
+	mmapstring.h
 
 AM_CPPFLAGS = -I$(top_builddir)/include @ICUCPPFLAGS@ @JANSSON_CFLAGS@
 
@@ -53,3 +60,9 @@ libdata_types_la_SOURCES = connect.h connect.c base64.h hmac-md5.h	\
 	mmapstring_private.h mailstream_ssl_private.h			\
 	mailstream_cfstream.c mailstream_cfstream.h \
     mailstream_compress.c mailstream_compress.h mailjson.c mailjson.h
+
+noinst_HEADERS = \
+	base64.h \
+	mail.h \
+	maillock.h \
+	mailstream_compress.h

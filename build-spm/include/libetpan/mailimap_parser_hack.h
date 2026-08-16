@@ -29,21 +29,20 @@
  * SUCH DAMAGE.
  */
 
-/*
- * $Id: pop3driver_message.h,v 1.6 2004/11/21 21:53:34 hoa Exp $
- */
-
-#ifndef POP3DRIVER_MESSAGE_H
-
-#define POP3DRIVER_MESSAGE_H
-
-#include <libetpan/pop3driver_types.h>
+#ifndef MAILIMAP_PARSER_HACK_H
+#define MAILIMAP_PARSER_HACK_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-extern mailmessage_driver * pop3_message_driver;
+#include <libetpan/mailimap_types.h>
+
+LIBETPAN_EXPORT
+int mailimap_hack_date_time_parse(char * str,
+                                  struct mailimap_date_time ** result,
+                                  size_t progr_rate,
+                                  progress_function * progr_fun);
 
 #ifdef __cplusplus
 }

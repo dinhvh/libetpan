@@ -54,7 +54,6 @@ static char index_64[128] = {
 static char basis_64[] =
    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
-LIBETPAN_EXPORT
 char * encode_base64(const char * in, int len)
 {
   char * output, * tmp;
@@ -102,7 +101,6 @@ char * encode_base64(const char * in, int len)
   return output;
 }
 
-LIBETPAN_EXPORT
 char * decode_base64(const char * in, int len)
 {
   char * output, * out;

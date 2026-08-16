@@ -32,24 +32,42 @@ include $(top_srcdir)/rules.mk
 EXTRA_DIST = TODO
 
 etpaninclude_HEADERS = \
-	mailimap_helper.h mailimap.h \
-	mailimap_types.h mailimap_types_helper.h \
-	mailimap_socket.h mailimap_ssl.h \
-	mailimap_extension.h mailimap_extension_types.h \
-	annotatemore.h annotatemore_types.h \
-	acl.h acl_types.h \
-	uidplus.h uidplus_types.h \
-	quota.h quota_parser.h quota_sender.h quota_types.h \
+	acl.h \
+	acl_types.h \
+	annotatemore.h \
+	annotatemore_types.h \
+	clientid.h \
+	condstore.h \
+	condstore_types.h \
+	enable.h \
 	idle.h \
-	namespace.h namespace_parser.h namespace_sender.h namespace_types.h \
-	xlist.h xgmlabels.h xgmmsgid.h xgmthrid.h \
-	mailimap_id.h mailimap_id_types.h \
-	enable.h condstore.h condstore_types.h \
-	qresync.h qresync_types.h \
-	mailimap_sort.h mailimap_sort_types.h \
-  mailimap_compress.h \
-  mailimap_oauth2.h \
-  clientid.h
+	mailimap.h \
+	mailimap_compress.h \
+	mailimap_extension.h \
+	mailimap_extension_types.h \
+	mailimap_helper.h \
+	mailimap_id.h \
+	mailimap_id_types.h \
+	mailimap_oauth2.h \
+	mailimap_parser_hack.h \
+	mailimap_socket.h \
+	mailimap_sort.h \
+	mailimap_sort_types.h \
+	mailimap_ssl.h \
+	mailimap_types.h \
+	mailimap_types_helper.h \
+	namespace.h \
+	namespace_types.h \
+	qresync.h \
+	qresync_types.h \
+	quota.h \
+	quota_types.h \
+	uidplus.h \
+	uidplus_types.h \
+	xgmlabels.h \
+	xgmmsgid.h \
+	xgmthrid.h \
+	xlist.h
 
 AM_CPPFLAGS = -I$(top_builddir)/include \
 	-I$(top_srcdir)/src/data-types
@@ -60,7 +78,7 @@ libimap_la_SOURCES = \
 	mailimap_types.c mailimap_types_helper.c \
 	mailimap_sender.h mailimap_sender.c \
 	mailimap_keywords.h mailimap_keywords.c \
-	mailimap_parser.h mailimap_parser.c \
+	mailimap_parser.h mailimap_parser_hack.h mailimap_parser.c \
         mailimap.c \
         mailimap_helper.c \
         mailimap_socket.c \
@@ -105,3 +123,12 @@ libimap_la_SOURCES = \
   mailimap_oauth2.c mailimap_oauth2.h \
   clientid_sender.c clientid_sender.h \
   clientid.c clientid.h
+
+noinst_HEADERS = \
+	mailimap_id_sender.h \
+	mailimap_parser.h \
+	namespace_parser.h \
+	namespace_sender.h \
+	qresync_private.h \
+	quota_parser.h \
+	quota_sender.h

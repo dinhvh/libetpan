@@ -37,8 +37,8 @@
 
 #define DBDRIVER_H
 
-#include <libetpan/dbdriver_message.h>
-#include <libetpan/dbdriver_types.h>
+#include "dbdriver_message.h"
+#include "dbdriver_types.h"
 
 #ifdef __cplusplus
 extern "C" {

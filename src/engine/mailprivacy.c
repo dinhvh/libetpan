@@ -52,6 +52,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "mailprivacy_tools.h"
+#include "mime_message_driver.h"
 
 carray * mailprivacy_get_protocols(struct mailprivacy * privacy)
 {

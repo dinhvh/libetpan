@@ -46,23 +46,17 @@ extern mailstream_low_driver * mailstream_compress_driver;
 
 struct mailstream_compress_context;
 
-/* exported methods */
-LIBETPAN_EXPORT
 mailstream_low * mailstream_low_compress_open(mailstream_low * ms);
 
-LIBETPAN_EXPORT
 int mailstream_low_compress_wait_idle(mailstream_low * low,
                                       struct mailstream_cancel * idle,
                                       int max_idle_delay);
 
   /*
-LIBETPAN_EXPORT
 int mailstream_low_compress_setup_idle(mailstream_low * low);
 
-LIBETPAN_EXPORT
 int mailstream_low_compress_unsetup_idle(mailstream_low * low);
 
-LIBETPAN_EXPORT
 int mailstream_low_compress_interrupt_idle(mailstream_low * low);
 */
   

@@ -32,8 +32,6 @@ include $(top_srcdir)/rules.mk
 etpaninclude_HEADERS = \
 	pop3driver.h \
 	pop3driver_cached.h \
-	pop3driver_cached_message.h \
-	pop3driver_message.h \
 	pop3driver_types.h \
 	pop3storage.h
 
@@ -54,3 +52,7 @@ libpop3_la_SOURCES = \
 	pop3driver_message.c \
 	pop3driver_tools.h pop3driver_tools.c \
 	pop3storage.c
+
+noinst_HEADERS = \
+	pop3driver_cached_message.h \
+	pop3driver_message.h

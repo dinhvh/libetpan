@@ -44,6 +44,7 @@
 #include "mailstream.h"
 #include "mailimap_keywords.h"
 #include "mailimap_parser.h"
+#include "mailimap_parser_hack.h"
 #include "mailimap_extension.h"
 #include "mmapstring.h"
 #include "mail.h"

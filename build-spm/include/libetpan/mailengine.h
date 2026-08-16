@@ -54,12 +54,15 @@ extern "C" {
   storage data
 */
 
+LIBETPAN_EXPORT
 struct mailengine *
 libetpan_engine_new(struct mailprivacy * privacy);
 
+LIBETPAN_EXPORT
 void libetpan_engine_free(struct mailengine * engine);
 
 
+LIBETPAN_EXPORT
 struct mailprivacy *
 libetpan_engine_get_privacy(struct mailengine * engine);
 
@@ -75,9 +78,11 @@ libetpan_engine_get_privacy(struct mailengine * engine);
   these functions cannot fail.
 */
 
+LIBETPAN_EXPORT
 int libetpan_message_ref(struct mailengine * engine,
     mailmessage * msg);
 
+LIBETPAN_EXPORT
 int libetpan_message_unref(struct mailengine * engine,
     mailmessage * msg);
 
@@ -91,9 +96,11 @@ int libetpan_message_unref(struct mailengine * engine,
   the value is -MAIL_ERROR_XXX
 */
 
+LIBETPAN_EXPORT
 int libetpan_message_mime_ref(struct mailengine * engine,
     mailmessage * msg);
 
+LIBETPAN_EXPORT
 int libetpan_message_mime_unref(struct mailengine * engine,
     mailmessage * msg);
 
@@ -112,15 +119,18 @@ int libetpan_message_mime_unref(struct mailengine * engine,
   These two list can only be freed by libetpan_folder_free_msg_list()
 */
 
+LIBETPAN_EXPORT
 int libetpan_folder_get_msg_list(struct mailengine * engine,
     struct mailfolder * folder,
     struct mailmessage_list ** p_new_msg_list,
     struct mailmessage_list ** p_lost_msg_list);
 
+LIBETPAN_EXPORT
 int libetpan_folder_fetch_env_list(struct mailengine * engine,
     struct mailfolder * folder,
     struct mailmessage_list * msg_list);
 
+LIBETPAN_EXPORT
 void libetpan_folder_free_msg_list(struct mailengine * engine,
     struct mailfolder * folder,
     struct mailmessage_list * env_list);
@@ -130,18 +140,23 @@ void libetpan_folder_free_msg_list(struct mailengine * engine,
   connect and disconnect storage
 */
 
+LIBETPAN_EXPORT
 int libetpan_storage_add(struct mailengine * engine,
     struct mailstorage * storage);
 
+LIBETPAN_EXPORT
 void libetpan_storage_remove(struct mailengine * engine,
     struct mailstorage * storage);
 
+LIBETPAN_EXPORT
 int libetpan_storage_connect(struct mailengine * engine,
     struct mailstorage * storage);
 
+LIBETPAN_EXPORT
 void libetpan_storage_disconnect(struct mailengine * engine,
     struct mailstorage * storage);
 
+LIBETPAN_EXPORT
 int libetpan_storage_used(struct mailengine * engine,
     struct mailstorage * storage);
 
@@ -154,17 +169,21 @@ int libetpan_storage_used(struct mailengine * engine,
   you were given.
 */
 
+LIBETPAN_EXPORT
 int libetpan_folder_connect(struct mailengine * engine,
     struct mailfolder * folder);
 
+LIBETPAN_EXPORT
 void libetpan_folder_disconnect(struct mailengine * engine,
     struct mailfolder * folder);
 
 
+LIBETPAN_EXPORT
 struct mailfolder *
 libetpan_message_get_folder(struct mailengine * engine,
     mailmessage * msg);
 
+LIBETPAN_EXPORT
 struct mailstorage *
 libetpan_message_get_storage(struct mailengine * engine,
     mailmessage * msg);
@@ -174,14 +193,19 @@ libetpan_message_get_storage(struct mailengine * engine,
   register a message
 */
 
+LIBETPAN_EXPORT
 int libetpan_message_register(struct mailengine * engine,
     struct mailfolder * folder,
     mailmessage * msg);
 
 
+LIBETPAN_EXPORT
 void libetpan_engine_debug(struct mailengine * engine, FILE * f);
 
+#ifdef DEBUG_ENGINE
+LIBETPAN_EXPORT
 extern void * engine_app;
+#endif
 
 #ifdef __cplusplus
 }

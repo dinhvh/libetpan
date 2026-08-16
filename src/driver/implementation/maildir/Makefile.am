@@ -30,10 +30,6 @@
 include $(top_srcdir)/rules.mk
 
 etpaninclude_HEADERS = \
-	maildirdriver.h \
-	maildirdriver_cached.h \
-	maildirdriver_cached_message.h \
-	maildirdriver_message.h \
 	maildirdriver_types.h \
 	maildirstorage.h
 
@@ -54,3 +50,9 @@ libmaildir_la_SOURCES = \
 	maildirdriver_message.c \
 	maildirdriver_tools.h maildirdriver_tools.c \
 	maildirstorage.c
+
+noinst_HEADERS = \
+	maildirdriver.h \
+	maildirdriver_cached.h \
+	maildirdriver_cached_message.h \
+	maildirdriver_message.h

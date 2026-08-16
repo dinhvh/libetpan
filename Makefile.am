@@ -31,7 +31,9 @@ include $(top_srcdir)/rules.mk
 
 ACLOCAL_AMFLAGS = -I m4
 
-EXTRA_DIST = libetpan.pc.in libetpan-config.h.in COPYRIGHT
+EXTRA_DIST = libetpan.pc.in libetpan-config.h.in COPYRIGHT \
+	tools/public_headers.py PUBLIC_HEADERS_PLAN.md \
+	tests/public-headers/test_public_headers.py
 
 # The file stamp-prepare is generated in the top build directory by
 # rules defined in rules.mk.
@@ -55,3 +57,9 @@ $(top_builddir)/stamp-prepare: libetpan-config.h
 libetpan-config.h: libetpan-config.h.in config.h
 	cat $(srcdir)/libetpan-config.h.in | $(CPP) -I$(top_builddir) - \
 	| sed -e '/^#/d;/^[ \t]*$$/d;s/^@/#/' > $@
+
+.PHONY: public-headers-check
+public-headers-check: stamp-prepare
+	$(PYTHON) $(top_srcdir)/tools/public_headers.py \
+		--source-root $(top_srcdir) --build-root $(top_builddir) \
+		check --include-dir $(top_builddir)/include/libetpan
