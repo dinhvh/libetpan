@@ -3,6 +3,7 @@
 #endif
 
 #include <libetpan/libetpan.h>
+#include "data_message_driver.h"
 #include <sys/stat.h>
 #include <unistd.h>
 #include <fcntl.h>

@@ -75,10 +75,8 @@ struct mailmessage_list {
   carray * msg_tab; /* elements are (mailmessage *) */
 };
 
-LIBETPAN_EXPORT
 struct mailmessage_list * mailmessage_list_new(carray * msg_tab);
 
-LIBETPAN_EXPORT
 void mailmessage_list_free(struct mailmessage_list * env_list);
 
 /*
@@ -91,10 +89,8 @@ struct mail_list {
   clist * mb_list; /* elements are (char *) */
 };
 
-LIBETPAN_EXPORT
 struct mail_list * mail_list_new(clist * mb_list);
 
-LIBETPAN_EXPORT
 void mail_list_free(struct mail_list * resp);
 
 /*
@@ -125,17 +121,14 @@ struct mail_flags {
   clist * fl_extension; /* elements are (char *) */
 };
 
-LIBETPAN_EXPORT
 struct mail_flags * mail_flags_new(uint32_t fl_flags, clist * fl_ext);
 
-LIBETPAN_EXPORT
 void mail_flags_free(struct mail_flags * flags);
 
 /*
   This function creates a flag for a new message
 */
 
-LIBETPAN_EXPORT
 struct mail_flags * mail_flags_new_empty(void);
 
 
@@ -145,7 +138,6 @@ struct mail_flags * mail_flags_new_empty(void);
   
 */
 
-LIBETPAN_EXPORT
 int32_t mailimf_date_time_comp(struct mailimf_date_time * date1,
     struct mailimf_date_time * date2);
 
@@ -778,12 +770,10 @@ struct mailmessage_tree {
   char * node_base_subject;
 };
 
-LIBETPAN_EXPORT
 struct mailmessage_tree *
 mailmessage_tree_new(char * node_msgid, time_t node_date,
     mailmessage * node_msg);
 
-LIBETPAN_EXPORT
 void mailmessage_tree_free(struct mailmessage_tree * tree);
 
 /*
@@ -792,7 +782,6 @@ void mailmessage_tree_free(struct mailmessage_tree * tree);
   if you want to release memory of the given tree and all the sub-trees,
   you can use this function.
 */
-LIBETPAN_EXPORT
 void mailmessage_tree_free_recursive(struct mailmessage_tree * tree);
 
 
@@ -805,14 +794,11 @@ struct generic_message_t {
   void * msg_data;
 };
 
-LIBETPAN_EXPORT
 const char * maildriver_strerror(int err);
 
 /* basic malloc / free functions to be compliant with the library allocations */
-LIBETPAN_EXPORT
 void *libetpan_malloc(size_t length);
 
-LIBETPAN_EXPORT
 void libetpan_free(void* data);
 
 #ifdef __cplusplus

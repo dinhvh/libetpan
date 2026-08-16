@@ -29,9 +29,7 @@
 
 include $(top_srcdir)/rules.mk
 
-etpaninclude_HEADERS = \
-	nntpdriver_types.h \
-	nntpstorage.h
+etpaninclude_HEADERS = nntpstorage.h
 
 AM_CPPFLAGS = -I$(top_builddir)/include \
 	-I$(top_srcdir)/src/driver/interface \
@@ -55,4 +53,5 @@ noinst_HEADERS = \
 	nntpdriver.h \
 	nntpdriver_cached.h \
 	nntpdriver_cached_message.h \
-	nntpdriver_message.h
+	nntpdriver_message.h \
+	nntpdriver_types.h

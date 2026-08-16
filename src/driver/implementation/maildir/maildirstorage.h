@@ -37,7 +37,9 @@
 
 #define MAILDIRSTORAGE_H
 
-#include <libetpan/maildirdriver_types.h>
+#include <libetpan/libetpan-config.h>
+
+struct mailstorage;
 
 #ifdef __cplusplus
 extern "C" {

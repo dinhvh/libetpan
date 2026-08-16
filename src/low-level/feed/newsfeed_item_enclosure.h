@@ -32,7 +32,7 @@
 
 #define NEWSFEED_ITEM_ENCLOSURE_H
 
-#include <libetpan/newsfeed_types.h>
+#include "newsfeed_types.h"
 
 struct newsfeed_item_enclosure * newsfeed_item_enclosure_new(void);
 void newsfeed_item_enclosure_free(struct newsfeed_item_enclosure * enclosure);

@@ -40,9 +40,9 @@
 #include <libetpan/libetpan-config.h>
 
 #include <libetpan/maildriver_types.h>
-#include <libetpan/mailmh.h>
+#include "mailmh.h"
 #include <libetpan/clist.h>
-#include <libetpan/generic_cache_types.h>
+#include "generic_cache_types.h"
 #include <libetpan/mailstorage_types.h>
 
 #ifdef __cplusplus

@@ -29,8 +29,7 @@
 
 include $(top_srcdir)/rules.mk
 
-etpaninclude_HEADERS = \
-	newsfeed_types.h newsfeed.h newsfeed_item.h newsfeed_item_enclosure.h
+etpaninclude_HEADERS =
 
 AM_CPPFLAGS = -I$(top_builddir)/include \
 	-I$(top_srcdir)/src/data-types -I$(top_srcdir)/src/low-level/imf
@@ -46,3 +45,9 @@ libfeed_la_SOURCES = \
 	parser_atom03.h parser_atom03.c \
 	parser_rdf.h parser_rdf.c \
 	parser_rss20.h parser_rss20.c
+
+noinst_HEADERS = \
+	newsfeed.h \
+	newsfeed_item.h \
+	newsfeed_item_enclosure.h \
+	newsfeed_types.h

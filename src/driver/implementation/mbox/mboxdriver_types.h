@@ -38,7 +38,7 @@
 #define MBOXDRIVER_TYPES_H
 
 #include <libetpan/maildriver_types.h>
-#include <libetpan/mailmbox.h>
+#include "mailmbox.h"
 #include <libetpan/mailstorage_types.h>
 
 #ifdef __cplusplus

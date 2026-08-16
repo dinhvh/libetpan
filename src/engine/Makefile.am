@@ -39,7 +39,10 @@ etpaninclude_HEADERS = \
 
 AM_CPPFLAGS = -I$(top_builddir)/include \
 	-I$(top_srcdir)/src/driver/interface \
-	-I$(top_srcdir)/src/driver/implementation/imap
+	-I$(top_srcdir)/src/driver/tools \
+	-I$(top_srcdir)/src/driver/implementation/data-message \
+	-I$(top_srcdir)/src/driver/implementation/imap \
+	-I$(top_srcdir)/src/driver/implementation/mime-message
 
 noinst_LTLIBRARIES = libengine.la
 

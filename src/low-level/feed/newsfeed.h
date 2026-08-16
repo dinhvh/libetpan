@@ -33,9 +33,9 @@
 #ifndef NEWSFEED_H
 #define NEWSFEED_H
 
-#include <libetpan/newsfeed_types.h>
-#include <libetpan/newsfeed_item.h>
-#include <libetpan/newsfeed_item_enclosure.h>
+#include "newsfeed_types.h"
+#include "newsfeed_item.h"
+#include "newsfeed_item_enclosure.h"
 
 struct newsfeed * newsfeed_new(void);
 void newsfeed_free(struct newsfeed * feed);

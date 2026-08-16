@@ -29,9 +29,7 @@
 
 include $(top_srcdir)/rules.mk
 
-etpaninclude_HEADERS = \
-	feeddriver_types.h \
-	feedstorage.h
+etpaninclude_HEADERS = feedstorage.h
 
 AM_CPPFLAGS = -I$(top_builddir)/include \
 	-I$(top_srcdir)/src/driver/interface \
@@ -50,4 +48,5 @@ libfeed_la_SOURCES = \
 
 noinst_HEADERS = \
 	feeddriver.h \
-	feeddriver_message.h
+	feeddriver_message.h \
+	feeddriver_types.h

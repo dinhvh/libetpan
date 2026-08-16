@@ -37,7 +37,7 @@
 
 #define MAILDIRDRIVER_MESSAGE_H
 
-#include <libetpan/maildirdriver_types.h>
+#include "maildirdriver_types.h"
 
 #ifdef __cplusplus
 extern "C" {

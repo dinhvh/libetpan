@@ -29,8 +29,7 @@
 
 include $(top_srcdir)/rules.mk
 
-etpaninclude_HEADERS = \
-	maildir.h maildir_types.h
+etpaninclude_HEADERS =
 
 AM_CPPFLAGS = -I$(top_builddir)/include \
 	-I$(top_srcdir)/src/data-types
@@ -39,3 +38,7 @@ noinst_LTLIBRARIES = libmaildir.la
 
 libmaildir_la_SOURCES = \
 	maildir.c
+
+noinst_HEADERS = \
+	maildir.h \
+	maildir_types.h

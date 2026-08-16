@@ -37,7 +37,7 @@
 
 #define MAILDIR_H
 
-#include <libetpan/maildir_types.h>
+#include "maildir_types.h"
 
 struct maildir * maildir_new(const char * path);
 

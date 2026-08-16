@@ -30,12 +30,13 @@
 include $(top_srcdir)/rules.mk
 
 etpaninclude_HEADERS = \
-	maildriver.h maildriver_types.h maildriver_types_helper.h \
 	maildriver_errors.h \
-	mailmessage.h mailmessage_types.h \
+	maildriver_types.h \
+	mailfolder.h \
+	mailmessage.h \
+	mailmessage_types.h \
 	mailstorage.h \
-	mailstorage_types.h \
-	mailfolder.h
+	mailstorage_types.h
 
 AM_CPPFLAGS = -I$(top_builddir)/include \
 	-I$(top_srcdir)/src/low-level/imf \
@@ -55,3 +56,7 @@ libinterface_la_SOURCES = \
 	mailstorage.c \
 	mailstorage_tools.h mailstorage_tools.c \
 	mailfolder.c
+
+noinst_HEADERS = \
+	maildriver.h \
+	maildriver_types_helper.h

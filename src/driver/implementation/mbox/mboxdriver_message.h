@@ -37,7 +37,7 @@
 
 #define MBOXDRIVER_MESSAGE_H
 
-#include <libetpan/mboxdriver_types.h>
+#include "mboxdriver_types.h"
 
 #ifdef __cplusplus
 extern "C" {

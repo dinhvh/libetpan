@@ -41,7 +41,7 @@
 extern "C" {
 #endif
 
-#include <libetpan/mboxdriver_types.h>
+#include "mboxdriver_types.h"
 
 extern mailsession_driver * mbox_session_driver;
 

@@ -95,6 +95,24 @@ class IncludeGraphTests(unittest.TestCase):
 
 
 class RepositoryIntegrationTests(unittest.TestCase):
+    NON_EXPORTED_DRIVER_HEADERS = {
+        "data_message_driver.h",
+        "dbdriver_types.h",
+        "feeddriver_types.h",
+        "imapdriver_types.h",
+        "maildirdriver_types.h",
+        "maildriver.h",
+        "maildriver_errors.h",
+        "maildriver_types.h",
+        "maildriver_types_helper.h",
+        "mboxdriver_types.h",
+        "mhdriver_types.h",
+        "nntpdriver_types.h",
+        "pop3driver.h",
+        "pop3driver_cached.h",
+        "pop3driver_types.h",
+    }
+
     def run_tool(self, *arguments, check=True):
         return subprocess.run(
             [sys.executable, str(SCRIPT), *arguments],
@@ -108,7 +126,7 @@ class RepositoryIntegrationTests(unittest.TestCase):
     def test_current_static_public_set_matches_audited_result(self):
         result = self.run_tool("list")
         names = result.stdout.splitlines()
-        self.assertEqual(len(names), 146)
+        self.assertEqual(len(names), 123)
         self.assertEqual(names, sorted(names, key=lambda value: value.encode()))
         self.assertIn("mailjmap.h", names)
 
@@ -120,6 +138,14 @@ class RepositoryIntegrationTests(unittest.TestCase):
         self.assertEqual(actions["umbrella"]["remove"], [])
         self.assertFalse(actions["umbrella"]["rewrite"])
         self.assertEqual(actions["diagnostics"], [])
+
+    def test_internal_driver_headers_do_not_declare_exports(self):
+        model = public_headers.build_model(
+            public_headers.parser().parse_args(["list"])
+        )
+        for name in self.NON_EXPORTED_DRIVER_HEADERS:
+            with self.subTest(header=name):
+                self.assertEqual(model.headers[name].exports, 0)
 
     def test_windows_generation_is_stable_and_platform_specific(self):
         with tempfile.TemporaryDirectory() as temporary:

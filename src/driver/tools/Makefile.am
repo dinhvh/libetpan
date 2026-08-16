@@ -30,8 +30,8 @@
 include $(top_srcdir)/rules.mk
 
 etpaninclude_HEADERS = \
-	generic_cache_types.h \
-	mailthread.h mailthread_types.h
+	mailthread.h \
+	mailthread_types.h
 
 AM_CPPFLAGS = -I$(top_builddir)/include \
 	-I$(top_srcdir)/src/low-level/imf \
@@ -45,3 +45,5 @@ libtools_la_SOURCES = \
 	generic_cache.h generic_cache.c \
 	imfcache.h imfcache.c \
 	mailthread.c mailthread_types.c
+
+noinst_HEADERS = generic_cache_types.h

@@ -61,51 +61,36 @@ extern "C" {
 #include <libetpan/mailstream_types.h>
 #include <libetpan/mmapstring.h>
 
-/* src/driver/implementation/data-message */
-#include <libetpan/data_message_driver.h>
-
 /* src/driver/implementation/db */
-#include <libetpan/dbdriver_types.h>
 #include <libetpan/dbstorage.h>
 
 /* src/driver/implementation/feed */
-#include <libetpan/feeddriver_types.h>
 #include <libetpan/feedstorage.h>
 
 /* src/driver/implementation/hotmail */
 #include <libetpan/hotmailstorage.h>
 
 /* src/driver/implementation/imap */
-#include <libetpan/imapdriver_types.h>
 #include <libetpan/imapstorage.h>
 
 /* src/driver/implementation/maildir */
-#include <libetpan/maildirdriver_types.h>
 #include <libetpan/maildirstorage.h>
 
 /* src/driver/implementation/mbox */
-#include <libetpan/mboxdriver_types.h>
 #include <libetpan/mboxstorage.h>
 
 /* src/driver/implementation/mh */
-#include <libetpan/mhdriver_types.h>
 #include <libetpan/mhstorage.h>
 
 /* src/driver/implementation/nntp */
-#include <libetpan/nntpdriver_types.h>
 #include <libetpan/nntpstorage.h>
 
 /* src/driver/implementation/pop3 */
-#include <libetpan/pop3driver.h>
-#include <libetpan/pop3driver_cached.h>
-#include <libetpan/pop3driver_types.h>
 #include <libetpan/pop3storage.h>
 
 /* src/driver/interface */
-#include <libetpan/maildriver.h>
 #include <libetpan/maildriver_errors.h>
 #include <libetpan/maildriver_types.h>
-#include <libetpan/maildriver_types_helper.h>
 #include <libetpan/mailfolder.h>
 #include <libetpan/mailmessage.h>
 #include <libetpan/mailmessage_types.h>
@@ -113,7 +98,6 @@ extern "C" {
 #include <libetpan/mailstorage_types.h>
 
 /* src/driver/tools */
-#include <libetpan/generic_cache_types.h>
 #include <libetpan/mailthread.h>
 #include <libetpan/mailthread_types.h>
 
@@ -129,12 +113,6 @@ extern "C" {
 #include <libetpan/mailactivesync.h>
 #include <libetpan/mailactivesync_http.h>
 #include <libetpan/mailactivesync_types.h>
-
-/* src/low-level/feed */
-#include <libetpan/newsfeed.h>
-#include <libetpan/newsfeed_item.h>
-#include <libetpan/newsfeed_item_enclosure.h>
-#include <libetpan/newsfeed_types.h>
 
 /* src/low-level/gmail */
 #include <libetpan/mailgmail.h>
@@ -196,17 +174,6 @@ extern "C" {
 #include <libetpan/mailjmap_response.h>
 #include <libetpan/mailjmap_types.h>
 #endif
-
-/* src/low-level/maildir */
-#include <libetpan/maildir.h>
-#include <libetpan/maildir_types.h>
-
-/* src/low-level/mbox */
-#include <libetpan/mailmbox.h>
-#include <libetpan/mailmbox_types.h>
-
-/* src/low-level/mh */
-#include <libetpan/mailmh.h>
 
 /* src/low-level/mime */
 #include <libetpan/mailmime.h>

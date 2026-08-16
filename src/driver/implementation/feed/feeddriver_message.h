@@ -41,7 +41,7 @@
 extern "C" {
 #endif
 
-#include <libetpan/feeddriver_types.h>
+#include "feeddriver_types.h"
 
 extern mailmessage_driver * feed_message_driver;
 

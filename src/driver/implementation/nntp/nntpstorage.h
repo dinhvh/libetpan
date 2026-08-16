@@ -37,7 +37,10 @@
 
 #define NNTPSTORAGE_H
 
-#include <libetpan/nntpdriver_types.h>
+#include <stdint.h>
+#include <libetpan/libetpan-config.h>
+
+struct mailstorage;
 
 #ifdef __cplusplus
 extern "C" {

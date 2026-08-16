@@ -39,7 +39,7 @@
 
 #include <libetpan/libetpan-config.h>
 
-#include <libetpan/mboxdriver_types.h>
+#include "mboxdriver_types.h"
 
 #ifdef __cplusplus
 extern "C" {

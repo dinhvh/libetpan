@@ -41,7 +41,7 @@
 extern "C" {
 #endif
 
-#include <libetpan/mailmbox_types.h>
+#include "mailmbox_types.h"
 
 int
 mailmbox_append_message_list(struct mailmbox_folder * folder,

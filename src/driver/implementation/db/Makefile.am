@@ -29,9 +29,7 @@
 
 include $(top_srcdir)/rules.mk
 
-etpaninclude_HEADERS = \
-	dbdriver_types.h \
-	dbstorage.h
+etpaninclude_HEADERS = dbstorage.h
 
 AM_CPPFLAGS = -I$(top_builddir)/include \
 	-I$(top_srcdir)/src/driver/interface \
@@ -49,4 +47,5 @@ libdb_la_SOURCES = \
 
 noinst_HEADERS = \
 	dbdriver.h \
-	dbdriver_message.h
+	dbdriver_message.h \
+	dbdriver_types.h

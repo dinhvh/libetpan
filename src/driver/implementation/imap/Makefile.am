@@ -29,9 +29,7 @@
 
 include $(top_srcdir)/rules.mk
 
-etpaninclude_HEADERS = \
-	imapdriver_types.h \
-	imapstorage.h
+etpaninclude_HEADERS = imapstorage.h
 
 AM_CPPFLAGS = -I$(top_builddir)/include \
 	-I$(top_srcdir)/src/driver/interface \
@@ -57,4 +55,5 @@ noinst_HEADERS = \
 	imapdriver_cached_message.h \
 	imapdriver_message.h \
 	imapdriver_tools.h \
-	imapdriver_tools_private.h
+	imapdriver_tools_private.h \
+	imapdriver_types.h

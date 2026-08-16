@@ -31,8 +31,7 @@ include $(top_srcdir)/rules.mk
 
 EXTRA_DIST = TODO
 
-etpaninclude_HEADERS = \
-	mailmbox.h mailmbox_types.h
+etpaninclude_HEADERS =
 
 AM_CPPFLAGS = -I$(top_builddir)/include \
 	-I$(top_srcdir)/src/data-types \
@@ -42,3 +41,7 @@ noinst_LTLIBRARIES = libmbox.la
 
 libmbox_la_SOURCES = \
 	mailmbox_parse.h mailmbox_parse.c mailmbox.c mailmbox_types.c
+
+noinst_HEADERS = \
+	mailmbox.h \
+	mailmbox_types.h

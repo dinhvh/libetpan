@@ -2070,7 +2070,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "mkdir -p \"$BUILT_PRODUCTS_DIR/include\"\nrsync -aL \"$SRCROOT/../include/libetpan/\" \"$BUILT_PRODUCTS_DIR/include/libetpan/\"\n";
+			shellScript = "public_include_dir=\"$BUILT_PRODUCTS_DIR/include/libetpan\"\nframework_headers_dir=\"$BUILT_PRODUCTS_DIR/$PUBLIC_HEADERS_FOLDER_PATH\"\nmkdir -p \"$public_include_dir\" \"$framework_headers_dir\"\nln -sf \"Versions/Current/Headers\" \"$BUILT_PRODUCTS_DIR/$FULL_PRODUCT_NAME/Headers\"\n\"${PYTHON:-python3}\" \"$SRCROOT/../tools/public_headers.py\" export-android --destination \"$public_include_dir\"\n\"${PYTHON:-python3}\" \"$SRCROOT/../tools/public_headers.py\" export-android --destination \"$framework_headers_dir\"\n";
 		};
 		C6635C5316E002ED0066276E /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;

@@ -37,7 +37,7 @@
 
 #define MHDRIVER_CACHED_H
 
-#include <libetpan/mhdriver_types.h>
+#include "mhdriver_types.h"
 
 #ifdef __cplusplus
 extern "C" {

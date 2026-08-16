@@ -37,7 +37,7 @@
 
 #define IMAPDRIVER_MESSAGE_H
 
-#include <libetpan/imapdriver_types.h>
+#include "imapdriver_types.h"
 
 #ifdef __cplusplus
 extern "C" {

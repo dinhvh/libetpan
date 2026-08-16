@@ -104,7 +104,18 @@ TESTS = smime-low-level-test mailpgp-low-level-test \
 # For W32, reverse the -DLIBETPAN_DLL.  Unfortunately, CFLAGS comes
 # after AM_CPPFLAGS, so we have to frob CFLAGS.
 CFLAGS += -ULIBETPAN_DLL
-AM_CPPFLAGS = -I$(top_builddir)/include
+AM_CPPFLAGS = -I$(top_builddir)/include \
+	-I$(top_srcdir)/src/driver/interface \
+	-I$(top_srcdir)/src/driver/tools \
+	-I$(top_srcdir)/src/driver/implementation/data-message \
+	-I$(top_srcdir)/src/driver/implementation/imap \
+	-I$(top_srcdir)/src/driver/implementation/nntp \
+	-I$(top_srcdir)/src/driver/implementation/pop3 \
+	-include data_message_driver.h \
+	-include maildriver.h \
+	-include imapdriver_types.h \
+	-include nntpdriver_types.h \
+	-include pop3driver_types.h
 LDADD = ../src/libetpan.la
 
 FRMCOMMON = frm-common.h frm-common.c option-parser.h option-parser.c

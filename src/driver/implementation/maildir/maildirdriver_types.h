@@ -40,8 +40,8 @@
 #include <libetpan/libetpan-config.h>
 
 #include <libetpan/maildriver_types.h>
-#include <libetpan/maildir.h>
-#include <libetpan/generic_cache_types.h>
+#include "maildir.h"
+#include "generic_cache_types.h"
 #include <libetpan/mailstorage_types.h>
 
 #ifdef __cplusplus

@@ -29,9 +29,7 @@
 
 include $(top_srcdir)/rules.mk
 
-etpaninclude_HEADERS = \
-	maildirdriver_types.h \
-	maildirstorage.h
+etpaninclude_HEADERS = maildirstorage.h
 
 AM_CPPFLAGS = -I$(top_builddir)/include \
 	-I$(top_srcdir)/src/driver/interface \
@@ -55,4 +53,5 @@ noinst_HEADERS = \
 	maildirdriver.h \
 	maildirdriver_cached.h \
 	maildirdriver_cached_message.h \
-	maildirdriver_message.h
+	maildirdriver_message.h \
+	maildirdriver_types.h

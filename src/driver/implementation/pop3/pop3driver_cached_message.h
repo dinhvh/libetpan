@@ -37,7 +37,7 @@
 
 #define POP3DRIVER_CACHED_MESSAGE_H
 
-#include <libetpan/pop3driver_types.h>
+#include "pop3driver_types.h"
 
 #ifdef __cplusplus
 extern "C" {

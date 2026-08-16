@@ -44,6 +44,7 @@
 
 #include "mail.h"
 #include "pop3driver.h"
+#include "pop3driver_cached.h"
 #include "mailstorage_tools.h"
 #include "maildriver.h"
 

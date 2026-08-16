@@ -29,8 +29,7 @@
 
 include $(top_srcdir)/rules.mk
 
-etpaninclude_HEADERS = \
-	data_message_driver.h
+etpaninclude_HEADERS =
 
 AM_CPPFLAGS = -I$(top_builddir)/include \
 	-I$(top_srcdir)/src/driver/interface
@@ -39,3 +38,5 @@ noinst_LTLIBRARIES = libdata-message.la
 
 libdata_message_la_SOURCES = \
 	data_message_driver.c
+
+noinst_HEADERS = data_message_driver.h

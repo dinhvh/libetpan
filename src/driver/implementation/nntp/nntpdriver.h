@@ -37,7 +37,7 @@
 
 #define NNTPDRIVER_H
 
-#include <libetpan/nntpdriver_types.h>
+#include "nntpdriver_types.h"
 
 #ifdef __cplusplus
 extern "C" {

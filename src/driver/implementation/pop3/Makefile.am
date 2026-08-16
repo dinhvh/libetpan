@@ -29,11 +29,7 @@
 
 include $(top_srcdir)/rules.mk
 
-etpaninclude_HEADERS = \
-	pop3driver.h \
-	pop3driver_cached.h \
-	pop3driver_types.h \
-	pop3storage.h
+etpaninclude_HEADERS = pop3storage.h
 
 AM_CPPFLAGS = -I$(top_builddir)/include \
 	-I$(top_srcdir)/src/driver/interface \
@@ -54,5 +50,8 @@ libpop3_la_SOURCES = \
 	pop3storage.c
 
 noinst_HEADERS = \
+	pop3driver.h \
+	pop3driver_cached.h \
 	pop3driver_cached_message.h \
-	pop3driver_message.h
+	pop3driver_message.h \
+	pop3driver_types.h

@@ -41,7 +41,7 @@
 extern "C" {
 #endif
 
-#include <libetpan/imapdriver_types.h>
+#include "imapdriver_types.h"
 
 extern mailsession_driver * imap_session_driver;
 

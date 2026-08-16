@@ -41,7 +41,7 @@
 
 #include <libetpan/maildriver_types.h>
 #include <libetpan/mailstorage_types.h>
-#include <libetpan/newsfeed.h>
+#include "newsfeed.h"
 
 #ifdef __cplusplus
 extern "C" {

@@ -41,7 +41,7 @@
 
 #include <libetpan/mailimap.h>
 #include <libetpan/maildriver_types.h>
-#include <libetpan/generic_cache_types.h>
+#include "generic_cache_types.h"
 #include <libetpan/mailstorage_types.h>
 
 #ifdef __cplusplus
