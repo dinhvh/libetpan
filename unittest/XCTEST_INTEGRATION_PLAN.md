@@ -38,7 +38,7 @@ The XCTest bundle currently runs **452 independently reported tests**, with all
 - [x] MIME builder: 3 XCTest cases.
 - [x] MIME parser serialization: 162 XCTest cases, one per corpus fixture.
 - [x] Plaintext rendering: 41 XCTest cases, one per message fixture.
-- [x] POP3: 1 local-loopback regression XCTest case.
+- [x] POP3: 1 local-socketpair regression XCTest case.
 - [x] ActiveSync WBXML: 4 XCTest cases.
 - [x] ActiveSync HTTP: 48 XCTest cases.
 - [x] ActiveSync sample flows: 4 XCTest cases.
@@ -65,11 +65,11 @@ Result: 452 tests executed, 0 failures.
 
 The migrated data-types, charset-detection, IMAP UTF-7, IMF, MIME parser, MIME
 builder, MIME parser serialization, and plaintext rendering Unix runners have
-also been compiled and run successfully. The local-loopback POP3 Unix runner
-also passes when allowed to bind its fake server socket. The ActiveSync WBXML,
-HTTP, and sample-flow Unix runners pass. The complete Unix matrix was compiled
-and run against the Xcode-built framework with no failures. CI stages that
-framework in the runtime location expected by the command-line executables.
+also been compiled and run successfully. The local-socketpair POP3 Unix runner
+passes without network or `bind()` permission. The ActiveSync WBXML, HTTP, and
+sample-flow Unix runners pass. The complete Unix matrix was compiled and run
+against the Xcode-built framework with no failures. CI stages that framework
+in the runtime location expected by the command-line executables.
 
 The default Unix Makefile behavior still targets the autotools static archive.
 CI overrides that dependency and library path because the checked-in generated

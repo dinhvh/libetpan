@@ -1,8 +1,8 @@
+#include <pthread.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
-#include <netinet/in.h>
 #include <sys/socket.h>
-#include <sys/wait.h>
 #include <unistd.h>
 
 #include <libetpan/carray.h>
@@ -48,142 +48,118 @@ static int read_client_command(int fd)
   return 0;
 }
 
-static void run_fake_pop3_server(int fd)
+static void * run_fake_pop3_server(void * context)
 {
+  int fd = (int) (intptr_t) context;
+  int failed = 0;
+
   if (write_server_stream(fd, "+OK POP3 ready\r\n") < 0) {
     fprintf(stderr, "server: greeting failed\n");
-    _exit(1);
+    failed = 1;
+    goto cleanup;
   }
   if (read_client_command(fd) < 0) {
     fprintf(stderr, "server: USER read failed\n");
-    _exit(1);
+    failed = 1;
+    goto cleanup;
   }
   if (write_server_stream(fd, "+OK user accepted\r\n") < 0) {
     fprintf(stderr, "server: USER response failed\n");
-    _exit(1);
+    failed = 1;
+    goto cleanup;
   }
   if (read_client_command(fd) < 0) {
     fprintf(stderr, "server: PASS read failed\n");
-    _exit(1);
+    failed = 1;
+    goto cleanup;
   }
   if (write_server_stream(fd, "+OK pass accepted\r\n") < 0) {
     fprintf(stderr, "server: PASS response failed\n");
-    _exit(1);
+    failed = 1;
+    goto cleanup;
   }
   if (read_client_command(fd) < 0) {
     fprintf(stderr, "server: LIST read failed\n");
-    _exit(1);
+    failed = 1;
+    goto cleanup;
   }
   if (write_server_stream(fd,
       "+OK list follows\r\n"
       "0 12345\r\n"
       "1 10\r\n"
-      ".\r\n") < 0)
-    _exit(1);
-  if (read_client_command(fd) < 0)
-    _exit(1);
+      ".\r\n") < 0) {
+    failed = 1;
+    goto cleanup;
+  }
+  if (read_client_command(fd) < 0) {
+    failed = 1;
+    goto cleanup;
+  }
   if (write_server_stream(fd,
       "+OK uidl follows\r\n"
       "0 bad\r\n"
       "1 valid-uid\r\n"
-      ".\r\n") < 0)
-    _exit(1);
-  if (read_client_command(fd) < 0)
-    _exit(1);
+      ".\r\n") < 0) {
+    failed = 1;
+    goto cleanup;
+  }
+  if (read_client_command(fd) < 0) {
+    failed = 1;
+    goto cleanup;
+  }
   if (write_server_stream(fd, "+OK bye\r\n") < 0)
-    _exit(1);
+    failed = 1;
 
-  _exit(0);
+cleanup:
+  close(fd);
+  return (void *) (intptr_t) failed;
 }
 
-static int test_list_ignores_zero_message_number(void)
+static int test_list_ignores_zero_message_number(const char ** failure_message)
 {
-  int listen_fd;
-  int client_fd;
-  int server_fd;
-  struct sockaddr_in addr;
-  socklen_t addr_len;
-  pid_t server_pid;
-  mailstream * stream;
-  mailpop3 * pop3;
-  carray * list;
+  int sockets[2] = { -1, -1 };
+  pthread_t server_thread;
+  int server_thread_started = 0;
+  void * server_result = NULL;
+  mailstream * stream = NULL;
+  mailpop3 * pop3 = NULL;
+  carray * list = NULL;
   struct mailpop3_msg_info * msg;
-  int connect_r;
-  int user_r;
-  int pass_r;
-  int list_r;
-  int ok;
-  int status;
+  int connect_r = -1;
+  int user_r = -1;
+  int pass_r = -1;
+  int list_r = -1;
+  int ok = 0;
   unsigned int list_count = 0;
 
-  listen_fd = socket(AF_INET, SOCK_STREAM, 0);
-  if (listen_fd < 0) {
-    perror("socket");
-    return 0;
+  *failure_message = "POP3 LIST result did not match the expected messages";
+  if (socketpair(AF_UNIX, SOCK_STREAM, 0, sockets) < 0) {
+    perror("socketpair");
+    *failure_message = "could not create the fake POP3 socket pair";
+    goto cleanup;
   }
 
-  memset(&addr, 0, sizeof(addr));
-  addr.sin_family = AF_INET;
-  addr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
-  addr.sin_port = 0;
-  if (bind(listen_fd, (struct sockaddr *) &addr, sizeof(addr)) < 0) {
-    perror("bind");
-    close(listen_fd);
-    return 0;
+  if (pthread_create(&server_thread, NULL, run_fake_pop3_server,
+          (void *) (intptr_t) sockets[1]) != 0) {
+    *failure_message = "could not start the fake POP3 server thread";
+    goto cleanup;
   }
-  if (listen(listen_fd, 1) < 0) {
-    perror("listen");
-    close(listen_fd);
-    return 0;
-  }
+  server_thread_started = 1;
+  sockets[1] = -1;
 
-  addr_len = sizeof(addr);
-  if (getsockname(listen_fd, (struct sockaddr *) &addr, &addr_len) < 0) {
-    perror("getsockname");
-    close(listen_fd);
-    return 0;
-  }
-
-  server_pid = fork();
-  if (server_pid < 0) {
-    close(listen_fd);
-    return 0;
-  }
-  if (server_pid == 0) {
-    server_fd = accept(listen_fd, NULL, NULL);
-    close(listen_fd);
-    if (server_fd < 0)
-      _exit(1);
-    run_fake_pop3_server(server_fd);
-  }
-
-  client_fd = socket(AF_INET, SOCK_STREAM, 0);
-  if (client_fd < 0) {
-    perror("client socket");
-    close(listen_fd);
-    return 0;
-  }
-  if (connect(client_fd, (struct sockaddr *) &addr, sizeof(addr)) < 0) {
-    perror("connect");
-    close(client_fd);
-    close(listen_fd);
-    return 0;
-  }
-  close(listen_fd);
-
-  stream = mailstream_socket_open(client_fd);
+  stream = mailstream_socket_open(sockets[0]);
   if (stream == NULL) {
-    close(client_fd);
-    return 0;
+    *failure_message = "could not open the POP3 client mailstream";
+    goto cleanup;
   }
+  sockets[0] = -1;
 
   pop3 = mailpop3_new(0, NULL);
   if (pop3 == NULL) {
-    mailstream_close(stream);
-    return 0;
+    *failure_message = "could not allocate the POP3 client";
+    goto cleanup;
   }
 
-  list = NULL;
   ok = 1;
   connect_r = mailpop3_connect(pop3, stream);
   ok = ok && (connect_r == MAILPOP3_NO_ERROR);
@@ -208,11 +184,25 @@ static int test_list_ignores_zero_message_number(void)
   if (list != NULL)
     list_count = carray_count(list);
 
-  mailpop3_free(pop3);
-  if (waitpid(server_pid, &status, 0) < 0)
-    ok = 0;
-  else if (!WIFEXITED(status) || (WEXITSTATUS(status) != 0))
-    ok = 0;
+cleanup:
+  if (pop3 != NULL)
+    mailpop3_free(pop3);
+  else if (stream != NULL)
+    mailstream_close(stream);
+  if (sockets[0] >= 0)
+    close(sockets[0]);
+  if (sockets[1] >= 0)
+    close(sockets[1]);
+  if (server_thread_started) {
+    if (pthread_join(server_thread, &server_result) != 0) {
+      *failure_message = "could not join the fake POP3 server thread";
+      ok = 0;
+    }
+    else if ((intptr_t) server_result != 0) {
+      *failure_message = "the fake POP3 server conversation failed";
+      ok = 0;
+    }
+  }
 
   if (!ok) {
     fprintf(stderr, "connect=%d user=%d pass=%d list=%d count=%u\n",
@@ -225,12 +215,14 @@ static int test_list_ignores_zero_message_number(void)
 
 int pop3_test_run_case(test_failure_callback failure_callback, void * context)
 {
-  if (!test_list_ignores_zero_message_number()) {
+  const char * failure_message;
+
+  if (!test_list_ignores_zero_message_number(&failure_message)) {
     fprintf(stderr, "POP3 LIST zero message number regression failed\n");
     if (failure_callback != NULL)
       failure_callback(__FILE__, __LINE__,
           "test_list_ignores_zero_message_number()",
-          "POP3 LIST must ignore an invalid zero message number", context);
+          failure_message, context);
     return -1;
   }
 
