@@ -1463,12 +1463,14 @@ static char * x509_subject_email(X509 * cert)
       name = sk_GENERAL_NAME_value(names, i);
       if (name->type == GEN_EMAIL) {
         ASN1_IA5STRING * str;
+        int length;
 
         str = name->d.rfc822Name;
-        result = malloc((size_t) str->length + 1);
+        length = ASN1_STRING_length(str);
+        result = malloc((size_t) length + 1);
         if (result != NULL) {
-          memcpy(result, str->data, (size_t) str->length);
-          result[str->length] = '\0';
+          memcpy(result, ASN1_STRING_get0_data(str), (size_t) length);
+          result[length] = '\0';
         }
         GENERAL_NAMES_free(names);
         return result;
