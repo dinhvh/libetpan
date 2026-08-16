@@ -122,7 +122,11 @@ AM_CONDITIONAL([HAVE_NSURLSESSION], [test "x$have_nsurlsession" = xyes])
 # Check the C compiler.
 AC_PROG_CC
 AC_PROG_CXX
-AC_PROG_OBJC
+case "${host}" in
+    *-apple-darwin*)
+        AC_PROG_OBJC
+        ;;
+esac
 
 # Compiler flags.
 AC_ARG_ENABLE(debug, [AS_HELP_STRING([--enable-debug], [setup flags (gcc) for debugging (default=no)])],
