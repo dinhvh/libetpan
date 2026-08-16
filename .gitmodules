@@ -7,3 +7,9 @@
 [submodule "build-mac/dependencies/submodules/openssl"]
 	path = build-mac/dependencies/submodules/openssl
 	url = https://github.com/openssl/openssl.git
+[submodule "build-mac/dependencies/submodules/rnp"]
+	path = build-mac/dependencies/submodules/rnp
+	url = https://github.com/rnpgp/rnp.git
+[submodule "build-mac/dependencies/submodules/json-c"]
+	path = build-mac/dependencies/submodules/json-c
+	url = https://github.com/json-c/json-c.git

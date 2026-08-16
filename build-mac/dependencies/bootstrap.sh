@@ -23,4 +23,7 @@ echo "Building Cyrus SASL XCFramework"
 echo "Building OpenSSL libcrypto XCFramework"
 "$script_dir/build-openssl-xcframework.sh"
 
+echo "Building RNP XCFramework"
+"$script_dir/build-rnp-xcframework.sh"
+
 echo "Dependencies are ready in $script_dir/build"
