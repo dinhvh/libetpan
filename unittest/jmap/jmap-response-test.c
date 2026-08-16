@@ -6,8 +6,8 @@
 #	include <config.h>
 #endif
 
-#include "../src/low-level/jmap/mailjmap_response.h"
-#include "../src/low-level/jmap/mailjmap_types.h"
+#include "../../src/low-level/jmap/mailjmap_response.h"
+#include "../../src/low-level/jmap/mailjmap_types.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -16,7 +16,8 @@
 static char * read_fixture_file(const char * name, size_t * result_len)
 {
   const char * prefixes[] = {
-    "tests/jmap/data/response/",
+    "unittest/jmap/data/response/",
+    "../unittest/jmap/data/response/",
     "jmap/data/response/"
   };
   char path[512];

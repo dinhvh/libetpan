@@ -101,10 +101,14 @@ static char * read_file(const char * path, size_t * result_len)
 
   file = fopen(path, "rb");
   if (file == NULL) {
-    snprintf(prefixed_path, sizeof(prefixed_path), "tests/%s", path);
+    snprintf(prefixed_path, sizeof(prefixed_path), "unittest/%s", path);
     file = fopen(prefixed_path, "rb");
-    if (file == NULL)
-      return NULL;
+    if (file == NULL) {
+      snprintf(prefixed_path, sizeof(prefixed_path), "../unittest/%s", path);
+      file = fopen(prefixed_path, "rb");
+      if (file == NULL)
+        return NULL;
+    }
   }
 
   if (fseek(file, 0, SEEK_END) < 0)

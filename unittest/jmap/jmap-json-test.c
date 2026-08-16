@@ -6,7 +6,7 @@
 #	include <config.h>
 #endif
 
-#include "../src/data-types/mailjson.h"
+#include "../../src/data-types/mailjson.h"
 
 #include <jansson.h>
 #include <limits.h>

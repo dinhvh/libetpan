@@ -32,7 +32,7 @@ JSON dependency and adapter boundary:
   `src/data-types`.
 - Request, response, session, mail, and blob code use `mailjson_value` and
   `mailjson_*` directly rather than depending on Jansson directly.
-- `tests/jmap-json-test.c` may include Jansson directly when it needs to verify
+- `unittest/jmap/jmap-json-test.c` may include Jansson directly when it needs to verify
   adapter behavior against the backend.
 
 Implemented mail methods:
@@ -52,7 +52,7 @@ Implemented test and diagnostic tools:
 
 - Fake-transport unit coverage for session, call, mailbox, thread, email, blob,
   request, response, HTTP, and JSON behavior.
-- Request serialization golden files under `tests/jmap/data/request/`.
+- Request serialization golden files under `unittest/jmap/data/request/`.
 - A libFuzzer harness for `mailjmap_response_parse()` under `tests/fuzz/`.
 - `tests/jmap-sample.c` for manual live-provider smoke testing.
 

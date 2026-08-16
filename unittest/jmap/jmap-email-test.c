@@ -333,7 +333,8 @@ static char * dup_string(const char * value)
 static char * read_fixture_file(const char * name, size_t * result_len)
 {
   const char * prefixes[] = {
-    "tests/jmap/data/email/",
+    "unittest/jmap/data/email/",
+    "../unittest/jmap/data/email/",
     "jmap/data/email/"
   };
   char path[512];

@@ -8,10 +8,10 @@
 
 #include <libetpan/mailjmap.h>
 
-#include "../src/data-types/mailjson.h"
-#include "../src/low-level/jmap/mailjmap_request.h"
-#include "../src/low-level/jmap/mailjmap_response.h"
-#include "../src/low-level/jmap/mailjmap_types.h"
+#include "../../src/data-types/mailjson.h"
+#include "../../src/low-level/jmap/mailjmap_request.h"
+#include "../../src/low-level/jmap/mailjmap_response.h"
+#include "../../src/low-level/jmap/mailjmap_types.h"
 
 #include <stdio.h>
 #include <stdlib.h>

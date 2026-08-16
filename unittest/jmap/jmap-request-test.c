@@ -6,9 +6,9 @@
 #	include <config.h>
 #endif
 
-#include "../src/data-types/mailjson.h"
-#include "../src/low-level/jmap/mailjmap_request.h"
-#include "../src/low-level/jmap/mailjmap_types.h"
+#include "../../src/data-types/mailjson.h"
+#include "../../src/low-level/jmap/mailjmap_request.h"
+#include "../../src/low-level/jmap/mailjmap_types.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,7 +17,8 @@
 static char * read_expected_file(const char * name)
 {
   const char * prefixes[] = {
-    "tests/jmap/data/request/",
+    "unittest/jmap/data/request/",
+    "../unittest/jmap/data/request/",
     "jmap/data/request/"
   };
   char path[512];

@@ -69,26 +69,31 @@ static int read_file(const char * filename, char ** result, size_t * result_len)
 static char * fixture_path(const char * filename)
 {
   const char * srcdir;
-  static const char fixture_dir[] = "/fixtures/openpgp/";
+  const char * fixture_dir;
   char * path;
   size_t srcdir_len;
   size_t filename_len;
 
   srcdir = getenv("srcdir");
-  if (srcdir == NULL)
+  if (srcdir == NULL) {
     srcdir = ".";
+    fixture_dir = "/unittest/mailpgp/fixtures/";
+  }
+  else {
+    fixture_dir = "/../unittest/mailpgp/fixtures/";
+  }
 
   srcdir_len = strlen(srcdir);
   filename_len = strlen(filename);
-  path = malloc(srcdir_len + sizeof(fixture_dir) - 1 + filename_len + 1);
+  path = malloc(srcdir_len + strlen(fixture_dir) + filename_len + 1);
   if (path == NULL)
     return NULL;
 
   memcpy(path, srcdir, srcdir_len);
-  memcpy(path + srcdir_len, fixture_dir, sizeof(fixture_dir) - 1);
-  memcpy(path + srcdir_len + sizeof(fixture_dir) - 1, filename,
+  memcpy(path + srcdir_len, fixture_dir, strlen(fixture_dir));
+  memcpy(path + srcdir_len + strlen(fixture_dir), filename,
       filename_len);
-  path[srcdir_len + sizeof(fixture_dir) - 1 + filename_len] = '\0';
+  path[srcdir_len + strlen(fixture_dir) + filename_len] = '\0';
   return path;
 }
 

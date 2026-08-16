@@ -97,7 +97,8 @@ static char * read_fixture_file(const char * directory, const char * name,
   long len;
   size_t read_len;
   const char * prefixes[] = {
-    "tests/jmap/data/",
+    "unittest/jmap/data/",
+    "../unittest/jmap/data/",
     "jmap/data/"
   };
   size_t i;

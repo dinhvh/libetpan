@@ -34,22 +34,6 @@ EXTRA_DIST = README activesync-ms-device-oauth.py activesync-live-sync-test.sh \
 	jmap-live-smoke-test.sh \
 	smime-openssl-fixture-test.sh \
 	mailpgp-gnupg-fixture-test.sh \
-	fixtures/openpgp/hidden-recipient-secret.asc \
-	fixtures/openpgp/hidden-recipient-message.eml \
-	fixtures/openpgp/hidden-recipient-body.txt \
-	jmap/data/blob/download-message.eml \
-	jmap/data/blob/upload-response.json \
-	jmap/data/email/get-multipart-vendor.json \
-	jmap/data/mailbox/changes.json \
-	jmap/data/mailbox/get.json \
-	jmap/data/mailbox/query.json \
-	jmap/data/mailbox/set.json \
-	jmap/data/request/mailbox-get.json \
-	jmap/data/request/email-query-get-result-reference.json \
-	jmap/data/response/method-success-and-error.json \
-	jmap/data/response/problem-limit.json \
-	jmap/data/session/fastmail-style.json \
-	jmap/data/session/minimal.json \
 	fuzz/README.md \
 	fuzz/fuzz_imap_response.c \
 	fuzz/fuzz_jmap_response.c \
@@ -105,6 +89,7 @@ TESTS = smime-low-level-test mailpgp-low-level-test \
 # after AM_CPPFLAGS, so we have to frob CFLAGS.
 CFLAGS += -ULIBETPAN_DLL
 AM_CPPFLAGS = -I$(top_builddir)/include \
+	@JANSSON_CFLAGS@ \
 	-I$(top_srcdir)/src/driver/interface \
 	-I$(top_srcdir)/src/driver/tools \
 	-I$(top_srcdir)/src/driver/implementation/data-message \
@@ -131,11 +116,11 @@ READMSGCOMMON = readmsg-common.h readmsg-common.c option-parser.h	\
 
 readmsg_SOURCES = $(READMSGCOMMON) readmsg.c
 
-smime_low_level_test_SOURCES = smime-low-level-test.c
+smime_low_level_test_SOURCES = $(top_srcdir)/unittest/smime/smime_low_level_test.c
 smime_low_level_test_LDADD = ../src/libetpan.la @SSLLIBS@ @SMIMELIBS@
 smime_openssl_interop_test_SOURCES = smime-openssl-interop-test.c
 smime_openssl_interop_test_LDADD = ../src/libetpan.la @SSLLIBS@ @SMIMELIBS@
-mailpgp_low_level_test_SOURCES = mailpgp-low-level-test.c
+mailpgp_low_level_test_SOURCES = $(top_srcdir)/unittest/mailpgp/mailpgp_low_level_test.c
 mailpgp_low_level_test_LDADD = ../src/libetpan.la @RNP_LIBS@
 mailpgp_gnupg_interop_test_SOURCES = mailpgp-gnupg-interop-test.c
 mailpgp_gnupg_interop_test_LDADD = ../src/libetpan.la @RNP_LIBS@
@@ -146,28 +131,28 @@ readmsg_uid_SOURCES = $(READMSGCOMMON) readmsg-uid.c
 
 fetch_attachment_SOURCES = $(READMSGCOMMON) fetch-attachment.c
 
-gmail_http_test_SOURCES = gmail-http-test.c
+gmail_http_test_SOURCES = $(top_srcdir)/unittest/gmail/http_test.c
 
 gmail_sample_SOURCES = gmail-sample.c
 
-jmap_json_test_SOURCES = jmap-json-test.c
+jmap_json_test_SOURCES = $(top_srcdir)/unittest/jmap/jmap-json-test.c
 
-jmap_http_test_SOURCES = jmap-http-test.c
+jmap_http_test_SOURCES = $(top_srcdir)/unittest/jmap/jmap-http-test.c
 
-jmap_request_test_SOURCES = jmap-request-test.c
+jmap_request_test_SOURCES = $(top_srcdir)/unittest/jmap/jmap-request-test.c
 
-jmap_response_test_SOURCES = jmap-response-test.c
+jmap_response_test_SOURCES = $(top_srcdir)/unittest/jmap/jmap-response-test.c
 
-jmap_call_test_SOURCES = jmap-call-test.c
+jmap_call_test_SOURCES = $(top_srcdir)/unittest/jmap/jmap-call-test.c
 
-jmap_mailbox_test_SOURCES = jmap-mailbox-test.c
+jmap_mailbox_test_SOURCES = $(top_srcdir)/unittest/jmap/jmap-mailbox-test.c
 
-jmap_thread_test_SOURCES = jmap-thread-test.c
+jmap_thread_test_SOURCES = $(top_srcdir)/unittest/jmap/jmap-thread-test.c
 
-jmap_email_test_SOURCES = jmap-email-test.c
+jmap_email_test_SOURCES = $(top_srcdir)/unittest/jmap/jmap-email-test.c
 
-jmap_blob_test_SOURCES = jmap-blob-test.c
+jmap_blob_test_SOURCES = $(top_srcdir)/unittest/jmap/jmap-blob-test.c
 
-jmap_session_test_SOURCES = jmap-session-test.c
+jmap_session_test_SOURCES = $(top_srcdir)/unittest/jmap/jmap-session-test.c
 
 jmap_sample_SOURCES = jmap-sample.c

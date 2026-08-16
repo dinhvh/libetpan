@@ -7,6 +7,7 @@
 #endif
 
 #include <libetpan/libetpan.h>
+#include "../../src/driver/implementation/data-message/data_message_driver.h"
 
 #include <stdio.h>
 #include <stdlib.h>

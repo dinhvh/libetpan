@@ -8,8 +8,8 @@
 
 #include <libetpan/mailgmail.h>
 
-#include "../src/low-level/gmail/mailgmail_parser.h"
-#include "../src/low-level/gmail/mailgmail_url.h"
+#include "../../src/low-level/gmail/mailgmail_parser.h"
+#include "../../src/low-level/gmail/mailgmail_url.h"
 
 #include <stdio.h>
 #include <stdlib.h>

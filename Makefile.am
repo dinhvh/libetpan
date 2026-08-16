@@ -33,7 +33,23 @@ ACLOCAL_AMFLAGS = -I m4
 
 EXTRA_DIST = libetpan.pc.in libetpan-config.h.in COPYRIGHT \
 	tools/public_headers.py PUBLIC_HEADERS_PLAN.md \
-	tests/public-headers/test_public_headers.py
+	unittest/public-headers/test_public_headers.py \
+	unittest/mailpgp/fixtures/hidden-recipient-secret.asc \
+	unittest/mailpgp/fixtures/hidden-recipient-message.eml \
+	unittest/mailpgp/fixtures/hidden-recipient-body.txt \
+	unittest/jmap/data/blob/download-message.eml \
+	unittest/jmap/data/blob/upload-response.json \
+	unittest/jmap/data/email/get-multipart-vendor.json \
+	unittest/jmap/data/mailbox/changes.json \
+	unittest/jmap/data/mailbox/get.json \
+	unittest/jmap/data/mailbox/query.json \
+	unittest/jmap/data/mailbox/set.json \
+	unittest/jmap/data/request/mailbox-get.json \
+	unittest/jmap/data/request/email-query-get-result-reference.json \
+	unittest/jmap/data/response/method-success-and-error.json \
+	unittest/jmap/data/response/problem-limit.json \
+	unittest/jmap/data/session/fastmail-style.json \
+	unittest/jmap/data/session/minimal.json
 
 # The file stamp-prepare is generated in the top build directory by
 # rules defined in rules.mk.
