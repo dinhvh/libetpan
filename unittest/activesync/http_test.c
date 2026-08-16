@@ -7,8 +7,8 @@
 #endif
 
 #include <libetpan/mailactivesync.h>
-#include <libetpan/mailactivesync_codes.h>
-#include <libetpan/mailactivesync_wbxml.h>
+#include "../../src/low-level/activesync/mailactivesync_codes.h"
+#include "../../src/low-level/activesync/mailactivesync_wbxml.h"
 
 #include "../../src/low-level/activesync/mailactivesync_command.h"
 

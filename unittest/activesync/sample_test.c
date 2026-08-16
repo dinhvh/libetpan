@@ -12,8 +12,8 @@
 #include "../../tests/activesync-sample.c"
 #undef main
 
-#include <libetpan/mailactivesync_codes.h>
-#include <libetpan/mailactivesync_wbxml.h>
+#include "../../src/low-level/activesync/mailactivesync_codes.h"
+#include "../../src/low-level/activesync/mailactivesync_wbxml.h"
 
 #include <stdio.h>
 #include <stdlib.h>
