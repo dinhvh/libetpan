@@ -844,7 +844,7 @@
 		367860B016AB35BC002F2B96 = {
 			isa = PBXGroup;
 			children = (
-				A10000000000000000000030 /* XCTest */,
+				A10000000000000000000030 /* unittest */,
 				367860BE16AB35BC002F2B96 /* libetpan Tests */,
 				367860F616AB38D3002F2B96 /* External Frameworks and Libraries */,
 				367860BC16AB35BC002F2B96 /* Products */,
@@ -927,67 +927,179 @@
 				3678619616AB4671002F2B96 /* libiconv.2.dylib */,
 				8568A3DE1C609B8500FF4470 /* libz.tbd */,
 				3678639816AB61BA002F2B96 /* libetpan.a */,
+				A10000000000000000000015 /* XCTest.framework */,
+				A10000000000000000000016 /* libetpan.framework */,
 			);
 			name = "External Frameworks and Libraries";
 			sourceTree = "<group>";
 		};
-		A10000000000000000000030 /* XCTest */ = {
+		A10000000000000000000030 /* unittest */ = {
 			isa = PBXGroup;
 			children = (
-				A10000000000000000000011 /* IMAPResponseDoneTests.m */,
-				A20000000000000000000011 /* IMAPUTF7Tests.m */,
+				B10000000000000000000001 /* activesync */,
+				B10000000000000000000002 /* charset-detection */,
+				B10000000000000000000003 /* common */,
+				B10000000000000000000004 /* data-types */,
+				B10000000000000000000005 /* imap */,
+				B10000000000000000000006 /* imap-utf7 */,
+				B10000000000000000000007 /* imf */,
+				B10000000000000000000008 /* mime */,
+				B10000000000000000000009 /* mime-builder */,
+				B1000000000000000000000A /* mime-parser */,
+				B1000000000000000000000B /* plaintext-rendering */,
+				B1000000000000000000000C /* pop3 */,
+				B1000000000000000000000D /* xctest */,
+			);
+			name = unittest;
+			sourceTree = "<group>";
+		};
+		B10000000000000000000001 /* activesync */ = {
+			isa = PBXGroup;
+			children = (
+				AG0000000000000000000012 /* http_test.c */,
+				AH0000000000000000000012 /* sample_test.c */,
+				AF0000000000000000000012 /* wbxml_test.c */,
+			);
+			name = activesync;
+			sourceTree = "<group>";
+		};
+		B10000000000000000000002 /* charset-detection */ = {
+			isa = PBXGroup;
+			children = (
+				A50000000000000000000014 /* charset_detection_tests.c */,
+			);
+			name = "charset-detection";
+			sourceTree = "<group>";
+		};
+		B10000000000000000000003 /* common */ = {
+			isa = PBXGroup;
+			children = (
+				A50000000000000000000015 /* test_utils.c */,
+			);
+			name = common;
+			sourceTree = "<group>";
+		};
+		B10000000000000000000004 /* data-types */ = {
+			isa = PBXGroup;
+			children = (
+				A50000000000000000000012 /* md5_test.c */,
+			);
+			name = "data-types";
+			sourceTree = "<group>";
+		};
+		B10000000000000000000005 /* imap */ = {
+			isa = PBXGroup;
+			children = (
+				A90000000000000000000012 /* command_parameter_sender_test.c */,
+				A80000000000000000000012 /* command_sender_test.c */,
+				AA0000000000000000000012 /* idle_test.c */,
+				A10000000000000000000013 /* imap_test_utils.c */,
+				A60000000000000000000012 /* response_data_test.c */,
+				A10000000000000000000012 /* response_done_test.c */,
+				A70000000000000000000012 /* unsupported_response_test.c */,
+				B1000000000000000000000E /* data */,
+			);
+			name = imap;
+			sourceTree = "<group>";
+		};
+		B1000000000000000000000E /* data */ = {
+			isa = PBXGroup;
+			children = (
+				A90000000000000000000013 /* command-parameters */,
+				A80000000000000000000013 /* command-sender */,
+				A60000000000000000000013 /* response-data */,
+				A10000000000000000000014 /* response-done */,
+				A70000000000000000000013 /* unsupported */,
+			);
+			name = data;
+			sourceTree = "<group>";
+		};
+		B10000000000000000000006 /* imap-utf7 */ = {
+			isa = PBXGroup;
+			children = (
 				A20000000000000000000012 /* imap_utf7_tests.c */,
-				A30000000000000000000011 /* IMFParserTests.m */,
+			);
+			name = "imap-utf7";
+			sourceTree = "<group>";
+		};
+		B10000000000000000000007 /* imf */ = {
+			isa = PBXGroup;
+			children = (
 				A30000000000000000000012 /* parser_test.c */,
 				A30000000000000000000013 /* imf-data */,
-				A40000000000000000000011 /* MIMEParserTests.m */,
+			);
+			name = imf;
+			sourceTree = "<group>";
+		};
+		B10000000000000000000008 /* mime */ = {
+			isa = PBXGroup;
+			children = (
 				A40000000000000000000012 /* MIME parser_test.c */,
-				A50000000000000000000011 /* DataTypesTests.m */,
-				A50000000000000000000012 /* md5_test.c */,
-				A50000000000000000000013 /* CharsetDetectionTests.m */,
-				A50000000000000000000014 /* charset_detection_tests.c */,
-				A50000000000000000000015 /* test_utils.c */,
-				A60000000000000000000011 /* IMAPResponseDataTests.m */,
-				A60000000000000000000012 /* response_data_test.c */,
-				A60000000000000000000013 /* response-data */,
-				A70000000000000000000011 /* IMAPUnsupportedResponseTests.m */,
-				A70000000000000000000012 /* unsupported_response_test.c */,
-				A70000000000000000000013 /* unsupported */,
-				A80000000000000000000011 /* IMAPCommandSenderTests.m */,
-				A80000000000000000000012 /* command_sender_test.c */,
-				A80000000000000000000013 /* command-sender */,
-				A90000000000000000000011 /* IMAPCommandParameterSenderTests.m */,
-				A90000000000000000000012 /* command_parameter_sender_test.c */,
-				A90000000000000000000013 /* command-parameters */,
-				AA0000000000000000000011 /* IMAPIdleTests.m */,
-				AA0000000000000000000012 /* idle_test.c */,
-				AB0000000000000000000011 /* MIMEBuilderTests.m */,
+			);
+			name = mime;
+			sourceTree = "<group>";
+		};
+		B10000000000000000000009 /* mime-builder */ = {
+			isa = PBXGroup;
+			children = (
 				AB0000000000000000000012 /* MIME builder main.c */,
 				AB0000000000000000000013 /* mime_builder_helpers.c */,
-				AC0000000000000000000011 /* MIMEParserSerializationTests.m */,
+			);
+			name = "mime-builder";
+			sourceTree = "<group>";
+		};
+		B1000000000000000000000A /* mime-parser */ = {
+			isa = PBXGroup;
+			children = (
+				AC0000000000000000000014 /* json_writer.c */,
 				AC0000000000000000000012 /* MIME parser serialization main.c */,
 				AC0000000000000000000013 /* mime_serializer.c */,
-				AC0000000000000000000014 /* json_writer.c */,
-				AD0000000000000000000011 /* PlaintextRenderingTests.m */,
-				AD0000000000000000000012 /* plaintext rendering main.c */,
+			);
+			name = "mime-parser";
+			sourceTree = "<group>";
+		};
+		B1000000000000000000000B /* plaintext-rendering */ = {
+			isa = PBXGroup;
+			children = (
 				AD0000000000000000000013 /* html_cleaner.c */,
 				AD0000000000000000000014 /* html_flattener.c */,
 				AD0000000000000000000015 /* html_renderer.c */,
-				AE0000000000000000000011 /* POP3Tests.m */,
-				AE0000000000000000000012 /* POP3 main.c */,
-				AF0000000000000000000011 /* ActiveSyncWBXMLTests.m */,
-				AF0000000000000000000012 /* wbxml_test.c */,
-				AG0000000000000000000011 /* ActiveSyncHTTPTests.m */,
-				AG0000000000000000000012 /* http_test.c */,
-				AH0000000000000000000011 /* ActiveSyncSampleTests.m */,
-				AH0000000000000000000012 /* sample_test.c */,
-				A10000000000000000000012 /* response_done_test.c */,
-				A10000000000000000000013 /* imap_test_utils.c */,
-				A10000000000000000000014 /* response-done */,
-				A10000000000000000000015 /* XCTest.framework */,
-				A10000000000000000000016 /* libetpan.framework */,
+				AD0000000000000000000012 /* plaintext rendering main.c */,
 			);
-			name = XCTest;
+			name = "plaintext-rendering";
+			sourceTree = "<group>";
+		};
+		B1000000000000000000000C /* pop3 */ = {
+			isa = PBXGroup;
+			children = (
+				AE0000000000000000000012 /* POP3 main.c */,
+			);
+			name = pop3;
+			sourceTree = "<group>";
+		};
+		B1000000000000000000000D /* xctest */ = {
+			isa = PBXGroup;
+			children = (
+				AG0000000000000000000011 /* ActiveSyncHTTPTests.m */,
+				AH0000000000000000000011 /* ActiveSyncSampleTests.m */,
+				AF0000000000000000000011 /* ActiveSyncWBXMLTests.m */,
+				A50000000000000000000013 /* CharsetDetectionTests.m */,
+				A50000000000000000000011 /* DataTypesTests.m */,
+				A90000000000000000000011 /* IMAPCommandParameterSenderTests.m */,
+				A80000000000000000000011 /* IMAPCommandSenderTests.m */,
+				AA0000000000000000000011 /* IMAPIdleTests.m */,
+				A60000000000000000000011 /* IMAPResponseDataTests.m */,
+				A10000000000000000000011 /* IMAPResponseDoneTests.m */,
+				A20000000000000000000011 /* IMAPUTF7Tests.m */,
+				A70000000000000000000011 /* IMAPUnsupportedResponseTests.m */,
+				A30000000000000000000011 /* IMFParserTests.m */,
+				AB0000000000000000000011 /* MIMEBuilderTests.m */,
+				AC0000000000000000000011 /* MIMEParserSerializationTests.m */,
+				A40000000000000000000011 /* MIMEParserTests.m */,
+				AE0000000000000000000011 /* POP3Tests.m */,
+				AD0000000000000000000011 /* PlaintextRenderingTests.m */,
+			);
+			name = xctest;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
