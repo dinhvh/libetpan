@@ -35,12 +35,13 @@ You can use flag --with-poll for using poll() instead of select() for checking c
 
 ### Mac / iOS
 
-- Install Xcode, CMake, Autoconf, Automake and Libtool.
-- Initialize the dependency submodules and build their XCFrameworks:
+- Install Xcode and CMake. Autoconf, Automake, and Libtool are optional; when
+  present, the bootstrap refreshes the checked-in autotools output.
+- Configure libEtPan, initialize the dependency submodules, and build their XCFrameworks:
 
-      $ ./build-mac/dependencies/bootstrap.sh
+      $ ./build-mac/bootstrap.sh
 
-- Open `build-mac/libetpan.xcodeproj`
+- Open `build-mac/libetpan.xcworkspace`
 - Choose the correct target "static libetpan" for Mac or "libetpan ios" for iOS.
 - To build all supported slices, choose the "libetpan xcframework" target. The result is written to `build-mac/build/LibEtPan.xcframework`.
 - Build
