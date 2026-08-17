@@ -381,5 +381,9 @@ static int test_upload_and_download(void)
 
 int main(void)
 {
-  return test_upload_and_download() ? 0 : 1;
+  if (!test_upload_and_download())
+    return 1;
+
+  puts("jmap-blob-test: ok");
+  return 0;
 }

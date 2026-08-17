@@ -122,11 +122,7 @@ AM_CONDITIONAL([HAVE_NSURLSESSION], [test "x$have_nsurlsession" = xyes])
 # Check the C compiler.
 AC_PROG_CC
 AC_PROG_CXX
-case "${host}" in
-    *-apple-darwin*)
-        AC_PROG_OBJC
-        ;;
-esac
+AC_PROG_OBJC
 
 # Compiler flags.
 AC_ARG_ENABLE(debug, [AS_HELP_STRING([--enable-debug], [setup flags (gcc) for debugging (default=no)])],
@@ -150,11 +146,15 @@ if test "x$GCC" = xyes; then
 fi
 AC_ARG_ENABLE(syntax, [AS_HELP_STRING([--enable-unstrict-syntax], [be lazy on syntax checking for protocols (default=no)])], , [AC_DEFINE(UNSTRICT_SYNTAX, 1, [Define to be lazy on protocol syntax])])
 
-AH_VERBATIM([CONFIG_H_FIRST], [/* Check for Linux's /usr/include/features.h
+AH_VERBATIM([CONFIG_H_FIRST], [#ifndef LIBETPAN_CONFIG_H_INCLUDED
+#define LIBETPAN_CONFIG_H_INCLUDED
+
+/* Check for Linux's /usr/include/features.h
  */
 #ifdef _FEATURES_H
 #  error  config.h must be first file included
 #endif])
+AH_BOTTOM([#endif /* LIBETPAN_CONFIG_H_INCLUDED */])
 
 AC_C_INLINE
 

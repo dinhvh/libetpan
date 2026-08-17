@@ -74,8 +74,13 @@ libetpan-config.h: libetpan-config.h.in config.h
 	cat $(srcdir)/libetpan-config.h.in | $(CPP) -I$(top_builddir) - \
 	| sed -e '/^#/d;/^[ \t]*$$/d;s/^@/#/' > $@
 
-.PHONY: public-headers-check
+.PHONY: public-headers-check unittest
 public-headers-check: stamp-prepare
 	$(PYTHON) $(top_srcdir)/tools/public_headers.py \
 		--source-root $(top_srcdir) --build-root $(top_builddir) \
 		check --include-dir $(top_builddir)/include/libetpan
+
+unittest:
+	$(MAKE) -C unittest check
+
+check-local: unittest

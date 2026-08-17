@@ -96,6 +96,7 @@ AM_CPPFLAGS = -I$(top_builddir)/include \
 	-I$(top_srcdir)/src/driver/implementation/imap \
 	-I$(top_srcdir)/src/driver/implementation/nntp \
 	-I$(top_srcdir)/src/driver/implementation/pop3 \
+	-include config.h \
 	-include data_message_driver.h \
 	-include maildriver.h \
 	-include imapdriver_types.h \

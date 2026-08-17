@@ -627,9 +627,17 @@ static int test_call_maps_unknown_capability_problem(void)
 
 int main(void)
 {
-  return (test_call_posts_to_api_url() &&
-      test_call_records_method_error_diagnostics() &&
-      test_call_records_problem_diagnostics() &&
-      test_call_records_http_problem_diagnostics() &&
-      test_call_maps_unknown_capability_problem()) ? 0 : 1;
+  if (!test_call_posts_to_api_url())
+    return 1;
+  if (!test_call_records_method_error_diagnostics())
+    return 1;
+  if (!test_call_records_problem_diagnostics())
+    return 1;
+  if (!test_call_records_http_problem_diagnostics())
+    return 1;
+  if (!test_call_maps_unknown_capability_problem())
+    return 1;
+
+  puts("jmap-call-test: ok");
+  return 0;
 }

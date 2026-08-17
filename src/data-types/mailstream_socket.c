@@ -459,7 +459,10 @@ static ssize_t mailstream_low_socket_write(mailstream_low * s,
   {
     ssize_t written;
 
-    written = send(socket_data->fd, buf, count, 0);
+    if (socket_data->use_read)
+      written = write(socket_data->fd, buf, count);
+    else
+      written = send(socket_data->fd, buf, count, 0);
 
 #ifdef WIN32
     if (SOCKET_ERROR == written) {

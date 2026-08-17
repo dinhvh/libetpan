@@ -244,5 +244,6 @@ int main(void)
   if (!test_missing_session_state())
     return 1;
 
+  puts("jmap-response-test: ok");
   return 0;
 }

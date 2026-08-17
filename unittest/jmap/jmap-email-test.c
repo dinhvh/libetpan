@@ -1975,5 +1975,9 @@ static int test_email_query_and_changes(void)
 
 int main(void)
 {
-  return test_email_query_and_changes() ? 0 : 1;
+  if (!test_email_query_and_changes())
+    return 1;
+
+  puts("jmap-email-test: ok");
+  return 0;
 }

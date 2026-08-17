@@ -22,24 +22,48 @@ static int check(int condition, const char * message)
   return 1;
 }
 
+static char * existing_path(const char * filename)
+{
+  char * parent_filename;
+  FILE * f;
+
+  f = fopen(filename, "rb");
+  if (f != NULL) {
+    fclose(f);
+    return strdup(filename);
+  }
+
+  parent_filename = malloc(strlen(filename) + 4);
+  if (parent_filename == NULL)
+    return NULL;
+  strcpy(parent_filename, "../");
+  strcat(parent_filename, filename);
+
+  f = fopen(parent_filename, "rb");
+  if (f != NULL) {
+    fclose(f);
+    return parent_filename;
+  }
+
+  free(parent_filename);
+  return strdup(filename);
+}
+
 static int read_file(const char * filename, char ** result, size_t * result_len)
 {
   FILE * f;
   long size;
   char * data;
-  char * parent_filename;
+  char * path;
 
-  f = fopen(filename, "rb");
+  path = existing_path(filename);
+  if (path == NULL)
+    return -1;
+
+  f = fopen(path, "rb");
+  free(path);
   if (f == NULL) {
-    parent_filename = malloc(strlen(filename) + 4);
-    if (parent_filename == NULL)
-      return -1;
-    strcpy(parent_filename, "../");
-    strcat(parent_filename, filename);
-    f = fopen(parent_filename, "rb");
-    free(parent_filename);
-    if (f == NULL)
-      return -1;
+    return -1;
   }
 
   if (fseek(f, 0, SEEK_END) < 0)
@@ -351,6 +375,8 @@ int smime_test_passphrase_callback_with_backend(enum mailsmime_backend backend)
   static const char cert_filename[] =
       "unittest/smime/fixtures/carol-cert.pem";
   const char * key_filename;
+  char * cert_path;
+  char * key_path;
   struct passphrase_test_context pass_context;
   struct mailsmime * smime;
   struct mailmime * original;
@@ -367,12 +393,16 @@ int smime_test_passphrase_callback_with_backend(enum mailsmime_backend backend)
   original = make_text_part();
   signed_mime = NULL;
   verify_result = NULL;
+  cert_path = existing_path(cert_filename);
+  key_path = existing_path(key_filename);
   pass_context.email = email;
   pass_context.passphrase = passphrase;
   pass_context.called = 0;
 
   ok = check(smime != NULL, "could not create callback S/MIME context") &&
-      check(original != NULL, "could not create callback text MIME part");
+      check(original != NULL, "could not create callback text MIME part") &&
+      check(cert_path != NULL, "could not resolve callback certificate path") &&
+      check(key_path != NULL, "could not resolve callback key path");
   if (!ok)
     goto cleanup;
 
@@ -380,10 +410,10 @@ int smime_test_passphrase_callback_with_backend(enum mailsmime_backend backend)
       &pass_context);
   ok = check(r == MAILSMIME_NO_ERROR, "could not set passphrase callback") &&
       ok;
-  r = mailsmime_add_trusted_cert_file(smime, cert_filename);
+  r = mailsmime_add_trusted_cert_file(smime, cert_path);
   ok = check(r == MAILSMIME_NO_ERROR,
       "could not trust callback certificate") && ok;
-  r = mailsmime_set_private_key_file(smime, email, cert_filename, key_filename,
+  r = mailsmime_set_private_key_file(smime, email, cert_path, key_path,
       NULL);
   ok = check(r == MAILSMIME_NO_ERROR,
       "could not load encrypted private key through callback") && ok;
@@ -407,6 +437,8 @@ int smime_test_passphrase_callback_with_backend(enum mailsmime_backend backend)
   }
 
  cleanup:
+  free(key_path);
+  free(cert_path);
   mailsmime_result_free(verify_result);
   mailsmime_mime_free(signed_mime);
   mailmime_free(original);
@@ -427,6 +459,10 @@ int smime_test_crypto_round_trip_with_backend(enum mailsmime_backend backend)
       "unittest/smime/fixtures/bob-cert.pem";
   const char * key_filename;
   const char * wrong_key_filename;
+  char * cert_path;
+  char * wrong_cert_path;
+  char * key_path;
+  char * wrong_key_path;
   struct mailsmime * smime;
   struct mailsmime * untrusted_smime;
   struct mailsmime * wrong_smime;
@@ -473,27 +509,37 @@ int smime_test_crypto_round_trip_with_backend(enum mailsmime_backend backend)
   tampered_result = NULL;
   signer = NULL;
   pem = NULL;
+  cert_path = existing_path(cert_filename);
+  wrong_cert_path = existing_path(wrong_cert_filename);
+  key_path = existing_path(key_filename);
+  wrong_key_path = existing_path(wrong_key_filename);
 
   ok = check(smime != NULL, "could not create S/MIME context") &&
       check(untrusted_smime != NULL,
           "could not create untrusted S/MIME context") &&
       check(wrong_smime != NULL, "could not create wrong-key S/MIME context") &&
-      check(original != NULL, "could not create text MIME part");
+      check(original != NULL, "could not create text MIME part") &&
+      check(cert_path != NULL, "could not resolve test certificate path") &&
+      check(wrong_cert_path != NULL,
+          "could not resolve wrong certificate path") &&
+      check(key_path != NULL, "could not resolve private key path") &&
+      check(wrong_key_path != NULL,
+          "could not resolve wrong private key path");
   if (!ok)
     goto cleanup;
 
-  r = mailsmime_add_trusted_cert_file(smime, cert_filename);
+  r = mailsmime_add_trusted_cert_file(smime, cert_path);
   ok = check(r == MAILSMIME_NO_ERROR, "could not trust test certificate") && ok;
-  r = mailsmime_add_cert_file(smime, email, cert_filename);
+  r = mailsmime_add_cert_file(smime, email, cert_path);
   ok = check(r == MAILSMIME_NO_ERROR, "could not add recipient cert") && ok;
-  r = mailsmime_set_private_key_file(smime, email, cert_filename, key_filename,
+  r = mailsmime_set_private_key_file(smime, email, cert_path, key_path,
       key_passphrase);
   ok = check(r == MAILSMIME_NO_ERROR, "could not add private key") && ok;
-  r = mailsmime_add_cert_file(smime, wrong_email, wrong_cert_filename);
+  r = mailsmime_add_cert_file(smime, wrong_email, wrong_cert_path);
   ok = check(r == MAILSMIME_NO_ERROR, "could not add second recipient cert") &&
       ok;
   r = mailsmime_set_private_key_file(wrong_smime, wrong_email,
-      wrong_cert_filename, wrong_key_filename, key_passphrase);
+      wrong_cert_path, wrong_key_path, key_passphrase);
   ok = check(r == MAILSMIME_NO_ERROR, "could not add wrong private key") && ok;
   if (!ok)
     goto cleanup;
@@ -582,6 +628,10 @@ int smime_test_crypto_round_trip_with_backend(enum mailsmime_backend backend)
       "multi-recipient MIME was not detected as encrypted") && ok;
 
  cleanup:
+  free(wrong_key_path);
+  free(key_path);
+  free(wrong_cert_path);
+  free(cert_path);
   free(pem);
   mailsmime_certificate_free(signer);
   mailsmime_result_free(tampered_result);

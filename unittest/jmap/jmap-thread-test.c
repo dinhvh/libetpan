@@ -362,5 +362,9 @@ static int test_thread_get_and_changes(void)
 
 int main(void)
 {
-  return test_thread_get_and_changes() ? 0 : 1;
+  if (!test_thread_get_and_changes())
+    return 1;
+
+  puts("jmap-thread-test: ok");
+  return 0;
 }

@@ -758,5 +758,9 @@ int main(void)
   ok = test_fastmail_style_session_fixture() && ok;
   ok = test_get_session_auth_failure() && ok;
 
-  return ok ? 0 : 1;
+  if (!ok)
+    return 1;
+
+  puts("jmap-session-test: ok");
+  return 0;
 }

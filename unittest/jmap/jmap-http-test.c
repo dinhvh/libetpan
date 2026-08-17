@@ -293,5 +293,9 @@ int main(void)
   ok = test_request_response_helpers() && ok;
   ok = test_fake_transport() && ok;
 
-  return ok ? 0 : 1;
+  if (!ok)
+    return 1;
+
+  puts("jmap-http-test: ok");
+  return 0;
 }

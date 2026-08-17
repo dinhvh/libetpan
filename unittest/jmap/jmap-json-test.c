@@ -346,5 +346,9 @@ int main(void)
   ok = test_build_scalars_and_sorted_serialize() && ok;
   ok = test_integer_creation_bounds() && ok;
 
-  return ok ? 0 : 1;
+  if (!ok)
+    return 1;
+
+  puts("jmap-json-test: ok");
+  return 0;
 }

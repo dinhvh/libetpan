@@ -341,7 +341,13 @@ static int test_request_result_reference(void)
 
 int main(void)
 {
-  return (test_request_convenience_helpers() &&
-      test_request_serialize() &&
-      test_request_result_reference()) ? 0 : 1;
+  if (!test_request_convenience_helpers())
+    return 1;
+  if (!test_request_serialize())
+    return 1;
+  if (!test_request_result_reference())
+    return 1;
+
+  puts("jmap-request-test: ok");
+  return 0;
 }

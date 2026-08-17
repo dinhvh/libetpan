@@ -152,6 +152,7 @@ static int test_list_ignores_zero_message_number(const char ** failure_message)
     *failure_message = "could not open the POP3 client mailstream";
     goto cleanup;
   }
+  mailstream_socket_set_use_read(stream, 1);
   sockets[0] = -1;
 
   pop3 = mailpop3_new(0, NULL);

@@ -894,5 +894,6 @@ int main(void)
   if (!test_mailbox_changes_and_query())
     return 1;
 
+  puts("jmap-mailbox-test: ok");
   return 0;
 }
