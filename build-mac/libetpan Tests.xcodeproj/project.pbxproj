@@ -211,22 +211,22 @@
 		AF0000000000000000000002 /* wbxml_test.c in Sources */ = {isa = PBXBuildFile; fileRef = AF0000000000000000000012 /* wbxml_test.c */; settings = {COMPILER_FLAGS = "-DACTIVESYNC_WBXML_NO_MAIN"; }; };
 		AG0000000000000000000001 /* ActiveSyncHTTPTests.m in Sources */ = {isa = PBXBuildFile; fileRef = AG0000000000000000000011 /* ActiveSyncHTTPTests.m */; };
 		AG0000000000000000000002 /* http_test.c in Sources */ = {isa = PBXBuildFile; fileRef = AG0000000000000000000012 /* http_test.c */; settings = {COMPILER_FLAGS = "-DACTIVESYNC_HTTP_NO_MAIN"; }; };
-		C10000000000000000000001 /* MovedUnitTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C10000000000000000000101 /* MovedUnitTests.m */; };
-		C10000000000000000000002 /* http_test.c in Sources */ = {isa = PBXBuildFile; fileRef = C10000000000000000000102 /* http_test.c */; settings = {COMPILER_FLAGS = "-Dmain=gmail_http_test_main"; }; };
-		C10000000000000000000003 /* jmap-blob-test.c in Sources */ = {isa = PBXBuildFile; fileRef = C10000000000000000000103 /* jmap-blob-test.c */; settings = {COMPILER_FLAGS = "-Dmain=jmap_blob_test_main"; }; };
-		C10000000000000000000004 /* jmap-call-test.c in Sources */ = {isa = PBXBuildFile; fileRef = C10000000000000000000104 /* jmap-call-test.c */; settings = {COMPILER_FLAGS = "-Dmain=jmap_call_test_main"; }; };
-		C10000000000000000000005 /* jmap-email-test.c in Sources */ = {isa = PBXBuildFile; fileRef = C10000000000000000000105 /* jmap-email-test.c */; settings = {COMPILER_FLAGS = "-Dmain=jmap_email_test_main"; }; };
-		C10000000000000000000006 /* jmap-http-test.c in Sources */ = {isa = PBXBuildFile; fileRef = C10000000000000000000106 /* jmap-http-test.c */; settings = {COMPILER_FLAGS = "-Dmain=jmap_http_test_main"; }; };
-		C10000000000000000000007 /* jmap-json-test.c in Sources */ = {isa = PBXBuildFile; fileRef = C10000000000000000000107 /* jmap-json-test.c */; settings = {COMPILER_FLAGS = "-Dmain=jmap_json_test_main"; }; };
-		C10000000000000000000008 /* jmap-mailbox-test.c in Sources */ = {isa = PBXBuildFile; fileRef = C10000000000000000000108 /* jmap-mailbox-test.c */; settings = {COMPILER_FLAGS = "-Dmain=jmap_mailbox_test_main"; }; };
-		C10000000000000000000009 /* jmap-request-test.c in Sources */ = {isa = PBXBuildFile; fileRef = C10000000000000000000109 /* jmap-request-test.c */; settings = {COMPILER_FLAGS = "-Dmain=jmap_request_test_main"; }; };
-		C1000000000000000000000A /* jmap-response-test.c in Sources */ = {isa = PBXBuildFile; fileRef = C1000000000000000000010A /* jmap-response-test.c */; settings = {COMPILER_FLAGS = "-Dmain=jmap_response_test_main"; }; };
-		C1000000000000000000000B /* jmap-session-test.c in Sources */ = {isa = PBXBuildFile; fileRef = C1000000000000000000010B /* jmap-session-test.c */; settings = {COMPILER_FLAGS = "-Dmain=jmap_session_test_main"; }; };
-		C1000000000000000000000C /* jmap-thread-test.c in Sources */ = {isa = PBXBuildFile; fileRef = C1000000000000000000010C /* jmap-thread-test.c */; settings = {COMPILER_FLAGS = "-Dmain=jmap_thread_test_main"; }; };
-		C1000000000000000000000D /* mailpgp_low_level_test.c in Sources */ = {isa = PBXBuildFile; fileRef = C1000000000000000000010D /* mailpgp_low_level_test.c */; settings = {COMPILER_FLAGS = "-Dmain=mailpgp_low_level_test_main"; }; };
-		C1000000000000000000000E /* smime_low_level_test.c in Sources */ = {isa = PBXBuildFile; fileRef = C1000000000000000000010E /* smime_low_level_test.c */; settings = {COMPILER_FLAGS = "-DUSE_SMIME_APPLE -Dmain=smime_low_level_test_main"; }; };
 		AH0000000000000000000001 /* ActiveSyncSampleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = AH0000000000000000000011 /* ActiveSyncSampleTests.m */; };
 		AH0000000000000000000002 /* sample_test.c in Sources */ = {isa = PBXBuildFile; fileRef = AH0000000000000000000012 /* sample_test.c */; settings = {COMPILER_FLAGS = "-DACTIVESYNC_SAMPLE_NO_MAIN"; }; };
+		C10000000000000000000003 /* JMAPBlobTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C10000000000000000000103 /* JMAPBlobTests.m */; };
+		C10000000000000000000004 /* JMAPCallTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C10000000000000000000104 /* JMAPCallTests.m */; };
+		C10000000000000000000005 /* JMAPEmailTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C10000000000000000000105 /* JMAPEmailTests.m */; };
+		C10000000000000000000006 /* JMAPHTTPTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C10000000000000000000106 /* JMAPHTTPTests.m */; };
+		C10000000000000000000007 /* JMAPJSONTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C10000000000000000000107 /* JMAPJSONTests.m */; };
+		C10000000000000000000008 /* JMAPMailboxTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C10000000000000000000108 /* JMAPMailboxTests.m */; };
+		C10000000000000000000009 /* JMAPRequestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C10000000000000000000109 /* JMAPRequestTests.m */; };
+		C1000000000000000000000A /* JMAPResponseTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C1000000000000000000010A /* JMAPResponseTests.m */; };
+		C1000000000000000000000B /* JMAPSessionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C1000000000000000000010B /* JMAPSessionTests.m */; };
+		C1000000000000000000000C /* JMAPThreadTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C1000000000000000000010C /* JMAPThreadTests.m */; };
+		C1000000000000000000000D /* MailPGPTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C1000000000000000000010D /* MailPGPTests.m */; };
+		C1000000000000000000000E /* smime_low_level_test.c in Sources */ = {isa = PBXBuildFile; fileRef = C1000000000000000000010E /* smime_low_level_test.c */; settings = {COMPILER_FLAGS = "-DUSE_SMIME_APPLE -DSMIME_LOW_LEVEL_NO_MAIN"; }; };
+		C20000000000000000000001 /* GmailTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C20000000000000000000101 /* GmailTests.m */; };
+		C30000000000000000000001 /* SMIMETests.m in Sources */ = {isa = PBXBuildFile; fileRef = C30000000000000000000101 /* SMIMETests.m */; };
 		C6ED6CF917A1862C00A4A14C /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6ED6CF817A1862C00A4A14C /* Security.framework */; };
 		C6ED6CFA17A1863E00A4A14C /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6ED6CF817A1862C00A4A14C /* Security.framework */; };
 		C6ED6CFB17A1865600A4A14C /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6ED6CF817A1862C00A4A14C /* Security.framework */; };
@@ -601,22 +601,22 @@
 		AF0000000000000000000012 /* wbxml_test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = wbxml_test.c; path = ../unittest/activesync/wbxml_test.c; sourceTree = SOURCE_ROOT; };
 		AG0000000000000000000011 /* ActiveSyncHTTPTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = ActiveSyncHTTPTests.m; path = ../unittest/xctest/ActiveSyncHTTPTests.m; sourceTree = SOURCE_ROOT; };
 		AG0000000000000000000012 /* http_test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = http_test.c; path = ../unittest/activesync/http_test.c; sourceTree = SOURCE_ROOT; };
-		C10000000000000000000101 /* MovedUnitTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = MovedUnitTests.m; path = ../unittest/xctest/MovedUnitTests.m; sourceTree = SOURCE_ROOT; };
-		C10000000000000000000102 /* http_test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = http_test.c; path = ../unittest/gmail/http_test.c; sourceTree = SOURCE_ROOT; };
-		C10000000000000000000103 /* jmap-blob-test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = "jmap-blob-test.c"; path = "../unittest/jmap/jmap-blob-test.c"; sourceTree = SOURCE_ROOT; };
-		C10000000000000000000104 /* jmap-call-test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = "jmap-call-test.c"; path = "../unittest/jmap/jmap-call-test.c"; sourceTree = SOURCE_ROOT; };
-		C10000000000000000000105 /* jmap-email-test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = "jmap-email-test.c"; path = "../unittest/jmap/jmap-email-test.c"; sourceTree = SOURCE_ROOT; };
-		C10000000000000000000106 /* jmap-http-test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = "jmap-http-test.c"; path = "../unittest/jmap/jmap-http-test.c"; sourceTree = SOURCE_ROOT; };
-		C10000000000000000000107 /* jmap-json-test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = "jmap-json-test.c"; path = "../unittest/jmap/jmap-json-test.c"; sourceTree = SOURCE_ROOT; };
-		C10000000000000000000108 /* jmap-mailbox-test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = "jmap-mailbox-test.c"; path = "../unittest/jmap/jmap-mailbox-test.c"; sourceTree = SOURCE_ROOT; };
-		C10000000000000000000109 /* jmap-request-test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = "jmap-request-test.c"; path = "../unittest/jmap/jmap-request-test.c"; sourceTree = SOURCE_ROOT; };
-		C1000000000000000000010A /* jmap-response-test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = "jmap-response-test.c"; path = "../unittest/jmap/jmap-response-test.c"; sourceTree = SOURCE_ROOT; };
-		C1000000000000000000010B /* jmap-session-test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = "jmap-session-test.c"; path = "../unittest/jmap/jmap-session-test.c"; sourceTree = SOURCE_ROOT; };
-		C1000000000000000000010C /* jmap-thread-test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = "jmap-thread-test.c"; path = "../unittest/jmap/jmap-thread-test.c"; sourceTree = SOURCE_ROOT; };
-		C1000000000000000000010D /* mailpgp_low_level_test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = mailpgp_low_level_test.c; path = ../unittest/mailpgp/mailpgp_low_level_test.c; sourceTree = SOURCE_ROOT; };
-		C1000000000000000000010E /* smime_low_level_test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = smime_low_level_test.c; path = ../unittest/smime/smime_low_level_test.c; sourceTree = SOURCE_ROOT; };
 		AH0000000000000000000011 /* ActiveSyncSampleTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = ActiveSyncSampleTests.m; path = ../unittest/xctest/ActiveSyncSampleTests.m; sourceTree = SOURCE_ROOT; };
 		AH0000000000000000000012 /* sample_test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = sample_test.c; path = ../unittest/activesync/sample_test.c; sourceTree = SOURCE_ROOT; };
+		C10000000000000000000103 /* JMAPBlobTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = JMAPBlobTests.m; path = ../unittest/xctest/JMAPBlobTests.m; sourceTree = SOURCE_ROOT; };
+		C10000000000000000000104 /* JMAPCallTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = JMAPCallTests.m; path = ../unittest/xctest/JMAPCallTests.m; sourceTree = SOURCE_ROOT; };
+		C10000000000000000000105 /* JMAPEmailTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = JMAPEmailTests.m; path = ../unittest/xctest/JMAPEmailTests.m; sourceTree = SOURCE_ROOT; };
+		C10000000000000000000106 /* JMAPHTTPTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = JMAPHTTPTests.m; path = ../unittest/xctest/JMAPHTTPTests.m; sourceTree = SOURCE_ROOT; };
+		C10000000000000000000107 /* JMAPJSONTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = JMAPJSONTests.m; path = ../unittest/xctest/JMAPJSONTests.m; sourceTree = SOURCE_ROOT; };
+		C10000000000000000000108 /* JMAPMailboxTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = JMAPMailboxTests.m; path = ../unittest/xctest/JMAPMailboxTests.m; sourceTree = SOURCE_ROOT; };
+		C10000000000000000000109 /* JMAPRequestTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = JMAPRequestTests.m; path = ../unittest/xctest/JMAPRequestTests.m; sourceTree = SOURCE_ROOT; };
+		C1000000000000000000010A /* JMAPResponseTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = JMAPResponseTests.m; path = ../unittest/xctest/JMAPResponseTests.m; sourceTree = SOURCE_ROOT; };
+		C1000000000000000000010B /* JMAPSessionTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = JMAPSessionTests.m; path = ../unittest/xctest/JMAPSessionTests.m; sourceTree = SOURCE_ROOT; };
+		C1000000000000000000010C /* JMAPThreadTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = JMAPThreadTests.m; path = ../unittest/xctest/JMAPThreadTests.m; sourceTree = SOURCE_ROOT; };
+		C1000000000000000000010D /* MailPGPTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = MailPGPTests.m; path = ../unittest/xctest/MailPGPTests.m; sourceTree = SOURCE_ROOT; };
+		C1000000000000000000010E /* smime_low_level_test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = smime_low_level_test.c; path = ../unittest/smime/smime_low_level_test.c; sourceTree = SOURCE_ROOT; };
+		C20000000000000000000101 /* GmailTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = GmailTests.m; path = ../unittest/xctest/GmailTests.m; sourceTree = SOURCE_ROOT; };
+		C30000000000000000000101 /* SMIMETests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = SMIMETests.m; path = ../unittest/xctest/SMIMETests.m; sourceTree = SOURCE_ROOT; };
 		C6ED6CF817A1862C00A4A14C /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		C6ED6D0817A1883000A4A14C /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = System/Library/Frameworks/CoreServices.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -1097,50 +1097,11 @@
 			name = pop3;
 			sourceTree = "<group>";
 		};
-		C10000000000000000000201 /* gmail */ = {
-			isa = PBXGroup;
-			children = (
-				C10000000000000000000102 /* http_test.c */,
-			);
-			name = gmail;
-			sourceTree = "<group>";
-		};
-		C10000000000000000000202 /* jmap */ = {
-			isa = PBXGroup;
-			children = (
-				C10000000000000000000103 /* jmap-blob-test.c */,
-				C10000000000000000000104 /* jmap-call-test.c */,
-				C10000000000000000000105 /* jmap-email-test.c */,
-				C10000000000000000000106 /* jmap-http-test.c */,
-				C10000000000000000000107 /* jmap-json-test.c */,
-				C10000000000000000000108 /* jmap-mailbox-test.c */,
-				C10000000000000000000109 /* jmap-request-test.c */,
-				C1000000000000000000010A /* jmap-response-test.c */,
-				C1000000000000000000010B /* jmap-session-test.c */,
-				C1000000000000000000010C /* jmap-thread-test.c */,
-			);
-			name = jmap;
-			sourceTree = "<group>";
-		};
-		C10000000000000000000203 /* mailpgp */ = {
-			isa = PBXGroup;
-			children = (
-				C1000000000000000000010D /* mailpgp_low_level_test.c */,
-			);
-			name = mailpgp;
-			sourceTree = "<group>";
-		};
-		C10000000000000000000204 /* smime */ = {
-			isa = PBXGroup;
-			children = (
-				C1000000000000000000010E /* smime_low_level_test.c */,
-			);
-			name = smime;
-			sourceTree = "<group>";
-		};
 		B1000000000000000000000D /* xctest */ = {
 			isa = PBXGroup;
 			children = (
+				C20000000000000000000101 /* GmailTests.m */,
+				C30000000000000000000101 /* SMIMETests.m */,
 				AG0000000000000000000011 /* ActiveSyncHTTPTests.m */,
 				AH0000000000000000000011 /* ActiveSyncSampleTests.m */,
 				AF0000000000000000000011 /* ActiveSyncWBXMLTests.m */,
@@ -1156,7 +1117,6 @@
 				A30000000000000000000011 /* IMFParserTests.m */,
 				AB0000000000000000000011 /* MIMEBuilderTests.m */,
 				AC0000000000000000000011 /* MIMEParserSerializationTests.m */,
-				C10000000000000000000101 /* MovedUnitTests.m */,
 				A40000000000000000000011 /* MIMEParserTests.m */,
 				AE0000000000000000000011 /* POP3Tests.m */,
 				AD0000000000000000000011 /* PlaintextRenderingTests.m */,
@@ -1174,6 +1134,46 @@
 				A70000000000000000000013 /* unsupported */,
 			);
 			name = data;
+			sourceTree = "<group>";
+		};
+		C10000000000000000000201 /* gmail */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = gmail;
+			sourceTree = "<group>";
+		};
+		C10000000000000000000202 /* jmap */ = {
+			isa = PBXGroup;
+			children = (
+				C10000000000000000000103 /* JMAPBlobTests.m */,
+				C10000000000000000000104 /* JMAPCallTests.m */,
+				C10000000000000000000105 /* JMAPEmailTests.m */,
+				C10000000000000000000106 /* JMAPHTTPTests.m */,
+				C10000000000000000000107 /* JMAPJSONTests.m */,
+				C10000000000000000000108 /* JMAPMailboxTests.m */,
+				C10000000000000000000109 /* JMAPRequestTests.m */,
+				C1000000000000000000010A /* JMAPResponseTests.m */,
+				C1000000000000000000010B /* JMAPSessionTests.m */,
+				C1000000000000000000010C /* JMAPThreadTests.m */,
+			);
+			name = jmap;
+			sourceTree = "<group>";
+		};
+		C10000000000000000000203 /* mailpgp */ = {
+			isa = PBXGroup;
+			children = (
+				C1000000000000000000010D /* MailPGPTests.m */,
+			);
+			name = mailpgp;
+			sourceTree = "<group>";
+		};
+		C10000000000000000000204 /* smime */ = {
+			isa = PBXGroup;
+			children = (
+				C1000000000000000000010E /* smime_low_level_test.c */,
+			);
+			name = smime;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1782,20 +1782,20 @@
 				AG0000000000000000000002 /* http_test.c in Sources */,
 				AH0000000000000000000001 /* ActiveSyncSampleTests.m in Sources */,
 				AH0000000000000000000002 /* sample_test.c in Sources */,
-				C10000000000000000000001 /* MovedUnitTests.m in Sources */,
-				C10000000000000000000002 /* http_test.c in Sources */,
-				C10000000000000000000003 /* jmap-blob-test.c in Sources */,
-				C10000000000000000000004 /* jmap-call-test.c in Sources */,
-				C10000000000000000000005 /* jmap-email-test.c in Sources */,
-				C10000000000000000000006 /* jmap-http-test.c in Sources */,
-				C10000000000000000000007 /* jmap-json-test.c in Sources */,
-				C10000000000000000000008 /* jmap-mailbox-test.c in Sources */,
-				C10000000000000000000009 /* jmap-request-test.c in Sources */,
-				C1000000000000000000000A /* jmap-response-test.c in Sources */,
-				C1000000000000000000000B /* jmap-session-test.c in Sources */,
-				C1000000000000000000000C /* jmap-thread-test.c in Sources */,
-				C1000000000000000000000D /* mailpgp_low_level_test.c in Sources */,
+				C20000000000000000000001 /* GmailTests.m in Sources */,
+				C10000000000000000000003 /* JMAPBlobTests.m in Sources */,
+				C10000000000000000000004 /* JMAPCallTests.m in Sources */,
+				C10000000000000000000005 /* JMAPEmailTests.m in Sources */,
+				C10000000000000000000006 /* JMAPHTTPTests.m in Sources */,
+				C10000000000000000000007 /* JMAPJSONTests.m in Sources */,
+				C10000000000000000000008 /* JMAPMailboxTests.m in Sources */,
+				C10000000000000000000009 /* JMAPRequestTests.m in Sources */,
+				C1000000000000000000000A /* JMAPResponseTests.m in Sources */,
+				C1000000000000000000000B /* JMAPSessionTests.m in Sources */,
+				C1000000000000000000000C /* JMAPThreadTests.m in Sources */,
+				C1000000000000000000000D /* MailPGPTests.m in Sources */,
 				C1000000000000000000000E /* smime_low_level_test.c in Sources */,
+				C30000000000000000000001 /* SMIMETests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2167,6 +2167,10 @@
 				CODE_SIGNING_ALLOWED = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(BUILT_PRODUCTS_DIR)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"USE_SMIME_OPENSSL=1",
+				);
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/../include/libetpan",
@@ -2218,6 +2222,10 @@
 				CODE_SIGNING_ALLOWED = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(BUILT_PRODUCTS_DIR)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"USE_SMIME_OPENSSL=1",
+				);
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/../include/libetpan",

@@ -14,8 +14,17 @@ extern "C" {
 #include <libetpan/mailimf_types.h>
 #include <libetpan/mailmime.h>
 
+enum mailsmime_backend {
+  MAILSMIME_BACKEND_DEFAULT,
+  MAILSMIME_BACKEND_APPLE,
+  MAILSMIME_BACKEND_OPENSSL
+};
+
 LIBETPAN_EXPORT
 struct mailsmime * mailsmime_new(void);
+
+LIBETPAN_EXPORT
+struct mailsmime * mailsmime_new_with_backend(enum mailsmime_backend backend);
 
 LIBETPAN_EXPORT
 void mailsmime_free(struct mailsmime * smime);

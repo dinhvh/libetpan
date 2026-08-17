@@ -17,10 +17,12 @@
 
 #include <ctype.h>
 #include <limits.h>
+#include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
+#include <unistd.h>
 
 #ifdef USE_SMIME_OPENSSL
 #include <openssl/asn1.h>
@@ -29,6 +31,9 @@
 #include <openssl/err.h>
 #include <openssl/evp.h>
 #include <openssl/pem.h>
+#if OPENSSL_VERSION_MAJOR >= 3
+#include <openssl/provider.h>
+#endif
 #include <openssl/x509.h>
 #include <openssl/x509_vfy.h>
 #include <openssl/x509v3.h>
@@ -40,6 +45,7 @@
 #include <Security/Security.h>
 #include <Security/CMSDecoder.h>
 #include <Security/CMSEncoder.h>
+#include <Security/SecCertificateOIDs.h>
 #include <Security/SecImportExport.h>
 #endif
 
@@ -47,10 +53,10 @@ struct mailsmime_cert_entry {
   char * email;
   char * filename;
 #ifdef USE_SMIME_OPENSSL
-  X509 * cert;
+  X509 * openssl_cert;
 #endif
 #ifdef USE_SMIME_APPLE
-  SecCertificateRef cert;
+  SecCertificateRef apple_cert;
 #endif
 };
 
@@ -60,34 +66,46 @@ struct mailsmime_key_entry {
   char * key_filename;
   char * passphrase;
 #ifdef USE_SMIME_OPENSSL
-  X509 * cert;
-  EVP_PKEY * key;
+  X509 * openssl_cert;
+  EVP_PKEY * openssl_key;
 #endif
 #ifdef USE_SMIME_APPLE
-  SecCertificateRef cert;
-  SecIdentityRef identity;
+  SecCertificateRef apple_cert;
+  SecIdentityRef apple_identity;
 #endif
 };
 
 struct mailsmime {
+  enum mailsmime_backend backend;
   clist * certs;
   clist * keys;
   mailsmime_passphrase_callback passphrase_callback;
   void * passphrase_context;
 #ifdef USE_SMIME_OPENSSL
-  X509_STORE * store;
+  X509_STORE * openssl_store;
+#if OPENSSL_VERSION_MAJOR >= 3
+  OSSL_PROVIDER * openssl_default_provider;
+#endif
 #endif
 #ifdef USE_SMIME_APPLE
-  CFMutableArrayRef trusted_certs;
+  CFMutableArrayRef apple_trusted_certs;
+  SecKeychainRef apple_keychain;
+  char * apple_keychain_path;
 #endif
 };
 
+#ifdef USE_SMIME_APPLE
+static const char apple_temp_keychain_password[] =
+    "libetpan-smime-temporary";
+#endif
+
 struct mailsmime_certificate {
+  enum mailsmime_backend backend;
 #ifdef USE_SMIME_OPENSSL
-  X509 * cert;
+  X509 * openssl_cert;
 #endif
 #ifdef USE_SMIME_APPLE
-  SecCertificateRef cert;
+  SecCertificateRef apple_cert;
 #endif
   char * email;
   char * name;
@@ -338,12 +356,12 @@ static void cert_entry_free(struct mailsmime_cert_entry * entry)
   free(entry->email);
   free(entry->filename);
 #ifdef USE_SMIME_OPENSSL
-  if (entry->cert != NULL)
-    X509_free(entry->cert);
+  if (entry->openssl_cert != NULL)
+    X509_free(entry->openssl_cert);
 #endif
 #ifdef USE_SMIME_APPLE
-  if (entry->cert != NULL)
-    CFRelease(entry->cert);
+  if (entry->apple_cert != NULL)
+    CFRelease(entry->apple_cert);
 #endif
   free(entry);
 }
@@ -363,16 +381,16 @@ static void key_entry_free(struct mailsmime_key_entry * entry)
   free(entry->key_filename);
   free(entry->passphrase);
 #ifdef USE_SMIME_OPENSSL
-  if (entry->cert != NULL)
-    X509_free(entry->cert);
-  if (entry->key != NULL)
-    EVP_PKEY_free(entry->key);
+  if (entry->openssl_cert != NULL)
+    X509_free(entry->openssl_cert);
+  if (entry->openssl_key != NULL)
+    EVP_PKEY_free(entry->openssl_key);
 #endif
 #ifdef USE_SMIME_APPLE
-  if (entry->cert != NULL)
-    CFRelease(entry->cert);
-  if (entry->identity != NULL)
-    CFRelease(entry->identity);
+  if (entry->apple_cert != NULL)
+    CFRelease(entry->apple_cert);
+  if (entry->apple_identity != NULL)
+    CFRelease(entry->apple_identity);
 #endif
   free(entry);
 }
@@ -385,11 +403,38 @@ static void key_entry_free_func(void * value, void * data)
 
 struct mailsmime * mailsmime_new(void)
 {
+  return mailsmime_new_with_backend(MAILSMIME_BACKEND_DEFAULT);
+}
+
+struct mailsmime * mailsmime_new_with_backend(enum mailsmime_backend backend)
+{
   struct mailsmime * smime;
+
+  if (backend == MAILSMIME_BACKEND_DEFAULT) {
+#ifdef USE_SMIME_APPLE
+    backend = MAILSMIME_BACKEND_APPLE;
+#elif defined(USE_SMIME_OPENSSL)
+    backend = MAILSMIME_BACKEND_OPENSSL;
+#else
+    return NULL;
+#endif
+  }
+#ifndef USE_SMIME_APPLE
+  if (backend == MAILSMIME_BACKEND_APPLE)
+    return NULL;
+#endif
+#ifndef USE_SMIME_OPENSSL
+  if (backend == MAILSMIME_BACKEND_OPENSSL)
+    return NULL;
+#endif
+  if (backend != MAILSMIME_BACKEND_APPLE &&
+      backend != MAILSMIME_BACKEND_OPENSSL)
+    return NULL;
 
   smime = calloc(1, sizeof(* smime));
   if (smime == NULL)
     return NULL;
+  smime->backend = backend;
 
   smime->certs = clist_new();
   smime->keys = clist_new();
@@ -397,18 +442,43 @@ struct mailsmime * mailsmime_new(void)
     goto err;
 
 #ifdef USE_SMIME_OPENSSL
-  smime->store = X509_STORE_new();
-  if (smime->store == NULL)
-    goto err;
-#ifdef X509_V_FLAG_PARTIAL_CHAIN
-  X509_STORE_set_flags(smime->store, X509_V_FLAG_PARTIAL_CHAIN);
+  if (backend == MAILSMIME_BACKEND_OPENSSL) {
+#if OPENSSL_VERSION_MAJOR >= 3
+    smime->openssl_default_provider = OSSL_PROVIDER_load(NULL, "default");
+    if (smime->openssl_default_provider == NULL)
+      goto err;
 #endif
+    smime->openssl_store = X509_STORE_new();
+    if (smime->openssl_store == NULL)
+      goto err;
+#ifdef X509_V_FLAG_PARTIAL_CHAIN
+    X509_STORE_set_flags(smime->openssl_store, X509_V_FLAG_PARTIAL_CHAIN);
+#endif
+  }
 #endif
 #ifdef USE_SMIME_APPLE
-  smime->trusted_certs = CFArrayCreateMutable(NULL, 0,
-      &kCFTypeArrayCallBacks);
-  if (smime->trusted_certs == NULL)
-    goto err;
+  if (backend == MAILSMIME_BACKEND_APPLE) {
+    char path[] = "/tmp/libetpan-smime-keychain-XXXXXX";
+    int fd;
+
+    fd = mkstemp(path);
+    if (fd < 0)
+      goto err;
+    close(fd);
+    unlink(path);
+    if (SecKeychainCreate(path,
+        (UInt32) strlen(apple_temp_keychain_password),
+        apple_temp_keychain_password, false, NULL,
+        &smime->apple_keychain) != errSecSuccess)
+      goto err;
+    smime->apple_keychain_path = strdup(path);
+    if (smime->apple_keychain_path == NULL)
+      goto err;
+    smime->apple_trusted_certs = CFArrayCreateMutable(NULL, 0,
+        &kCFTypeArrayCallBacks);
+    if (smime->apple_trusted_certs == NULL)
+      goto err;
+  }
 #endif
 
   return smime;
@@ -432,12 +502,24 @@ void mailsmime_free(struct mailsmime * smime)
     clist_free(smime->keys);
   }
 #ifdef USE_SMIME_OPENSSL
-  if (smime->store != NULL)
-    X509_STORE_free(smime->store);
+  if (smime->openssl_store != NULL)
+    X509_STORE_free(smime->openssl_store);
+#if OPENSSL_VERSION_MAJOR >= 3
+  if (smime->openssl_default_provider != NULL)
+    OSSL_PROVIDER_unload(smime->openssl_default_provider);
+#endif
 #endif
 #ifdef USE_SMIME_APPLE
-  if (smime->trusted_certs != NULL)
-    CFRelease(smime->trusted_certs);
+  if (smime->apple_trusted_certs != NULL)
+    CFRelease(smime->apple_trusted_certs);
+  if (smime->apple_keychain != NULL) {
+    SecKeychainDelete(smime->apple_keychain);
+    CFRelease(smime->apple_keychain);
+  }
+  if (smime->apple_keychain_path != NULL) {
+    unlink(smime->apple_keychain_path);
+    free(smime->apple_keychain_path);
+  }
 #endif
   free(smime);
 }
@@ -505,6 +587,66 @@ static EVP_PKEY * load_key_file(const char * filename, const char * passphrase)
 #endif
 
 #ifdef USE_SMIME_APPLE
+static pthread_mutex_t apple_keychain_search_mutex = PTHREAD_MUTEX_INITIALIZER;
+
+static int apple_push_keychain_search(SecKeychainRef keychain,
+    CFArrayRef * previous, SecKeychainRef * previous_default)
+{
+  CFArrayRef current;
+  CFMutableArrayRef updated;
+
+  current = NULL;
+  pthread_mutex_lock(&apple_keychain_search_mutex);
+  if (SecKeychainUnlock(keychain,
+      (UInt32) strlen(apple_temp_keychain_password),
+      apple_temp_keychain_password, true) != errSecSuccess)
+    goto err;
+  if (SecKeychainCopySearchList(&current) != errSecSuccess)
+    goto err;
+  updated = CFArrayCreateMutable(NULL, 1, &kCFTypeArrayCallBacks);
+  if (updated == NULL)
+    goto err;
+  CFArrayAppendValue(updated, keychain);
+  if (SecKeychainSetSearchList(updated) != errSecSuccess) {
+    CFRelease(updated);
+    goto err;
+  }
+  * previous_default = NULL;
+  if (SecKeychainCopyDefault(previous_default) != errSecSuccess ||
+      SecKeychainSetDefault(keychain) != errSecSuccess) {
+    SecKeychainSetSearchList(current);
+    CFRelease(updated);
+    goto err;
+  }
+  CFRelease(updated);
+  * previous = current;
+  return MAILSMIME_NO_ERROR;
+
+ err:
+  if ((previous_default != NULL) && (* previous_default != NULL)) {
+    CFRelease(* previous_default);
+    * previous_default = NULL;
+  }
+  if (current != NULL)
+    CFRelease(current);
+  pthread_mutex_unlock(&apple_keychain_search_mutex);
+  return MAILSMIME_ERROR_PRIVATE_KEY;
+}
+
+static void apple_pop_keychain_search(CFArrayRef previous,
+    SecKeychainRef previous_default)
+{
+  if (previous_default != NULL) {
+    SecKeychainSetDefault(previous_default);
+    CFRelease(previous_default);
+  }
+  if (previous != NULL) {
+    SecKeychainSetSearchList(previous);
+    CFRelease(previous);
+  }
+  pthread_mutex_unlock(&apple_keychain_search_mutex);
+}
+
 static int read_file_to_mem(const char * filename, char ** result,
     size_t * result_len)
 {
@@ -570,12 +712,35 @@ static SecCertificateRef apple_load_cert_file(const char * filename)
     return NULL;
 
   cert = SecCertificateCreateWithData(NULL, data);
+  if (cert == NULL) {
+    SecExternalFormat format;
+    SecExternalItemType item_type;
+    SecItemImportExportKeyParameters params;
+    CFArrayRef items;
+
+    format = kSecFormatUnknown;
+    item_type = kSecItemTypeCertificate;
+    memset(&params, 0, sizeof(params));
+    params.version = SEC_KEY_IMPORT_EXPORT_PARAMS_VERSION;
+    items = NULL;
+    if (SecItemImport(data, NULL, &format, &item_type, 0, &params, NULL,
+        &items) == errSecSuccess && items != NULL &&
+        CFArrayGetCount(items) > 0) {
+      CFTypeRef item;
+
+      item = CFArrayGetValueAtIndex(items, 0);
+      if (item != NULL && CFGetTypeID(item) == SecCertificateGetTypeID())
+        cert = (SecCertificateRef) CFRetain(item);
+    }
+    if (items != NULL)
+      CFRelease(items);
+  }
   CFRelease(data);
   return cert;
 }
 
 static int apple_import_items_from_file(const char * filename,
-    const char * passphrase, CFArrayRef * result)
+    const char * passphrase, SecKeychainRef keychain, CFArrayRef * result)
 {
   CFDataRef data;
   CFArrayRef items;
@@ -583,6 +748,7 @@ static int apple_import_items_from_file(const char * filename,
   SecExternalItemType item_type;
   SecItemImportExportKeyParameters params;
   CFStringRef cf_passphrase;
+  SecAccessRef access;
   OSStatus status;
 
   if ((filename == NULL) || (result == NULL))
@@ -591,9 +757,32 @@ static int apple_import_items_from_file(const char * filename,
   data = cfdata_from_file(filename);
   if (data == NULL)
     return MAILSMIME_ERROR_PARSE;
+  access = NULL;
+  {
+    SecTrustedApplicationRef application;
+    CFArrayRef applications;
+
+    application = NULL;
+    applications = NULL;
+    if (SecTrustedApplicationCreateFromPath(NULL, &application) ==
+        errSecSuccess) {
+      const void * values[] = { application };
+
+      applications = CFArrayCreate(NULL, values, 1,
+          &kCFTypeArrayCallBacks);
+      if (applications != NULL)
+        SecAccessCreate(CFSTR("libetpan S/MIME temporary identity"),
+            applications, &access);
+    }
+    if (applications != NULL)
+      CFRelease(applications);
+    if (application != NULL)
+      CFRelease(application);
+  }
 
   memset(&params, 0, sizeof(params));
   params.version = SEC_KEY_IMPORT_EXPORT_PARAMS_VERSION;
+  params.accessRef = access;
   cf_passphrase = NULL;
   if (passphrase != NULL) {
     cf_passphrase = CFStringCreateWithCString(NULL, passphrase,
@@ -604,11 +793,41 @@ static int apple_import_items_from_file(const char * filename,
   format = kSecFormatUnknown;
   item_type = kSecItemTypeUnknown;
   items = NULL;
-  status = SecItemImport(data, NULL, &format, &item_type, 0, &params, NULL,
+  status = SecItemImport(data, NULL, &format, &item_type, 0, &params, keychain,
       &items);
+
+  /* SecItemImport honors importKeychain directly.  Prefer it to
+     SecPKCS12Import so loading a context does not expose its identity through
+     the user's default keychain. */
+  if ((status != errSecSuccess) || (items == NULL)) {
+    CFMutableDictionaryRef options;
+    CFStringRef password;
+
+    if (items != NULL) {
+      CFRelease(items);
+      items = NULL;
+    }
+    options = CFDictionaryCreateMutable(NULL, 3,
+        &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+    password = CFStringCreateWithCString(NULL,
+        passphrase != NULL ? passphrase : "", kCFStringEncodingUTF8);
+    if ((options != NULL) && (password != NULL)) {
+      CFDictionarySetValue(options, kSecImportExportPassphrase, password);
+      CFDictionarySetValue(options, kSecImportExportKeychain, keychain);
+      if (access != NULL)
+        CFDictionarySetValue(options, kSecImportExportAccess, access);
+      status = SecPKCS12Import(data, options, &items);
+    }
+    if (password != NULL)
+      CFRelease(password);
+    if (options != NULL)
+      CFRelease(options);
+  }
 
   if (cf_passphrase != NULL)
     CFRelease(cf_passphrase);
+  if (access != NULL)
+    CFRelease(access);
   CFRelease(data);
 
   if (status != errSecSuccess)
@@ -621,7 +840,7 @@ static int apple_import_items_from_file(const char * filename,
 }
 
 static SecIdentityRef apple_identity_from_items(CFArrayRef items,
-    SecCertificateRef cert)
+    SecCertificateRef cert, SecKeychainRef keychain)
 {
   CFIndex count;
   CFIndex i;
@@ -632,20 +851,25 @@ static SecIdentityRef apple_identity_from_items(CFArrayRef items,
   count = CFArrayGetCount(items);
   for (i = 0; i < count; i ++) {
     CFTypeRef item;
+    SecIdentityRef identity;
 
     item = CFArrayGetValueAtIndex(items, i);
+    identity = NULL;
     if ((item != NULL) && (CFGetTypeID(item) == SecIdentityGetTypeID()))
-      return (SecIdentityRef) CFRetain(item);
+      identity = (SecIdentityRef) item;
+    if ((item != NULL) && (CFGetTypeID(item) == CFDictionaryGetTypeID())) {
+      identity = (SecIdentityRef) CFDictionaryGetValue(
+          (CFDictionaryRef) item, kSecImportItemIdentity);
+    }
+    if (identity != NULL)
+      return (SecIdentityRef) CFRetain(identity);
   }
 
   if (cert != NULL) {
     SecIdentityRef identity;
 
     identity = NULL;
-    if (SecIdentityCreateWithCertificate(items, cert, &identity) ==
-        errSecSuccess)
-      return identity;
-    if (SecIdentityCreateWithCertificate(NULL, cert, &identity) ==
+    if (SecIdentityCreateWithCertificate(keychain, cert, &identity) ==
         errSecSuccess)
       return identity;
   }
@@ -696,47 +920,43 @@ static char * apple_cert_summary(SecCertificateRef cert)
 int mailsmime_add_trusted_cert_file(struct mailsmime * smime,
     const char * filename)
 {
+  if ((smime == NULL) || (filename == NULL))
+    return MAILSMIME_ERROR_INVAL;
 #ifdef USE_SMIME_OPENSSL
-  X509 * cert;
+  if (smime->backend == MAILSMIME_BACKEND_OPENSSL) {
+    X509 * cert;
 
-  if ((smime == NULL) || (filename == NULL))
-    return MAILSMIME_ERROR_INVAL;
-
-  cert = load_cert_file(filename);
-  if (cert == NULL)
-    return MAILSMIME_ERROR_CERT;
-
-  if (X509_STORE_add_cert(smime->store, cert) != 1) {
-    unsigned long err;
-
-    err = ERR_peek_last_error();
-    if (ERR_GET_REASON(err) != X509_R_CERT_ALREADY_IN_HASH_TABLE) {
-      X509_free(cert);
+    cert = load_cert_file(filename);
+    if (cert == NULL)
       return MAILSMIME_ERROR_CERT;
+
+    if (X509_STORE_add_cert(smime->openssl_store, cert) != 1) {
+      unsigned long err;
+
+      err = ERR_peek_last_error();
+      if (ERR_GET_REASON(err) != X509_R_CERT_ALREADY_IN_HASH_TABLE) {
+        X509_free(cert);
+        return MAILSMIME_ERROR_CERT;
+      }
+      ERR_clear_error();
     }
-    ERR_clear_error();
+    X509_free(cert);
+    return MAILSMIME_NO_ERROR;
   }
-
-  X509_free(cert);
-  return MAILSMIME_NO_ERROR;
-#elif defined(USE_SMIME_APPLE)
-  SecCertificateRef cert;
-
-  if ((smime == NULL) || (filename == NULL))
-    return MAILSMIME_ERROR_INVAL;
-
-  cert = apple_load_cert_file(filename);
-  if (cert == NULL)
-    return MAILSMIME_ERROR_CERT;
-
-  CFArrayAppendValue(smime->trusted_certs, cert);
-  CFRelease(cert);
-  return MAILSMIME_NO_ERROR;
-#else
-  (void) smime;
-  (void) filename;
-  return MAILSMIME_ERROR_CRYPTO;
 #endif
+#ifdef USE_SMIME_APPLE
+  if (smime->backend == MAILSMIME_BACKEND_APPLE) {
+    SecCertificateRef cert;
+
+    cert = apple_load_cert_file(filename);
+    if (cert == NULL)
+      return MAILSMIME_ERROR_CERT;
+    CFArrayAppendValue(smime->apple_trusted_certs, cert);
+    CFRelease(cert);
+    return MAILSMIME_NO_ERROR;
+  }
+#endif
+  return MAILSMIME_ERROR_CRYPTO;
 }
 
 int mailsmime_add_cert_file(struct mailsmime * smime,
@@ -758,13 +978,18 @@ int mailsmime_add_cert_file(struct mailsmime * smime,
     goto err;
 
 #ifdef USE_SMIME_OPENSSL
-  entry->cert = load_cert_file(filename);
-  if (entry->cert == NULL)
-    goto cert_err;
-#elif defined(USE_SMIME_APPLE)
-  entry->cert = apple_load_cert_file(filename);
-  if (entry->cert == NULL)
-    goto cert_err;
+  if (smime->backend == MAILSMIME_BACKEND_OPENSSL) {
+    entry->openssl_cert = load_cert_file(filename);
+    if (entry->openssl_cert == NULL)
+      goto cert_err;
+  }
+#endif
+#ifdef USE_SMIME_APPLE
+  if (smime->backend == MAILSMIME_BACKEND_APPLE) {
+    entry->apple_cert = apple_load_cert_file(filename);
+    if (entry->apple_cert == NULL)
+      goto cert_err;
+  }
 #endif
 
   if (clist_append(smime->certs, entry) < 0)
@@ -810,41 +1035,58 @@ int mailsmime_set_private_key_file(struct mailsmime * smime,
     goto err;
 
 #ifdef USE_SMIME_OPENSSL
-  const char * key_passphrase;
-
-  entry->cert = load_cert_file(cert_filename);
-  if (entry->cert == NULL)
-    goto cert_err;
-
-  key_passphrase = entry->passphrase;
-  if ((key_passphrase == NULL) && (smime->passphrase_callback != NULL))
-    key_passphrase = smime->passphrase_callback(email, smime->passphrase_context);
-
-  entry->key = load_key_file(key_filename, key_passphrase);
-  if (entry->key == NULL)
-    goto key_err;
-#elif defined(USE_SMIME_APPLE)
-  {
+  if (smime->backend == MAILSMIME_BACKEND_OPENSSL) {
     const char * key_passphrase;
-    CFArrayRef imported_items;
+
+    entry->openssl_cert = load_cert_file(cert_filename);
+    if (entry->openssl_cert == NULL)
+      goto cert_err;
 
     key_passphrase = entry->passphrase;
     if ((key_passphrase == NULL) && (smime->passphrase_callback != NULL))
       key_passphrase = smime->passphrase_callback(email,
           smime->passphrase_context);
 
-    entry->cert = apple_load_cert_file(cert_filename);
-    if (entry->cert == NULL)
+    entry->openssl_key = load_key_file(key_filename, key_passphrase);
+    if (entry->openssl_key == NULL)
+      goto key_err;
+  }
+#endif
+#ifdef USE_SMIME_APPLE
+  if (smime->backend == MAILSMIME_BACKEND_APPLE) {
+    const char * key_passphrase;
+    CFArrayRef imported_items;
+    CFArrayRef previous_keychains;
+    SecKeychainRef previous_default_keychain;
+
+    key_passphrase = entry->passphrase;
+    if ((key_passphrase == NULL) && (smime->passphrase_callback != NULL))
+      key_passphrase = smime->passphrase_callback(email,
+          smime->passphrase_context);
+
+    entry->apple_cert = apple_load_cert_file(cert_filename);
+    if (entry->apple_cert == NULL)
       goto cert_err;
 
     imported_items = NULL;
-    if (apple_import_items_from_file(key_filename, key_passphrase,
-        &imported_items) != MAILSMIME_NO_ERROR)
+    previous_keychains = NULL;
+    previous_default_keychain = NULL;
+    if (apple_push_keychain_search(smime->apple_keychain, &previous_keychains,
+        &previous_default_keychain) != MAILSMIME_NO_ERROR)
       goto key_err;
+    if (apple_import_items_from_file(key_filename, key_passphrase,
+        smime->apple_keychain,
+        &imported_items) != MAILSMIME_NO_ERROR) {
+      apple_pop_keychain_search(previous_keychains,
+          previous_default_keychain);
+      goto key_err;
+    }
 
-    entry->identity = apple_identity_from_items(imported_items, entry->cert);
+    entry->apple_identity = apple_identity_from_items(imported_items,
+        entry->apple_cert, smime->apple_keychain);
     CFRelease(imported_items);
-    if (entry->identity == NULL)
+    apple_pop_keychain_search(previous_keychains, previous_default_keychain);
+    if (entry->apple_identity == NULL)
       goto key_err;
   }
 #endif
@@ -1581,8 +1823,9 @@ static struct mailsmime_certificate * certificate_new_from_x509(X509 * x509)
   if (cert == NULL)
     return NULL;
 
-  cert->cert = X509_dup(x509);
-  if (cert->cert == NULL)
+  cert->backend = MAILSMIME_BACKEND_OPENSSL;
+  cert->openssl_cert = X509_dup(x509);
+  if (cert->openssl_cert == NULL)
     goto err;
 
   cert->email = x509_subject_email(x509);
@@ -1634,6 +1877,36 @@ static char * apple_cert_fingerprint_sha256(SecCertificateRef cert)
   return result;
 }
 
+static char * apple_cert_property_description(SecCertificateRef cert,
+    CFStringRef oid)
+{
+  const void * values[] = { oid };
+  CFArrayRef keys;
+  CFDictionaryRef properties;
+  CFDictionaryRef property;
+  CFTypeRef value;
+  CFStringRef description;
+  char * result;
+
+  keys = CFArrayCreate(NULL, values, 1, &kCFTypeArrayCallBacks);
+  if (keys == NULL)
+    return NULL;
+  properties = SecCertificateCopyValues(cert, keys, NULL);
+  CFRelease(keys);
+  if (properties == NULL)
+    return NULL;
+
+  property = (CFDictionaryRef) CFDictionaryGetValue(properties, oid);
+  value = property != NULL ? CFDictionaryGetValue(property,
+      kSecPropertyKeyValue) : NULL;
+  description = value != NULL ? CFCopyDescription(value) : NULL;
+  result = apple_cfstring_to_cstring(description);
+  if (description != NULL)
+    CFRelease(description);
+  CFRelease(properties);
+  return result;
+}
+
 static struct mailsmime_certificate * certificate_new_from_sec_certificate(
     SecCertificateRef sec_cert)
 {
@@ -1644,11 +1917,30 @@ static struct mailsmime_certificate * certificate_new_from_sec_certificate(
   if (cert == NULL)
     return NULL;
 
-  cert->cert = (SecCertificateRef) CFRetain(sec_cert);
+  cert->backend = MAILSMIME_BACKEND_APPLE;
+  cert->apple_cert = (SecCertificateRef) CFRetain(sec_cert);
+  {
+    CFArrayRef emails;
+
+    emails = NULL;
+    if (SecCertificateCopyEmailAddresses(sec_cert, &emails) == errSecSuccess &&
+        emails != NULL && CFArrayGetCount(emails) > 0) {
+      CFStringRef email;
+
+      email = (CFStringRef) CFArrayGetValueAtIndex(emails, 0);
+      cert->email = apple_cfstring_to_cstring(email);
+    }
+    if (emails != NULL)
+      CFRelease(emails);
+  }
   summary = apple_cert_summary(sec_cert);
   cert->name = summary != NULL ? strdup(summary) : NULL;
   cert->subject = summary;
   cert->issuer = NULL;
+  cert->not_before = apple_cert_property_description(sec_cert,
+      kSecOIDX509V1ValidityNotBefore);
+  cert->not_after = apple_cert_property_description(sec_cert,
+      kSecOIDX509V1ValidityNotAfter);
   cert->fingerprint_sha256 = apple_cert_fingerprint_sha256(sec_cert);
 
   return cert;
@@ -1760,7 +2052,7 @@ static void result_set_certificate_verify_error(struct mailsmime * smime,
     if (store_ctx == NULL)
       continue;
 
-    if (X509_STORE_CTX_init(store_ctx, smime->store, cert, signers) != 1) {
+    if (X509_STORE_CTX_init(store_ctx, smime->openssl_store, cert, signers) != 1) {
       X509_STORE_CTX_free(store_ctx);
       continue;
     }
@@ -1811,7 +2103,7 @@ static void result_set_certificate_verify_status(struct mailsmime * smime,
       return;
     }
 
-    if (X509_STORE_CTX_init(store_ctx, smime->store, cert, signers) != 1) {
+    if (X509_STORE_CTX_init(store_ctx, smime->openssl_store, cert, signers) != 1) {
       X509_STORE_CTX_free(store_ctx);
       sk_X509_free(signers);
       result->status = MAILSMIME_VERIFY_ERROR;
@@ -1869,7 +2161,7 @@ static int parse_mime_from_mem(const char * data, size_t len,
 }
 
 #ifdef USE_SMIME_OPENSSL
-static int verify_smime_entity(struct mailsmime * smime,
+static int openssl_verify_smime_entity(struct mailsmime * smime,
     struct mailmime * mime, struct mailsmime_result * result)
 {
   char * data;
@@ -1912,7 +2204,7 @@ static int verify_smime_entity(struct mailsmime * smime,
 #ifdef CMS_NO_SIGNER_CERT_VERIFY
   verify_flags |= CMS_NO_SIGNER_CERT_VERIFY;
 #endif
-  if (CMS_verify(cms, NULL, smime->store, dcont, out, verify_flags) == 1) {
+  if (CMS_verify(cms, NULL, smime->openssl_store, dcont, out, verify_flags) == 1) {
     result_set_certificate_verify_status(smime, result, cms);
     if (content_is(mime->mm_content_type, 0, MAILMIME_COMPOSITE_TYPE_MULTIPART,
         "signed")) {
@@ -2014,9 +2306,9 @@ static int apple_trust_status(struct mailsmime * smime, SecTrustRef trust)
   if (trust == NULL)
     return MAILSMIME_VERIFY_INVALID;
 
-  if ((smime->trusted_certs != NULL) &&
-      (CFArrayGetCount(smime->trusted_certs) > 0)) {
-    status = SecTrustSetAnchorCertificates(trust, smime->trusted_certs);
+  if ((smime->apple_trusted_certs != NULL) &&
+      (CFArrayGetCount(smime->apple_trusted_certs) > 0)) {
+    status = SecTrustSetAnchorCertificates(trust, smime->apple_trusted_certs);
     if (status != errSecSuccess)
       return MAILSMIME_VERIFY_INVALID;
   }
@@ -2125,7 +2417,7 @@ static int apple_decoder_update(CMSDecoderRef decoder, const char * data,
   return MAILSMIME_NO_ERROR;
 }
 
-static int verify_smime_entity(struct mailsmime * smime,
+static int apple_verify_smime_entity(struct mailsmime * smime,
     struct mailmime * mime, struct mailsmime_result * result)
 {
   CMSDecoderRef decoder;
@@ -2218,7 +2510,11 @@ int mailsmime_sign(struct mailsmime * smime,
     const char * signer_email,
     struct mailmime ** result)
 {
+  if ((smime == NULL) || (mime == NULL) || (signer_email == NULL) ||
+      (result == NULL))
+    return MAILSMIME_ERROR_INVAL;
 #ifdef USE_SMIME_OPENSSL
+  if (smime->backend == MAILSMIME_BACKEND_OPENSSL) {
   struct mailsmime_key_entry * key;
   struct mailmime * signed_part;
   char * data;
@@ -2228,10 +2524,6 @@ int mailsmime_sign(struct mailsmime * smime,
   BIO * in;
   CMS_ContentInfo * cms;
   int r;
-
-  if ((smime == NULL) || (mime == NULL) || (signer_email == NULL) ||
-      (result == NULL))
-    return MAILSMIME_ERROR_INVAL;
 
   key = find_key(smime, signer_email);
   if (key == NULL)
@@ -2254,7 +2546,8 @@ int mailsmime_sign(struct mailsmime * smime,
     return MAILSMIME_ERROR_MEMORY;
   }
 
-  cms = CMS_sign(key->cert, key->key, NULL, in, CMS_BINARY | CMS_DETACHED);
+  cms = CMS_sign(key->openssl_cert, key->openssl_key, NULL, in,
+      CMS_BINARY | CMS_DETACHED);
   BIO_free(in);
   if (cms == NULL) {
     free(data);
@@ -2273,7 +2566,10 @@ int mailsmime_sign(struct mailsmime * smime,
   r = make_multipart_signed(signed_part, der, der_len, result);
   free(der);
   return r;
-#elif defined(USE_SMIME_APPLE)
+  }
+#endif
+#ifdef USE_SMIME_APPLE
+  if (smime->backend == MAILSMIME_BACKEND_APPLE) {
   struct mailsmime_key_entry * key;
   struct mailmime * signed_part;
   CMSEncoderRef encoder;
@@ -2284,12 +2580,8 @@ int mailsmime_sign(struct mailsmime * smime,
   size_t der_len;
   int r;
 
-  if ((smime == NULL) || (mime == NULL) || (signer_email == NULL) ||
-      (result == NULL))
-    return MAILSMIME_ERROR_INVAL;
-
   key = find_key(smime, signer_email);
-  if ((key == NULL) || (key->identity == NULL))
+  if ((key == NULL) || (key->apple_identity == NULL))
     return MAILSMIME_ERROR_PRIVATE_KEY;
 
   r = copy_mime(mime, &signed_part);
@@ -2311,9 +2603,9 @@ int mailsmime_sign(struct mailsmime * smime,
   }
 
   if ((CMSEncoderSetHasDetachedContent(encoder, true) != errSecSuccess) ||
-      (CMSEncoderAddSigners(encoder, key->identity) != errSecSuccess) ||
-      ((key->cert != NULL) &&
-      (CMSEncoderAddSupportingCerts(encoder, key->cert) != errSecSuccess)) ||
+      (CMSEncoderAddSigners(encoder, key->apple_identity) != errSecSuccess) ||
+      ((key->apple_cert != NULL) &&
+      (CMSEncoderAddSupportingCerts(encoder, key->apple_cert) != errSecSuccess)) ||
       (CMSEncoderUpdateContent(encoder, data, data_len) != errSecSuccess) ||
       (CMSEncoderCopyEncodedContent(encoder, &encoded) != errSecSuccess)) {
     CFRelease(encoder);
@@ -2334,13 +2626,9 @@ int mailsmime_sign(struct mailsmime * smime,
   r = make_multipart_signed(signed_part, der, der_len, result);
   free(der);
   return r;
-#else
-  (void) smime;
-  (void) mime;
-  (void) signer_email;
-  (void) result;
-  return MAILSMIME_ERROR_CRYPTO;
+  }
 #endif
+  return MAILSMIME_ERROR_CRYPTO;
 }
 
 int mailsmime_verify(struct mailsmime * smime,
@@ -2358,11 +2646,21 @@ int mailsmime_verify(struct mailsmime * smime,
   if (verify_result == NULL)
     return MAILSMIME_ERROR_MEMORY;
 
-  if (content_is(mime->mm_content_type, 0, MAILMIME_COMPOSITE_TYPE_MULTIPART,
-      "signed") || content_is_pkcs7_mime(mime->mm_content_type))
-    r = verify_smime_entity(smime, mime, verify_result);
-  else
+  if (!(content_is(mime->mm_content_type, 0,
+      MAILMIME_COMPOSITE_TYPE_MULTIPART, "signed") ||
+      content_is_pkcs7_mime(mime->mm_content_type)))
     r = MAILSMIME_ERROR_INVAL;
+  else {
+    r = MAILSMIME_ERROR_CRYPTO;
+#ifdef USE_SMIME_OPENSSL
+    if (smime->backend == MAILSMIME_BACKEND_OPENSSL)
+      r = openssl_verify_smime_entity(smime, mime, verify_result);
+#endif
+#ifdef USE_SMIME_APPLE
+    if (smime->backend == MAILSMIME_BACKEND_APPLE)
+      r = apple_verify_smime_entity(smime, mime, verify_result);
+#endif
+  }
 
   if (r != MAILSMIME_NO_ERROR) {
     mailsmime_result_free(verify_result);
@@ -2385,7 +2683,11 @@ int mailsmime_encrypt(struct mailsmime * smime,
     unsigned int recipient_count,
     struct mailmime ** result)
 {
+  if ((smime == NULL) || (mime == NULL) || (recipient_emails == NULL) ||
+      (recipient_count == 0) || (result == NULL))
+    return MAILSMIME_ERROR_INVAL;
 #ifdef USE_SMIME_OPENSSL
+  if (smime->backend == MAILSMIME_BACKEND_OPENSSL) {
   STACK_OF(X509) * certs;
   char * data;
   size_t data_len;
@@ -2395,10 +2697,6 @@ int mailsmime_encrypt(struct mailsmime * smime,
   CMS_ContentInfo * cms;
   unsigned int i;
   int r;
-
-  if ((smime == NULL) || (mime == NULL) || (recipient_emails == NULL) ||
-      (recipient_count == 0) || (result == NULL))
-    return MAILSMIME_ERROR_INVAL;
 
   certs = sk_X509_new_null();
   if (certs == NULL)
@@ -2412,7 +2710,7 @@ int mailsmime_encrypt(struct mailsmime * smime,
       sk_X509_free(certs);
       return MAILSMIME_ERROR_CERT;
     }
-    if (sk_X509_push(certs, entry->cert) == 0) {
+    if (sk_X509_push(certs, entry->openssl_cert) == 0) {
       sk_X509_free(certs);
       return MAILSMIME_ERROR_MEMORY;
     }
@@ -2448,7 +2746,10 @@ int mailsmime_encrypt(struct mailsmime * smime,
   r = make_pkcs7_mime("enveloped-data", der, der_len, result);
   free(der);
   return r;
-#elif defined(USE_SMIME_APPLE)
+  }
+#endif
+#ifdef USE_SMIME_APPLE
+  if (smime->backend == MAILSMIME_BACKEND_APPLE) {
   CMSEncoderRef encoder;
   CFMutableArrayRef certs;
   CFDataRef encoded;
@@ -2459,10 +2760,6 @@ int mailsmime_encrypt(struct mailsmime * smime,
   unsigned int i;
   int r;
 
-  if ((smime == NULL) || (mime == NULL) || (recipient_emails == NULL) ||
-      (recipient_count == 0) || (result == NULL))
-    return MAILSMIME_ERROR_INVAL;
-
   certs = CFArrayCreateMutable(NULL, 0, &kCFTypeArrayCallBacks);
   if (certs == NULL)
     return MAILSMIME_ERROR_MEMORY;
@@ -2471,11 +2768,11 @@ int mailsmime_encrypt(struct mailsmime * smime,
     struct mailsmime_cert_entry * entry;
 
     entry = find_cert(smime, recipient_emails[i]);
-    if ((entry == NULL) || (entry->cert == NULL)) {
+    if ((entry == NULL) || (entry->apple_cert == NULL)) {
       CFRelease(certs);
       return MAILSMIME_ERROR_CERT;
     }
-    CFArrayAppendValue(certs, entry->cert);
+    CFArrayAppendValue(certs, entry->apple_cert);
   }
 
   r = write_mime_to_mem(mime, &data, &data_len);
@@ -2512,29 +2809,24 @@ int mailsmime_encrypt(struct mailsmime * smime,
   r = make_pkcs7_mime("enveloped-data", der, der_len, result);
   free(der);
   return r;
-#else
-  (void) smime;
-  (void) mime;
-  (void) recipient_emails;
-  (void) recipient_count;
-  (void) result;
-  return MAILSMIME_ERROR_CRYPTO;
+  }
 #endif
+  return MAILSMIME_ERROR_CRYPTO;
 }
 
 int mailsmime_decrypt(struct mailsmime * smime,
     struct mailmime * mime,
     struct mailmime ** result)
 {
+  if ((smime == NULL) || (mime == NULL) || (result == NULL))
+    return MAILSMIME_ERROR_INVAL;
 #ifdef USE_SMIME_OPENSSL
+  if (smime->backend == MAILSMIME_BACKEND_OPENSSL) {
   char * der;
   size_t der_len;
   CMS_ContentInfo * cms;
   clistiter * cur;
   int r;
-
-  if ((smime == NULL) || (mime == NULL) || (result == NULL))
-    return MAILSMIME_ERROR_INVAL;
 
   r = smime_body_to_mem(mime, &der, &der_len);
   if (r != MAILSMIME_NO_ERROR)
@@ -2556,7 +2848,8 @@ int mailsmime_decrypt(struct mailsmime * smime,
       return MAILSMIME_ERROR_MEMORY;
     }
 
-    if (CMS_decrypt(cms, entry->key, entry->cert, NULL, out, CMS_BINARY) == 1) {
+    if (CMS_decrypt(cms, entry->openssl_key, entry->openssl_cert, NULL, out,
+        CMS_BINARY) == 1) {
       char * content;
       size_t content_len;
 
@@ -2575,44 +2868,60 @@ int mailsmime_decrypt(struct mailsmime * smime,
 
   CMS_ContentInfo_free(cms);
   return MAILSMIME_ERROR_DECRYPT;
-#elif defined(USE_SMIME_APPLE)
+  }
+#endif
+#ifdef USE_SMIME_APPLE
+  if (smime->backend == MAILSMIME_BACKEND_APPLE) {
   char * der;
   size_t der_len;
   CMSDecoderRef decoder;
+  CFArrayRef previous_keychains;
+  SecKeychainRef previous_default_keychain;
   CFDataRef content;
   char * content_data;
   size_t content_len;
   int r;
 
-  if ((smime == NULL) || (mime == NULL) || (result == NULL))
-    return MAILSMIME_ERROR_INVAL;
-
   r = smime_body_to_mem(mime, &der, &der_len);
   if (r != MAILSMIME_NO_ERROR)
     return r;
 
+  previous_keychains = NULL;
+  previous_default_keychain = NULL;
+  if (apple_push_keychain_search(smime->apple_keychain, &previous_keychains,
+      &previous_default_keychain) != MAILSMIME_NO_ERROR) {
+    free(der);
+    return MAILSMIME_ERROR_DECRYPT;
+  }
   decoder = NULL;
   if (CMSDecoderCreate(&decoder) != errSecSuccess) {
+    apple_pop_keychain_search(previous_keychains, previous_default_keychain);
     free(der);
     return MAILSMIME_ERROR_MEMORY;
   }
 
   r = apple_decoder_update(decoder, der, der_len);
   free(der);
+  if (r != MAILSMIME_NO_ERROR)
+    r = MAILSMIME_ERROR_DECRYPT;
   if (r == MAILSMIME_NO_ERROR) {
     if (CMSDecoderFinalizeMessage(decoder) != errSecSuccess)
       r = MAILSMIME_ERROR_DECRYPT;
   }
   if (r != MAILSMIME_NO_ERROR) {
+    apple_pop_keychain_search(previous_keychains, previous_default_keychain);
     CFRelease(decoder);
     return r;
   }
 
   content = NULL;
-  if (CMSDecoderCopyContent(decoder, &content) != errSecSuccess) {
+  if ((CMSDecoderCopyContent(decoder, &content) != errSecSuccess) ||
+      (content == NULL)) {
+    apple_pop_keychain_search(previous_keychains, previous_default_keychain);
     CFRelease(decoder);
     return MAILSMIME_ERROR_DECRYPT;
   }
+  apple_pop_keychain_search(previous_keychains, previous_default_keychain);
   CFRelease(decoder);
 
   r = cfdata_to_alloc(content, &content_data, &content_len);
@@ -2622,13 +2931,15 @@ int mailsmime_decrypt(struct mailsmime * smime,
 
   r = parse_mime_from_mem(content_data, content_len, result);
   free(content_data);
+  if ((r == MAILSMIME_NO_ERROR) && mailsmime_is_encrypted(* result)) {
+    mailsmime_mime_free(* result);
+    * result = NULL;
+    return MAILSMIME_ERROR_DECRYPT;
+  }
   return r;
-#else
-  (void) smime;
-  (void) mime;
-  (void) result;
-  return MAILSMIME_ERROR_CRYPTO;
+  }
 #endif
+  return MAILSMIME_ERROR_CRYPTO;
 }
 
 void mailsmime_mime_free(struct mailmime * mime)
@@ -2747,17 +3058,23 @@ int mailsmime_result_get_signer(struct mailsmime_result * result,
   if (cur == NULL)
     return MAILSMIME_ERROR_INVAL;
 
+  {
+    struct mailsmime_certificate * source;
+
+    source = clist_content(cur);
+    * cert = NULL;
 #ifdef USE_SMIME_OPENSSL
-  * cert = certificate_new_from_x509(
-      ((struct mailsmime_certificate *) clist_content(cur))->cert);
+    if (source->backend == MAILSMIME_BACKEND_OPENSSL)
+      * cert = certificate_new_from_x509(source->openssl_cert);
+#endif
+#ifdef USE_SMIME_APPLE
+    if (source->backend == MAILSMIME_BACKEND_APPLE)
+      * cert = certificate_new_from_sec_certificate(source->apple_cert);
+#endif
+  }
   if (* cert == NULL)
     return MAILSMIME_ERROR_MEMORY;
-#elif defined(USE_SMIME_APPLE)
-  * cert = certificate_new_from_sec_certificate(
-      ((struct mailsmime_certificate *) clist_content(cur))->cert);
-  if (* cert == NULL)
-    return MAILSMIME_ERROR_MEMORY;
-#else
+#if !defined(USE_SMIME_OPENSSL) && !defined(USE_SMIME_APPLE)
   * cert = NULL;
   return MAILSMIME_ERROR_CRYPTO;
 #endif
@@ -2835,18 +3152,18 @@ int mailsmime_certificate_export_pem(struct mailsmime_certificate * cert,
     char ** pem,
     size_t * pem_len)
 {
-#ifdef USE_SMIME_OPENSSL
-  BIO * out;
-  int r;
-
   if ((cert == NULL) || (pem == NULL) || (pem_len == NULL))
     return MAILSMIME_ERROR_INVAL;
+#ifdef USE_SMIME_OPENSSL
+  if (cert->backend == MAILSMIME_BACKEND_OPENSSL) {
+  BIO * out;
+  int r;
 
   out = BIO_new(BIO_s_mem());
   if (out == NULL)
     return MAILSMIME_ERROR_MEMORY;
 
-  if (PEM_write_bio_X509(out, cert->cert) != 1) {
+  if (PEM_write_bio_X509(out, cert->openssl_cert) != 1) {
     BIO_free(out);
     return MAILSMIME_ERROR_CRYPTO;
   }
@@ -2854,7 +3171,10 @@ int mailsmime_certificate_export_pem(struct mailsmime_certificate * cert,
   r = bio_to_alloc(out, pem, pem_len);
   BIO_free(out);
   return r;
-#elif defined(USE_SMIME_APPLE)
+  }
+#endif
+#ifdef USE_SMIME_APPLE
+  if (cert->backend == MAILSMIME_BACKEND_APPLE) {
   CFDataRef der;
   static const char begin[] = "-----BEGIN CERTIFICATE-----\n";
   static const char end[] = "-----END CERTIFICATE-----\n";
@@ -2862,10 +3182,7 @@ int mailsmime_certificate_export_pem(struct mailsmime_certificate * cert,
   int col;
   int r;
 
-  if ((cert == NULL) || (pem == NULL) || (pem_len == NULL))
-    return MAILSMIME_ERROR_INVAL;
-
-  der = SecCertificateCopyData(cert->cert);
+  der = SecCertificateCopyData(cert->apple_cert);
   if (der == NULL)
     return MAILSMIME_ERROR_CRYPTO;
 
@@ -2896,12 +3213,9 @@ int mailsmime_certificate_export_pem(struct mailsmime_certificate * cert,
   r = mmap_to_alloc(encoded, pem, pem_len);
   mmap_string_free(encoded);
   return r;
-#else
-  (void) cert;
-  (void) pem;
-  (void) pem_len;
-  return MAILSMIME_ERROR_CRYPTO;
+  }
 #endif
+  return MAILSMIME_ERROR_CRYPTO;
 }
 
 void mailsmime_certificate_free(struct mailsmime_certificate * cert)
@@ -2909,12 +3223,12 @@ void mailsmime_certificate_free(struct mailsmime_certificate * cert)
   if (cert == NULL)
     return;
 #ifdef USE_SMIME_OPENSSL
-  if (cert->cert != NULL)
-    X509_free(cert->cert);
+  if (cert->openssl_cert != NULL)
+    X509_free(cert->openssl_cert);
 #endif
 #ifdef USE_SMIME_APPLE
-  if (cert->cert != NULL)
-    CFRelease(cert->cert);
+  if (cert->apple_cert != NULL)
+    CFRelease(cert->apple_cert);
 #endif
   free(cert->email);
   free(cert->name);

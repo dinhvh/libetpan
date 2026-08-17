@@ -2733,6 +2733,7 @@
 					"$(inherited)",
 					"HAVE_JMAP=1",
 					"USE_SMIME_APPLE=1",
+					"USE_SMIME_OPENSSL=1",
 					"HAVE_JMAP=1",
 					"USE_PGP_RNP=1",
 				);
@@ -2764,6 +2765,7 @@
 					"$(inherited)",
 					"HAVE_JMAP=1",
 					"USE_SMIME_APPLE=1",
+					"USE_SMIME_OPENSSL=1",
 					"HAVE_JMAP=1",
 					"USE_PGP_RNP=1",
 				);
@@ -2881,6 +2883,7 @@
 					"$(inherited)",
 					"HAVE_JMAP=1",
 					"USE_SMIME_APPLE=1",
+					"USE_SMIME_OPENSSL=1",
 				);
 				INSTALL_PATH = /usr/local/lib;
 				MACOSX_DEPLOYMENT_TARGET = 12.0;
@@ -2902,6 +2905,7 @@
 					"$(inherited)",
 					"HAVE_JMAP=1",
 					"USE_SMIME_APPLE=1",
+					"USE_SMIME_OPENSSL=1",
 				);
 				INSTALL_PATH = /usr/local/lib;
 				MACOSX_DEPLOYMENT_TARGET = 12.0;

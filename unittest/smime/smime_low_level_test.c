@@ -12,19 +12,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
-
-#if defined(__APPLE__) && !defined(USE_SMIME_APPLE)
-#error "macOS S/MIME tests must use the Apple Security framework backend"
-#endif
-
-#ifdef USE_SSL
-#include <openssl/evp.h>
-#include <openssl/pem.h>
-#include <openssl/rsa.h>
-#include <openssl/x509.h>
-#include <openssl/x509v3.h>
-#endif
 
 static int check(int condition, const char * message)
 {
@@ -116,7 +103,7 @@ static struct mailmime * parse_message_body(const char * filename)
   return mime;
 }
 
-static int check_signed_fixture(const char * filename)
+int smime_test_signed_fixture(const char * filename)
 {
   struct mailmime * mime;
   int ok;
@@ -134,7 +121,7 @@ static int check_signed_fixture(const char * filename)
   return ok;
 }
 
-static int check_encrypted_fixture(const char * filename)
+int smime_test_encrypted_fixture(const char * filename)
 {
   struct mailmime * mime;
   int ok;
@@ -154,180 +141,13 @@ static int check_encrypted_fixture(const char * filename)
   return ok;
 }
 
-#ifdef USE_SMIME_OPENSSL
-static int add_extension(X509 * cert, int nid, const char * value)
+#if defined(USE_SMIME_OPENSSL) || defined(USE_SMIME_APPLE)
+static const char * fixture_key(enum mailsmime_backend backend,
+    const char * openssl_key, const char * apple_identity)
 {
-  X509V3_CTX ctx;
-  X509_EXTENSION * ext;
-
-  X509V3_set_ctx_nodb(&ctx);
-  X509V3_set_ctx(&ctx, cert, cert, NULL, NULL, 0);
-  ext = X509V3_EXT_conf_nid(NULL, &ctx, nid, (char *) value);
-  if (ext == NULL)
-    return -1;
-  if (X509_add_ext(cert, ext, -1) != 1) {
-    X509_EXTENSION_free(ext);
-    return -1;
-  }
-  X509_EXTENSION_free(ext);
-  return 0;
-}
-
-static EVP_PKEY * generate_key(void)
-{
-  EVP_PKEY_CTX * ctx;
-  EVP_PKEY * key;
-
-  ctx = EVP_PKEY_CTX_new_id(EVP_PKEY_RSA, NULL);
-  if (ctx == NULL)
-    return NULL;
-  key = NULL;
-  if (EVP_PKEY_keygen_init(ctx) <= 0)
-    goto err;
-  if (EVP_PKEY_CTX_set_rsa_keygen_bits(ctx, 2048) <= 0)
-    goto err;
-  if (EVP_PKEY_keygen(ctx, &key) <= 0)
-    goto err;
-  EVP_PKEY_CTX_free(ctx);
-  return key;
-
- err:
-  EVP_PKEY_CTX_free(ctx);
-  EVP_PKEY_free(key);
-  return NULL;
-}
-
-static X509 * generate_cert(EVP_PKEY * key, const char * email)
-{
-  X509 * cert;
-  X509_NAME * name;
-  char san[256];
-
-  cert = X509_new();
-  if (cert == NULL)
-    return NULL;
-
-  if (X509_set_version(cert, 2) != 1)
-    goto err;
-  if (ASN1_INTEGER_set(X509_get_serialNumber(cert), 1) != 1)
-    goto err;
-  if (X509_gmtime_adj(X509_get_notBefore(cert), -60 * 60) == NULL)
-    goto err;
-  if (X509_gmtime_adj(X509_get_notAfter(cert), 60 * 60 * 24 * 365) == NULL)
-    goto err;
-  if (X509_set_pubkey(cert, key) != 1)
-    goto err;
-
-  name = X509_get_subject_name(cert);
-  if (X509_NAME_add_entry_by_txt(name, "CN", MBSTRING_ASC,
-      (const unsigned char *) "libetpan S/MIME Test", -1, -1, 0) != 1)
-    goto err;
-  if (X509_NAME_add_entry_by_txt(name, "emailAddress", MBSTRING_ASC,
-      (const unsigned char *) email, -1, -1, 0) != 1)
-    goto err;
-  if (X509_set_issuer_name(cert, name) != 1)
-    goto err;
-
-  if (add_extension(cert, NID_basic_constraints, "critical,CA:TRUE") < 0)
-    goto err;
-  if (add_extension(cert, NID_key_usage,
-      "digitalSignature,keyEncipherment,keyCertSign") < 0)
-    goto err;
-  if (add_extension(cert, NID_ext_key_usage, "emailProtection") < 0)
-    goto err;
-  snprintf(san, sizeof(san), "email:%s", email);
-  if (add_extension(cert, NID_subject_alt_name, san) < 0)
-    goto err;
-
-  if (X509_sign(cert, key, EVP_sha256()) == 0)
-    goto err;
-
-  return cert;
-
- err:
-  X509_free(cert);
-  return NULL;
-}
-
-static int write_identity_files(const char * cert_filename,
-    const char * key_filename, const char * email)
-{
-  EVP_PKEY * key;
-  X509 * cert;
-  FILE * f;
-  int ok;
-
-  key = generate_key();
-  if (key == NULL)
-    return 0;
-  cert = generate_cert(key, email);
-  if (cert == NULL) {
-    EVP_PKEY_free(key);
-    return 0;
-  }
-
-  ok = 0;
-  f = fopen(cert_filename, "wb");
-  if (f == NULL)
-    goto done;
-  ok = PEM_write_X509(f, cert) == 1;
-  fclose(f);
-  if (!ok)
-    goto done;
-
-  f = fopen(key_filename, "wb");
-  if (f == NULL) {
-    ok = 0;
-    goto done;
-  }
-  ok = PEM_write_PrivateKey(f, key, NULL, NULL, 0, NULL, NULL) == 1;
-  fclose(f);
-
- done:
-  X509_free(cert);
-  EVP_PKEY_free(key);
-  return ok;
-}
-
-static int write_encrypted_identity_files(const char * cert_filename,
-    const char * key_filename, const char * email, const char * passphrase)
-{
-  EVP_PKEY * key;
-  X509 * cert;
-  FILE * f;
-  int ok;
-
-  key = generate_key();
-  if (key == NULL)
-    return 0;
-  cert = generate_cert(key, email);
-  if (cert == NULL) {
-    EVP_PKEY_free(key);
-    return 0;
-  }
-
-  ok = 0;
-  f = fopen(cert_filename, "wb");
-  if (f == NULL)
-    goto done;
-  ok = PEM_write_X509(f, cert) == 1;
-  fclose(f);
-  if (!ok)
-    goto done;
-
-  f = fopen(key_filename, "wb");
-  if (f == NULL) {
-    ok = 0;
-    goto done;
-  }
-  ok = PEM_write_PrivateKey(f, key, EVP_aes_256_cbc(),
-      (unsigned char *) passphrase, (int) strlen(passphrase), NULL, NULL) == 1;
-  fclose(f);
-
- done:
-  X509_free(cert);
-  EVP_PKEY_free(key);
-  return ok;
+  if (backend == MAILSMIME_BACKEND_APPLE)
+    return apple_identity;
+  return openssl_key;
 }
 
 struct passphrase_test_context {
@@ -347,21 +167,6 @@ static const char * test_passphrase_callback(const char * email, void * context)
 
   pass_context->called ++;
   return pass_context->passphrase;
-}
-
-static int make_temp_filename(char * filename, size_t filename_len)
-{
-  char tmpl[] = "/tmp/libetpan-smime-low-level-XXXXXX";
-  int fd;
-
-  if (filename_len < sizeof(tmpl))
-    return 0;
-  strcpy(filename, tmpl);
-  fd = mkstemp(filename);
-  if (fd < 0)
-    return 0;
-  close(fd);
-  return 1;
 }
 
 static struct mailmime * make_text_part(void)
@@ -539,12 +344,13 @@ static int tamper_text_part(struct mailmime * mime)
   return 1;
 }
 
-static int check_passphrase_callback(void)
+int smime_test_passphrase_callback_with_backend(enum mailsmime_backend backend)
 {
   static const char email[] = "carol@example.test";
   static const char passphrase[] = "libetpan-smime-passphrase";
-  char cert_filename[64];
-  char key_filename[64];
+  static const char cert_filename[] =
+      "unittest/smime/fixtures/carol-cert.pem";
+  const char * key_filename;
   struct passphrase_test_context pass_context;
   struct mailsmime * smime;
   struct mailmime * original;
@@ -553,19 +359,11 @@ static int check_passphrase_callback(void)
   int r;
   int ok;
 
-  if (!make_temp_filename(cert_filename, sizeof(cert_filename)))
-    return check(0, "could not create callback certificate filename");
-  if (!make_temp_filename(key_filename, sizeof(key_filename))) {
-    unlink(cert_filename);
-    return check(0, "could not create callback key filename");
-  }
+  key_filename = fixture_key(backend,
+      "unittest/smime/fixtures/carol-key-encrypted.pem",
+      "unittest/smime/fixtures/carol-identity-encrypted.p12");
 
-  ok = write_encrypted_identity_files(cert_filename, key_filename, email,
-      passphrase);
-  if (!check(ok, "could not generate encrypted S/MIME test identity"))
-    goto cleanup_files;
-
-  smime = mailsmime_new();
+  smime = mailsmime_new_with_backend(backend);
   original = make_text_part();
   signed_mime = NULL;
   verify_result = NULL;
@@ -614,20 +412,21 @@ static int check_passphrase_callback(void)
   mailmime_free(original);
   mailsmime_free(smime);
 
- cleanup_files:
-  unlink(cert_filename);
-  unlink(key_filename);
   return ok;
 }
 
-static int check_crypto_round_trip(void)
+int smime_test_crypto_round_trip_with_backend(enum mailsmime_backend backend)
 {
   static const char email[] = "alice@example.test";
   static const char wrong_email[] = "bob@example.test";
-  char cert_filename[64];
-  char key_filename[64];
-  char wrong_cert_filename[64];
-  char wrong_key_filename[64];
+  static const char apple_identity_passphrase[] =
+      "libetpan-smime-fixture";
+  static const char cert_filename[] =
+      "unittest/smime/fixtures/alice-cert.pem";
+  static const char wrong_cert_filename[] =
+      "unittest/smime/fixtures/bob-cert.pem";
+  const char * key_filename;
+  const char * wrong_key_filename;
   struct mailsmime * smime;
   struct mailsmime * untrusted_smime;
   struct mailsmime * wrong_smime;
@@ -648,36 +447,20 @@ static int check_crypto_round_trip(void)
   size_t pem_len;
   int r;
   int ok;
+  const char * key_passphrase;
 
-  if (!make_temp_filename(cert_filename, sizeof(cert_filename)))
-    return check(0, "could not create temporary certificate filename");
-  if (!make_temp_filename(key_filename, sizeof(key_filename))) {
-    unlink(cert_filename);
-    return check(0, "could not create temporary key filename");
-  }
-  if (!make_temp_filename(wrong_cert_filename, sizeof(wrong_cert_filename))) {
-    unlink(cert_filename);
-    unlink(key_filename);
-    return check(0, "could not create temporary wrong certificate filename");
-  }
-  if (!make_temp_filename(wrong_key_filename, sizeof(wrong_key_filename))) {
-    unlink(cert_filename);
-    unlink(key_filename);
-    unlink(wrong_cert_filename);
-    return check(0, "could not create temporary wrong key filename");
-  }
+  key_filename = fixture_key(backend,
+      "unittest/smime/fixtures/alice-key.pem",
+      "unittest/smime/fixtures/alice-identity.p12");
+  wrong_key_filename = fixture_key(backend,
+      "unittest/smime/fixtures/bob-key.pem",
+      "unittest/smime/fixtures/bob-identity.p12");
+  key_passphrase = backend == MAILSMIME_BACKEND_APPLE ?
+      apple_identity_passphrase : NULL;
 
-  ok = write_identity_files(cert_filename, key_filename, email);
-  if (!check(ok, "could not generate S/MIME test identity"))
-    goto cleanup_files;
-  ok = write_identity_files(wrong_cert_filename, wrong_key_filename,
-      wrong_email);
-  if (!check(ok, "could not generate second S/MIME test identity"))
-    goto cleanup_files;
-
-  smime = mailsmime_new();
-  untrusted_smime = mailsmime_new();
-  wrong_smime = mailsmime_new();
+  smime = mailsmime_new_with_backend(backend);
+  untrusted_smime = mailsmime_new_with_backend(backend);
+  wrong_smime = mailsmime_new_with_backend(backend);
   original = make_text_part();
   signed_mime = NULL;
   tampered_mime = NULL;
@@ -704,13 +487,13 @@ static int check_crypto_round_trip(void)
   r = mailsmime_add_cert_file(smime, email, cert_filename);
   ok = check(r == MAILSMIME_NO_ERROR, "could not add recipient cert") && ok;
   r = mailsmime_set_private_key_file(smime, email, cert_filename, key_filename,
-      NULL);
+      key_passphrase);
   ok = check(r == MAILSMIME_NO_ERROR, "could not add private key") && ok;
   r = mailsmime_add_cert_file(smime, wrong_email, wrong_cert_filename);
   ok = check(r == MAILSMIME_NO_ERROR, "could not add second recipient cert") &&
       ok;
   r = mailsmime_set_private_key_file(wrong_smime, wrong_email,
-      wrong_cert_filename, wrong_key_filename, NULL);
+      wrong_cert_filename, wrong_key_filename, key_passphrase);
   ok = check(r == MAILSMIME_NO_ERROR, "could not add wrong private key") && ok;
   if (!ok)
     goto cleanup;
@@ -815,31 +598,46 @@ static int check_crypto_round_trip(void)
   mailsmime_free(untrusted_smime);
   mailsmime_free(smime);
 
- cleanup_files:
-  unlink(cert_filename);
-  unlink(key_filename);
-  unlink(wrong_cert_filename);
-  unlink(wrong_key_filename);
   return ok;
+}
+
+int smime_test_crypto_round_trip(void)
+{
+  return smime_test_crypto_round_trip_with_backend(MAILSMIME_BACKEND_DEFAULT);
+}
+
+int smime_test_passphrase_callback(void)
+{
+  return smime_test_passphrase_callback_with_backend(
+      MAILSMIME_BACKEND_DEFAULT);
 }
 #endif
 
+#ifndef SMIME_LOW_LEVEL_NO_MAIN
 int main(void)
 {
   int ok;
 
   ok = 1;
-  ok = check_signed_fixture(
+  ok = smime_test_signed_fixture(
       "unittest/mime-parser/data/input/mbox/jwz/118") && ok;
-  ok = check_signed_fixture(
+  ok = smime_test_signed_fixture(
       "unittest/mime-parser/data/input/mbox/jwz/128") && ok;
-  ok = check_encrypted_fixture(
+  ok = smime_test_encrypted_fixture(
       "unittest/mime-parser/data/input/mbox/jwz/105") && ok;
-  ok = check_encrypted_fixture(
+  ok = smime_test_encrypted_fixture(
       "unittest/mime-parser/data/input/mbox/jwz/121") && ok;
 #ifdef USE_SMIME_OPENSSL
-  ok = check_crypto_round_trip() && ok;
-  ok = check_passphrase_callback() && ok;
+  ok = smime_test_crypto_round_trip_with_backend(
+      MAILSMIME_BACKEND_OPENSSL) && ok;
+  ok = smime_test_passphrase_callback_with_backend(
+      MAILSMIME_BACKEND_OPENSSL) && ok;
+#endif
+#ifdef USE_SMIME_APPLE
+  ok = smime_test_crypto_round_trip_with_backend(
+      MAILSMIME_BACKEND_APPLE) && ok;
+  ok = smime_test_passphrase_callback_with_backend(
+      MAILSMIME_BACKEND_APPLE) && ok;
 #endif
 
   if (!ok)
@@ -848,3 +646,4 @@ int main(void)
   puts("smime-low-level-test: ok");
   return EXIT_SUCCESS;
 }
+#endif

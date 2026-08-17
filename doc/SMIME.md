@@ -4,6 +4,25 @@ The low-level S/MIME API works with `struct mailmime *` values directly. The
 caller configures certificates and keys on a `struct mailsmime *` context, then
 passes MIME entities in and gets MIME entities back.
 
+## Backend Selection
+
+`mailsmime_new()` keeps the platform's default behavior. When a build contains
+both S/MIME implementations, a caller can select one for each context:
+
+```c
+struct mailsmime * apple_smime;
+struct mailsmime * openssl_smime;
+
+apple_smime = mailsmime_new_with_backend(MAILSMIME_BACKEND_APPLE);
+openssl_smime = mailsmime_new_with_backend(MAILSMIME_BACKEND_OPENSSL);
+```
+
+The available values are `MAILSMIME_BACKEND_DEFAULT`,
+`MAILSMIME_BACKEND_APPLE`, and `MAILSMIME_BACKEND_OPENSSL`. The explicit
+constructor returns `NULL` when the requested backend was not compiled into
+libetpan. On macOS, the Xcode framework builds both implementations and the
+default remains Apple Security.
+
 ## Signing
 
 ```c
