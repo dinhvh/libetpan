@@ -14,7 +14,7 @@ if [[ ! -f "$source_dir/CMakeLists.txt" ]]; then
   exit 1
 fi
 
-for command in cmake xcodebuild xcrun; do
+for command in cmake python3 xcodebuild xcrun; do
   if ! command -v "$command" >/dev/null 2>&1; then
     echo "Required command not found: $command" >&2
     exit 1
@@ -41,12 +41,29 @@ build_variant() {
     -DCMAKE_OSX_ARCHITECTURES="$architectures" \
     -DCMAKE_OSX_DEPLOYMENT_TARGET="$deployment_target" \
     -DCMAKE_INSTALL_PREFIX="$prefix" \
+    -DCMAKE_C_FLAGS="-Djson_object_get=jansson_json_object_get" \
     -DJANSSON_BUILD_SHARED_LIBS=OFF \
     -DJANSSON_BUILD_DOCS=OFF \
     -DJANSSON_EXAMPLES=OFF \
     -DJANSSON_WITHOUT_TESTS=ON
   cmake --build "$variant_build" --parallel
   cmake --install "$variant_build"
+
+  # Jansson and JSON-C both export an ABI-incompatible json_object_get().
+  # Keep the rename in the installed header so every consumer calls the
+  # namespaced symbol emitted by the static library above.
+  python3 - "$prefix/include/jansson.h" <<'PY'
+from pathlib import Path
+import sys
+
+header = Path(sys.argv[1])
+contents = header.read_text()
+marker = "#define JANSSON_H\n"
+replacement = marker + "\n/* Avoid a collision with JSON-C when linked statically. */\n#define json_object_get jansson_json_object_get\n"
+if marker not in contents:
+    raise SystemExit(f"Could not find Jansson include guard in {header}")
+header.write_text(contents.replace(marker, replacement, 1))
+PY
 }
 
 rm -rf "$build_root"
