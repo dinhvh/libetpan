@@ -65,7 +65,7 @@ int newsnntp_socket_connect(newsnntp * f, const char * server, uint16_t port)
   mailstream * stream;
 
 #if HAVE_CFNETWORK
-  if (mailstream_cfstream_enabled) {
+  if (mailstream_ssl_get_backend() == MAILSTREAM_SSL_BACKEND_CFNETWORK) {
     return newsnntp_cfsocket_connect(f, server, port);
   }
 #endif

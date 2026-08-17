@@ -261,7 +261,7 @@ int mailstorage_generic_connect_with_local_address_tls(mailsession_driver * driv
   case CONNECTION_TYPE_STARTTLS:
   case CONNECTION_TYPE_TLS:
 #if HAVE_CFNETWORK
-    if (mailstream_cfstream_enabled) {
+    if (mailstream_ssl_get_backend() == MAILSTREAM_SSL_BACKEND_CFNETWORK) {
       stream = mailstream_cfstream_open_voip(servername, port, mailstream_cfstream_voip_enabled);
       if (stream == NULL) {
         res = MAIL_ERROR_CONNECT;
@@ -310,7 +310,7 @@ int mailstorage_generic_connect_with_local_address_tls(mailsession_driver * driv
   case CONNECTION_TYPE_TLS:
   case CONNECTION_TYPE_COMMAND_TLS:
 #if HAVE_CFNETWORK
-    if (mailstream_cfstream_enabled) {
+    if (mailstream_ssl_get_backend() == MAILSTREAM_SSL_BACKEND_CFNETWORK) {
       int ssl_level = MAILSTREAM_CFSTREAM_SSL_LEVEL_NEGOCIATED_SSL;
       mailstream_cfstream_set_ssl_level(stream, ssl_level);
       mailstream_cfstream_set_ssl_peer_name(stream, servername);

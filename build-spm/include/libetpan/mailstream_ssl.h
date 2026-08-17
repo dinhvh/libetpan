@@ -55,6 +55,22 @@ extern mailstream_low_driver * mailstream_ssl_driver;
 
 struct mailstream_ssl_context;
 
+enum mailstream_ssl_backend {
+  MAILSTREAM_SSL_BACKEND_OPENSSL,
+  MAILSTREAM_SSL_BACKEND_GNUTLS,
+  MAILSTREAM_SSL_BACKEND_CFNETWORK
+};
+
+/* Configure once, before opening streams. Returns -1 when unavailable. */
+LIBETPAN_EXPORT
+int mailstream_ssl_set_backend(enum mailstream_ssl_backend backend);
+
+LIBETPAN_EXPORT
+enum mailstream_ssl_backend mailstream_ssl_get_backend(void);
+
+LIBETPAN_EXPORT
+int mailstream_ssl_backend_is_available(enum mailstream_ssl_backend backend);
+
 LIBETPAN_EXPORT
 mailstream_low * mailstream_low_ssl_open(int fd);
 

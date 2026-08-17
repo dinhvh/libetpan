@@ -72,7 +72,7 @@ int mailpop3_ssl_connect_with_callback(mailpop3 * f, const char * server, uint16
   mailstream * stream;
 
 #if HAVE_CFNETWORK
-  if (mailstream_cfstream_enabled) {
+  if (mailstream_ssl_get_backend() == MAILSTREAM_SSL_BACKEND_CFNETWORK) {
     if (callback == NULL) {
       return mailpop3_cfssl_connect(f, server, port);
     }

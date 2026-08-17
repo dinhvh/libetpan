@@ -76,7 +76,7 @@ int mailsmtp_ssl_connect_with_callback(mailsmtp * session,
   mailstream * stream;
 
 #if HAVE_CFNETWORK
-  if (mailstream_cfstream_enabled) {
+  if (mailstream_ssl_get_backend() == MAILSTREAM_SSL_BACKEND_CFNETWORK) {
     if (callback == NULL) {
       return mailsmtp_cfssl_connect(session, server, port);
     }

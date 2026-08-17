@@ -68,7 +68,7 @@ int mailimap_socket_connect_voip(mailimap * f, const char * server, uint16_t por
     mailstream * stream;
 
   #if HAVE_CFNETWORK
-    if (mailstream_cfstream_enabled) {
+    if (mailstream_ssl_get_backend() == MAILSTREAM_SSL_BACKEND_CFNETWORK) {
       return mailimap_cfsocket_connect_voip(f, server, port, voip_enabled);
     }
   #endif

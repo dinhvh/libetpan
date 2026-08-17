@@ -68,7 +68,7 @@ int mailsmtp_socket_connect(mailsmtp * session,
   mailstream * stream;
 
 #if HAVE_CFNETWORK
-  if (mailstream_cfstream_enabled) {
+  if (mailstream_ssl_get_backend() == MAILSTREAM_SSL_BACKEND_CFNETWORK) {
     return mailsmtp_cfsocket_connect(session, server, port);
   }
 #endif

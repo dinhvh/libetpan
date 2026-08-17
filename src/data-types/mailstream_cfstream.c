@@ -55,6 +55,62 @@
 LIBETPAN_EXPORT
 int mailstream_cfstream_enabled = CFSTREAM_ENABLED_DEFAULT;
 
+static enum mailstream_ssl_backend mailstream_selected_ssl_backend =
+#if defined(USE_GNUTLS)
+  MAILSTREAM_SSL_BACKEND_GNUTLS;
+#else
+  MAILSTREAM_SSL_BACKEND_OPENSSL;
+#endif
+
+static int mailstream_ssl_backend_was_selected = 0;
+
+int mailstream_ssl_backend_is_available(enum mailstream_ssl_backend backend)
+{
+  switch (backend) {
+  case MAILSTREAM_SSL_BACKEND_OPENSSL:
+#if defined(USE_SSL) && !defined(USE_GNUTLS)
+    return 1;
+#else
+    return 0;
+#endif
+  case MAILSTREAM_SSL_BACKEND_GNUTLS:
+#if defined(USE_SSL) && defined(USE_GNUTLS)
+    return 1;
+#else
+    return 0;
+#endif
+  case MAILSTREAM_SSL_BACKEND_CFNETWORK:
+#if HAVE_CFNETWORK
+    return 1;
+#else
+    return 0;
+#endif
+  default:
+    return 0;
+  }
+}
+
+int mailstream_ssl_set_backend(enum mailstream_ssl_backend backend)
+{
+  if (!mailstream_ssl_backend_is_available(backend))
+    return -1;
+
+  mailstream_selected_ssl_backend = backend;
+  mailstream_ssl_backend_was_selected = 1;
+  mailstream_cfstream_enabled =
+    (backend == MAILSTREAM_SSL_BACKEND_CFNETWORK);
+  return 0;
+}
+
+enum mailstream_ssl_backend mailstream_ssl_get_backend(void)
+{
+  /* Preserve the old public boolean until it can be retired. */
+  if (!mailstream_ssl_backend_was_selected)
+    return mailstream_cfstream_enabled ? MAILSTREAM_SSL_BACKEND_CFNETWORK :
+      mailstream_selected_ssl_backend;
+  return mailstream_selected_ssl_backend;
+}
+
 LIBETPAN_EXPORT
 int mailstream_cfstream_voip_enabled = 0;
 

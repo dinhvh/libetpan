@@ -74,7 +74,7 @@ int mailimap_ssl_connect_voip_with_callback(mailimap * f, const char * server, u
   mailstream * stream;
 
 #if HAVE_CFNETWORK
-  if (mailstream_cfstream_enabled) {
+  if (mailstream_ssl_get_backend() == MAILSTREAM_SSL_BACKEND_CFNETWORK) {
     if (callback == NULL) {
       return mailimap_cfssl_connect_voip(f, server, port, voip_enabled);
     }
