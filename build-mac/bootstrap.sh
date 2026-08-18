@@ -6,12 +6,26 @@ script_dir="$(cd "$(dirname "$0")" && pwd)"
 repository_root="$(cd "$script_dir/.." && pwd)"
 logfile="$script_dir/bootstrap.log"
 archive="$script_dir/autogen-result.tar.gz"
+no_cache=false
 configure_flags=(
   --with-expat=no
   --with-curl=no
   --enable-debug
   --with-smime=no
 )
+
+for argument in "$@"; do
+  case "$argument" in
+    --no-cache)
+      no_cache=true
+      ;;
+    *)
+      echo "Unknown argument: $argument" >&2
+      echo "Usage: $0 [--no-cache]" >&2
+      exit 1
+      ;;
+  esac
+done
 
 autogen_available=true
 if [[ ! -x "$repository_root/autogen.sh" ]]; then
@@ -28,7 +42,12 @@ fi
 
 cd "$repository_root"
 
-if "$autogen_available"; then
+if "$no_cache" || [[ ! -f "$archive" ]]; then
+  if ! "$autogen_available"; then
+    echo "Autotools are required to create build-mac/autogen-result.tar.gz" >&2
+    exit 1
+  fi
+
   echo "Generating the autotools build files"
   SDKROOT= IPHONEOS_DEPLOYMENT_TARGET= \
     ./autogen.sh "${configure_flags[@]}" >"$logfile" 2>&1 || {
@@ -52,6 +71,9 @@ else
       exit 1
     }
 fi
+
+make stamp-prepare-target >> "$logfile" 2>&1
+make libetpan-config.h >> "$logfile" 2>&1
 
 echo "Building macOS/iOS dependencies"
 "$script_dir/dependencies/bootstrap.sh"
