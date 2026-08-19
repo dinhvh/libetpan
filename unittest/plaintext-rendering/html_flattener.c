@@ -388,7 +388,15 @@ char * plaintext_rendering_flatten_html(const char * html)
   state.show_link = 1;
   state.last_char_is_whitespace = 1;
   cleaned_html = plaintext_rendering_cleaned_html(html);
+#if LIBXML_VERSION >= 21100
   parser_context = htmlNewSAXParserCtxt(&handler, &state);
+#else
+  parser_context = htmlNewParserCtxt();
+  if (parser_context != NULL) {
+    *parser_context->sax = handler;
+    parser_context->userData = &state;
+  }
+#endif
   parsed_doc = NULL;
   if (parser_context != NULL) {
     parsed_doc = htmlCtxtReadMemory(parser_context, cleaned_html,
