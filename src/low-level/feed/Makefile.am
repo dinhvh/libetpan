@@ -32,7 +32,8 @@ include $(top_srcdir)/rules.mk
 etpaninclude_HEADERS =
 
 AM_CPPFLAGS = -I$(top_builddir)/include \
-	-I$(top_srcdir)/src/data-types -I$(top_srcdir)/src/low-level/imf
+	-I$(top_srcdir)/src/data-types -I$(top_srcdir)/src/low-level/imf \
+	@LIBXML2_CFLAGS@
 
 noinst_LTLIBRARIES = libfeed.la
 

@@ -303,7 +303,7 @@ struct newsfeed_item * newsfeed_get_item(struct newsfeed * feed, unsigned int n)
  * we got from url's server. */
 int newsfeed_update(struct newsfeed * feed, time_t last_update)
 {
-#if (defined(HAVE_CURL) && defined(HAVE_EXPAT))
+#if defined(HAVE_CURL)
   CURL * eh;
   CURLcode curl_res;
   struct newsfeed_parser_context * feed_ctx;
@@ -330,25 +330,9 @@ int newsfeed_update(struct newsfeed * feed, time_t last_update)
     goto free_eh;
   }
   
-  feed_ctx->parser = XML_ParserCreate(NULL);
-  if (feed_ctx->parser == NULL) {
-    res = NEWSFEED_ERROR_MEMORY;
+  res = newsfeed_parser_context_init(feed_ctx, feed);
+  if (res != NEWSFEED_NO_ERROR)
     goto free_ctx;
-  }
-  feed_ctx->depth = 0;
-  feed_ctx->str = mmap_string_sized_new(256);
-  if (feed_ctx->str == NULL) {
-    res = NEWSFEED_ERROR_MEMORY;
-    goto free_praser;
-  }
-  feed_ctx->feed = feed;
-  feed_ctx->location = 0;
-  feed_ctx->curitem = NULL;
-  feed_ctx->error = NEWSFEED_NO_ERROR;
-  
-  /* Set initial expat handlers, which will take care of choosing
-   * correct parser later. */
-  newsfeed_parser_set_expat_handlers(feed_ctx);
   
   if (feed->feed_timeout != 0)
     timeout_value = feed->feed_timeout;
@@ -384,8 +368,12 @@ int newsfeed_update(struct newsfeed * feed, time_t last_update)
   curl_res = curl_easy_perform(eh);
   if (curl_res != 0) {
     res = curl_error_convert(curl_res);
-    goto free_str;
+    goto free_parser;
   }
+
+  res = newsfeed_parser_end(feed_ctx);
+  if (res != NEWSFEED_NO_ERROR)
+    goto free_parser;
   
   curl_easy_getinfo(eh, CURLINFO_RESPONSE_CODE, &response_code);
   
@@ -393,22 +381,19 @@ int newsfeed_update(struct newsfeed * feed, time_t last_update)
   
   if (feed_ctx->error != NEWSFEED_NO_ERROR) {
     res = feed_ctx->error;
-    goto free_str;
+    goto free_parser;
   }
   
   /* Cleanup, we should be done. */
-  mmap_string_free(feed_ctx->str);
-  XML_ParserFree(feed_ctx->parser);
+  newsfeed_parser_context_cleanup(feed_ctx);
   free(feed_ctx);
   
   feed->feed_response_code = (int) response_code;
   
   return NEWSFEED_NO_ERROR;;
   
- free_str:
-  mmap_string_free(feed_ctx->str);
- free_praser:
-  XML_ParserFree(feed_ctx->parser);
+ free_parser:
+  newsfeed_parser_context_cleanup(feed_ctx);
  free_ctx:
   free(feed_ctx);
  free_eh:
@@ -416,6 +401,8 @@ int newsfeed_update(struct newsfeed * feed, time_t last_update)
  err:
   return res;
 #else
+  (void) feed;
+  (void) last_update;
   return NEWSFEED_ERROR_INTERNAL;
 #endif
 }

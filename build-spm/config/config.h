@@ -61,9 +61,8 @@
 /* SASL is disabled for the source package to avoid a system/vendor dependency. */
 /* #undef USE_SASL */
 
-/* OpenSSL, GnuTLS, curl, expat, lmdb, and poll are disabled for SPM. */
+/* OpenSSL, GnuTLS, curl, lmdb, and poll are disabled for SPM. */
 /* #undef HAVE_CURL */
-/* #undef HAVE_EXPAT */
 /* #undef HAVE_ICONV_PROTO_CONST */
 /* #undef HAVE_LIBLOCKFILE */
 /* #undef HAVE_MINGW32_SYSTEM */

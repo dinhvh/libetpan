@@ -34,7 +34,10 @@
 
 #include "newsfeed_private.h"
 
-void newsfeed_parser_set_expat_handlers(struct newsfeed_parser_context * ctx);
+int newsfeed_parser_context_init(struct newsfeed_parser_context * ctx,
+    struct newsfeed * feed);
+void newsfeed_parser_context_cleanup(struct newsfeed_parser_context * ctx);
+int newsfeed_parser_end(struct newsfeed_parser_context * ctx);
 size_t newsfeed_writefunc(void * ptr, size_t size, size_t nmemb, void * stream);
 const char * newsfeed_parser_get_attribute_value(const char ** attr,
     const char * name);

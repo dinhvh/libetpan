@@ -67,7 +67,7 @@ the JSON/HTTP libraries enabled by the JMAP build:
 clang -g -O1 -fsanitize=address,fuzzer \
     -I . -I include -I src/low-level/jmap -I src/main \
     tests/fuzz/fuzz_jmap_response.c src/.libs/libetpan.a \
-    -ljansson -lcurl -lexpat -lpthread -lz \
+    -ljansson -lcurl -lxml2 -lpthread -lz \
     -o fuzz_jmap_response
 ```
 

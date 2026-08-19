@@ -35,8 +35,8 @@
 #include "newsfeed_types.h"
 #include "mmapstring.h"
 
-#ifdef HAVE_EXPAT
-#include <expat.h>
+#ifdef HAVE_CURL
+#include <libxml/parser.h>
 #endif
 
 struct newsfeed_parser_context {
@@ -48,9 +48,11 @@ struct newsfeed_parser_context {
   struct newsfeed_item * curitem;
   
   int error;
-  
-#ifdef HAVE_EXPAT
-  void * parser;
+
+#ifdef HAVE_CURL
+  unsigned int feed_type;
+  xmlSAXHandler sax_handler;
+  xmlParserCtxtPtr parser;
 #endif
 };
 

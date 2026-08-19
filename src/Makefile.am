@@ -90,4 +90,4 @@ libetpan@LIBSUFFIX@_la_LIBADD = \
 	engine/libengine.la \
         $(arch_lib) \
 	@LIBS@ @SSLLIBS@ @SMIMELIBS@ @LIBICONV@ @ICULIB@ @DBLIB@ @GNUTLSLIB@ @SASLLIBS@ \
-	@JANSSON_LIBS@
+	@JANSSON_LIBS@ @LIBXML2_LIBS@

@@ -6,11 +6,11 @@ OSXSDK="`xcodebuild -showsdks 2>/dev/null | grep macosx | sed 's/.*macosx\(.*\)/
 
 if test "x`uname`" = xLinux ; then
   distdir=libetpan-travis-build
-  ./autogen.sh --with-curl=no --disable-db --with-expat=no
+  ./autogen.sh --with-curl=no --disable-db
   make dist distdir=$distdir
   tar xzf $distdir.tar.gz
   cd $distdir
-  ./configure --with-curl=no --disable-db --with-expat=no
+  ./configure --with-curl=no --disable-db
   make
   cd tests
   make imap-sample

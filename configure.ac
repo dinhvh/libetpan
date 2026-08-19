@@ -832,46 +832,16 @@ AS_IF([test "x$have_jmap" = xyes],
   [AC_DEFINE([HAVE_JMAP], [1], [Define to include low-level JMAP support])])
 AM_CONDITIONAL([HAVE_JMAP], [test "x$have_jmap" = xyes])
 
-dnl expat
-libexpat=no
-AC_ARG_WITH(expat, [AS_HELP_STRING([--with-expat[=DIR]], [expat install directory (default=auto)])],
-            [], [with_expat=auto])
-if test "x$with_expat" = "xno"; then
-	:
-elif test "x$with_expat" != "xauto"; then
-  OCPPFLAGS="$CPPFLAGS"
-  OLDFLAGS="$LDFLAGS"
-  if test "x$with_expat" != "xyes" ; then
-    CPPFLAGS="$CPPFLAGS -I$with_expat/include"
-    LDFLAGS="$LDFLAGS -L$with_expat/lib -lexpat"
-  fi
-  AC_CHECK_HEADER(expat.h, [libexpat=yes])
-  if test "x$libexpat" = "xyes"; then
-      AC_MSG_CHECKING([whether with-expat compiles and links fine])
-      AC_LINK_IFELSE([AC_LANG_PROGRAM([[]], [[XML_SetElementHandler();]])], [libexpat=yes], [libexpat=no])
-      AC_MSG_RESULT([$libexpat])
-  fi
-   if test "x$libexpat" = "xno"; then
-      CPPFLAGS="$OCPPFLAGS"
-      LDFLAGS="$OLDFLAGS"
-   fi
-else
-  AC_CHECK_HEADER(expat.h, [libexpat=yes])
-  if test "x$libexpat" = "xyes"; then
-    AC_MSG_CHECKING([whether libexpat compiles and links fine])
-    OLDFLAGS="$LDFLAGS"
-    LDFLAGS="$LDFLAGS -lexpat"
-    AC_LINK_IFELSE([AC_LANG_PROGRAM([[]], [[XML_SetElementHandler();]])], [libexpat=yes], [libexpat=no])
-    AC_MSG_RESULT([$libexpat])
-    if test "x$libexpat" = "xno"; then
-      LDFLAGS="$OLDFLAGS"
-    fi
-  fi
-fi
-
-if test "x$libexpat" = "xyes" ; then
-  AC_DEFINE([HAVE_EXPAT], 1, [Define to use expat])
-fi
+dnl XML
+LIBXML2_CFLAGS=
+LIBXML2_LIBS=
+AS_IF([test "x$libcurl" = xyes], [
+  PKG_CHECK_MODULES([LIBXML2], [libxml-2.0],
+    [],
+    [AC_MSG_ERROR([libxml2 is required for feed XML support when curl is enabled])])
+])
+AC_SUBST([LIBXML2_CFLAGS])
+AC_SUBST([LIBXML2_LIBS])
 
 AC_ARG_WITH([zlib],
   [AS_HELP_STRING([--with-zlib],

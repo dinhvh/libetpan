@@ -8,7 +8,6 @@ logfile="$script_dir/bootstrap.log"
 archive="$script_dir/autogen-result.tar.gz"
 no_cache=false
 configure_flags=(
-  --with-expat=no
   --with-curl=no
   --enable-debug
   --with-smime=no
