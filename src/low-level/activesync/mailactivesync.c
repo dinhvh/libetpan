@@ -182,7 +182,7 @@ int mailactivesync_connect(mailactivesync * session,
   session->as_advertised_commands = NULL;
 
   if (session->as_http_transport == NULL) {
-    r = mailactivesync_http_transport_new_curl(
+    r = mailactivesync_http_transport_new_default(
         &session->as_http_transport);
     if (r != MAILACTIVESYNC_NO_ERROR)
       return r;

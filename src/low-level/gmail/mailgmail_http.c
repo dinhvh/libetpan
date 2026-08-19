@@ -7,10 +7,127 @@
 #endif
 
 #include "mailgmail_http.h"
+#include "mailhttp.h"
 
 #include <stdlib.h>
 #include <string.h>
 #include <strings.h>
+
+struct gmail_mailhttp_context {
+  struct mailhttp_transport * transport;
+};
+
+static int gmail_error_from_mailhttp(int r)
+{
+  switch (r) {
+  case MAILHTTP_NO_ERROR: return MAILGMAIL_NO_ERROR;
+  case MAILHTTP_ERROR_MEMORY: return MAILGMAIL_ERROR_MEMORY;
+  case MAILHTTP_ERROR_BAD_STATE:
+  case MAILHTTP_ERROR_BAD_URL: return MAILGMAIL_ERROR_BAD_STATE;
+  case MAILHTTP_ERROR_TLS: return MAILGMAIL_ERROR_SSL;
+  case MAILHTTP_ERROR_TIMEOUT: return MAILGMAIL_ERROR_HTTP;
+  case MAILHTTP_ERROR_UNAVAILABLE: return MAILGMAIL_ERROR_HTTP_UNAVAILABLE;
+  default: return MAILGMAIL_ERROR_HTTP;
+  }
+}
+
+static int gmail_mailhttp_perform(struct mailgmail_http_transport * transport,
+    struct mailgmail_http_request * request,
+    struct mailgmail_http_response ** result)
+{
+  struct gmail_mailhttp_context * context = transport->context;
+  struct mailhttp_request * common_request;
+  struct mailhttp_response * common_response = NULL;
+  struct mailgmail_http_response * response = NULL;
+  clistiter * cur;
+  int r;
+
+  common_request = mailhttp_request_new(request->method, request->url);
+  if (common_request == NULL)
+    return MAILGMAIL_ERROR_MEMORY;
+  common_request->timeout = request->timeout;
+  common_request->max_redirects = 3;
+  for (cur = clist_begin(request->headers); cur != NULL;
+      cur = clist_next(cur)) {
+    struct mailgmail_http_header * header = clist_content(cur);
+    r = mailhttp_request_add_header(common_request, header->name,
+        header->value);
+    if (r != MAILHTTP_NO_ERROR)
+      goto common_error;
+  }
+  r = mailhttp_request_set_body(common_request, request->body,
+      request->body_len);
+  if (r != MAILHTTP_NO_ERROR)
+    goto common_error;
+  r = mailhttp_perform(context->transport, common_request, &common_response);
+  if (r != MAILHTTP_NO_ERROR)
+    goto common_error;
+  response = mailgmail_http_response_new(common_response->status_code);
+  if (response == NULL) {
+    r = MAILHTTP_ERROR_MEMORY;
+    goto common_error;
+  }
+  for (cur = clist_begin(common_response->headers); cur != NULL;
+      cur = clist_next(cur)) {
+    struct mailhttp_header * header = clist_content(cur);
+    if (mailgmail_http_response_add_header(response, header->name,
+        header->value) != MAILGMAIL_NO_ERROR) {
+      r = MAILHTTP_ERROR_MEMORY;
+      goto common_error;
+    }
+  }
+  if (common_response->body_len != 0) {
+    response->body = malloc(common_response->body_len);
+    if (response->body == NULL) {
+      r = MAILHTTP_ERROR_MEMORY;
+      goto common_error;
+    }
+    memcpy(response->body, common_response->body,
+        common_response->body_len);
+    response->body_len = common_response->body_len;
+  }
+  mailhttp_response_free(common_response);
+  mailhttp_request_free(common_request);
+  * result = response;
+  return MAILGMAIL_NO_ERROR;
+
+common_error:
+  mailgmail_http_response_free(response);
+  mailhttp_response_free(common_response);
+  mailhttp_request_free(common_request);
+  return gmail_error_from_mailhttp(r);
+}
+
+static void gmail_mailhttp_free(struct mailgmail_http_transport * transport)
+{
+  struct gmail_mailhttp_context * context = transport->context;
+  if (context == NULL)
+    return;
+  mailhttp_transport_free(context->transport);
+  free(context);
+}
+
+int mailgmail_http_transport_new_mailhttp(struct mailhttp_transport * common,
+    struct mailgmail_http_transport ** result)
+{
+  struct mailgmail_http_transport * transport;
+  struct gmail_mailhttp_context * context;
+
+  context = malloc(sizeof(* context));
+  transport = malloc(sizeof(* transport));
+  if ((context == NULL) || (transport == NULL)) {
+    free(context);
+    free(transport);
+    mailhttp_transport_free(common);
+    return MAILGMAIL_ERROR_MEMORY;
+  }
+  context->transport = common;
+  transport->context = context;
+  transport->perform = gmail_mailhttp_perform;
+  transport->free = gmail_mailhttp_free;
+  * result = transport;
+  return MAILGMAIL_NO_ERROR;
+}
 
 static char * dup_string(const char * value)
 {
@@ -260,11 +377,39 @@ int mailgmail_http_transport_new_default(
 
   * result = NULL;
 
-#if defined(__APPLE__)
-  return mailgmail_http_transport_new_nsurlsession(result);
-#elif defined(HAVE_CURL)
-  return mailgmail_http_transport_new_curl(result);
-#else
-  return MAILGMAIL_ERROR_HTTP_UNAVAILABLE;
-#endif
+  {
+    struct mailhttp_transport * common;
+    int r = mailhttp_transport_new_default(&common);
+    if (r != MAILHTTP_NO_ERROR)
+      return gmail_error_from_mailhttp(r);
+    return mailgmail_http_transport_new_mailhttp(common, result);
+  }
+}
+
+int mailgmail_http_transport_new_curl(
+    struct mailgmail_http_transport ** result)
+{
+  struct mailhttp_transport * common;
+  int r;
+  if (result == NULL)
+    return MAILGMAIL_ERROR_BAD_STATE;
+  * result = NULL;
+  r = mailhttp_transport_new_curl(&common);
+  if (r != MAILHTTP_NO_ERROR)
+    return gmail_error_from_mailhttp(r);
+  return mailgmail_http_transport_new_mailhttp(common, result);
+}
+
+int mailgmail_http_transport_new_nsurlsession(
+    struct mailgmail_http_transport ** result)
+{
+  struct mailhttp_transport * common;
+  int r;
+  if (result == NULL)
+    return MAILGMAIL_ERROR_BAD_STATE;
+  * result = NULL;
+  r = mailhttp_transport_new_nsurlsession(&common);
+  if (r != MAILHTTP_NO_ERROR)
+    return gmail_error_from_mailhttp(r);
+  return mailgmail_http_transport_new_mailhttp(common, result);
 }

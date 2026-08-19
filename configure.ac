@@ -806,6 +806,7 @@ fi
 if test "x$libcurl" = "xyes" ; then
   AC_DEFINE([HAVE_CURL], 1, [Define to use curl])
 fi
+AM_CONDITIONAL([HAVE_CURL], [test "x$libcurl" = "xyes"])
 
 dnl JSON
 PKG_CHECK_MODULES([JANSSON], [jansson],
@@ -815,16 +816,16 @@ PKG_CHECK_MODULES([JANSSON], [jansson],
 dnl JMAP
 AC_ARG_WITH([jmap],
   [AS_HELP_STRING([--with-jmap],
-    [include low-level JMAP support using Jansson and curl @<:@default=auto@:>@])],
+    [include low-level JMAP support using Jansson and an HTTP backend @<:@default=auto@:>@])],
   [], [with_jmap=auto])
 
 have_jmap=no
 AS_IF([test "x$with_jmap" != xno], [
-  AS_IF([test "x$libcurl" = xyes], [
+  AS_IF([test "x$libcurl" = xyes || test "x$have_nsurlsession" = xyes], [
     have_jmap=yes
   ], [
     AS_IF([test "x$with_jmap" = xyes],
-      [AC_MSG_ERROR([JMAP support requested but curl was not found])],
+      [AC_MSG_ERROR([JMAP support requested but no HTTP backend was found])],
       [have_jmap=no])
   ])
 ])
@@ -832,16 +833,9 @@ AS_IF([test "x$have_jmap" = xyes],
   [AC_DEFINE([HAVE_JMAP], [1], [Define to include low-level JMAP support])])
 AM_CONDITIONAL([HAVE_JMAP], [test "x$have_jmap" = xyes])
 
-dnl XML
-LIBXML2_CFLAGS=
-LIBXML2_LIBS=
-AS_IF([test "x$libcurl" = xyes], [
-  PKG_CHECK_MODULES([LIBXML2], [libxml-2.0],
-    [],
-    [AC_MSG_ERROR([libxml2 is required for feed XML support when curl is enabled])])
-])
-AC_SUBST([LIBXML2_CFLAGS])
-AC_SUBST([LIBXML2_LIBS])
+dnl XML (feed parsing is independent from the selected HTTP backend)
+PKG_CHECK_MODULES([LIBXML2], [libxml-2.0], [],
+  [AC_MSG_ERROR([libxml2 is required for feed XML support])])
 
 AC_ARG_WITH([zlib],
   [AS_HELP_STRING([--with-zlib],

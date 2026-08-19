@@ -116,6 +116,10 @@ int mailjmap_http_transport_new_curl(
     struct mailjmap_http_transport ** result);
 
 LIBETPAN_EXPORT
+int mailjmap_http_transport_new_nsurlsession(
+    struct mailjmap_http_transport ** result);
+
+LIBETPAN_EXPORT
 void mailjmap_http_transport_free(
     struct mailjmap_http_transport * transport);
 

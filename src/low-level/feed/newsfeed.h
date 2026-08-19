@@ -69,6 +69,10 @@ time_t newsfeed_get_date(struct newsfeed * feed);
 void newsfeed_set_timeout(struct newsfeed * feed, unsigned int timeout);
 unsigned int newsfeed_get_timeout(struct newsfeed * feed);
 
+/* Takes ownership of transport. */
+int newsfeed_set_http_transport(struct newsfeed * feed,
+    struct mailhttp_transport * transport);
+
 int newsfeed_add_item(struct newsfeed * feed, struct newsfeed_item * item);
 
 int newsfeed_update(struct newsfeed * feed, time_t last_update);

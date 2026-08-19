@@ -43,10 +43,7 @@
 #include "mailstream.h"
 #include "newsfeed_item.h"
 #include "parser.h"
-
-#ifdef HAVE_CURL
-#include <curl/curl.h>
-#endif
+#include "mailhttp.h"
 
 #ifdef LIBETPAN_REENTRANT
 #	ifndef WIN32
@@ -54,9 +51,13 @@
 #	endif
 #endif
 
-#ifdef HAVE_CURL
-static int curl_error_convert(int curl_res);
-#endif
+static int mailhttp_error_convert(int error);
+
+static int newsfeed_body_sink(const void * data, size_t length, void * context)
+{
+  return newsfeed_writefunc((void *) data, 1, length, context) == length ?
+      0 : -1;
+}
 
 /* feed_new()
  * Initializes new Feed struct, setting its url and a default timeout. */
@@ -79,6 +80,8 @@ struct newsfeed * newsfeed_new(void)
     goto free;
   feed->feed_response_code = 0;
   feed->feed_timeout = 0;
+  feed->feed_http_transport = NULL;
+  (void) mailhttp_transport_new_default(&feed->feed_http_transport);
   
   return feed;
   
@@ -98,6 +101,7 @@ void newsfeed_free(struct newsfeed * feed)
   free(feed->feed_language);
   free(feed->feed_author);
   free(feed->feed_generator);
+  mailhttp_transport_free(feed->feed_http_transport);
   
   for(i = 0 ; i < carray_count(feed->feed_item_list) ; i ++) {
     struct newsfeed_item * item;
@@ -303,31 +307,29 @@ struct newsfeed_item * newsfeed_get_item(struct newsfeed * feed, unsigned int n)
  * we got from url's server. */
 int newsfeed_update(struct newsfeed * feed, time_t last_update)
 {
-#if defined(HAVE_CURL)
-  CURL * eh;
-  CURLcode curl_res;
+  struct mailhttp_transport * transport = NULL;
+  struct mailhttp_request * request = NULL;
+  struct mailhttp_response * response = NULL;
   struct newsfeed_parser_context * feed_ctx;
   unsigned int res;
-  unsigned int timeout_value;
-  long response_code;
+  time_t timeout_value;
+  int r;
   
   if (feed->feed_url == NULL) {
     res = NEWSFEED_ERROR_BADURL;
     goto err;
   }
   
-  /* Init curl before anything else. */
-  eh = curl_easy_init();
-  if (eh == NULL) {
-    res = NEWSFEED_ERROR_MEMORY;
+  transport = feed->feed_http_transport;
+  if (transport == NULL) {
+    res = NEWSFEED_ERROR_INTERNAL;
     goto err;
   }
-  
-  /* Curl initialized, create parser context now. */
+
   feed_ctx = malloc(sizeof(* feed_ctx));
   if (feed_ctx == NULL) {
     res = NEWSFEED_ERROR_MEMORY;
-    goto free_eh;
+    goto err;
   }
   
   res = newsfeed_parser_context_init(feed_ctx, feed);
@@ -339,72 +341,67 @@ int newsfeed_update(struct newsfeed * feed, time_t last_update)
   else
     timeout_value = mailstream_network_delay.tv_sec;
   
-  curl_easy_setopt(eh, CURLOPT_URL, feed->feed_url);
-  curl_easy_setopt(eh, CURLOPT_NOPROGRESS, 1);
-#ifdef CURLOPT_MUTE
-  curl_easy_setopt(eh, CURLOPT_MUTE, 1);
-#endif
-  curl_easy_setopt(eh, CURLOPT_WRITEFUNCTION, newsfeed_writefunc);
-  curl_easy_setopt(eh, CURLOPT_WRITEDATA, feed_ctx);
-  curl_easy_setopt(eh, CURLOPT_FOLLOWLOCATION, 1);
-  curl_easy_setopt(eh, CURLOPT_MAXREDIRS, 3);
-  curl_easy_setopt(eh, CURLOPT_TIMEOUT, timeout_value);
-  curl_easy_setopt(eh, CURLOPT_NOSIGNAL, 1);
-  curl_easy_setopt(eh, CURLOPT_USERAGENT, "libEtPan!");
-  
-  /* Use HTTP's If-Modified-Since feature, if application provided
-   * the timestamp of last update. */
-  if (last_update != -1) {
-    curl_easy_setopt(eh, CURLOPT_TIMECONDITION,
-        CURL_TIMECOND_IFMODSINCE);
-    curl_easy_setopt(eh, CURLOPT_TIMEVALUE, last_update);
-  }
-        
-#if LIBCURL_VERSION_NUM >= 0x070a00
-  curl_easy_setopt(eh, CURLOPT_SSL_VERIFYPEER, 0);
-  curl_easy_setopt(eh, CURLOPT_SSL_VERIFYHOST, 0);
-#endif
-
-  curl_res = curl_easy_perform(eh);
-  if (curl_res != 0) {
-    res = curl_error_convert(curl_res);
+  request = mailhttp_request_new("GET", feed->feed_url);
+  if (request == NULL) {
+    res = NEWSFEED_ERROR_MEMORY;
     goto free_parser;
+  }
+  request->timeout = timeout_value;
+  request->max_redirects = 3;
+  mailhttp_request_set_body_sink(request, newsfeed_body_sink, feed_ctx);
+  r = mailhttp_request_add_header(request, "User-Agent", "libEtPan!");
+  if (r != MAILHTTP_NO_ERROR) {
+    res = mailhttp_error_convert(r);
+    goto free_request;
+  }
+
+  if (last_update != -1) {
+    char date[64];
+    struct tm * tm_value = gmtime(&last_update);
+    if ((tm_value != NULL) &&
+        (strftime(date, sizeof(date), "%a, %d %b %Y %H:%M:%S GMT",
+            tm_value) != 0)) {
+      r = mailhttp_request_add_header(request, "If-Modified-Since", date);
+      if (r != MAILHTTP_NO_ERROR) {
+        res = mailhttp_error_convert(r);
+        goto free_request;
+      }
+    }
+  }
+
+  r = mailhttp_perform(transport, request, &response);
+  if (r != MAILHTTP_NO_ERROR) {
+    res = feed_ctx->error != NEWSFEED_NO_ERROR ? feed_ctx->error :
+        mailhttp_error_convert(r);
+    goto free_request;
   }
 
   res = newsfeed_parser_end(feed_ctx);
   if (res != NEWSFEED_NO_ERROR)
-    goto free_parser;
-  
-  curl_easy_getinfo(eh, CURLINFO_RESPONSE_CODE, &response_code);
-  
-  curl_easy_cleanup(eh);
+    goto free_response;
   
   if (feed_ctx->error != NEWSFEED_NO_ERROR) {
     res = feed_ctx->error;
-    goto free_parser;
+    goto free_response;
   }
-  
-  /* Cleanup, we should be done. */
+
+  feed->feed_response_code = response->status_code;
+  mailhttp_response_free(response);
+  mailhttp_request_free(request);
   newsfeed_parser_context_cleanup(feed_ctx);
   free(feed_ctx);
-  
-  feed->feed_response_code = (int) response_code;
-  
-  return NEWSFEED_NO_ERROR;;
-  
+  return NEWSFEED_NO_ERROR;
+
+ free_response:
+  mailhttp_response_free(response);
+ free_request:
+  mailhttp_request_free(request);
  free_parser:
   newsfeed_parser_context_cleanup(feed_ctx);
  free_ctx:
   free(feed_ctx);
- free_eh:
-  curl_easy_cleanup(eh);
  err:
   return res;
-#else
-  (void) feed;
-  (void) last_update;
-  return NEWSFEED_ERROR_INTERNAL;
-#endif
 }
 
 int newsfeed_add_item(struct newsfeed * feed, struct newsfeed_item * item)
@@ -412,128 +409,35 @@ int newsfeed_add_item(struct newsfeed * feed, struct newsfeed_item * item)
   return carray_add(feed->feed_item_list, item, NULL);
 }
 
-#ifdef HAVE_CURL
-static int curl_error_convert(int curl_res)
+static int mailhttp_error_convert(int error)
 {
-  switch (curl_res) {
-  case CURLE_OK:
+  switch (error) {
+  case MAILHTTP_NO_ERROR:
     return NEWSFEED_NO_ERROR;
-    
-  case CURLE_UNSUPPORTED_PROTOCOL:
+  case MAILHTTP_ERROR_PROTOCOL:
     return NEWSFEED_ERROR_UNSUPPORTED_PROTOCOL;
-    
-  case CURLE_FAILED_INIT:
-  case CURLE_LIBRARY_NOT_FOUND:
-  case CURLE_FUNCTION_NOT_FOUND:
-  case CURLE_BAD_FUNCTION_ARGUMENT:
-  case CURLE_BAD_CALLING_ORDER:
-  case CURLE_UNKNOWN_TELNET_OPTION:
-  case CURLE_TELNET_OPTION_SYNTAX:
-  case CURLE_OBSOLETE:
-  case CURLE_GOT_NOTHING:
-  case CURLE_INTERFACE_FAILED:
-  case CURLE_SHARE_IN_USE:
-  case CURL_LAST:
-    return NEWSFEED_ERROR_INTERNAL;
-    
-  case CURLE_URL_MALFORMAT:
-  case CURLE_URL_MALFORMAT_USER:
-  case CURLE_MALFORMAT_USER:
+  case MAILHTTP_ERROR_BAD_URL:
+  case MAILHTTP_ERROR_BAD_STATE:
     return NEWSFEED_ERROR_BADURL;
-    
-  case CURLE_COULDNT_RESOLVE_PROXY:
-    return NEWSFEED_ERROR_RESOLVE_PROXY;
-    
-  case CURLE_COULDNT_RESOLVE_HOST:
+  case MAILHTTP_ERROR_RESOLVE:
     return NEWSFEED_ERROR_RESOLVE_HOST;
-    
-  case CURLE_COULDNT_CONNECT:
+  case MAILHTTP_ERROR_CONNECT:
     return NEWSFEED_ERROR_CONNECT;
-    
-  case CURLE_FTP_WEIRD_SERVER_REPLY:
-  case CURLE_FTP_WEIRD_PASS_REPLY:
-  case CURLE_FTP_WEIRD_USER_REPLY:
-  case CURLE_FTP_WEIRD_PASV_REPLY:
-  case CURLE_FTP_WEIRD_227_FORMAT:
-    return NEWSFEED_ERROR_PROTOCOL;
-    
-  case CURLE_FTP_ACCESS_DENIED:
-    return NEWSFEED_ERROR_ACCESS;
-    
-  case CURLE_FTP_USER_PASSWORD_INCORRECT:
-  case CURLE_BAD_PASSWORD_ENTERED:
-  case CURLE_LOGIN_DENIED:
-    return NEWSFEED_ERROR_AUTHENTICATION;
-    
-  case CURLE_FTP_CANT_GET_HOST:
-  case CURLE_FTP_CANT_RECONNECT:
-  case CURLE_FTP_COULDNT_SET_BINARY:
-  case CURLE_FTP_QUOTE_ERROR:
-  case CURLE_FTP_COULDNT_SET_ASCII:
-  case CURLE_FTP_PORT_FAILED:
-  case CURLE_FTP_COULDNT_USE_REST:
-  case CURLE_FTP_COULDNT_GET_SIZE:
-    return NEWSFEED_ERROR_FTP;
-    
-  case CURLE_PARTIAL_FILE:
-    return NEWSFEED_ERROR_PARTIAL_FILE;
-    
-  case CURLE_FTP_COULDNT_RETR_FILE:
-  case CURLE_FILE_COULDNT_READ_FILE:
-  case CURLE_BAD_DOWNLOAD_RESUME:
-  case CURLE_FILESIZE_EXCEEDED:
-    return NEWSFEED_ERROR_FETCH;
-    
-  case CURLE_FTP_COULDNT_STOR_FILE:
-  case CURLE_HTTP_POST_ERROR:
-    return NEWSFEED_ERROR_PUT;
-    
-  case CURLE_OUT_OF_MEMORY:
+  case MAILHTTP_ERROR_MEMORY:
     return NEWSFEED_ERROR_MEMORY;
-    
-  case CURLE_OPERATION_TIMEOUTED:
-    return NEWSFEED_ERROR_STREAM;
-    
-  case CURLE_HTTP_RANGE_ERROR:
-  case CURLE_HTTP_RETURNED_ERROR:
-  case CURLE_TOO_MANY_REDIRECTS:
-  case CURLE_BAD_CONTENT_ENCODING:
-    return NEWSFEED_ERROR_HTTP;
-    
-  case CURLE_LDAP_CANNOT_BIND:
-  case CURLE_LDAP_SEARCH_FAILED:
-  case CURLE_LDAP_INVALID_URL:
-    return NEWSFEED_ERROR_LDAP;
-
-  case CURLE_ABORTED_BY_CALLBACK:
+  case MAILHTTP_ERROR_CANCELLED:
     return NEWSFEED_ERROR_CANCELLED;
-    
-  case CURLE_FTP_WRITE_ERROR:
-  case CURLE_SEND_ERROR:
-  case CURLE_RECV_ERROR:
-  case CURLE_READ_ERROR:
-  case CURLE_WRITE_ERROR:
-  case CURLE_SEND_FAIL_REWIND:
+  case MAILHTTP_ERROR_TIMEOUT:
+  case MAILHTTP_ERROR_BODY_SINK:
+  case MAILHTTP_ERROR_IO:
     return NEWSFEED_ERROR_STREAM;
-    
-  case CURLE_SSL_CONNECT_ERROR:
-  case CURLE_SSL_PEER_CERTIFICATE:
-  case CURLE_SSL_ENGINE_NOTFOUND:
-  case CURLE_SSL_ENGINE_SETFAILED:
-  case CURLE_SSL_CERTPROBLEM:
-  case CURLE_SSL_CIPHER:
-#if LIBCURL_VERSION_NUM < 0x073e00
-  case CURLE_SSL_CACERT:
-#endif
-  case CURLE_FTP_SSL_FAILED:
-  case CURLE_SSL_ENGINE_INITFAILED:
+  case MAILHTTP_ERROR_TLS:
     return NEWSFEED_ERROR_SSL;
-    
+  case MAILHTTP_ERROR_UNAVAILABLE:
   default:
     return NEWSFEED_ERROR_INTERNAL;
   }
 }
-#endif
 
 void newsfeed_set_timeout(struct newsfeed * feed, unsigned int timeout)
 {
@@ -543,4 +447,14 @@ void newsfeed_set_timeout(struct newsfeed * feed, unsigned int timeout)
 unsigned int newsfeed_get_timeout(struct newsfeed * feed)
 {
   return feed->feed_timeout;
+}
+
+int newsfeed_set_http_transport(struct newsfeed * feed,
+    struct mailhttp_transport * transport)
+{
+  if ((feed == NULL) || (transport == NULL))
+    return NEWSFEED_ERROR_INTERNAL;
+  mailhttp_transport_free(feed->feed_http_transport);
+  feed->feed_http_transport = transport;
+  return NEWSFEED_NO_ERROR;
 }

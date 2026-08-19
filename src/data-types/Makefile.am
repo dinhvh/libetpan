@@ -40,12 +40,17 @@ etpaninclude_HEADERS = \
 	mailstream_cfstream.h \
 	mailstream_helper.h \
 	mailstream_low.h \
+	mailhttp.h \
 	mailstream_socket.h \
 	mailstream_ssl.h \
 	mailstream_types.h \
 	mmapstring.h
 
 AM_CPPFLAGS = -I$(top_builddir)/include @ICUCPPFLAGS@ @JANSSON_CFLAGS@
+
+# Libtool has no Objective-C language tag. Compile the Apple backend through
+# the C configuration, as is done for the Gmail NSURLSession backend.
+AM_LIBTOOLFLAGS = --tag=CC
 
 noinst_LTLIBRARIES = libdata-types.la
 
@@ -59,7 +64,18 @@ libdata_types_la_SOURCES = connect.h connect.c base64.h hmac-md5.h	\
 	mailstream_cancel.c timeutils.h timeutils.c			\
 	mmapstring_private.h mailstream_ssl_private.h			\
 	mailstream_cfstream.c mailstream_cfstream.h \
-    mailstream_compress.c mailstream_compress.h mailjson.c mailjson.h
+    mailstream_compress.c mailstream_compress.h mailjson.c mailjson.h \
+	mailhttp.c mailhttp.h
+
+if HAVE_CURL
+libdata_types_la_SOURCES += mailhttp_curl.c
+endif
+
+if HAVE_NSURLSESSION
+libdata_types_la_SOURCES += mailhttp_nsurlsession.m
+endif
+
+libdata_types_la_LINK = $(LINK)
 
 noinst_HEADERS = \
 	base64.h \

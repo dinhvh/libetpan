@@ -76,12 +76,13 @@ gmail_live_tests = gmail-live-smoke-test.sh
 noinst_PROGRAMS = smime decrypt pgp frm frm-tree frm-simple	\
 	readmsg-simple fetch-attachment smtpsend readmsg-uid \
 	readmsg compose-msg imap-sample mime-create mime-parse \
-	pop-sample activesync-sample gmail-http-test gmail-sample \
+	pop-sample activesync-sample mailhttp-test feed-http-test \
+	gmail-http-test gmail-sample \
 	smime-low-level-test smime-openssl-interop-test \
 	mailpgp-low-level-test mailpgp-gnupg-interop-test \
 	$(jmap_test_programs) $(jmap_sample_programs)
 
-TESTS = smime-low-level-test mailpgp-low-level-test \
+TESTS = mailhttp-test feed-http-test smime-low-level-test mailpgp-low-level-test \
 	smime-openssl-fixture-test.sh mailpgp-gnupg-fixture-test.sh \
 	$(jmap_test_programs) $(jmap_live_tests) $(gmail_live_tests)
 
@@ -133,6 +134,10 @@ readmsg_uid_SOURCES = $(READMSGCOMMON) readmsg-uid.c
 fetch_attachment_SOURCES = $(READMSGCOMMON) fetch-attachment.c
 
 gmail_http_test_SOURCES = $(top_srcdir)/unittest/gmail/http_test.c
+
+mailhttp_test_SOURCES = $(top_srcdir)/unittest/http/mailhttp_test.c
+
+feed_http_test_SOURCES = $(top_srcdir)/unittest/feed/feed_http_test.c
 
 gmail_sample_SOURCES = gmail-sample.c
 

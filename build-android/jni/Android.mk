@@ -37,13 +37,14 @@ src_files = \
 ./src/data-types/mailstream_low.c \
 ./src/data-types/mailstream_socket.c \
 ./src/data-types/mailstream_ssl.c \
+./src/data-types/mailhttp.c \
+./src/data-types/mailhttp_curl.c \
 ./src/data-types/mailjson.c \
 ./src/data-types/md5.c \
 ./src/data-types/mmapstring.c \
 ./src/data-types/timeutils.c \
 ./src/low-level/gmail/mailgmail.c \
 ./src/low-level/gmail/mailgmail_http.c \
-./src/low-level/gmail/mailgmail_http_curl.c \
 ./src/low-level/gmail/mailgmail_parser.c \
 ./src/low-level/gmail/mailgmail_types.c \
 ./src/low-level/gmail/mailgmail_url.c \
@@ -142,7 +143,6 @@ src_files += \
 ./src/low-level/jmap/mailjmap.c \
 ./src/low-level/jmap/mailjmap_blob.c \
 ./src/low-level/jmap/mailjmap_http.c \
-./src/low-level/jmap/mailjmap_http_curl.c \
 ./src/low-level/jmap/mailjmap_mail.c \
 ./src/low-level/jmap/mailjmap_request.c \
 ./src/low-level/jmap/mailjmap_response.c \

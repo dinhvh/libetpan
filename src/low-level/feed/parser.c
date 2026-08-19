@@ -36,14 +36,10 @@
 
 #include "parser.h"
 
-#ifdef HAVE_CURL
 #include <limits.h>
-#endif
 #include <string.h>
 #include <stdio.h>
-#ifdef HAVE_CURL
 #include <libxml/parser.h>
-#endif
 
 #include "newsfeed.h"
 
@@ -53,7 +49,6 @@
 #include "parser_atom10.h"
 #include "parser_atom03.h"
 
-#ifdef HAVE_CURL
 enum {
   FEED_TYPE_NONE,
   FEED_TYPE_RDF,
@@ -285,35 +280,6 @@ size_t newsfeed_writefunc(void * ptr, size_t size, size_t nmemb, void * data)
   
   return len;
 }
-#else
-int newsfeed_parser_context_init(struct newsfeed_parser_context * ctx,
-    struct newsfeed * feed)
-{
-  (void) ctx;
-  (void) feed;
-  return NEWSFEED_ERROR_INTERNAL;
-}
-
-void newsfeed_parser_context_cleanup(struct newsfeed_parser_context * ctx)
-{
-  (void) ctx;
-}
-
-int newsfeed_parser_end(struct newsfeed_parser_context * ctx)
-{
-  (void) ctx;
-  return NEWSFEED_ERROR_INTERNAL;
-}
-
-size_t newsfeed_writefunc(void * ptr, size_t size, size_t nmemb, void * data)
-{
-  (void) ptr;
-  (void) size;
-  (void) nmemb;
-  (void) data;
-  return 0;
-}
-#endif
 
 const char * newsfeed_parser_get_attribute_value(const char ** attr,
     const char * name)

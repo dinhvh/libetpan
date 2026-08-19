@@ -1908,6 +1908,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = macosx;
 			};
 			name = Debug;
 		};
@@ -1932,6 +1933,7 @@
 				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/../../include\"";
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = macosx;
 			};
 			name = Release;
 		};
@@ -2173,6 +2175,7 @@
 				);
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/../include",
 					"$(SRCROOT)/../include/libetpan",
 					"$(SRCROOT)/../src/data-types",
 					"$(SRCROOT)/../src/low-level/imap",
@@ -2187,6 +2190,7 @@
 					"$(SRCROOT)/../unittest/mime-parser",
 					"$(SRCROOT)/../unittest/plaintext-rendering",
 					"$(SDKROOT)/usr/include/libxml2",
+					"$(SRCROOT)/dependencies/build/Jansson.xcframework/macos-arm64_x86_64/Headers",
 					"$(SRCROOT)/dependencies/build/Tidy.xcframework/macos-arm64_x86_64/Headers",
 					"$(SRCROOT)/../unittest/pop3",
 					"$(SRCROOT)/../unittest/activesync",
@@ -2210,6 +2214,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = macosx;
 				TEST_HOST = "";
 			};
 			name = Debug;
@@ -2228,6 +2233,7 @@
 				);
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/../include",
 					"$(SRCROOT)/../include/libetpan",
 					"$(SRCROOT)/../src/data-types",
 					"$(SRCROOT)/../src/low-level/imap",
@@ -2242,6 +2248,7 @@
 					"$(SRCROOT)/../unittest/mime-parser",
 					"$(SRCROOT)/../unittest/plaintext-rendering",
 					"$(SDKROOT)/usr/include/libxml2",
+					"$(SRCROOT)/dependencies/build/Jansson.xcframework/macos-arm64_x86_64/Headers",
 					"$(SRCROOT)/dependencies/build/Tidy.xcframework/macos-arm64_x86_64/Headers",
 					"$(SRCROOT)/../unittest/pop3",
 					"$(SRCROOT)/../unittest/activesync",
@@ -2265,6 +2272,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = macosx;
 				TEST_HOST = "";
 			};
 			name = Release;

@@ -51,6 +51,7 @@ extern "C" {
 #include <libetpan/chash.h>
 #include <libetpan/clist.h>
 #include <libetpan/mailjson.h>
+#include <libetpan/mailhttp.h>
 #include <libetpan/mailsem.h>
 #include <libetpan/mailstream.h>
 #include <libetpan/mailstream_cfstream.h>

@@ -251,6 +251,8 @@ build_headers.bat
     <ClCompile Include="..\..\src\data-types\mailstream_ssl.c" />
     <ClCompile Include="..\..\src\data-types\mail_cache_db.c" />
     <ClCompile Include="..\..\src\data-types\mailjson.c" />
+    <ClCompile Include="..\..\src\data-types\mailhttp.c" />
+    <ClCompile Include="..\..\src\data-types\mailhttp_curl.c" />
     <ClCompile Include="..\..\src\data-types\md5.c" />
     <ClCompile Include="..\..\src\data-types\mmapstring.c" />
     <ClCompile Include="..\..\src\data-types\timeutils.c" />
@@ -323,7 +325,6 @@ build_headers.bat
     <ClCompile Include="..\..\src\low-level\jmap\mailjmap.c" Condition="'$(EnableJMAP)'=='true'" />
     <ClCompile Include="..\..\src\low-level\jmap\mailjmap_blob.c" Condition="'$(EnableJMAP)'=='true'" />
     <ClCompile Include="..\..\src\low-level\jmap\mailjmap_http.c" Condition="'$(EnableJMAP)'=='true'" />
-    <ClCompile Include="..\..\src\low-level\jmap\mailjmap_http_curl.c" Condition="'$(EnableJMAP)'=='true'" />
     <ClCompile Include="..\..\src\low-level\jmap\mailjmap_mail.c" Condition="'$(EnableJMAP)'=='true'" />
     <ClCompile Include="..\..\src\low-level\jmap\mailjmap_request.c" Condition="'$(EnableJMAP)'=='true'" />
     <ClCompile Include="..\..\src\low-level\jmap\mailjmap_response.c" Condition="'$(EnableJMAP)'=='true'" />
@@ -449,6 +450,7 @@ build_headers.bat
     <ClInclude Include="..\..\src\data-types\mail_cache_db.h" />
     <ClInclude Include="..\..\src\data-types\mail_cache_db_types.h" />
     <ClInclude Include="..\..\src\data-types\mailjson.h" />
+    <ClInclude Include="..\..\src\data-types\mailhttp.h" />
     <ClInclude Include="..\..\src\data-types\md5.h" />
     <ClInclude Include="..\..\src\data-types\md5global.h" />
     <ClInclude Include="..\..\src\data-types\mmapstring.h" />

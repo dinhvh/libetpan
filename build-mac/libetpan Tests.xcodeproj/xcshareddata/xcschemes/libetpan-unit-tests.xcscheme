@@ -17,7 +17,7 @@
                BlueprintIdentifier = "8DC2EF4F0486A6940098B216"
                BuildableName = "libetpan.framework"
                BlueprintName = "libetpan"
-               ReferencedContainer = "container:../libetpan.xcodeproj">
+               ReferencedContainer = "container:libetpan.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry

@@ -568,6 +568,9 @@
 		D10000010000000000000005 /* CyrusSASL.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = D10000000000000000000001 /* CyrusSASL.xcframework */; };
 		D10000010000000000000006 /* Jansson.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = D10000000000000000000002 /* Jansson.xcframework */; };
 		E10000000000000000000001 /* mailjson.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000001 /* mailjson.c */; };
+		F10000000000000000000001 /* mailhttp.c in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000001 /* mailhttp.c */; };
+		F10000000000000000000002 /* mailhttp_curl.c in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000002 /* mailhttp_curl.c */; };
+		F10000000000000000000003 /* mailhttp_nsurlsession.m in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000003 /* mailhttp_nsurlsession.m */; };
 		E10000000000000000000002 /* mailactivesync.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000002 /* mailactivesync.c */; };
 		E10000000000000000000003 /* mailactivesync_codes.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000003 /* mailactivesync_codes.c */; };
 		E10000000000000000000004 /* mailactivesync_command.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000004 /* mailactivesync_command.c */; };
@@ -576,15 +579,12 @@
 		E10000000000000000000007 /* mailactivesync_wbxml.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000007 /* mailactivesync_wbxml.c */; };
 		E10000000000000000000008 /* mailgmail.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000008 /* mailgmail.c */; };
 		E10000000000000000000009 /* mailgmail_http.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000009 /* mailgmail_http.c */; };
-		E1000000000000000000000A /* mailgmail_http_curl.c in Sources */ = {isa = PBXBuildFile; fileRef = E0000000000000000000000A /* mailgmail_http_curl.c */; };
-		E1000000000000000000000B /* mailgmail_http_nsurlsession.m in Sources */ = {isa = PBXBuildFile; fileRef = E0000000000000000000000B /* mailgmail_http_nsurlsession.m */; };
 		E1000000000000000000000C /* mailgmail_parser.c in Sources */ = {isa = PBXBuildFile; fileRef = E0000000000000000000000C /* mailgmail_parser.c */; };
 		E1000000000000000000000D /* mailgmail_types.c in Sources */ = {isa = PBXBuildFile; fileRef = E0000000000000000000000D /* mailgmail_types.c */; };
 		E1000000000000000000000E /* mailgmail_url.c in Sources */ = {isa = PBXBuildFile; fileRef = E0000000000000000000000E /* mailgmail_url.c */; };
 		E1000000000000000000000F /* mailjmap.c in Sources */ = {isa = PBXBuildFile; fileRef = E0000000000000000000000F /* mailjmap.c */; };
 		E10000000000000000000010 /* mailjmap_blob.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000010 /* mailjmap_blob.c */; };
 		E10000000000000000000011 /* mailjmap_http.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000011 /* mailjmap_http.c */; };
-		E10000000000000000000012 /* mailjmap_http_curl.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000012 /* mailjmap_http_curl.c */; };
 		E10000000000000000000013 /* mailjmap_mail.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000013 /* mailjmap_mail.c */; };
 		E10000000000000000000014 /* mailjmap_request.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000014 /* mailjmap_request.c */; };
 		E10000000000000000000015 /* mailjmap_response.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000015 /* mailjmap_response.c */; };
@@ -594,6 +594,9 @@
 		E10000000000000000000019 /* mailpgp_rnp.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000019 /* mailpgp_rnp.c */; };
 		E1000000000000000000001A /* mailsmime.c in Sources */ = {isa = PBXBuildFile; fileRef = E0000000000000000000001A /* mailsmime.c */; };
 		E20000000000000000000001 /* mailjson.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000001 /* mailjson.c */; };
+		F20000000000000000000001 /* mailhttp.c in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000001 /* mailhttp.c */; };
+		F20000000000000000000002 /* mailhttp_curl.c in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000002 /* mailhttp_curl.c */; };
+		F20000000000000000000003 /* mailhttp_nsurlsession.m in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000003 /* mailhttp_nsurlsession.m */; };
 		E20000000000000000000002 /* mailactivesync.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000002 /* mailactivesync.c */; };
 		E20000000000000000000003 /* mailactivesync_codes.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000003 /* mailactivesync_codes.c */; };
 		E20000000000000000000004 /* mailactivesync_command.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000004 /* mailactivesync_command.c */; };
@@ -602,15 +605,12 @@
 		E20000000000000000000007 /* mailactivesync_wbxml.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000007 /* mailactivesync_wbxml.c */; };
 		E20000000000000000000008 /* mailgmail.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000008 /* mailgmail.c */; };
 		E20000000000000000000009 /* mailgmail_http.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000009 /* mailgmail_http.c */; };
-		E2000000000000000000000A /* mailgmail_http_curl.c in Sources */ = {isa = PBXBuildFile; fileRef = E0000000000000000000000A /* mailgmail_http_curl.c */; };
-		E2000000000000000000000B /* mailgmail_http_nsurlsession.m in Sources */ = {isa = PBXBuildFile; fileRef = E0000000000000000000000B /* mailgmail_http_nsurlsession.m */; };
 		E2000000000000000000000C /* mailgmail_parser.c in Sources */ = {isa = PBXBuildFile; fileRef = E0000000000000000000000C /* mailgmail_parser.c */; };
 		E2000000000000000000000D /* mailgmail_types.c in Sources */ = {isa = PBXBuildFile; fileRef = E0000000000000000000000D /* mailgmail_types.c */; };
 		E2000000000000000000000E /* mailgmail_url.c in Sources */ = {isa = PBXBuildFile; fileRef = E0000000000000000000000E /* mailgmail_url.c */; };
 		E2000000000000000000000F /* mailjmap.c in Sources */ = {isa = PBXBuildFile; fileRef = E0000000000000000000000F /* mailjmap.c */; };
 		E20000000000000000000010 /* mailjmap_blob.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000010 /* mailjmap_blob.c */; };
 		E20000000000000000000011 /* mailjmap_http.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000011 /* mailjmap_http.c */; };
-		E20000000000000000000012 /* mailjmap_http_curl.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000012 /* mailjmap_http_curl.c */; };
 		E20000000000000000000013 /* mailjmap_mail.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000013 /* mailjmap_mail.c */; };
 		E20000000000000000000014 /* mailjmap_request.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000014 /* mailjmap_request.c */; };
 		E20000000000000000000015 /* mailjmap_response.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000015 /* mailjmap_response.c */; };
@@ -620,6 +620,9 @@
 		E20000000000000000000019 /* mailpgp_rnp.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000019 /* mailpgp_rnp.c */; };
 		E2000000000000000000001A /* mailsmime.c in Sources */ = {isa = PBXBuildFile; fileRef = E0000000000000000000001A /* mailsmime.c */; };
 		E30000000000000000000001 /* mailjson.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000001 /* mailjson.c */; };
+		F30000000000000000000001 /* mailhttp.c in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000001 /* mailhttp.c */; };
+		F30000000000000000000002 /* mailhttp_curl.c in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000002 /* mailhttp_curl.c */; };
+		F30000000000000000000003 /* mailhttp_nsurlsession.m in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000003 /* mailhttp_nsurlsession.m */; };
 		E30000000000000000000002 /* mailactivesync.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000002 /* mailactivesync.c */; };
 		E30000000000000000000003 /* mailactivesync_codes.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000003 /* mailactivesync_codes.c */; };
 		E30000000000000000000004 /* mailactivesync_command.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000004 /* mailactivesync_command.c */; };
@@ -628,15 +631,12 @@
 		E30000000000000000000007 /* mailactivesync_wbxml.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000007 /* mailactivesync_wbxml.c */; };
 		E30000000000000000000008 /* mailgmail.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000008 /* mailgmail.c */; };
 		E30000000000000000000009 /* mailgmail_http.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000009 /* mailgmail_http.c */; };
-		E3000000000000000000000A /* mailgmail_http_curl.c in Sources */ = {isa = PBXBuildFile; fileRef = E0000000000000000000000A /* mailgmail_http_curl.c */; };
-		E3000000000000000000000B /* mailgmail_http_nsurlsession.m in Sources */ = {isa = PBXBuildFile; fileRef = E0000000000000000000000B /* mailgmail_http_nsurlsession.m */; };
 		E3000000000000000000000C /* mailgmail_parser.c in Sources */ = {isa = PBXBuildFile; fileRef = E0000000000000000000000C /* mailgmail_parser.c */; };
 		E3000000000000000000000D /* mailgmail_types.c in Sources */ = {isa = PBXBuildFile; fileRef = E0000000000000000000000D /* mailgmail_types.c */; };
 		E3000000000000000000000E /* mailgmail_url.c in Sources */ = {isa = PBXBuildFile; fileRef = E0000000000000000000000E /* mailgmail_url.c */; };
 		E3000000000000000000000F /* mailjmap.c in Sources */ = {isa = PBXBuildFile; fileRef = E0000000000000000000000F /* mailjmap.c */; };
 		E30000000000000000000010 /* mailjmap_blob.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000010 /* mailjmap_blob.c */; };
 		E30000000000000000000011 /* mailjmap_http.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000011 /* mailjmap_http.c */; };
-		E30000000000000000000012 /* mailjmap_http_curl.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000012 /* mailjmap_http_curl.c */; };
 		E30000000000000000000013 /* mailjmap_mail.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000013 /* mailjmap_mail.c */; };
 		E30000000000000000000014 /* mailjmap_request.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000014 /* mailjmap_request.c */; };
 		E30000000000000000000015 /* mailjmap_response.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000015 /* mailjmap_response.c */; };
@@ -645,7 +645,7 @@
 		E30000000000000000000018 /* mailpgp.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000018 /* mailpgp.c */; };
 		E30000000000000000000019 /* mailpgp_rnp.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000019 /* mailpgp_rnp.c */; };
 		E3000000000000000000001A /* mailsmime.c in Sources */ = {isa = PBXBuildFile; fileRef = E0000000000000000000001A /* mailsmime.c */; };
-		F10000000000000000000001 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F00000000000000000000001 /* Foundation.framework */; };
+		F60000000000000000000002 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F60000000000000000000001 /* Foundation.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -1049,6 +1049,10 @@
 		D10000000000000000000001 /* CyrusSASL.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = CyrusSASL.xcframework; path = dependencies/build/CyrusSASL.xcframework; sourceTree = "<group>"; };
 		D10000000000000000000002 /* Jansson.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = Jansson.xcframework; path = dependencies/build/Jansson.xcframework; sourceTree = "<group>"; };
 		E00000000000000000000001 /* mailjson.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = mailjson.c; path = "../src/data-types/mailjson.c"; sourceTree = SOURCE_ROOT; };
+		F00000000000000000000001 /* mailhttp.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = mailhttp.c; path = "../src/data-types/mailhttp.c"; sourceTree = SOURCE_ROOT; };
+		F00000000000000000000002 /* mailhttp_curl.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = mailhttp_curl.c; path = "../src/data-types/mailhttp_curl.c"; sourceTree = SOURCE_ROOT; };
+		F00000000000000000000003 /* mailhttp_nsurlsession.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = mailhttp_nsurlsession.m; path = "../src/data-types/mailhttp_nsurlsession.m"; sourceTree = SOURCE_ROOT; };
+		F50000000000000000000001 /* mailhttp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = mailhttp.h; path = "../src/data-types/mailhttp.h"; sourceTree = SOURCE_ROOT; };
 		E00000000000000000000002 /* mailactivesync.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = mailactivesync.c; path = "../src/low-level/activesync/mailactivesync.c"; sourceTree = "<group>"; };
 		E00000000000000000000003 /* mailactivesync_codes.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = mailactivesync_codes.c; path = "../src/low-level/activesync/mailactivesync_codes.c"; sourceTree = "<group>"; };
 		E00000000000000000000004 /* mailactivesync_command.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = mailactivesync_command.c; path = "../src/low-level/activesync/mailactivesync_command.c"; sourceTree = "<group>"; };
@@ -1057,15 +1061,12 @@
 		E00000000000000000000007 /* mailactivesync_wbxml.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = mailactivesync_wbxml.c; path = "../src/low-level/activesync/mailactivesync_wbxml.c"; sourceTree = "<group>"; };
 		E00000000000000000000008 /* mailgmail.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = mailgmail.c; path = "../src/low-level/gmail/mailgmail.c"; sourceTree = "<group>"; };
 		E00000000000000000000009 /* mailgmail_http.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = mailgmail_http.c; path = "../src/low-level/gmail/mailgmail_http.c"; sourceTree = "<group>"; };
-		E0000000000000000000000A /* mailgmail_http_curl.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = mailgmail_http_curl.c; path = "../src/low-level/gmail/mailgmail_http_curl.c"; sourceTree = "<group>"; };
-		E0000000000000000000000B /* mailgmail_http_nsurlsession.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = mailgmail_http_nsurlsession.m; path = "../src/low-level/gmail/mailgmail_http_nsurlsession.m"; sourceTree = "<group>"; };
 		E0000000000000000000000C /* mailgmail_parser.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = mailgmail_parser.c; path = "../src/low-level/gmail/mailgmail_parser.c"; sourceTree = "<group>"; };
 		E0000000000000000000000D /* mailgmail_types.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = mailgmail_types.c; path = "../src/low-level/gmail/mailgmail_types.c"; sourceTree = "<group>"; };
 		E0000000000000000000000E /* mailgmail_url.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = mailgmail_url.c; path = "../src/low-level/gmail/mailgmail_url.c"; sourceTree = "<group>"; };
 		E0000000000000000000000F /* mailjmap.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = mailjmap.c; path = "../src/low-level/jmap/mailjmap.c"; sourceTree = "<group>"; };
 		E00000000000000000000010 /* mailjmap_blob.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = mailjmap_blob.c; path = "../src/low-level/jmap/mailjmap_blob.c"; sourceTree = "<group>"; };
 		E00000000000000000000011 /* mailjmap_http.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = mailjmap_http.c; path = "../src/low-level/jmap/mailjmap_http.c"; sourceTree = "<group>"; };
-		E00000000000000000000012 /* mailjmap_http_curl.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = mailjmap_http_curl.c; path = "../src/low-level/jmap/mailjmap_http_curl.c"; sourceTree = "<group>"; };
 		E00000000000000000000013 /* mailjmap_mail.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = mailjmap_mail.c; path = "../src/low-level/jmap/mailjmap_mail.c"; sourceTree = "<group>"; };
 		E00000000000000000000014 /* mailjmap_request.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = mailjmap_request.c; path = "../src/low-level/jmap/mailjmap_request.c"; sourceTree = "<group>"; };
 		E00000000000000000000015 /* mailjmap_response.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = mailjmap_response.c; path = "../src/low-level/jmap/mailjmap_response.c"; sourceTree = "<group>"; };
@@ -1101,7 +1102,7 @@
 		E50000000000000000000019 /* mailpgp_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = mailpgp_types.h; path = "../src/low-level/pgp/mailpgp_types.h"; sourceTree = "<group>"; };
 		E5000000000000000000001A /* mailsmime.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = mailsmime.h; path = "../src/low-level/smime/mailsmime.h"; sourceTree = "<group>"; };
 		E5000000000000000000001B /* mailsmime_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = mailsmime_types.h; path = "../src/low-level/smime/mailsmime_types.h"; sourceTree = "<group>"; };
-		F00000000000000000000001 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		F60000000000000000000001 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1113,7 +1114,7 @@
 				D10000010000000000000002 /* Jansson.xcframework in Frameworks */,
 				BDEBB57D30318F7900DBF96D /* OpenSSL.xcframework in Frameworks */,
 				C6EFB8AE1433F58500F805C0 /* CoreFoundation.framework in Frameworks */,
-				F10000000000000000000001 /* Foundation.framework in Frameworks */,
+				F60000000000000000000002 /* Foundation.framework in Frameworks */,
 				C6EFB8B41433F5A400F805C0 /* CoreServices.framework in Frameworks */,
 				BDEBB58130319DB200DBF96D /* RNP.xcframework in Frameworks */,
 				C6ED6CF717A185FD00A4A14C /* Security.framework in Frameworks */,
@@ -1174,7 +1175,7 @@
 			children = (
 				C6F9ED9A105338F60059C3BA /* Libraries */,
 				C6EFB8AD1433F58500F805C0 /* CoreFoundation.framework */,
-				F00000000000000000000001 /* Foundation.framework */,
+				F60000000000000000000001 /* Foundation.framework */,
 				C6EFB8B31433F5A400F805C0 /* CoreServices.framework */,
 				C6ED6CF617A185FD00A4A14C /* Security.framework */,
 			);
@@ -1215,6 +1216,10 @@
 			children = (
 				E00000000000000000000001 /* mailjson.c */,
 				E50000000000000000000001 /* mailjson.h */,
+				F00000000000000000000001 /* mailhttp.c */,
+				F50000000000000000000001 /* mailhttp.h */,
+				F00000000000000000000002 /* mailhttp_curl.c */,
+				F00000000000000000000003 /* mailhttp_nsurlsession.m */,
 				C6F9E84F105335BC0059C3BA /* base64.c */,
 				C6F9E850105335BC0059C3BA /* base64.h */,
 				C6F9E851105335BC0059C3BA /* carray.c */,
@@ -1871,8 +1876,6 @@
 				E50000000000000000000008 /* mailgmail.h */,
 				E00000000000000000000009 /* mailgmail_http.c */,
 				E50000000000000000000009 /* mailgmail_http.h */,
-				E0000000000000000000000A /* mailgmail_http_curl.c */,
-				E0000000000000000000000B /* mailgmail_http_nsurlsession.m */,
 				E0000000000000000000000C /* mailgmail_parser.c */,
 				E5000000000000000000000A /* mailgmail_parser.h */,
 				E5000000000000000000000B /* mailgmail_private.h */,
@@ -1893,7 +1896,6 @@
 				E5000000000000000000000F /* mailjmap_blob.h */,
 				E00000000000000000000011 /* mailjmap_http.c */,
 				E50000000000000000000010 /* mailjmap_http.h */,
-				E00000000000000000000012 /* mailjmap_http_curl.c */,
 				E00000000000000000000013 /* mailjmap_mail.c */,
 				E50000000000000000000011 /* mailjmap_mail.h */,
 				E50000000000000000000012 /* mailjmap_private.h */,
@@ -2089,6 +2091,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				E10000000000000000000001 /* mailjson.c in Sources */,
+				F10000000000000000000001 /* mailhttp.c in Sources */,
+				F10000000000000000000002 /* mailhttp_curl.c in Sources */,
+				F10000000000000000000003 /* mailhttp_nsurlsession.m in Sources */,
 				E10000000000000000000002 /* mailactivesync.c in Sources */,
 				E10000000000000000000003 /* mailactivesync_codes.c in Sources */,
 				E10000000000000000000004 /* mailactivesync_command.c in Sources */,
@@ -2097,15 +2102,12 @@
 				E10000000000000000000007 /* mailactivesync_wbxml.c in Sources */,
 				E10000000000000000000008 /* mailgmail.c in Sources */,
 				E10000000000000000000009 /* mailgmail_http.c in Sources */,
-				E1000000000000000000000A /* mailgmail_http_curl.c in Sources */,
-				E1000000000000000000000B /* mailgmail_http_nsurlsession.m in Sources */,
 				E1000000000000000000000C /* mailgmail_parser.c in Sources */,
 				E1000000000000000000000D /* mailgmail_types.c in Sources */,
 				E1000000000000000000000E /* mailgmail_url.c in Sources */,
 				E1000000000000000000000F /* mailjmap.c in Sources */,
 				E10000000000000000000010 /* mailjmap_blob.c in Sources */,
 				E10000000000000000000011 /* mailjmap_http.c in Sources */,
-				E10000000000000000000012 /* mailjmap_http_curl.c in Sources */,
 				E10000000000000000000013 /* mailjmap_mail.c in Sources */,
 				E10000000000000000000014 /* mailjmap_request.c in Sources */,
 				E10000000000000000000015 /* mailjmap_response.c in Sources */,
@@ -2299,6 +2301,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				E20000000000000000000001 /* mailjson.c in Sources */,
+				F20000000000000000000001 /* mailhttp.c in Sources */,
+				F20000000000000000000002 /* mailhttp_curl.c in Sources */,
+				F20000000000000000000003 /* mailhttp_nsurlsession.m in Sources */,
 				E20000000000000000000002 /* mailactivesync.c in Sources */,
 				E20000000000000000000003 /* mailactivesync_codes.c in Sources */,
 				E20000000000000000000004 /* mailactivesync_command.c in Sources */,
@@ -2307,15 +2312,12 @@
 				E20000000000000000000007 /* mailactivesync_wbxml.c in Sources */,
 				E20000000000000000000008 /* mailgmail.c in Sources */,
 				E20000000000000000000009 /* mailgmail_http.c in Sources */,
-				E2000000000000000000000A /* mailgmail_http_curl.c in Sources */,
-				E2000000000000000000000B /* mailgmail_http_nsurlsession.m in Sources */,
 				E2000000000000000000000C /* mailgmail_parser.c in Sources */,
 				E2000000000000000000000D /* mailgmail_types.c in Sources */,
 				E2000000000000000000000E /* mailgmail_url.c in Sources */,
 				E2000000000000000000000F /* mailjmap.c in Sources */,
 				E20000000000000000000010 /* mailjmap_blob.c in Sources */,
 				E20000000000000000000011 /* mailjmap_http.c in Sources */,
-				E20000000000000000000012 /* mailjmap_http_curl.c in Sources */,
 				E20000000000000000000013 /* mailjmap_mail.c in Sources */,
 				E20000000000000000000014 /* mailjmap_request.c in Sources */,
 				E20000000000000000000015 /* mailjmap_response.c in Sources */,
@@ -2509,6 +2511,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				E30000000000000000000001 /* mailjson.c in Sources */,
+				F30000000000000000000001 /* mailhttp.c in Sources */,
+				F30000000000000000000002 /* mailhttp_curl.c in Sources */,
+				F30000000000000000000003 /* mailhttp_nsurlsession.m in Sources */,
 				E30000000000000000000002 /* mailactivesync.c in Sources */,
 				E30000000000000000000003 /* mailactivesync_codes.c in Sources */,
 				E30000000000000000000004 /* mailactivesync_command.c in Sources */,
@@ -2517,15 +2522,12 @@
 				E30000000000000000000007 /* mailactivesync_wbxml.c in Sources */,
 				E30000000000000000000008 /* mailgmail.c in Sources */,
 				E30000000000000000000009 /* mailgmail_http.c in Sources */,
-				E3000000000000000000000A /* mailgmail_http_curl.c in Sources */,
-				E3000000000000000000000B /* mailgmail_http_nsurlsession.m in Sources */,
 				E3000000000000000000000C /* mailgmail_parser.c in Sources */,
 				E3000000000000000000000D /* mailgmail_types.c in Sources */,
 				E3000000000000000000000E /* mailgmail_url.c in Sources */,
 				E3000000000000000000000F /* mailjmap.c in Sources */,
 				E30000000000000000000010 /* mailjmap_blob.c in Sources */,
 				E30000000000000000000011 /* mailjmap_http.c in Sources */,
-				E30000000000000000000012 /* mailjmap_http_curl.c in Sources */,
 				E30000000000000000000013 /* mailjmap_mail.c in Sources */,
 				E30000000000000000000014 /* mailjmap_request.c in Sources */,
 				E30000000000000000000015 /* mailjmap_response.c in Sources */,
@@ -2744,6 +2746,7 @@
 					"-lz",
 					"-liconv",
 					"-lc++",
+					"-lxml2",
 				);
 				PRODUCT_NAME = libetpan;
 				SDKROOT = macosx;
@@ -2776,6 +2779,7 @@
 					"-lz",
 					"-liconv",
 					"-lc++",
+					"-lxml2",
 				);
 				PRODUCT_NAME = libetpan;
 				SDKROOT = macosx;
@@ -2801,6 +2805,7 @@
 				OTHER_CFLAGS = (
 					"-DHAVE_CFNETWORK=1",
 					"-DHAVE_CONFIG_H=1",
+					"-DLIBETPAN_DISABLE_CURL=1",
 					"-DLIBETPAN_IOS_DISABLE_SSL=1",
 				);
 			};
@@ -2821,6 +2826,7 @@
 				OTHER_CFLAGS = (
 					"-DHAVE_CFNETWORK=1",
 					"-DHAVE_CONFIG_H=1",
+					"-DLIBETPAN_DISABLE_CURL=1",
 					"-DLIBETPAN_IOS_DISABLE_SSL=1",
 				);
 			};

@@ -35,9 +35,7 @@
 #include "newsfeed_types.h"
 #include "mmapstring.h"
 
-#ifdef HAVE_CURL
 #include <libxml/parser.h>
-#endif
 
 struct newsfeed_parser_context {
   unsigned int depth;
@@ -49,11 +47,9 @@ struct newsfeed_parser_context {
   
   int error;
 
-#ifdef HAVE_CURL
   unsigned int feed_type;
   xmlSAXHandler sax_handler;
   xmlParserCtxtPtr parser;
-#endif
 };
 
 time_t newsfeed_rfc822_date_parse(char * text);

@@ -17,16 +17,8 @@ AM_LIBTOOLFLAGS = --tag=CC
 
 noinst_LTLIBRARIES = libgmail.la
 
-if HAVE_NSURLSESSION
-nsurlsession_sources = mailgmail_http_nsurlsession.m
-else
-nsurlsession_sources =
-endif
-
 libgmail_la_SOURCES = \
 	mailgmail.c mailgmail_types.c \
-	mailgmail_http.c mailgmail_http_curl.c \
-	mailgmail_parser.c mailgmail_url.c \
-	$(nsurlsession_sources)
+	mailgmail_http.c mailgmail_parser.c mailgmail_url.c
 
 libgmail_la_LINK = $(LINK)

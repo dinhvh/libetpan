@@ -40,6 +40,8 @@ struct mailgmail_http_transport {
   void (*free)(struct mailgmail_http_transport * transport);
 };
 
+struct mailhttp_transport;
+
 struct mailgmail_http_header *
 mailgmail_http_header_new(const char * name, const char * value);
 
@@ -81,6 +83,10 @@ int mailgmail_http_transport_new_curl(
     struct mailgmail_http_transport ** result);
 
 int mailgmail_http_transport_new_nsurlsession(
+    struct mailgmail_http_transport ** result);
+
+int mailgmail_http_transport_new_mailhttp(
+    struct mailhttp_transport * common,
     struct mailgmail_http_transport ** result);
 
 void mailgmail_http_transport_free(

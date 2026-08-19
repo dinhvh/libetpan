@@ -24,6 +24,9 @@ LIBETPAN_TEST_DEPENDENCY ?= libetpan
 LIBETPAN_TEST_LDLIBS ?= $(TOP)/src/.libs/libetpan.a
 LDLIBS += $(LIBETPAN_TEST_LDLIBS) -lz -lcurl -lsasl2 -lpthread
 LDLIBS += $(shell pkg-config --libs icu-uc 2>/dev/null)
+ifeq ($(shell uname -s),Darwin)
+LDLIBS += -framework Foundation -liconv
+endif
 JANSSON_LDLIBS := $(shell pkg-config --libs jansson 2>/dev/null || printf '%s' "-ljansson")
 OPENSSL_LDLIBS := $(shell pkg-config --libs openssl 2>/dev/null || printf '%s' "-lssl -lcrypto")
 RNP_LDLIBS := $(shell pkg-config --libs rnp 2>/dev/null || printf '%s' "-lrnp")
@@ -43,6 +46,8 @@ CHARSET_DETECTION_TEST = charset-detection/charset_detection_test
 PLAINTEXT_RENDERING_TEST = plaintext-rendering/plaintext_rendering_test
 IMAP_UTF7_TEST = imap-utf7/imap_utf7_test
 DATA_TYPES_TEST = data-types/data_types_test
+MAILHTTP_TEST = http/http_test
+FEED_HTTP_TEST = feed/feed_http_test
 ACTIVESYNC_WBXML_TEST = activesync/wbxml_test
 ACTIVESYNC_HTTP_TEST = activesync/http_test
 ACTIVESYNC_SAMPLE_TEST = activesync/sample_test
@@ -70,6 +75,8 @@ TEST_PROGRAMS = \
 	$(PLAINTEXT_RENDERING_TEST) \
 	$(IMAP_UTF7_TEST) \
 	$(DATA_TYPES_TEST) \
+	$(MAILHTTP_TEST) \
+	$(FEED_HTTP_TEST) \
 	$(ACTIVESYNC_WBXML_TEST) \
 	$(ACTIVESYNC_HTTP_TEST) \
 	$(ACTIVESYNC_SAMPLE_TEST) \
@@ -145,6 +152,11 @@ DATA_TYPES_TEST_SRCS = \
 	data-types/md5_test.c \
 	$(TOP)/src/data-types/base64.c \
 	$(TOP)/src/data-types/md5.c
+MAILHTTP_TEST_SRCS = http/mailhttp_test.c
+MAILHTTP_TEST_DEPS = $(MAILHTTP_TEST_SRCS) $(TOP)/src/data-types/mailhttp.h
+FEED_HTTP_TEST_SRCS = feed/feed_http_test.c
+FEED_HTTP_TEST_DEPS = $(FEED_HTTP_TEST_SRCS) \
+	$(TOP)/src/low-level/feed/newsfeed.h
 ACTIVESYNC_WBXML_TEST_SRCS = \
 	activesync/wbxml_test.c
 ACTIVESYNC_HTTP_TEST_SRCS = \
@@ -251,6 +263,8 @@ check: all
 	@cd plaintext-rendering && ./plaintext_rendering_test
 	@cd imap-utf7 && ./imap_utf7_test
 	@cd data-types && ./data_types_test
+	@cd http && ./http_test
+	@cd feed && ./feed_http_test
 	@cd activesync && ./wbxml_test
 	@cd activesync && ./http_test
 	@cd activesync && ./sample_test
@@ -315,6 +329,13 @@ $(IMAP_UTF7_TEST): $(IMAP_UTF7_TEST_DEPS) $(LIBETPAN_TEST_DEPENDENCY)
 $(DATA_TYPES_TEST): $(DATA_TYPES_TEST_DEPS)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(DATA_TYPES_TEST_SRCS) -o $@
 
+$(MAILHTTP_TEST): $(MAILHTTP_TEST_DEPS) $(LIBETPAN_TEST_DEPENDENCY)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(MAILHTTP_TEST_SRCS) $(LDLIBS) -o $@
+
+$(FEED_HTTP_TEST): $(FEED_HTTP_TEST_DEPS) $(LIBETPAN_TEST_DEPENDENCY)
+	$(CC) $(CPPFLAGS) $(XML2_CPPFLAGS) $(CFLAGS) $(FEED_HTTP_TEST_SRCS) \
+		$(LDLIBS) $(XML2_LDLIBS) -o $@
+
 $(ACTIVESYNC_WBXML_TEST): $(ACTIVESYNC_WBXML_TEST_DEPS) $(LIBETPAN_TEST_DEPENDENCY)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(ACTIVESYNC_WBXML_TEST_SRCS) $(LDLIBS) -o $@
 
@@ -371,6 +392,8 @@ clean:
 	rm -f $(MIME_PARSER_SERIALIZATION_TEST) $(CHARSET_DETECTION_TEST)
 	rm -f $(PLAINTEXT_RENDERING_TEST) $(IMAP_UTF7_TEST)
 	rm -f $(DATA_TYPES_TEST)
+	rm -f $(MAILHTTP_TEST)
+	rm -f $(FEED_HTTP_TEST)
 	rm -f $(ACTIVESYNC_WBXML_TEST) $(ACTIVESYNC_HTTP_TEST)
 	rm -f $(ACTIVESYNC_SAMPLE_TEST) $(POP3_TEST)
 	rm -f $(GMAIL_TEST) $(JMAP_JSON_TEST) $(JMAP_HTTP_TEST)

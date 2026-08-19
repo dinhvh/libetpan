@@ -115,6 +115,23 @@ void mailgmail_free(mailgmail * session)
   free(session);
 }
 
+int mailgmail_set_http_transport(mailgmail * session,
+    struct mailhttp_transport * transport)
+{
+  struct mailgmail_http_transport * wrapped;
+  int r;
+
+  if ((session == NULL) || (transport == NULL))
+    return MAILGMAIL_ERROR_BAD_STATE;
+  wrapped = NULL;
+  r = mailgmail_http_transport_new_mailhttp(transport, &wrapped);
+  if (r != MAILGMAIL_NO_ERROR)
+    return r;
+  mailgmail_http_transport_free(session->gmail_http_transport);
+  session->gmail_http_transport = wrapped;
+  return MAILGMAIL_NO_ERROR;
+}
+
 int mailgmail_set_user(mailgmail * session, const char * user_id)
 {
   if (session == NULL)

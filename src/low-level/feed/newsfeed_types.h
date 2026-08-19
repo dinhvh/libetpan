@@ -35,6 +35,8 @@
 #include <libetpan/carray.h>
 #include <sys/types.h>
 
+struct mailhttp_transport;
+
 enum {
   NEWSFEED_NO_ERROR = 0,
   NEWSFEED_ERROR_CANCELLED,
@@ -72,6 +74,7 @@ struct newsfeed {
   int feed_response_code;
   
   unsigned int feed_timeout;
+  struct mailhttp_transport * feed_http_transport;
 };
 
 struct newsfeed_item {
