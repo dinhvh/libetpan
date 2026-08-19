@@ -10,8 +10,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install test dependencies
-        run: brew install tidy-html5
+      - name: Prepare
+        run: build-mac/bootstrap.sh
 
       - name: Run XCTest
         run: |
@@ -31,3 +31,17 @@ jobs:
           make -C unittest check \
             LIBETPAN_TEST_DEPENDENCY= \
             LIBETPAN_TEST_LDLIBS="-F$framework_dir -framework libetpan"
+
+  linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure
+        run: ./autogen.sh
+
+      - name: Build
+        run: make
+
+      - name: Run unit tests
+        run: make check
