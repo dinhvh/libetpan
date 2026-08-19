@@ -2187,7 +2187,7 @@
 					"$(SRCROOT)/../unittest/mime-parser",
 					"$(SRCROOT)/../unittest/plaintext-rendering",
 					"$(SDKROOT)/usr/include/libxml2",
-					"/opt/homebrew/opt/tidy-html5/include",
+					"$(SRCROOT)/dependencies/build/Tidy.xcframework/macos-arm64_x86_64/Headers",
 					"$(SRCROOT)/../unittest/pop3",
 					"$(SRCROOT)/../unittest/activesync",
 				);
@@ -2242,7 +2242,7 @@
 					"$(SRCROOT)/../unittest/mime-parser",
 					"$(SRCROOT)/../unittest/plaintext-rendering",
 					"$(SDKROOT)/usr/include/libxml2",
-					"/opt/homebrew/opt/tidy-html5/include",
+					"$(SRCROOT)/dependencies/build/Tidy.xcframework/macos-arm64_x86_64/Headers",
 					"$(SRCROOT)/../unittest/pop3",
 					"$(SRCROOT)/../unittest/activesync",
 				);
