@@ -13,3 +13,6 @@
 [submodule "build-mac/dependencies/submodules/json-c"]
 	path = build-mac/dependencies/submodules/json-c
 	url = https://github.com/json-c/json-c.git
+[submodule "build-mac/dependencies/submodules/tidy-html5"]
+	path = build-mac/dependencies/submodules/tidy-html5
+	url = https://github.com/htacg/tidy-html5.git

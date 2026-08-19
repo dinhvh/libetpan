@@ -23,6 +23,9 @@ echo "Building Cyrus SASL XCFramework"
 echo "Building OpenSSL libcrypto XCFramework"
 "$script_dir/build-openssl-xcframework.sh"
 
+echo "Building tidy-html5 XCFramework"
+"$script_dir/build-tidy-html5-xcframework.sh"
+
 echo "Building RNP XCFramework"
 "$script_dir/build-rnp-xcframework.sh"
 
