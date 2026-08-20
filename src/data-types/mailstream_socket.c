@@ -38,6 +38,12 @@
 #endif
 
 #include "mailstream_socket.h"
+#include "connect.h"
+
+#if HAVE_CFNETWORK
+#include "mailstream_cfstream.h"
+#include "mailstream_ssl.h"
+#endif
 
 #ifdef HAVE_UNISTD_H
 #	include <unistd.h>
@@ -504,6 +510,59 @@ mailstream * mailstream_socket_open_timeout(int fd, time_t timeout)
   mailstream_low_close(low);
  err:
   return NULL;
+}
+
+mailstream * mailstream_socket_connect_timeout(const char * server,
+    uint16_t port, time_t timeout,
+    enum mailstream_socket_connect_error * error)
+{
+  return mailstream_socket_connect_voip_timeout(server, port, timeout, 0,
+      error);
+}
+
+mailstream * mailstream_socket_connect_voip_timeout(const char * server,
+    uint16_t port, time_t timeout, int voip_enabled,
+    enum mailstream_socket_connect_error * error)
+{
+  mailstream * stream;
+  int fd;
+
+  if (error != NULL)
+    * error = MAILSTREAM_SOCKET_CONNECT_ERROR_CONNECTION_REFUSED;
+
+#if HAVE_CFNETWORK
+  if (mailstream_ssl_get_backend() == MAILSTREAM_SSL_BACKEND_CFNETWORK) {
+    if (error != NULL)
+      * error = MAILSTREAM_SOCKET_CONNECT_ERROR_CFNETWORK;
+    stream = mailstream_cfstream_open_voip_timeout(server, port, voip_enabled,
+        timeout);
+    if (stream != NULL && error != NULL)
+      * error = MAILSTREAM_SOCKET_CONNECT_NO_ERROR;
+    return stream;
+  }
+#else
+  (void) voip_enabled;
+#endif
+
+  fd = mail_tcp_connect_timeout(server, port, timeout);
+  if (fd == -1)
+    return NULL;
+
+  stream = mailstream_socket_open_timeout(fd, timeout);
+  if (stream == NULL) {
+#ifdef WIN32
+    closesocket(fd);
+#else
+    close(fd);
+#endif
+    if (error != NULL)
+      * error = MAILSTREAM_SOCKET_CONNECT_ERROR_MEMORY;
+    return NULL;
+  }
+
+  if (error != NULL)
+    * error = MAILSTREAM_SOCKET_CONNECT_NO_ERROR;
+  return stream;
 }
 
 static void mailstream_low_socket_cancel(mailstream_low * s)

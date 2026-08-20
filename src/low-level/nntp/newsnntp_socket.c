@@ -55,13 +55,9 @@
 #define SERVICE_NAME_NNTP "nntp"
 #define SERVICE_TYPE_TCP "tcp"
 
-#if HAVE_CFNETWORK
-static int newsnntp_cfsocket_connect(newsnntp * f, const char * server, uint16_t port);
-#endif
-
 int newsnntp_socket_connect(newsnntp * f, const char * server, uint16_t port)
 {
-  int s;
+  enum mailstream_socket_connect_error connect_error;
   mailstream * stream;
 
   if (port == 0) {
@@ -70,42 +66,15 @@ int newsnntp_socket_connect(newsnntp * f, const char * server, uint16_t port)
       port = DEFAULT_NNTP_PORT;
   }
 
-#if HAVE_CFNETWORK
-  if (mailstream_ssl_get_backend() == MAILSTREAM_SSL_BACKEND_CFNETWORK) {
-    return newsnntp_cfsocket_connect(f, server, port);
-  }
-#endif
-
-  /* Connection */
-
-  s = mail_tcp_connect_timeout(server, port, f->nntp_timeout);
-  if (s == -1)
+  stream = mailstream_socket_connect_timeout(server, port, f->nntp_timeout,
+      &connect_error);
+  if (stream == NULL) {
+    if (connect_error == MAILSTREAM_SOCKET_CONNECT_ERROR_MEMORY)
+      return NEWSNNTP_ERROR_MEMORY;
+    if (connect_error == MAILSTREAM_SOCKET_CONNECT_ERROR_CFNETWORK)
+      return NEWSNNTP_ERROR_STREAM;
     return NEWSNNTP_ERROR_CONNECTION_REFUSED;
-
-  stream = mailstream_socket_open_timeout(s, f->nntp_timeout);
-  if (stream == NULL) {
-#ifdef WIN32
-    closesocket(s);
-#else
-    close(s);
-#endif
-		
-    return NEWSNNTP_ERROR_MEMORY;
   }
 
   return newsnntp_connect(f, stream);
 }
-
-#if HAVE_CFNETWORK
-static int newsnntp_cfsocket_connect(newsnntp * f, const char * server, uint16_t port)
-{
-  mailstream * stream;
-  
-  stream = mailstream_cfstream_open_timeout(server, port, f->nntp_timeout);
-  if (stream == NULL) {
-    return NEWSNNTP_ERROR_STREAM;
-  }
-  
-  return newsnntp_connect(f, stream);
-}
-#endif

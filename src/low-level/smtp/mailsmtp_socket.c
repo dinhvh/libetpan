@@ -56,15 +56,10 @@
 #define SERVICE_NAME_SMTP "smtp"
 #define SERVICE_TYPE_TCP "tcp"
 
-#if HAVE_CFNETWORK
-static int mailsmtp_cfsocket_connect(mailsmtp * session,
-                                     const char * server, uint16_t port);
-#endif
-
 int mailsmtp_socket_connect(mailsmtp * session,
     const char * server, uint16_t port)
 {
-  int s;
+  enum mailstream_socket_connect_error connect_error;
   mailstream * stream;
 
   if (port == 0) {
@@ -73,26 +68,12 @@ int mailsmtp_socket_connect(mailsmtp * session,
       port = DEFAULT_SMTP_PORT;
   }
 
-#if HAVE_CFNETWORK
-  if (mailstream_ssl_get_backend() == MAILSTREAM_SSL_BACKEND_CFNETWORK) {
-    return mailsmtp_cfsocket_connect(session, server, port);
-  }
-#endif
-
-  /* Connection */
-
-  s = mail_tcp_connect_timeout(server, port, session->smtp_timeout);
-  if (s == -1)
-    return MAILSMTP_ERROR_CONNECTION_REFUSED;
-
-  stream = mailstream_socket_open(s);
+  stream = mailstream_socket_connect_timeout(server, port,
+      session->smtp_timeout, &connect_error);
   if (stream == NULL) {
-#ifdef WIN32
-	closesocket(s);
-#else
-    close(s);
-#endif
-    return MAILSMTP_ERROR_MEMORY;
+    if (connect_error == MAILSTREAM_SOCKET_CONNECT_ERROR_MEMORY)
+      return MAILSMTP_ERROR_MEMORY;
+    return MAILSMTP_ERROR_CONNECTION_REFUSED;
   }
 
   return mailsmtp_connect(session, stream);
@@ -150,21 +131,6 @@ int mailsmtp_socket_starttls_with_server_name_callback(mailsmtp * session,
 
   return MAILSMTP_NO_ERROR;
 }
-
-#if HAVE_CFNETWORK
-static int mailsmtp_cfsocket_connect(mailsmtp * session,
-                                     const char * server, uint16_t port)
-{
-  mailstream * stream;
-  
-  stream = mailstream_cfstream_open_timeout(server, port, session->smtp_timeout);
-  if (stream == NULL) {
-    return MAILSMTP_ERROR_CONNECTION_REFUSED;
-  }
-  
-  return mailsmtp_connect(session, stream);
-}
-#endif
 
 static int mailsmtp_cfsocket_starttls(mailsmtp * session, const char * server_name)
 {

@@ -57,14 +57,10 @@
 #define SERVICE_NAME_IMAP "imap2"
 #define SERVICE_TYPE_TCP "tcp"
 
-#if HAVE_CFNETWORK
-static int mailimap_cfsocket_connect_voip(mailimap * f, const char * server, uint16_t port, int voip_enabled);
-#endif
-
 LIBETPAN_EXPORT
 int mailimap_socket_connect_voip(mailimap * f, const char * server, uint16_t port, int voip_enabled)
 {
-    int s;
+    enum mailstream_socket_connect_error connect_error;
     mailstream * stream;
 
     if (port == 0) {
@@ -73,26 +69,12 @@ int mailimap_socket_connect_voip(mailimap * f, const char * server, uint16_t por
         port = DEFAULT_IMAP_PORT;
     }
 
-  #if HAVE_CFNETWORK
-    if (mailstream_ssl_get_backend() == MAILSTREAM_SSL_BACKEND_CFNETWORK) {
-      return mailimap_cfsocket_connect_voip(f, server, port, voip_enabled);
-    }
-  #endif
-
-    /* Connection */
-
-    s = mail_tcp_connect_timeout(server, port, f->imap_timeout);
-    if (s == -1)
-      return MAILIMAP_ERROR_CONNECTION_REFUSED;
-
-    stream = mailstream_socket_open_timeout(s, f->imap_timeout);
+    stream = mailstream_socket_connect_voip_timeout(server, port,
+        f->imap_timeout, voip_enabled, &connect_error);
     if (stream == NULL) {
-  #ifdef WIN32
-  	closesocket(s);
-  #else
-      close(s);
-  #endif
-      return MAILIMAP_ERROR_MEMORY;
+      if (connect_error == MAILSTREAM_SOCKET_CONNECT_ERROR_MEMORY)
+        return MAILIMAP_ERROR_MEMORY;
+      return MAILIMAP_ERROR_CONNECTION_REFUSED;
     }
 
     return mailimap_connect(f, stream);
@@ -162,20 +144,6 @@ int mailimap_socket_starttls_with_server_name_callback(mailimap * f,
   
   return MAILIMAP_NO_ERROR;
 }
-
-#if HAVE_CFNETWORK
-static int mailimap_cfsocket_connect_voip(mailimap * f, const char * server, uint16_t port, int voip_enabled)
-{
-  mailstream * stream;
-  
-  stream = mailstream_cfstream_open_voip_timeout(server, port, voip_enabled, f->imap_timeout);
-  if (stream == NULL) {
-    return MAILIMAP_ERROR_CONNECTION_REFUSED;
-  }
-  
-  return mailimap_connect(f, stream);
-}
-#endif
 
 static int mailimap_cfsocket_starttls(mailimap * f, const char * server_name)
 {

@@ -52,6 +52,20 @@ void mailstream_socket_set_use_read(mailstream * stream, int use_read);
 mailstream * mailstream_socket_open(int fd);
 mailstream * mailstream_socket_open_timeout(int fd, time_t timeout);
 
+enum mailstream_socket_connect_error {
+  MAILSTREAM_SOCKET_CONNECT_NO_ERROR = 0,
+  MAILSTREAM_SOCKET_CONNECT_ERROR_CONNECTION_REFUSED,
+  MAILSTREAM_SOCKET_CONNECT_ERROR_CFNETWORK,
+  MAILSTREAM_SOCKET_CONNECT_ERROR_MEMORY
+};
+
+mailstream * mailstream_socket_connect_timeout(const char * server,
+    uint16_t port, time_t timeout,
+    enum mailstream_socket_connect_error * error);
+mailstream * mailstream_socket_connect_voip_timeout(const char * server,
+    uint16_t port, time_t timeout, int voip_enabled,
+    enum mailstream_socket_connect_error * error);
+
 #ifdef __cplusplus
 }
 #endif
