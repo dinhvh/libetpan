@@ -13,3 +13,6 @@
 [submodule "build-mac/dependencies/submodules/tidy-html5"]
 	path = build-mac/dependencies/submodules/tidy-html5
 	url = https://github.com/htacg/tidy-html5.git
+[submodule "build-mac/dependencies/submodules/icu"]
+	path = build-mac/dependencies/submodules/icu
+	url = https://github.com/unicode-org/icu.git
