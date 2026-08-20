@@ -139,11 +139,13 @@ xcuserdata/
 /tests/compose-msg
 /tests/decrypt
 /tests/fetch-attachment
+/tests/feed-http-test
 /tests/frm
 /tests/frm-simple
 /tests/frm-tree
 /tests/gmail-http-test
 /tests/gmail-sample
+/tests/mailhttp-test
 /tests/mailpgp-gnupg-interop-test
 /tests/mailpgp-low-level-test
 /tests/pgp
