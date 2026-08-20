@@ -27,6 +27,9 @@
 		D30000000000000000000014 /* mailstream_gnutls.c in Sources */ = {isa = PBXBuildFile; fileRef = D30000000000000000000002 /* mailstream_gnutls.c */; };
 		D30000000000000000000015 /* mailstream_openssl.c in Sources */ = {isa = PBXBuildFile; fileRef = D30000000000000000000001 /* mailstream_openssl.c */; };
 		D30000000000000000000016 /* mailstream_gnutls.c in Sources */ = {isa = PBXBuildFile; fileRef = D30000000000000000000002 /* mailstream_gnutls.c */; };
+		D30000000000000000000017 /* mailstream_ssl_internal.c in Sources */ = {isa = PBXBuildFile; fileRef = D30000000000000000000006 /* mailstream_ssl_internal.c */; };
+		D30000000000000000000018 /* mailstream_ssl_internal.c in Sources */ = {isa = PBXBuildFile; fileRef = D30000000000000000000006 /* mailstream_ssl_internal.c */; };
+		D30000000000000000000019 /* mailstream_ssl_internal.c in Sources */ = {isa = PBXBuildFile; fileRef = D30000000000000000000006 /* mailstream_ssl_internal.c */; };
 		2307A00C170AAA5500C43C59 /* mailstream_compress.c in Sources */ = {isa = PBXBuildFile; fileRef = 2307A00A170AAA5500C43C59 /* mailstream_compress.c */; };
 		365DFFD215D1C93100F2DD85 /* xgmmsgid.c in Sources */ = {isa = PBXBuildFile; fileRef = 365DFFD115D1C93100F2DD85 /* xgmmsgid.c */; };
 		8A75ECDA17040F92007F9972 /* mailimap_sort.c in Sources */ = {isa = PBXBuildFile; fileRef = 8A75ECD917040F91007F9972 /* mailimap_sort.c */; };
@@ -657,9 +660,10 @@
 /* Begin PBXFileReference section */
 		D30000000000000000000001 /* mailstream_openssl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mailstream_openssl.c; sourceTree = "<group>"; };
 		D30000000000000000000002 /* mailstream_gnutls.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mailstream_gnutls.c; sourceTree = "<group>"; };
-		D30000000000000000000003 /* mailstream_ssl_backend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mailstream_ssl_backend.h; sourceTree = "<group>"; };
+		D30000000000000000000003 /* mailstream_ssl_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mailstream_ssl_internal.h; sourceTree = "<group>"; };
 		D30000000000000000000004 /* mailstream_openssl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mailstream_openssl.h; sourceTree = "<group>"; };
 		D30000000000000000000005 /* mailstream_gnutls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mailstream_gnutls.h; sourceTree = "<group>"; };
+		D30000000000000000000006 /* mailstream_ssl_internal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mailstream_ssl_internal.c; sourceTree = "<group>"; };
 		C0D100000000000000000001 /* libetpan-project.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = xcconfig/libetpan-project.xcconfig; sourceTree = "<group>"; };
 		C0D100000000000000000002 /* libetpan-framework.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = xcconfig/libetpan-framework.xcconfig; sourceTree = "<group>"; };
 		C0D100000000000000000003 /* libetpan-static-macos.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "xcconfig/libetpan-static-macos.xcconfig"; sourceTree = "<group>"; };
@@ -1292,7 +1296,8 @@
 				C6F9E872105335BC0059C3BA /* mailstream_ssl.h */,
 				D30000000000000000000001 /* mailstream_openssl.c */,
 				D30000000000000000000002 /* mailstream_gnutls.c */,
-				D30000000000000000000003 /* mailstream_ssl_backend.h */,
+				D30000000000000000000006 /* mailstream_ssl_internal.c */,
+				D30000000000000000000003 /* mailstream_ssl_internal.h */,
 				D30000000000000000000004 /* mailstream_openssl.h */,
 				D30000000000000000000005 /* mailstream_gnutls.h */,
 				C6F9E873105335BC0059C3BA /* mailstream_ssl_private.h */,
@@ -2169,6 +2174,7 @@
 				C6F9EB1D105335BD0059C3BA /* mailstream_ssl.c in Sources */,
 				D30000000000000000000011 /* mailstream_openssl.c in Sources */,
 				D30000000000000000000012 /* mailstream_gnutls.c in Sources */,
+				D30000000000000000000017 /* mailstream_ssl_internal.c in Sources */,
 				C6F9EB24105335BD0059C3BA /* md5.c in Sources */,
 				C6F9EB27105335BD0059C3BA /* mmapstring.c in Sources */,
 				C6F9EB2A105335BD0059C3BA /* timeutils.c in Sources */,
@@ -2468,6 +2474,7 @@
 				C682E28215B315EF00BE9DA7 /* mailstream_ssl.c in Sources */,
 				D30000000000000000000013 /* mailstream_openssl.c in Sources */,
 				D30000000000000000000014 /* mailstream_gnutls.c in Sources */,
+				D30000000000000000000018 /* mailstream_ssl_internal.c in Sources */,
 				C682E28315B315EF00BE9DA7 /* mailthread.c in Sources */,
 				C682E28415B315EF00BE9DA7 /* mailthread_types.c in Sources */,
 				C682E28515B315EF00BE9DA7 /* mboxdriver.c in Sources */,
@@ -2680,6 +2687,7 @@
 				C69AB2781054704000F32FBD /* mailstream_ssl.c in Sources */,
 				D30000000000000000000015 /* mailstream_openssl.c in Sources */,
 				D30000000000000000000016 /* mailstream_gnutls.c in Sources */,
+				D30000000000000000000019 /* mailstream_ssl_internal.c in Sources */,
 				C69AB27C1054704000F32FBD /* mailthread.c in Sources */,
 				C69AB27E1054704000F32FBD /* mailthread_types.c in Sources */,
 				C69AB2801054704000F32FBD /* mboxdriver.c in Sources */,

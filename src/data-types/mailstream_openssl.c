@@ -51,6 +51,7 @@
 
 #include "mailstream_ssl.h"
 #include "mailstream_ssl_private.h"
+#include "mailstream_ssl_internal.h"
 
 #ifdef HAVE_UNISTD_H
 #	include <unistd.h>
@@ -61,8 +62,6 @@
 #ifdef HAVE_STRING_H
 #	include <string.h>
 #endif
-#include <fcntl.h>
-
 /*
   these 3 headers MUST be included before <sys/select.h>
   to insure compatibility with Mac OS X (this is true for 10.2)
@@ -115,7 +114,7 @@ struct mailstream_ssl_server_name_callback_data {
   void * callback_data;
 };
 
-static int mailstream_openssl_ssl_set_server_name(
+int mailstream_openssl_ssl_set_server_name(
     struct mailstream_ssl_context * ssl_context, const char * hostname);
 static mailstream_low * mailstream_openssl_low_ssl_open_timeout(
     int fd, time_t timeout);
@@ -281,75 +280,6 @@ static inline void mailstream_ssl_init(void)
   MUTEX_UNLOCK(&ssl_lock);
 }
 
-static inline int mailstream_prepare_fd(int fd)
-{
-#ifndef WIN32
-  int fd_flags;
-  int r;
-  
-  fd_flags = fcntl(fd, F_GETFL, 0);
-  fd_flags |= O_NDELAY;
-  r = fcntl(fd, F_SETFL, fd_flags);
-  if (r < 0)
-    return -1;
-#endif
-  
-  return 0;
-}
-
-static int wait_SSL_connect(int s, int want_read, time_t timeout_seconds)
-{
-  struct timeval timeout;
-  int r;
-#if defined(WIN32) || !USE_POLL
-  fd_set fds;
-#else
-  struct pollfd pfd;
-#endif // WIN32
-
-  if (timeout_seconds == 0) {
-    timeout = mailstream_network_delay;
-  }
-  else {
-    timeout.tv_sec = timeout_seconds;
-    timeout.tv_usec = 0;
-  }
-#if defined(WIN32) || !USE_POLL
-  FD_ZERO(&fds);
-  FD_SET(s, &fds);
-  /* TODO: how to cancel this ? */
-  if (want_read)
-    r = select(s + 1, &fds, NULL, NULL, &timeout);
-  else
-    r = select(s + 1, NULL, &fds, NULL, &timeout);
-  if (r <= 0) {
-    return -1;
-  }
-  if (!FD_ISSET(s, &fds)) {
-    /* though, it's strange */
-    return -1;
-  }
-#else
-  pfd.fd = s;
-  if (want_read) {
-    pfd.events = POLLIN;
-  }
-  else {
-    pfd.events = POLLOUT;
-  }
-  r = poll(&pfd, 1, timeout.tv_sec * 1000 + timeout.tv_usec / 1000);
-  if (r <= 0) {
-    return -1;
-  }
-
-  if ((pfd.revents & pfd.events) != pfd.events) {
-    return -1;
-  }
-#endif
-  
-  return 0;
-}
-
 static int mailstream_low_ssl_close(mailstream_low * s);
 static ssize_t mailstream_low_ssl_read(mailstream_low * s,
 				       void * buf, size_t count);
@@ -387,7 +317,8 @@ static mailstream_low_driver local_mailstream_ssl_driver = {
   /* mailstream_interrupt_idle */ NULL,
 };
 
-mailstream_low_driver * mailstream_openssl_ssl_driver = &local_mailstream_ssl_driver;
+static mailstream_low_driver * mailstream_openssl_ssl_driver =
+  &local_mailstream_ssl_driver;
 
 /* file descriptor must be given in (default) blocking-mode */
 
@@ -469,14 +400,14 @@ again:
 
   switch(SSL_get_error(ssl_conn, r)) {
   	case SSL_ERROR_WANT_READ:
-          r = wait_SSL_connect(fd, 1, timeout);
+          r = mailstream_ssl_internal_wait_fd(fd, 1, timeout);
           if (r < 0)
             goto free_ssl_conn;
 	  else
 	    goto again;
 	break;
 	case SSL_ERROR_WANT_WRITE:
-          r = wait_SSL_connect(fd, 0, timeout);
+          r = mailstream_ssl_internal_wait_fd(fd, 0, timeout);
           if (r < 0)
             goto free_ssl_conn;
 	  else
@@ -490,7 +421,7 @@ again:
   if (cancel == NULL)
     goto free_ssl_conn;
   
-  r = mailstream_prepare_fd(fd);
+  r = mailstream_ssl_internal_prepare_fd(fd);
   if (r < 0)
     goto free_cancel;
   
@@ -567,11 +498,7 @@ static void  ssl_data_close(struct mailstream_ssl_data * ssl_data)
   ssl_data->ssl_conn = NULL;
   SSL_CTX_free(ssl_data->ssl_ctx);
   ssl_data->ssl_ctx  = NULL;
-#ifdef WIN32
-  closesocket(ssl_data->fd);
-#else
-  close(ssl_data->fd);
-#endif
+  mailstream_ssl_internal_close_fd(ssl_data->fd);
   ssl_data->fd = -1;
 }
 
@@ -1246,45 +1173,20 @@ carray * mailstream_openssl_low_ssl_get_certificate_chain(mailstream_low * s)
   return NULL;
 }
 
-#include "mailstream_ssl_backend.h"
-
-static mailstream_low * mailstream_openssl_driver_open_low(int fd,
+mailstream_low * mailstream_openssl_open_low(int fd,
     int starttls, time_t timeout,
-    void (* callback)(void *, void *), void * data)
+    void (* callback)(struct mailstream_ssl_context *, void *), void * data)
 {
   if (starttls)
     return mailstream_openssl_low_tls_open_with_callback_timeout(
-        fd, timeout, (void (*)(struct mailstream_ssl_context *, void *)) callback,
-        data);
+        fd, timeout, callback, data);
   return mailstream_openssl_low_ssl_open_with_callback_timeout(
-      fd, timeout, (void (*)(struct mailstream_ssl_context *, void *)) callback,
-      data);
+      fd, timeout, callback, data);
 }
 
-static struct mailstream_ssl_backend_driver mailstream_openssl_driver = {
-  MAILSTREAM_SSL_BACKEND_OPENSSL,
-  "openssl",
-  NULL,
-  mailstream_openssl_driver_open_low,
-  mailstream_openssl_ssl_get_certificate,
-  (int (*)(void *, char *)) mailstream_openssl_ssl_set_client_certicate,
-  (int (*)(void *, unsigned char *, size_t)) mailstream_openssl_ssl_set_client_certificate_data,
-  (int (*)(void *, unsigned char *, size_t)) mailstream_openssl_ssl_set_client_private_key_data,
-  (int (*)(void *, char *, char *)) mailstream_openssl_ssl_set_server_certicate,
-  (int (*)(void *, const char *)) mailstream_openssl_ssl_set_server_name,
-  (void * (*)(void *)) mailstream_openssl_ssl_get_openssl_ssl_ctx,
-  (int (*)(void *)) mailstream_openssl_ssl_get_fd,
-  mailstream_openssl_ssl_init_not_required,
-  mailstream_openssl_ssl_init_lock,
-  mailstream_openssl_ssl_uninit_lock,
-};
-
-const struct mailstream_ssl_backend_driver *
-mailstream_openssl_backend_driver(void)
+mailstream_low_driver * mailstream_openssl_low_driver(void)
 {
-  mailstream_openssl_driver.low_driver =
-    mailstream_openssl_ssl_driver;
-  return &mailstream_openssl_driver;
+  return mailstream_openssl_ssl_driver;
 }
 
 #if defined(__GNUC__) || defined(__clang__)

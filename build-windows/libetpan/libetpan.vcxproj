@@ -249,6 +249,7 @@ build_headers.bat
     <ClCompile Include="..\..\src\data-types\mailstream_low.c" />
     <ClCompile Include="..\..\src\data-types\mailstream_socket.c" />
     <ClCompile Include="..\..\src\data-types\mailstream_ssl.c" />
+    <ClCompile Include="..\..\src\data-types\mailstream_ssl_internal.c" />
     <ClCompile Include="..\..\src\data-types\mailstream_openssl.c" />
     <ClCompile Include="..\..\src\data-types\mailstream_gnutls.c" />
     <ClCompile Include="..\..\src\data-types\mail_cache_db.c" />
@@ -447,7 +448,7 @@ build_headers.bat
     <ClInclude Include="..\..\src\data-types\mailstream_low.h" />
     <ClInclude Include="..\..\src\data-types\mailstream_socket.h" />
     <ClInclude Include="..\..\src\data-types\mailstream_ssl.h" />
-    <ClInclude Include="..\..\src\data-types\mailstream_ssl_backend.h" />
+    <ClInclude Include="..\..\src\data-types\mailstream_ssl_internal.h" />
     <ClInclude Include="..\..\src\data-types\mailstream_openssl.h" />
     <ClInclude Include="..\..\src\data-types\mailstream_gnutls.h" />
     <ClInclude Include="..\..\src\data-types\mailstream_ssl_private.h" />

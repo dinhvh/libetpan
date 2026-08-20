@@ -7,7 +7,8 @@
 #endif
 
 #include "mailstream_ssl.h"
-#include "mailstream_ssl_backend.h"
+#include "mailstream_openssl.h"
+#include "mailstream_gnutls.h"
 #include "mailstream_cfstream.h"
 #include "mailstream.h"
 #include "mailstream_low.h"
@@ -24,12 +25,11 @@
 
 struct mailstream_ssl_context {
   enum mailstream_ssl_backend backend;
-  const struct mailstream_ssl_backend_driver * driver;
   void * provider_context;
 };
 
 struct mailstream_ssl_callback_data {
-  const struct mailstream_ssl_backend_driver * driver;
+  enum mailstream_ssl_backend backend;
   const char * server_name;
   void (* callback)(struct mailstream_ssl_context *, void *);
   void * callback_data;
@@ -106,44 +106,39 @@ mailstream * mailstream_ssl_connect_timeout(const char * server,
   return stream;
 }
 
-static const struct mailstream_ssl_backend_driver *
-mailstream_ssl_backend_driver_for_type(enum mailstream_ssl_backend backend)
+static int mailstream_ssl_socket_backend_is_available(
+    enum mailstream_ssl_backend backend)
 {
   switch (backend) {
 #ifdef HAVE_OPENSSL
   case MAILSTREAM_SSL_BACKEND_OPENSSL:
-    return mailstream_openssl_backend_driver();
+    return 1;
 #endif
 #ifdef HAVE_GNUTLS
   case MAILSTREAM_SSL_BACKEND_GNUTLS:
-    return mailstream_gnutls_backend_driver();
+    return 1;
 #endif
   default:
-    return NULL;
+    return 0;
   }
 }
 
-static const struct mailstream_ssl_backend_driver *
-mailstream_ssl_default_socket_backend_driver(void)
+static enum mailstream_ssl_backend mailstream_ssl_default_socket_backend(void)
 {
 #ifdef HAVE_OPENSSL
-  return mailstream_openssl_backend_driver();
+  return MAILSTREAM_SSL_BACKEND_OPENSSL;
 #elif defined(HAVE_GNUTLS)
-  return mailstream_gnutls_backend_driver();
+  return MAILSTREAM_SSL_BACKEND_GNUTLS;
 #else
-  return NULL;
+  return MAILSTREAM_SSL_BACKEND_CFNETWORK;
 #endif
 }
 
-static const struct mailstream_ssl_backend_driver *
-mailstream_ssl_selected_socket_backend_driver(void)
+static enum mailstream_ssl_backend mailstream_ssl_selected_socket_backend(void)
 {
-  const struct mailstream_ssl_backend_driver * driver;
-
-  driver = mailstream_ssl_backend_driver_for_type(selected_backend);
-  if (driver != NULL)
-    return driver;
-  return mailstream_ssl_default_socket_backend_driver();
+  if (mailstream_ssl_socket_backend_is_available(selected_backend))
+    return selected_backend;
+  return mailstream_ssl_default_socket_backend();
 }
 
 int mailstream_ssl_backend_is_available(enum mailstream_ssl_backend backend)
@@ -155,7 +150,7 @@ int mailstream_ssl_backend_is_available(enum mailstream_ssl_backend backend)
     return 0;
 #endif
   }
-  return mailstream_ssl_backend_driver_for_type(backend) != NULL;
+  return mailstream_ssl_socket_backend_is_available(backend);
 }
 
 int mailstream_ssl_set_backend(enum mailstream_ssl_backend backend)
@@ -181,14 +176,14 @@ enum mailstream_ssl_backend mailstream_ssl_get_backend(void)
   return selected_backend;
 }
 
-static void mailstream_ssl_provider_callback(void * provider_context,
+static void mailstream_ssl_provider_callback(
+    struct mailstream_ssl_context * provider_context,
     void * data)
 {
   struct mailstream_ssl_callback_data * callback_data = data;
   struct mailstream_ssl_context context;
 
-  context.backend = callback_data->driver->backend;
-  context.driver = callback_data->driver;
+  context.backend = callback_data->backend;
   context.provider_context = provider_context;
 
   if (callback_data->server_name != NULL)
@@ -201,20 +196,29 @@ static mailstream_low * mailstream_low_ssl_open_full(int fd, int starttls,
     time_t timeout, const char * server_name,
     void (* callback)(struct mailstream_ssl_context *, void *), void * data)
 {
-  const struct mailstream_ssl_backend_driver * driver;
+  enum mailstream_ssl_backend backend;
   struct mailstream_ssl_callback_data callback_data;
 
-  driver = mailstream_ssl_selected_socket_backend_driver();
-  if (driver == NULL)
-    return NULL;
-
-  callback_data.driver = driver;
+  backend = mailstream_ssl_selected_socket_backend();
+  callback_data.backend = backend;
   callback_data.server_name = server_name;
   callback_data.callback = callback;
   callback_data.callback_data = data;
 
-  return driver->open_low(fd, starttls, timeout,
-      mailstream_ssl_provider_callback, &callback_data);
+  switch (backend) {
+#ifdef HAVE_OPENSSL
+  case MAILSTREAM_SSL_BACKEND_OPENSSL:
+    return mailstream_openssl_open_low(fd, starttls, timeout,
+        mailstream_ssl_provider_callback, &callback_data);
+#endif
+#ifdef HAVE_GNUTLS
+  case MAILSTREAM_SSL_BACKEND_GNUTLS:
+    return mailstream_gnutls_open_low(fd, starttls, timeout,
+        mailstream_ssl_provider_callback, &callback_data);
+#endif
+  default:
+    return NULL;
+  }
 }
 
 mailstream_low * mailstream_low_ssl_open(int fd)
@@ -331,80 +335,147 @@ mailstream * mailstream_ssl_open_with_server_name_callback_timeout(int fd,
   return stream;
 }
 
-static const struct mailstream_ssl_backend_driver *
-mailstream_ssl_driver_for_stream(mailstream * stream)
+static enum mailstream_ssl_backend mailstream_ssl_backend_for_stream(
+    mailstream * stream)
 {
   mailstream_low * low;
 
   if (stream == NULL)
-    return NULL;
+    return MAILSTREAM_SSL_BACKEND_CFNETWORK;
   low = mailstream_get_low(stream);
   if (low == NULL)
-    return NULL;
+    return MAILSTREAM_SSL_BACKEND_CFNETWORK;
 #ifdef HAVE_OPENSSL
-  if (low->driver == mailstream_openssl_backend_driver()->low_driver)
-    return mailstream_openssl_backend_driver();
+  if (low->driver == mailstream_openssl_low_driver())
+    return MAILSTREAM_SSL_BACKEND_OPENSSL;
 #endif
 #ifdef HAVE_GNUTLS
-  if (low->driver == mailstream_gnutls_backend_driver()->low_driver)
-    return mailstream_gnutls_backend_driver();
+  if (low->driver == mailstream_gnutls_low_driver())
+    return MAILSTREAM_SSL_BACKEND_GNUTLS;
 #endif
-  return NULL;
+  return MAILSTREAM_SSL_BACKEND_CFNETWORK;
 }
 
 ssize_t mailstream_ssl_get_certificate(mailstream * stream,
     unsigned char ** cert_der)
 {
-  const struct mailstream_ssl_backend_driver * driver;
-
-  driver = mailstream_ssl_driver_for_stream(stream);
-  if (driver == NULL)
+  switch (mailstream_ssl_backend_for_stream(stream)) {
+#ifdef HAVE_OPENSSL
+  case MAILSTREAM_SSL_BACKEND_OPENSSL:
+    return mailstream_openssl_ssl_get_certificate(stream, cert_der);
+#endif
+#ifdef HAVE_GNUTLS
+  case MAILSTREAM_SSL_BACKEND_GNUTLS:
+    return mailstream_gnutls_ssl_get_certificate(stream, cert_der);
+#endif
+  default:
     return -1;
-  return driver->copy_certificate(stream, cert_der);
+  }
 }
 
 int mailstream_ssl_set_client_certicate(struct mailstream_ssl_context * context,
     char * filename)
 {
-  if (context == NULL || context->driver->set_client_certificate_file == NULL)
+  if (context == NULL)
     return -1;
-  return context->driver->set_client_certificate_file(
-      context->provider_context, filename);
+  switch (context->backend) {
+#ifdef HAVE_OPENSSL
+  case MAILSTREAM_SSL_BACKEND_OPENSSL:
+    return mailstream_openssl_ssl_set_client_certicate(
+        context->provider_context, filename);
+#endif
+#ifdef HAVE_GNUTLS
+  case MAILSTREAM_SSL_BACKEND_GNUTLS:
+    return mailstream_gnutls_ssl_set_client_certicate(
+        context->provider_context, filename);
+#endif
+  default:
+    return -1;
+  }
 }
 
 int mailstream_ssl_set_client_certificate_data(
     struct mailstream_ssl_context * context, unsigned char * der, size_t length)
 {
-  if (context == NULL || context->driver->set_client_certificate_data == NULL)
+  if (context == NULL)
     return -1;
-  return context->driver->set_client_certificate_data(
-      context->provider_context, der, length);
+  switch (context->backend) {
+#ifdef HAVE_OPENSSL
+  case MAILSTREAM_SSL_BACKEND_OPENSSL:
+    return mailstream_openssl_ssl_set_client_certificate_data(
+        context->provider_context, der, length);
+#endif
+#ifdef HAVE_GNUTLS
+  case MAILSTREAM_SSL_BACKEND_GNUTLS:
+    return mailstream_gnutls_ssl_set_client_certificate_data(
+        context->provider_context, der, length);
+#endif
+  default:
+    return -1;
+  }
 }
 
 int mailstream_ssl_set_client_private_key_data(
     struct mailstream_ssl_context * context, unsigned char * der, size_t length)
 {
-  if (context == NULL || context->driver->set_client_private_key_data == NULL)
+  if (context == NULL)
     return -1;
-  return context->driver->set_client_private_key_data(
-      context->provider_context, der, length);
+  switch (context->backend) {
+#ifdef HAVE_OPENSSL
+  case MAILSTREAM_SSL_BACKEND_OPENSSL:
+    return mailstream_openssl_ssl_set_client_private_key_data(
+        context->provider_context, der, length);
+#endif
+#ifdef HAVE_GNUTLS
+  case MAILSTREAM_SSL_BACKEND_GNUTLS:
+    return mailstream_gnutls_ssl_set_client_private_key_data(
+        context->provider_context, der, length);
+#endif
+  default:
+    return -1;
+  }
 }
 
 int mailstream_ssl_set_server_certicate(struct mailstream_ssl_context * context,
     char * ca_file, char * ca_path)
 {
-  if (context == NULL || context->driver->set_server_certificate == NULL)
+  if (context == NULL)
     return -1;
-  return context->driver->set_server_certificate(
-      context->provider_context, ca_file, ca_path);
+  switch (context->backend) {
+#ifdef HAVE_OPENSSL
+  case MAILSTREAM_SSL_BACKEND_OPENSSL:
+    return mailstream_openssl_ssl_set_server_certicate(
+        context->provider_context, ca_file, ca_path);
+#endif
+#ifdef HAVE_GNUTLS
+  case MAILSTREAM_SSL_BACKEND_GNUTLS:
+    return mailstream_gnutls_ssl_set_server_certicate(
+        context->provider_context, ca_file, ca_path);
+#endif
+  default:
+    return -1;
+  }
 }
 
 int mailstream_ssl_set_server_name(struct mailstream_ssl_context * context,
     const char * hostname)
 {
-  if (context == NULL || context->driver->set_server_name == NULL)
+  if (context == NULL)
     return -1;
-  return context->driver->set_server_name(context->provider_context, hostname);
+  switch (context->backend) {
+#ifdef HAVE_OPENSSL
+  case MAILSTREAM_SSL_BACKEND_OPENSSL:
+    return mailstream_openssl_ssl_set_server_name(
+        context->provider_context, hostname);
+#endif
+#ifdef HAVE_GNUTLS
+  case MAILSTREAM_SSL_BACKEND_GNUTLS:
+    return mailstream_gnutls_ssl_set_server_name(
+        context->provider_context, hostname);
+#endif
+  default:
+    return -1;
+  }
 }
 
 void mailstream_ssl_set_server_name_callback(
@@ -417,58 +488,100 @@ void * mailstream_ssl_get_openssl_ssl_ctx(
     struct mailstream_ssl_context * context)
 {
   if (context == NULL ||
-      context->backend != MAILSTREAM_SSL_BACKEND_OPENSSL ||
-      context->driver->get_native_context == NULL)
+      context->backend != MAILSTREAM_SSL_BACKEND_OPENSSL)
     return NULL;
-  return context->driver->get_native_context(context->provider_context);
+#ifdef HAVE_OPENSSL
+  return mailstream_openssl_ssl_get_openssl_ssl_ctx(
+      context->provider_context);
+#else
+  return NULL;
+#endif
 }
 
 int mailstream_ssl_get_fd(struct mailstream_ssl_context * context)
 {
-  if (context == NULL || context->driver->get_context_fd == NULL)
+  if (context == NULL)
     return -1;
-  return context->driver->get_context_fd(context->provider_context);
+  switch (context->backend) {
+#ifdef HAVE_OPENSSL
+  case MAILSTREAM_SSL_BACKEND_OPENSSL:
+    return mailstream_openssl_ssl_get_fd(context->provider_context);
+#endif
+#ifdef HAVE_GNUTLS
+  case MAILSTREAM_SSL_BACKEND_GNUTLS:
+    return mailstream_gnutls_ssl_get_fd(context->provider_context);
+#endif
+  default:
+    return -1;
+  }
 }
 
 void mailstream_openssl_init_not_required(void)
 {
 #ifdef HAVE_OPENSSL
-  mailstream_openssl_backend_driver()->init_not_required();
+  mailstream_openssl_ssl_init_not_required();
 #endif
 }
 
 void mailstream_gnutls_init_not_required(void)
 {
 #ifdef HAVE_GNUTLS
-  mailstream_gnutls_backend_driver()->init_not_required();
+  mailstream_gnutls_ssl_init_not_required();
 #endif
 }
 
 void mailstream_ssl_init_not_required(void)
 {
-  const struct mailstream_ssl_backend_driver * driver;
-
-  driver = mailstream_ssl_selected_socket_backend_driver();
-  if (driver != NULL)
-    driver->init_not_required();
+  switch (mailstream_ssl_selected_socket_backend()) {
+#ifdef HAVE_OPENSSL
+  case MAILSTREAM_SSL_BACKEND_OPENSSL:
+    mailstream_openssl_ssl_init_not_required();
+    break;
+#endif
+#ifdef HAVE_GNUTLS
+  case MAILSTREAM_SSL_BACKEND_GNUTLS:
+    mailstream_gnutls_ssl_init_not_required();
+    break;
+#endif
+  default:
+    break;
+  }
 }
 
 void mailstream_ssl_init_lock(void)
 {
-  const struct mailstream_ssl_backend_driver * driver;
-
-  driver = mailstream_ssl_selected_socket_backend_driver();
-  if (driver != NULL && driver->init_lock != NULL)
-    driver->init_lock();
+  switch (mailstream_ssl_selected_socket_backend()) {
+#ifdef HAVE_OPENSSL
+  case MAILSTREAM_SSL_BACKEND_OPENSSL:
+    mailstream_openssl_ssl_init_lock();
+    break;
+#endif
+#ifdef HAVE_GNUTLS
+  case MAILSTREAM_SSL_BACKEND_GNUTLS:
+    mailstream_gnutls_ssl_init_lock();
+    break;
+#endif
+  default:
+    break;
+  }
 }
 
 void mailstream_ssl_uninit_lock(void)
 {
-  const struct mailstream_ssl_backend_driver * driver;
-
-  driver = mailstream_ssl_selected_socket_backend_driver();
-  if (driver != NULL && driver->uninit_lock != NULL)
-    driver->uninit_lock();
+  switch (mailstream_ssl_selected_socket_backend()) {
+#ifdef HAVE_OPENSSL
+  case MAILSTREAM_SSL_BACKEND_OPENSSL:
+    mailstream_openssl_ssl_uninit_lock();
+    break;
+#endif
+#ifdef HAVE_GNUTLS
+  case MAILSTREAM_SSL_BACKEND_GNUTLS:
+    mailstream_gnutls_ssl_uninit_lock();
+    break;
+#endif
+  default:
+    break;
+  }
 }
 
 carray * mailstream_low_ssl_get_certificate_chain(mailstream_low * stream)

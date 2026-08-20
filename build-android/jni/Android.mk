@@ -37,6 +37,7 @@ src_files = \
 ./src/data-types/mailstream_low.c \
 ./src/data-types/mailstream_socket.c \
 ./src/data-types/mailstream_ssl.c \
+./src/data-types/mailstream_ssl_internal.c \
 ./src/data-types/mailstream_openssl.c \
 ./src/data-types/mailstream_gnutls.c \
 ./src/data-types/mailhttp.c \
