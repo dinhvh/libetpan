@@ -8,9 +8,15 @@ logfile="$(mktemp "${TMPDIR:-/tmp}/libetpan-bootstrap.XXXXXX")"
 archive="$script_dir/autogen-result.tar.gz"
 no_cache=false
 configure_flags=(
+  --quiet
   --with-curl=no
   --enable-debug
   --with-smime=no
+  --with-sasl=no
+  --with-icu=no
+  --with-gnutls=no
+  --with-rnp=no
+  --with-openssl=no
 )
 
 echo "Bootstrap log: $logfile"
