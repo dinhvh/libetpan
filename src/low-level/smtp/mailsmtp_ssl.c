@@ -75,6 +75,12 @@ int mailsmtp_ssl_connect_with_callback(mailsmtp * session,
   int s;
   mailstream * stream;
 
+  if (port == 0) {
+    port = mail_get_service_port(SERVICE_NAME_SMTPS, SERVICE_TYPE_TCP);
+    if (port == 0)
+      port = DEFAULT_SMTPS_PORT;
+  }
+
 #if HAVE_CFNETWORK
   if (mailstream_ssl_get_backend() == MAILSTREAM_SSL_BACKEND_CFNETWORK) {
     if (callback == NULL) {
@@ -82,12 +88,6 @@ int mailsmtp_ssl_connect_with_callback(mailsmtp * session,
     }
   }
 #endif
-  
-  if (port == 0) {
-    port = mail_get_service_port(SERVICE_NAME_SMTPS, SERVICE_TYPE_TCP);
-    if (port == 0)
-      port = DEFAULT_SMTPS_PORT;
-  }
 
   /* Connection */
 

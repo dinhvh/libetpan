@@ -67,17 +67,17 @@ int mailsmtp_socket_connect(mailsmtp * session,
   int s;
   mailstream * stream;
 
-#if HAVE_CFNETWORK
-  if (mailstream_ssl_get_backend() == MAILSTREAM_SSL_BACKEND_CFNETWORK) {
-    return mailsmtp_cfsocket_connect(session, server, port);
-  }
-#endif
-  
   if (port == 0) {
     port = mail_get_service_port(SERVICE_NAME_SMTP, SERVICE_TYPE_TCP);
     if (port == 0)
       port = DEFAULT_SMTP_PORT;
   }
+
+#if HAVE_CFNETWORK
+  if (mailstream_ssl_get_backend() == MAILSTREAM_SSL_BACKEND_CFNETWORK) {
+    return mailsmtp_cfsocket_connect(session, server, port);
+  }
+#endif
 
   /* Connection */
 

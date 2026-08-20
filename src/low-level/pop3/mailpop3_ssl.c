@@ -71,6 +71,12 @@ int mailpop3_ssl_connect_with_callback(mailpop3 * f, const char * server, uint16
   int s;
   mailstream * stream;
 
+  if (port == 0) {
+    port = mail_get_service_port(SERVICE_NAME_POP3S, SERVICE_TYPE_TCP);
+    if (port == 0)
+      port = DEFAULT_POP3S_PORT;
+  }
+
 #if HAVE_CFNETWORK
   if (mailstream_ssl_get_backend() == MAILSTREAM_SSL_BACKEND_CFNETWORK) {
     if (callback == NULL) {
@@ -78,12 +84,6 @@ int mailpop3_ssl_connect_with_callback(mailpop3 * f, const char * server, uint16
     }
   }
 #endif
-  
-  if (port == 0) {
-    port = mail_get_service_port(SERVICE_NAME_POP3S, SERVICE_TYPE_TCP);
-    if (port == 0)
-      port = DEFAULT_POP3S_PORT;
-  }
 
   /* Connection */
 

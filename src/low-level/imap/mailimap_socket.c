@@ -67,17 +67,17 @@ int mailimap_socket_connect_voip(mailimap * f, const char * server, uint16_t por
     int s;
     mailstream * stream;
 
-  #if HAVE_CFNETWORK
-    if (mailstream_ssl_get_backend() == MAILSTREAM_SSL_BACKEND_CFNETWORK) {
-      return mailimap_cfsocket_connect_voip(f, server, port, voip_enabled);
-    }
-  #endif
-
     if (port == 0) {
       port = mail_get_service_port(SERVICE_NAME_IMAP, SERVICE_TYPE_TCP);
       if (port == 0)
         port = DEFAULT_IMAP_PORT;
     }
+
+  #if HAVE_CFNETWORK
+    if (mailstream_ssl_get_backend() == MAILSTREAM_SSL_BACKEND_CFNETWORK) {
+      return mailimap_cfsocket_connect_voip(f, server, port, voip_enabled);
+    }
+  #endif
 
     /* Connection */
 

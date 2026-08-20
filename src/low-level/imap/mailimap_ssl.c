@@ -73,6 +73,12 @@ int mailimap_ssl_connect_voip_with_callback(mailimap * f, const char * server, u
   int s;
   mailstream * stream;
 
+  if (port == 0) {
+    port = mail_get_service_port(SERVICE_NAME_IMAPS, SERVICE_TYPE_TCP);
+    if (port == 0)
+      port = DEFAULT_IMAPS_PORT;
+  }
+
 #if HAVE_CFNETWORK
   if (mailstream_ssl_get_backend() == MAILSTREAM_SSL_BACKEND_CFNETWORK) {
     if (callback == NULL) {
@@ -80,12 +86,6 @@ int mailimap_ssl_connect_voip_with_callback(mailimap * f, const char * server, u
     }
   }
 #endif
-  
-  if (port == 0) {
-    port = mail_get_service_port(SERVICE_NAME_IMAPS, SERVICE_TYPE_TCP);
-    if (port == 0)
-      port = DEFAULT_IMAPS_PORT;
-  }
 
   /* Connection */
 
