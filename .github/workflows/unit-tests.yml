@@ -60,7 +60,7 @@ jobs:
             libicu-dev
 
       - name: Configure
-        run: ./autogen.sh
+        run: ./autogen.sh --enable-static --enable-debug
 
       - name: Build
         run: make
