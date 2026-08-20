@@ -15,7 +15,7 @@ if [[ ! -f "$source_dir/Configure" ]]; then
   exit 1
 fi
 
-for command in make perl xcodebuild xcrun lipo rsync; do
+for command in make perl xcodebuild xcrun lipo libtool rsync; do
   if ! command -v "$command" >/dev/null 2>&1; then
     echo "Required command not found: $command" >&2
     exit 1
@@ -43,7 +43,7 @@ build_arch() {
   rm -rf "$arch_source" "$prefix"
   cp -R "$prepared_source" "$arch_source"
 
-  echo "Building libcrypto for $name ($arch)"
+  echo "Building OpenSSL for $name ($arch)"
   (
     cd "$arch_source"
     CC="$(xcrun --sdk "$sdk" --find clang)" \
@@ -60,6 +60,10 @@ build_arch() {
         "$minimum_flag"
     make -j "$jobs" build_libs
     make install_dev
+    xcrun libtool -static \
+      -o "$prefix/lib/libopenssl.a" \
+      "$prefix/lib/libssl.a" \
+      "$prefix/lib/libcrypto.a"
   )
 }
 
@@ -71,9 +75,9 @@ make_universal() {
   mkdir -p "$destination/lib"
   cp -R "$build_root/$name-arm64/install/include" "$destination/include"
   lipo -create \
-    "$build_root/$name-arm64/install/lib/libcrypto.a" \
-    "$build_root/$name-x86_64/install/lib/libcrypto.a" \
-    -output "$destination/lib/libcrypto.a"
+    "$build_root/$name-arm64/install/lib/libopenssl.a" \
+    "$build_root/$name-x86_64/install/lib/libopenssl.a" \
+    -output "$destination/lib/libopenssl.a"
 }
 
 rm -rf "$build_root"
@@ -96,11 +100,11 @@ make_universal ios-simulator
 
 rm -rf "$output"
 xcodebuild -create-xcframework \
-  -library "$build_root/macos-universal/lib/libcrypto.a" \
+  -library "$build_root/macos-universal/lib/libopenssl.a" \
   -headers "$build_root/macos-universal/include" \
-  -library "$build_root/ios-arm64/install/lib/libcrypto.a" \
+  -library "$build_root/ios-arm64/install/lib/libopenssl.a" \
   -headers "$build_root/ios-arm64/install/include" \
-  -library "$build_root/ios-simulator-universal/lib/libcrypto.a" \
+  -library "$build_root/ios-simulator-universal/lib/libopenssl.a" \
   -headers "$build_root/ios-simulator-universal/include" \
   -output "$output"
 

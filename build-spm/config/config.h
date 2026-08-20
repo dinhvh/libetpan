@@ -40,7 +40,6 @@
 #define HAVE_UNISTD_H 1
 #define HAVE_ZLIB 1
 
-#define LIBETPAN_IOS_DISABLE_SSL 1
 #define LIBETPAN_REENTRANT 1
 #define LIBETPAN_VERSION "1.10.1"
 #define LIBETPAN_VERSION_MAJOR 1
@@ -69,8 +68,8 @@
 /* #undef HAVE_SYS_POLL_H */
 /* #undef HAVE_WINSOCK2_H */
 /* #undef LMDB */
-/* #undef USE_GNUTLS */
+/* #undef HAVE_GNUTLS */
 /* #undef USE_POLL */
-/* #undef USE_SSL */
+/* #undef HAVE_OPENSSL */
 
 #endif

@@ -8,7 +8,7 @@
 
 #include "mailhttp.h"
 
-#if defined(HAVE_CURL) && !defined(LIBETPAN_DISABLE_CURL)
+#ifdef HAVE_CURL
 #include <curl/curl.h>
 
 #include <stdio.h>
@@ -240,4 +240,4 @@ int mailhttp_transport_new_curl(struct mailhttp_transport ** result)
   return MAILHTTP_NO_ERROR;
 }
 
-#endif /* HAVE_CURL && !LIBETPAN_DISABLE_CURL */
+#endif /* HAVE_CURL */

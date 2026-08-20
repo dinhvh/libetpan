@@ -159,13 +159,13 @@
 #define UNSTRICT_SYNTAX 1
 
 /* Define to use GnuTLS */
-/* #undef USE_GNUTLS */
+/* #undef HAVE_GNUTLS */
 
 /* Define to use SASL */
 #define USE_SASL 1
 
 /* Define to use OpenSSL */
-#define USE_SSL 1
+#define HAVE_OPENSSL 1
 
 /* Version number of package */
 #define VERSION "1.2"

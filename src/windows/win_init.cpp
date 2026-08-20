@@ -55,7 +55,7 @@ class win_init {
 		/* Initialize Mutexes */
 		mmapstring_init_lock();
 
-#ifdef USE_SSL
+#ifdef HAVE_OPENSSL
 		mailstream_ssl_init_lock();
 #endif
 
@@ -71,7 +71,7 @@ class win_init {
 #ifdef _MSC_VER
 		/* Uninitialize Mutexes */
 		mmapstring_uninit_lock();
-#ifdef USE_SSL
+#ifdef HAVE_OPENSSL
 		mailstream_ssl_uninit_lock();
 #endif
 
@@ -96,4 +96,3 @@ class win_init {
 
 /* Initialise  */
 static win_init windows_startup;
-

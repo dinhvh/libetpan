@@ -1,0 +1,18 @@
+BUNDLE_LOADER = $(TEST_HOST)
+CLANG_ENABLE_OBJC_ARC = YES
+CODE_SIGNING_ALLOWED = NO
+FRAMEWORK_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)
+GCC_C_LANGUAGE_STANDARD = gnu99
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) USE_SMIME_OPENSSL=1
+GENERATE_INFOPLIST_FILE = YES
+HEADER_SEARCH_PATHS = $(SRCROOT)/../include $(SRCROOT)/../include/libetpan $(SRCROOT)/../src/data-types $(SRCROOT)/../src/low-level/imap $(SRCROOT)/../unittest/common $(SRCROOT)/../unittest/imap $(SRCROOT)/../unittest/imap-utf7 $(SRCROOT)/../unittest/imf $(SRCROOT)/../unittest/mime $(SRCROOT)/../unittest/data-types $(SRCROOT)/../unittest/charset-detection $(SRCROOT)/../unittest/mime-builder $(SRCROOT)/../unittest/mime-parser $(SRCROOT)/../unittest/plaintext-rendering $(SDKROOT)/usr/include/libxml2 $(SRCROOT)/dependencies/build/Tidy.xcframework/macos-arm64_x86_64/Headers $(SRCROOT)/../unittest/pop3 $(SRCROOT)/../unittest/activesync
+LD_RUNPATH_SEARCH_PATHS = $(inherited) @loader_path/../Frameworks @loader_path/Frameworks $(BUILT_PRODUCTS_DIR)
+LIBRARY_SEARCH_PATHS = /opt/homebrew/opt/tidy-html5/lib
+MACOSX_DEPLOYMENT_TARGET = 14.0
+OTHER_LDFLAGS = $(inherited) -lxml2 -ltidy -lm -lz
+PRODUCT_BUNDLE_IDENTIFIER = org.libetpan.unit-tests
+PRODUCT_NAME = $(TARGET_NAME)
+SDKROOT = macosx
+SKIP_INSTALL = YES
+SUPPORTED_PLATFORMS = macosx
+TEST_HOST =

@@ -233,12 +233,10 @@ if test "x$with_openssl" != "xno"; then
   if test "x$with_openssl" != "xyes"; then
     CPPFLAGS="$OCPPFLAGS"
     LDFLAGS="$OLDFLAGS"
-  else
-   with_gnutls="no"
   fi
 fi
 if test "x$with_openssl" = "xyes"; then
-  AC_DEFINE([USE_SSL], 1, [Define to use OpenSSL])
+  AC_DEFINE([HAVE_OPENSSL], 1, [Define if OpenSSL is available])
   SSLLIBS="-lssl $SSLLIBS"
 else
   SSLLIBS=""
@@ -344,13 +342,10 @@ if test "x$with_gnutls" != "xno"; then
   if test "x$with_gnutls" != "xyes"; then
    CPPFLAGS="$OCPPFLAGS"
    LDFLAGS="$OLDFLAGS"
-  else
-   with_openssl="no"
   fi
 fi
 if test "x$with_gnutls" = "xyes"; then
-  AC_DEFINE([USE_GNUTLS],1, [Define to use GnuTLS])
-  AC_DEFINE([USE_SSL], 1, [Define to use OpenSSL])
+  AC_DEFINE([HAVE_GNUTLS], 1, [Define if GnuTLS is available])
   GNUTLSLIB="-lgnutls -lgcrypt -lgpg-error -lz"
 else
   GNUTLSLIB=""
@@ -447,8 +442,22 @@ AC_SUBST(LIBICONV)
 
 dnl CoreFoundation charset conversion
 COREFOUNDATIONLIB=""
+CFNETWORKLIB=""
 case "${host_os}" in
   darwin*)
+    SAVED_LIBS="$LIBS"
+    LIBS="$LIBS -framework CFNetwork -framework Security -framework CoreFoundation"
+    AC_LINK_IFELSE([AC_LANG_PROGRAM(
+      [[#include <CFNetwork/CFNetwork.h>
+        #include <Security/Security.h>]],
+      [[CFReadStreamRef stream = NULL;
+        SecTrustRef trust = NULL;
+        return stream != NULL || trust != NULL;]])],
+      [AC_DEFINE(HAVE_CFNETWORK, 1,
+         [Define if you have Apple CFNetwork.])
+       CFNETWORKLIB="-framework CFNetwork -framework Security -framework CoreFoundation"])
+    LIBS="$SAVED_LIBS"
+
     SAVED_LIBS="$LIBS"
     LIBS="$LIBS -framework CoreFoundation"
     AC_LINK_IFELSE([AC_LANG_PROGRAM(
@@ -463,6 +472,7 @@ case "${host_os}" in
     ;;
 esac
 AC_SUBST(COREFOUNDATIONLIB)
+AC_SUBST(CFNETWORKLIB)
 
 dnl ICU
 ICULIB=""

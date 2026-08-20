@@ -45,11 +45,7 @@ extern "C" {
 
 /* socket */
 
-#ifdef LIBETPAN_IOS_DISABLE_SSL
-#undef USE_SSL
-#endif
-
-#ifdef USE_SSL
+#if defined(HAVE_OPENSSL) || defined(HAVE_GNUTLS)
 extern mailstream_low_driver * mailstream_ssl_driver;
 #endif
 

@@ -295,7 +295,7 @@ int mailhttp_backend_is_available(enum mailhttp_backend backend)
 {
   switch (backend) {
   case MAILHTTP_BACKEND_CURL:
-#if defined(HAVE_CURL) && !defined(LIBETPAN_DISABLE_CURL)
+#ifdef HAVE_CURL
     return 1;
 #else
     return 0;
@@ -339,7 +339,7 @@ int mailhttp_transport_new_default(struct mailhttp_transport ** result)
   }
 }
 
-#if !defined(HAVE_CURL) || defined(LIBETPAN_DISABLE_CURL)
+#ifndef HAVE_CURL
 int mailhttp_transport_new_curl(struct mailhttp_transport ** result)
 {
   if (result == NULL)

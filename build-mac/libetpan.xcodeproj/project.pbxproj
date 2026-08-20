@@ -21,6 +21,12 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		D30000000000000000000011 /* mailstream_openssl.c in Sources */ = {isa = PBXBuildFile; fileRef = D30000000000000000000001 /* mailstream_openssl.c */; };
+		D30000000000000000000012 /* mailstream_gnutls.c in Sources */ = {isa = PBXBuildFile; fileRef = D30000000000000000000002 /* mailstream_gnutls.c */; };
+		D30000000000000000000013 /* mailstream_openssl.c in Sources */ = {isa = PBXBuildFile; fileRef = D30000000000000000000001 /* mailstream_openssl.c */; };
+		D30000000000000000000014 /* mailstream_gnutls.c in Sources */ = {isa = PBXBuildFile; fileRef = D30000000000000000000002 /* mailstream_gnutls.c */; };
+		D30000000000000000000015 /* mailstream_openssl.c in Sources */ = {isa = PBXBuildFile; fileRef = D30000000000000000000001 /* mailstream_openssl.c */; };
+		D30000000000000000000016 /* mailstream_gnutls.c in Sources */ = {isa = PBXBuildFile; fileRef = D30000000000000000000002 /* mailstream_gnutls.c */; };
 		2307A00C170AAA5500C43C59 /* mailstream_compress.c in Sources */ = {isa = PBXBuildFile; fileRef = 2307A00A170AAA5500C43C59 /* mailstream_compress.c */; };
 		365DFFD215D1C93100F2DD85 /* xgmmsgid.c in Sources */ = {isa = PBXBuildFile; fileRef = 365DFFD115D1C93100F2DD85 /* xgmmsgid.c */; };
 		8A75ECDA17040F92007F9972 /* mailimap_sort.c in Sources */ = {isa = PBXBuildFile; fileRef = 8A75ECD917040F91007F9972 /* mailimap_sort.c */; };
@@ -649,6 +655,17 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		D30000000000000000000001 /* mailstream_openssl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mailstream_openssl.c; sourceTree = "<group>"; };
+		D30000000000000000000002 /* mailstream_gnutls.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mailstream_gnutls.c; sourceTree = "<group>"; };
+		D30000000000000000000003 /* mailstream_ssl_backend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mailstream_ssl_backend.h; sourceTree = "<group>"; };
+		D30000000000000000000004 /* mailstream_openssl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mailstream_openssl.h; sourceTree = "<group>"; };
+		D30000000000000000000005 /* mailstream_gnutls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mailstream_gnutls.h; sourceTree = "<group>"; };
+		C0D100000000000000000001 /* libetpan-project.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = xcconfig/libetpan-project.xcconfig; sourceTree = "<group>"; };
+		C0D100000000000000000002 /* libetpan-framework.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = xcconfig/libetpan-framework.xcconfig; sourceTree = "<group>"; };
+		C0D100000000000000000003 /* libetpan-static-macos.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "xcconfig/libetpan-static-macos.xcconfig"; sourceTree = "<group>"; };
+		C0D100000000000000000004 /* libetpan-static-ios.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "xcconfig/libetpan-static-ios.xcconfig"; sourceTree = "<group>"; };
+		C0D100000000000000000005 /* libetpan-xcframework.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = xcconfig/libetpan-xcframework.xcconfig; sourceTree = "<group>"; };
+
 		2307A00A170AAA5500C43C59 /* mailstream_compress.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mailstream_compress.c; sourceTree = "<group>"; };
 		2307A00B170AAA5500C43C59 /* mailstream_compress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mailstream_compress.h; sourceTree = "<group>"; };
 		365DFFD115D1C93100F2DD85 /* xgmmsgid.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = xgmmsgid.c; sourceTree = "<group>"; };
@@ -1159,6 +1176,7 @@
 		0867D691FE84028FC02AAC07 /* libetpan */ = {
 			isa = PBXGroup;
 			children = (
+				C0D100000000000000000010 /* xcconfig */,
 				08FB77AEFE84172EC02AAC07 /* libetpan */,
 				089C1665FE841158C02AAC07 /* Resources */,
 				0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */,
@@ -1169,6 +1187,18 @@
 			sourceTree = "<group>";
 			tabWidth = 2;
 			usesTabs = 0;
+		};
+		C0D100000000000000000010 /* xcconfig */ = {
+			isa = PBXGroup;
+			children = (
+				C0D100000000000000000001 /* libetpan-project.xcconfig */,
+				C0D100000000000000000002 /* libetpan-framework.xcconfig */,
+				C0D100000000000000000003 /* libetpan-static-macos.xcconfig */,
+				C0D100000000000000000004 /* libetpan-static-ios.xcconfig */,
+				C0D100000000000000000005 /* libetpan-xcframework.xcconfig */,
+			);
+			name = xcconfig;
+			sourceTree = "<group>";
 		};
 		0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */ = {
 			isa = PBXGroup;
@@ -1260,6 +1290,11 @@
 				C6F9E870105335BC0059C3BA /* mailstream_socket.h */,
 				C6F9E871105335BC0059C3BA /* mailstream_ssl.c */,
 				C6F9E872105335BC0059C3BA /* mailstream_ssl.h */,
+				D30000000000000000000001 /* mailstream_openssl.c */,
+				D30000000000000000000002 /* mailstream_gnutls.c */,
+				D30000000000000000000003 /* mailstream_ssl_backend.h */,
+				D30000000000000000000004 /* mailstream_openssl.h */,
+				D30000000000000000000005 /* mailstream_gnutls.h */,
 				C6F9E873105335BC0059C3BA /* mailstream_ssl_private.h */,
 				C6F9E874105335BC0059C3BA /* mailstream_types.h */,
 				C6F9E878105335BC0059C3BA /* md5.c */,
@@ -2132,6 +2167,8 @@
 				C6F9EB19105335BD0059C3BA /* mailstream_low.c in Sources */,
 				C6F9EB1B105335BD0059C3BA /* mailstream_socket.c in Sources */,
 				C6F9EB1D105335BD0059C3BA /* mailstream_ssl.c in Sources */,
+				D30000000000000000000011 /* mailstream_openssl.c in Sources */,
+				D30000000000000000000012 /* mailstream_gnutls.c in Sources */,
 				C6F9EB24105335BD0059C3BA /* md5.c in Sources */,
 				C6F9EB27105335BD0059C3BA /* mmapstring.c in Sources */,
 				C6F9EB2A105335BD0059C3BA /* timeutils.c in Sources */,
@@ -2429,6 +2466,8 @@
 				C682E28015B315EF00BE9DA7 /* mailstream_low.c in Sources */,
 				C682E28115B315EF00BE9DA7 /* mailstream_socket.c in Sources */,
 				C682E28215B315EF00BE9DA7 /* mailstream_ssl.c in Sources */,
+				D30000000000000000000013 /* mailstream_openssl.c in Sources */,
+				D30000000000000000000014 /* mailstream_gnutls.c in Sources */,
 				C682E28315B315EF00BE9DA7 /* mailthread.c in Sources */,
 				C682E28415B315EF00BE9DA7 /* mailthread_types.c in Sources */,
 				C682E28515B315EF00BE9DA7 /* mboxdriver.c in Sources */,
@@ -2639,6 +2678,8 @@
 				C69AB2741054704000F32FBD /* mailstream_low.c in Sources */,
 				C69AB2761054704000F32FBD /* mailstream_socket.c in Sources */,
 				C69AB2781054704000F32FBD /* mailstream_ssl.c in Sources */,
+				D30000000000000000000015 /* mailstream_openssl.c in Sources */,
+				D30000000000000000000016 /* mailstream_gnutls.c in Sources */,
 				C69AB27C1054704000F32FBD /* mailthread.c in Sources */,
 				C69AB27E1054704000F32FBD /* mailthread_types.c in Sources */,
 				C69AB2801054704000F32FBD /* mboxdriver.c in Sources */,
@@ -2721,225 +2762,62 @@
 /* Begin XCBuildConfiguration section */
 		1DEB91AE08733DA50010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COMBINE_HIDPI_IMAGES = YES;
-				COPY_PHASE_STRIP = NO;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_VERSION = A;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_MODEL_TUNING = G5;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					"HAVE_JMAP=1",
-					"HAVE_COREFOUNDATION_CHARCONV=1",
-					"USE_SMIME_APPLE=1",
-					"USE_SMIME_OPENSSL=1",
-					"HAVE_JMAP=1",
-					"USE_PGP_RNP=1",
-				);
-				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "@loader_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 12.0;
-				OTHER_LDFLAGS = (
-					"-lz",
-					"-liconv",
-					"-lc++",
-					"-lxml2",
-				);
-				PRODUCT_NAME = libetpan;
-				SDKROOT = macosx;
-				WRAPPER_EXTENSION = framework;
-			};
+			baseConfigurationReference = C0D100000000000000000002 /* libetpan-framework.xcconfig */;
+			buildSettings = {};
 			name = Debug;
 		};
 		1DEB91AF08733DA50010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COMBINE_HIDPI_IMAGES = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_VERSION = A;
-				GCC_MODEL_TUNING = G5;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					"HAVE_JMAP=1",
-					"HAVE_COREFOUNDATION_CHARCONV=1",
-					"USE_SMIME_APPLE=1",
-					"USE_SMIME_OPENSSL=1",
-					"HAVE_JMAP=1",
-					"USE_PGP_RNP=1",
-				);
-				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "@loader_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 12.0;
-				OTHER_LDFLAGS = (
-					"-lz",
-					"-liconv",
-					"-lc++",
-					"-lxml2",
-				);
-				PRODUCT_NAME = libetpan;
-				SDKROOT = macosx;
-				STRIP_INSTALLED_PRODUCT = YES;
-				WRAPPER_EXTENSION = framework;
-			};
+			baseConfigurationReference = C0D100000000000000000002 /* libetpan-framework.xcconfig */;
+			buildSettings = {};
 			name = Release;
 		};
 		1DEB91B208733DA50010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
-			buildSettings = {
-				GCC_C_LANGUAGE_STANDARD = c99;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(SRCROOT)/..",
-					"$(SRCROOT)/include",
-					"$(SRCROOT)/../build-spm/include",
-				);
-				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = (
-					"-DHAVE_CFNETWORK=1",
-					"-DHAVE_CONFIG_H=1",
-					"-DLIBETPAN_DISABLE_CURL=1",
-					"-DLIBETPAN_IOS_DISABLE_SSL=1",
-				);
-			};
+			baseConfigurationReference = C0D100000000000000000001 /* libetpan-project.xcconfig */;
+			buildSettings = {};
 			name = Debug;
 		};
 		1DEB91B308733DA50010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
-			buildSettings = {
-				GCC_C_LANGUAGE_STANDARD = c99;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(SRCROOT)/..",
-					"$(SRCROOT)/include",
-					"$(SRCROOT)/../build-spm/include",
-				);
-				OTHER_CFLAGS = (
-					"-DHAVE_CFNETWORK=1",
-					"-DHAVE_CONFIG_H=1",
-					"-DLIBETPAN_DISABLE_CURL=1",
-					"-DLIBETPAN_IOS_DISABLE_SSL=1",
-				);
-			};
+			baseConfigurationReference = C0D100000000000000000001 /* libetpan-project.xcconfig */;
+			buildSettings = {};
 			name = Release;
 		};
 		C682E2BE15B315EF00BE9DA7 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = NO;
-				ENABLE_BITCODE = YES;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_MODEL_TUNING = G5;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					"HAVE_JMAP=1",
-					"HAVE_COREFOUNDATION_CHARCONV=1",
-					"USE_SMIME_OPENSSL=1",
-				);
-				INSTALL_PATH = /usr/local/lib;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
-				PRODUCT_NAME = "etpan-ios";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-			};
+			baseConfigurationReference = C0D100000000000000000004 /* libetpan-static-ios.xcconfig */;
+			buildSettings = {};
 			name = Debug;
 		};
 		C682E2BF15B315EF00BE9DA7 /* Release */ = {
 			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				ENABLE_BITCODE = YES;
-				GCC_MODEL_TUNING = G5;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					"HAVE_JMAP=1",
-					"HAVE_COREFOUNDATION_CHARCONV=1",
-					"USE_SMIME_OPENSSL=1",
-				);
-				INSTALL_PATH = /usr/local/lib;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
-				PRODUCT_NAME = "etpan-ios";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				ZERO_LINK = NO;
-			};
+			baseConfigurationReference = C0D100000000000000000004 /* libetpan-static-ios.xcconfig */;
+			buildSettings = {};
 			name = Release;
 		};
 		C69AB10B10546FE600F32FBD /* Debug */ = {
 			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COMBINE_HIDPI_IMAGES = YES;
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_MODEL_TUNING = G5;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					"HAVE_JMAP=1",
-					"HAVE_COREFOUNDATION_CHARCONV=1",
-					"USE_SMIME_APPLE=1",
-					"USE_SMIME_OPENSSL=1",
-				);
-				INSTALL_PATH = /usr/local/lib;
-				MACOSX_DEPLOYMENT_TARGET = 12.0;
-				PRODUCT_NAME = etpan;
-				SDKROOT = macosx;
-				SKIP_INSTALL = YES;
-			};
+			baseConfigurationReference = C0D100000000000000000003 /* libetpan-static-macos.xcconfig */;
+			buildSettings = {};
 			name = Debug;
 		};
 		C69AB10C10546FE600F32FBD /* Release */ = {
 			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COMBINE_HIDPI_IMAGES = YES;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_MODEL_TUNING = G5;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					"HAVE_JMAP=1",
-					"HAVE_COREFOUNDATION_CHARCONV=1",
-					"USE_SMIME_APPLE=1",
-					"USE_SMIME_OPENSSL=1",
-				);
-				INSTALL_PATH = /usr/local/lib;
-				MACOSX_DEPLOYMENT_TARGET = 12.0;
-				PRODUCT_NAME = etpan;
-				SDKROOT = macosx;
-				SKIP_INSTALL = YES;
-				ZERO_LINK = NO;
-			};
+			baseConfigurationReference = C0D100000000000000000003 /* libetpan-static-macos.xcconfig */;
+			buildSettings = {};
 			name = Release;
 		};
 		D20000000000000000000004 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			buildSettings = {
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-			};
+			baseConfigurationReference = C0D100000000000000000005 /* libetpan-xcframework.xcconfig */;
+			buildSettings = {};
 			name = Debug;
 		};
 		D20000000000000000000005 /* Release */ = {
 			isa = XCBuildConfiguration;
-			buildSettings = {
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-			};
+			baseConfigurationReference = C0D100000000000000000005 /* libetpan-xcframework.xcconfig */;
+			buildSettings = {};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
