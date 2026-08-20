@@ -37,13 +37,14 @@
 
 #define POP3STORAGE_H
 
+#include <stdint.h>
+#include <libetpan/libetpan-config.h>
+
+struct mailstorage;
+
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-#include <libetpan/pop3driver_types.h>
-#include <libetpan/pop3driver.h>
-#include <libetpan/pop3driver_cached.h>
 
 /*
   pop3_mailstorage_init is the constructor for a POP3 storage

@@ -37,7 +37,9 @@
 
 #define DBSTORAGE_H
 
-#include <libetpan/dbdriver_types.h>
+#include <libetpan/libetpan-config.h>
+
+struct mailstorage;
 
 #ifdef __cplusplus
 extern "C" {

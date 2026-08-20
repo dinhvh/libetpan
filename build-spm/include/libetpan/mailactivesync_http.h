@@ -98,6 +98,10 @@ int mailactivesync_http_transport_new_curl(
     struct mailactivesync_http_transport ** result);
 
 LIBETPAN_EXPORT
+int mailactivesync_http_transport_new_default(
+    struct mailactivesync_http_transport ** result);
+
+LIBETPAN_EXPORT
 void mailactivesync_http_transport_free(
     struct mailactivesync_http_transport * transport);
 

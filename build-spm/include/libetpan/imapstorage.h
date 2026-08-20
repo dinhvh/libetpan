@@ -37,11 +37,14 @@
 
 #define IMAPSTORAGE_H
 
+#include <stdint.h>
+#include <libetpan/libetpan-config.h>
+
+struct mailstorage;
+
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-#include <libetpan/imapdriver_types.h>
 
 /*
   imap_mailstorage_init is the constructor for a IMAP4rev1 storage

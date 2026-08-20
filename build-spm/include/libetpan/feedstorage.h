@@ -37,7 +37,9 @@
 
 #define FEEDSTORAGE_H
 
-#include <libetpan/feeddriver_types.h>
+#include <libetpan/libetpan-config.h>
+
+struct mailstorage;
 
 #ifdef __cplusplus
 extern "C" {

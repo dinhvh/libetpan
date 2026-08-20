@@ -12,11 +12,18 @@ extern "C" {
 
 #include <libetpan/mailgmail_types.h>
 
+struct mailhttp_transport;
+
 LIBETPAN_EXPORT
 mailgmail * mailgmail_new(void);
 
 LIBETPAN_EXPORT
 void mailgmail_free(mailgmail * session);
+
+/* Takes ownership of transport, whether wrapping succeeds or fails. */
+LIBETPAN_EXPORT
+int mailgmail_set_http_transport(mailgmail * session,
+    struct mailhttp_transport * transport);
 
 LIBETPAN_EXPORT
 int mailgmail_set_user(mailgmail * session, const char * user_id);
