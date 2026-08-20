@@ -29,7 +29,4 @@ echo "Building tidy-html5 XCFramework"
 echo "Building RNP XCFramework"
 "$script_dir/build-rnp-xcframework.sh"
 
-echo "Building ICU XCFrameworks"
-"$script_dir/build-icu-xcframework.sh"
-
 echo "Dependencies are ready in $script_dir/build"
