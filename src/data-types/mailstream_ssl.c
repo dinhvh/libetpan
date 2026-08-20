@@ -12,8 +12,15 @@
 #include "mailstream.h"
 #include "mailstream_low.h"
 #include "mailstream_types.h"
+#include "connect.h"
 
 #include <stdlib.h>
+
+#ifdef WIN32
+#include <win_etpan.h>
+#elif defined(HAVE_UNISTD_H)
+#include <unistd.h>
+#endif
 
 struct mailstream_ssl_context {
   enum mailstream_ssl_backend backend;
@@ -37,6 +44,79 @@ static enum mailstream_ssl_backend selected_backend =
 #else
   MAILSTREAM_SSL_BACKEND_GNUTLS;
 #endif
+
+mailstream * mailstream_ssl_connect_timeout(const char * server,
+    uint16_t port, time_t timeout,
+    void (* callback)(struct mailstream_ssl_context *, void *),
+    void * callback_data, enum mailstream_ssl_connect_error * error)
+{
+  return mailstream_ssl_connect_voip_timeout(server, port, timeout, 0,
+      callback, callback_data, error);
+}
+
+mailstream * mailstream_ssl_connect_voip_timeout(const char * server,
+    uint16_t port, time_t timeout, int voip_enabled,
+    void (* callback)(struct mailstream_ssl_context *, void *),
+    void * callback_data, enum mailstream_ssl_connect_error * error)
+{
+  mailstream * stream;
+  int fd;
+
+  if (error != NULL)
+    * error = MAILSTREAM_SSL_CONNECT_ERROR_CONNECTION_REFUSED;
+
+#if HAVE_CFNETWORK
+  if (mailstream_ssl_get_backend() == MAILSTREAM_SSL_BACKEND_CFNETWORK &&
+      callback == NULL) {
+    int r;
+
+    stream = mailstream_cfstream_open_voip_timeout(server, port, voip_enabled,
+        timeout);
+    if (stream == NULL)
+      return NULL;
+
+    mailstream_cfstream_set_ssl_level(stream,
+        MAILSTREAM_CFSTREAM_SSL_LEVEL_NEGOCIATED_SSL);
+    mailstream_cfstream_set_ssl_peer_name(stream, server);
+    mailstream_cfstream_set_ssl_verification_mask(stream,
+        MAILSTREAM_CFSTREAM_SSL_NO_VERIFICATION);
+    r = mailstream_cfstream_set_ssl_enabled(stream, 1);
+    if (r < 0) {
+      mailstream_close(stream);
+      if (error != NULL)
+        * error = MAILSTREAM_SSL_CONNECT_ERROR_SSL;
+      return NULL;
+    }
+
+    if (error != NULL)
+      * error = MAILSTREAM_SSL_CONNECT_NO_ERROR;
+    return stream;
+  }
+#else
+  (void) voip_enabled;
+#endif
+
+  fd = mail_tcp_connect_timeout(server, port, timeout);
+  if (fd == -1)
+    return NULL;
+
+  stream = mailstream_ssl_open_with_server_name_callback_timeout(fd, timeout,
+      server, callback, callback_data);
+  if (stream == NULL) {
+#ifdef WIN32
+    closesocket(fd);
+#else
+    close(fd);
+#endif
+    if (error != NULL)
+      * error = MAILSTREAM_SSL_CONNECT_ERROR_SSL;
+    return NULL;
+  }
+
+  if (error != NULL)
+    * error = MAILSTREAM_SSL_CONNECT_NO_ERROR;
+  return stream;
+}
 
 static const struct mailstream_ssl_backend_driver *
 mailstream_ssl_backend_driver_for_type(enum mailstream_ssl_backend backend)

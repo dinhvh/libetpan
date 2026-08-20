@@ -98,6 +98,24 @@ mailstream * mailstream_ssl_open_with_server_name_callback_timeout(int fd, time_
     const char * server_name,
     void (* callback)(struct mailstream_ssl_context * ssl_context, void * data), void * data);
 
+enum mailstream_ssl_connect_error {
+  MAILSTREAM_SSL_CONNECT_NO_ERROR = 0,
+  MAILSTREAM_SSL_CONNECT_ERROR_CONNECTION_REFUSED,
+  MAILSTREAM_SSL_CONNECT_ERROR_SSL
+};
+
+LIBETPAN_EXPORT
+mailstream * mailstream_ssl_connect_timeout(const char * server,
+    uint16_t port, time_t timeout,
+    void (* callback)(struct mailstream_ssl_context *, void *),
+    void * callback_data, enum mailstream_ssl_connect_error * error);
+
+LIBETPAN_EXPORT
+mailstream * mailstream_ssl_connect_voip_timeout(const char * server,
+    uint16_t port, time_t timeout, int voip_enabled,
+    void (* callback)(struct mailstream_ssl_context *, void *),
+    void * callback_data, enum mailstream_ssl_connect_error * error);
+
 LIBETPAN_EXPORT
 void mailstream_gnutls_init_not_required(void);
 
