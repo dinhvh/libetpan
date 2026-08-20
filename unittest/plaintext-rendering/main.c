@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <strings.h>
+#include <time.h>
 
 #include "html_flattener.h"
 #include "html_renderer.h"
@@ -28,6 +29,17 @@ static char * detach_mmap_string(MMAPString * str)
   assert(result != NULL);
   mmap_string_free(str);
   return result;
+}
+
+static void configure_test_timezone(void)
+{
+#ifdef WIN32
+  _putenv_s("TZ", "PST8PDT");
+  _tzset();
+#else
+  setenv("TZ", "America/Los_Angeles", 1);
+  tzset();
+#endif
 }
 
 static char * detect_encoded_word_charset(const char * data)
@@ -237,6 +249,7 @@ int plaintext_rendering_test_run_case(const char * relative_path,
   char * input_path = test_path_join(input_root, relative_path);
   int result;
 
+  configure_test_timezone();
   plaintext_rendering_html_flattener_init();
   result = check_rendering_fixture(input_path, input_root, output_root,
       failure_callback, context);
@@ -255,6 +268,7 @@ int plaintext_rendering_test_run(const char * fixture_root)
   unsigned int count = 0;
   int result = 0;
 
+  configure_test_timezone();
   files = test_list_files(input_root);
   for (cur = files; cur != NULL; cur = cur->next) {
     const char * relative_path = cur->path + strlen(input_root) + 1;
