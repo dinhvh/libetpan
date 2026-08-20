@@ -34,16 +34,15 @@ etpaninclude_HEADERS = \
 	charconv.h \
 	chash.h \
 	clist.h \
+	mailhttp.h \
 	mailjson.h \
 	mailsem.h \
 	mailstream.h \
 	mailstream_cfstream.h \
 	mailstream_helper.h \
 	mailstream_low.h \
-	mailhttp.h \
 	mailstream_socket.h \
 	mailstream_ssl.h \
-	mailstream_ssl_internal.h mailstream_openssl.h mailstream_gnutls.h \
 	mailstream_types.h \
 	mmapstring.h
 
@@ -83,4 +82,7 @@ noinst_HEADERS = \
 	base64.h \
 	mail.h \
 	maillock.h \
-	mailstream_compress.h
+	mailstream_compress.h \
+	mailstream_gnutls.h \
+	mailstream_openssl.h \
+	mailstream_ssl_internal.h
