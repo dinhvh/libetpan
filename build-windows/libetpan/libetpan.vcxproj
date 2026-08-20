@@ -83,7 +83,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <InlineFunctionExpansion>Default</InlineFunctionExpansion>
-      <AdditionalIncludeDirectories>../../src/data-types;../../src/driver;../../src/driver/interface;../../src/driver/tools;../../src/low-level/feed;../../src/low-level/imap;../../src/low-level/imf;../../src/low-level/maildir;../../src/low-level/mbox;../../src/low-level/mh;../../src/low-level/mime;../../src/low-level/nntp;../../src/low-level/pop3;../../src/low-level/smtp;../../src/windows;../../src/main;..;../include;../../src/driver/implementation/pop3;../../third-party/include;../../third-party/jansson/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../src/data-types;../../src/driver;../../src/driver/interface;../../src/driver/tools;../../src/low-level/feed;../../src/low-level/imap;../../src/low-level/imf;../../src/low-level/maildir;../../src/low-level/mbox;../../src/low-level/mh;../../src/low-level/mime;../../src/low-level/nntp;../../src/low-level/pop3;../../src/low-level/smtp;../../src/windows;../../src/main;..;../include;../../src/driver/implementation/pop3;../../third-party/include;../../third-party/json-c/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>HAVE_ZLIB;USE_SASL;USE_SSL;WIN32;_WINDOWS;_USRDLL;LIBETPAN_DLL;USE_SSL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -98,7 +98,7 @@
     </ClCompile>
     <Link>
       <AdditionalOptions>/DLL %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>libsasl2.lib;zlib.lib;Ws2_32.lib;ssleay32MDd.lib;libeay32MDd.lib;jansson.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libsasl2.lib;zlib.lib;Ws2_32.lib;ssleay32MDd.lib;libeay32MDd.lib;json-c.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>../../third-party/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>C;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
@@ -116,7 +116,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <InlineFunctionExpansion>Default</InlineFunctionExpansion>
-      <AdditionalIncludeDirectories>../../src/data-types;../../src/driver;../../src/driver/interface;../../src/driver/tools;../../src/low-level/feed;../../src/low-level/imap;../../src/low-level/imf;../../src/low-level/maildir;../../src/low-level/mbox;../../src/low-level/mh;../../src/low-level/mime;../../src/low-level/nntp;../../src/low-level/pop3;../../src/low-level/smtp;../../src/windows;../../src/main;..;../include;../../src/driver/implementation/pop3;../../third-party/include;../../third-party/jansson/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../src/data-types;../../src/driver;../../src/driver/interface;../../src/driver/tools;../../src/low-level/feed;../../src/low-level/imap;../../src/low-level/imf;../../src/low-level/maildir;../../src/low-level/mbox;../../src/low-level/mh;../../src/low-level/mime;../../src/low-level/nntp;../../src/low-level/pop3;../../src/low-level/smtp;../../src/windows;../../src/main;..;../include;../../src/driver/implementation/pop3;../../third-party/include;../../third-party/json-c/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>HAVE_ZLIB;USE_SASL;USE_SSL;WIN32;_WINDOWS;_USRDLL;LIBETPAN_DLL;USE_SSL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -130,7 +130,7 @@
     </ClCompile>
     <Link>
       <AdditionalOptions>/DLL %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>libsasl2.lib;zlib.lib;Ws2_32.lib;ssleay32MDd.lib;libeay32MDd.lib;jansson.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libsasl2.lib;zlib.lib;Ws2_32.lib;ssleay32MDd.lib;libeay32MDd.lib;json-c.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>../../third-party/lib64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>C;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
@@ -147,7 +147,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>../../src/data-types;../../src/driver;../../src/driver/interface;../../src/driver/tools;../../src/low-level/feed;../../src/low-level/imap;../../src/low-level/imf;../../src/low-level/maildir;../../src/low-level/mbox;../../src/low-level/mh;../../src/low-level/mime;../../src/low-level/nntp;../../src/low-level/pop3;../../src/low-level/smtp;../../src/windows;../../src/main;..;../include;../../src/driver/implementation/pop3;../../third-party/include;../../third-party/jansson/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../src/data-types;../../src/driver;../../src/driver/interface;../../src/driver/tools;../../src/low-level/feed;../../src/low-level/imap;../../src/low-level/imf;../../src/low-level/maildir;../../src/low-level/mbox;../../src/low-level/mh;../../src/low-level/mime;../../src/low-level/nntp;../../src/low-level/pop3;../../src/low-level/smtp;../../src/windows;../../src/main;..;../include;../../src/driver/implementation/pop3;../../third-party/include;../../third-party/json-c/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>HAVE_ZLIB;USE_SASL;USE_SSL;WIN32;_WINDOWS;_USRDLL;LIBETPAN_DLL;USE_SSL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
@@ -160,7 +160,7 @@
     </ClCompile>
     <Link>
       <AdditionalOptions>/DLL %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>libsasl2.lib;zlib.lib;Ws2_32.lib;ssleay32MD.lib;libeay32MD.lib;jansson.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libsasl2.lib;zlib.lib;Ws2_32.lib;ssleay32MD.lib;libeay32MD.lib;json-c.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>../../third-party/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>C;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -175,7 +175,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>../../src/data-types;../../src/driver;../../src/driver/interface;../../src/driver/tools;../../src/low-level/feed;../../src/low-level/imap;../../src/low-level/imf;../../src/low-level/maildir;../../src/low-level/mbox;../../src/low-level/mh;../../src/low-level/mime;../../src/low-level/nntp;../../src/low-level/pop3;../../src/low-level/smtp;../../src/windows;../../src/main;..;../include;../../src/driver/implementation/pop3;../../third-party/include;../../third-party/jansson/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../src/data-types;../../src/driver;../../src/driver/interface;../../src/driver/tools;../../src/low-level/feed;../../src/low-level/imap;../../src/low-level/imf;../../src/low-level/maildir;../../src/low-level/mbox;../../src/low-level/mh;../../src/low-level/mime;../../src/low-level/nntp;../../src/low-level/pop3;../../src/low-level/smtp;../../src/windows;../../src/main;..;../include;../../src/driver/implementation/pop3;../../third-party/include;../../third-party/json-c/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>HAVE_ZLIB;USE_SASL;USE_SSL;WIN32;_WINDOWS;_USRDLL;LIBETPAN_DLL;USE_SSL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
@@ -189,7 +189,7 @@
     </ClCompile>
     <Link>
       <AdditionalOptions>/DLL %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>libsasl2.lib;zlib.lib;Ws2_32.lib;ssleay32MD.lib;libeay32MD.lib;jansson.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libsasl2.lib;zlib.lib;Ws2_32.lib;ssleay32MD.lib;libeay32MD.lib;json-c.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>../../third-party/lib64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>C;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>

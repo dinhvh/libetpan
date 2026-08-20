@@ -52,14 +52,14 @@ all of those folders to `libetpan/third-party`.
 
 The Visual Studio project leaves low-level JMAP disabled by default so existing
 Windows builds do not require extra dependencies. To include the `mailjmap_*`
-sources, provide Windows builds of libcurl and Jansson in `third-party` and set
+sources, provide Windows builds of libcurl and JSON-C in `third-party` and set
 the MSBuild property `EnableJMAP=true`.
 
 The default project wiring expects:
 
 - libcurl headers in `third-party/include` and `libcurl.lib` in `third-party/lib`
   or `third-party/lib64`
-- Jansson headers in `third-party/jansson/include` and `jansson.lib` in the
+- JSON-C headers in `third-party/json-c/include` and `json-c.lib` in the
   active library path
 
 Example command-line build:

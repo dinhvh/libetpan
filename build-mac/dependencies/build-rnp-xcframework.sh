@@ -4,21 +4,16 @@ set -euo pipefail
 
 script_dir="$(cd "$(dirname "$0")" && pwd)"
 source_dir="$script_dir/submodules/rnp"
-json_c_source_dir="$script_dir/submodules/json-c"
 build_root="${BUILD_DIR:-$script_dir/build/rnp}"
 output="${OUTPUT:-$script_dir/build/RNP.xcframework}"
 openssl_root="${OPENSSL_BUILD_DIR:-$script_dir/build/openssl}"
+json_c_root="${JSON_C_BUILD_DIR:-$script_dir/build/json-c}"
 macos_deployment_target="${MACOSX_DEPLOYMENT_TARGET:-10.13}"
 ios_deployment_target="${IPHONEOS_DEPLOYMENT_TARGET:-12.0}"
 
 if [[ ! -f "$source_dir/CMakeLists.txt" || \
       ! -f "$source_dir/src/libsexpp/CMakeLists.txt" ]]; then
   echo "RNP sources are missing. Run: git submodule update --init --recursive" >&2
-  exit 1
-fi
-
-if [[ ! -f "$json_c_source_dir/CMakeLists.txt" ]]; then
-  echo "JSON-C sources are missing. Run: git submodule update --init --recursive" >&2
   exit 1
 fi
 
@@ -37,8 +32,7 @@ build_variant() {
   local system_name="$5"
   local openssl_prefix="$6"
   local variant_root="$build_root/$name"
-  local json_c_build="$variant_root/json-c-build"
-  local json_c_prefix="$variant_root/json-c-install"
+  local json_c_prefix="$json_c_root/$name/install"
   local rnp_build="$variant_root/rnp-build"
   local combined="$variant_root/librnp.a"
   local openssl_configure_prefix="$openssl_root/macos-universal"
@@ -50,34 +44,20 @@ build_variant() {
     exit 1
   fi
 
+  if [[ ! -f "$json_c_prefix/lib/libjson-c.a" ]]; then
+    echo "JSON-C build is missing for $name: $json_c_prefix/lib/libjson-c.a" >&2
+    echo "Run build-json-c-xcframework.sh first." >&2
+    exit 1
+  fi
+
   sdk_path="$(xcrun --sdk "$sdk" --show-sdk-path)"
   echo "Building RNP for $name ($architectures)"
-
-  cmake -S "$json_c_source_dir" -B "$json_c_build" \
-    -DCMAKE_BUILD_TYPE=Release \
-    -DCMAKE_SYSTEM_NAME="$system_name" \
-    -DCMAKE_C_COMPILER="$(xcrun --sdk "$sdk" --find clang)" \
-    -DCMAKE_OSX_SYSROOT="$sdk_path" \
-    -DCMAKE_OSX_ARCHITECTURES="$architectures" \
-    -DCMAKE_OSX_DEPLOYMENT_TARGET="$deployment_target" \
-    -DCMAKE_INSTALL_PREFIX="$json_c_prefix" \
-    -DCMAKE_C_FLAGS="-Djson_object_get=rnp_json_object_get" \
-    -DCMAKE_TRY_COMPILE_TARGET_TYPE=STATIC_LIBRARY \
-    -DBUILD_SHARED_LIBS=OFF \
-    -DBUILD_STATIC_LIBS=ON \
-    -DBUILD_APPS=OFF \
-    -DBUILD_TESTING=OFF \
-    -DDISABLE_WERROR=ON
-  cmake --build "$json_c_build" --target json-c --parallel
-  cmake --install "$json_c_build"
 
   cmake -S "$source_dir" -B "$rnp_build" \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_SYSTEM_NAME="$system_name" \
     -DCMAKE_C_COMPILER="$(xcrun --sdk "$sdk" --find clang)" \
     -DCMAKE_CXX_COMPILER="$(xcrun --sdk "$sdk" --find clang++)" \
-    -DCMAKE_C_FLAGS="-Djson_object_get=rnp_json_object_get" \
-    -DCMAKE_CXX_FLAGS="-Djson_object_get=rnp_json_object_get" \
     -DCMAKE_OSX_SYSROOT="$sdk_path" \
     -DCMAKE_OSX_ARCHITECTURES="$architectures" \
     -DCMAKE_OSX_DEPLOYMENT_TARGET="$deployment_target" \
@@ -99,14 +79,11 @@ build_variant() {
     -DJSON-C_LIBRARY="$json_c_prefix/lib/libjson-c.a"
   cmake --build "$rnp_build" --target librnp sexpp --parallel
 
-  # RNP's static target leaves its bundled sexpp and JSON-C dependencies for
-  # consumers to link. JSON-C and Jansson export incompatible functions named
-  # json_object_get, so JSON-C and its RNP call sites are compiled above with a
-  # private name. Combine the archives only after applying that namespace.
+  # RNP's static target leaves sexpp for consumers to link. JSON-C remains an
+  # explicit dependency and is not copied into RNP.xcframework.
   libtool -static -o "$combined" \
     "$rnp_build/src/lib/librnp.a" \
-    "$rnp_build/src/libsexpp/libsexpp.a" \
-    "$json_c_prefix/lib/libjson-c.a"
+    "$rnp_build/src/libsexpp/libsexpp.a"
 
   rm -rf "$variant_root/include"
   mkdir -p "$variant_root/include/rnp"

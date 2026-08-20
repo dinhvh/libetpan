@@ -14,8 +14,8 @@ fi
 echo "Initializing macOS/iOS dependency submodules"
 git -C "$repository_root" submodule update --init --recursive -- "$submodules_dir"
 
-echo "Building Jansson XCFramework"
-"$script_dir/build-jansson-xcframework.sh"
+echo "Building JSON-C XCFramework"
+"$script_dir/build-json-c-xcframework.sh"
 
 echo "Building Cyrus SASL XCFramework"
 "$script_dir/build-cyrus-sasl-xcframework.sh"

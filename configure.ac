@@ -809,14 +809,14 @@ fi
 AM_CONDITIONAL([HAVE_CURL], [test "x$libcurl" = "xyes"])
 
 dnl JSON
-PKG_CHECK_MODULES([JANSSON], [jansson],
+PKG_CHECK_MODULES([JSON_C], [json-c >= 0.14],
   [],
-  [AC_MSG_ERROR([Jansson is required for JSON support])])
+  [AC_MSG_ERROR([JSON-C is required for JSON support])])
 
 dnl JMAP
 AC_ARG_WITH([jmap],
   [AS_HELP_STRING([--with-jmap],
-    [include low-level JMAP support using Jansson and an HTTP backend @<:@default=auto@:>@])],
+    [include low-level JMAP support using JSON-C and an HTTP backend @<:@default=auto@:>@])],
   [], [with_jmap=auto])
 
 have_jmap=no

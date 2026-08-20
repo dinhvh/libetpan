@@ -90,7 +90,7 @@ TESTS = mailhttp-test feed-http-test smime-low-level-test mailpgp-low-level-test
 # after AM_CPPFLAGS, so we have to frob CFLAGS.
 CFLAGS += -ULIBETPAN_DLL
 AM_CPPFLAGS = -I$(top_builddir)/include \
-	@JANSSON_CFLAGS@ \
+	@JSON_C_CFLAGS@ \
 	-I$(top_srcdir)/src/driver/interface \
 	-I$(top_srcdir)/src/driver/tools \
 	-I$(top_srcdir)/src/driver/implementation/data-message \

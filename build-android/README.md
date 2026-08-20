@@ -52,29 +52,20 @@ libetpan-android-7/
 ```
 
 `libetpan.a` is **not** self-contained: linking it also requires
-`libssl.a`, `libcrypto.a` (OpenSSL), `libsasl2.a` (Cyrus SASL) and
-`libiconv.a`, plus the NDK system libs `z` and `log`. Link order matters
+`libssl.a`, `libcrypto.a` (OpenSSL), `libsasl2.a` (Cyrus SASL), `libjson-c.a`,
+and `libiconv.a`, plus the NDK system libs `z` and `log`. Link order matters
 (consumers before providers):
 
 ```
-etpan  sasl2  ssl  crypto  iconv  z  log
+etpan  json-c  sasl2  ssl  crypto  iconv  z  log
 ```
 
-Low-level JMAP is optional in the Android makefile because it needs Jansson.
-To include the `mailjmap_*` sources, build Jansson for Android separately and
-set `JANSSON_PATH` to a prefix containing `include/jansson.h` before running
-`build.sh`:
+Build JSON-C for Android separately and set `JSON_C_PATH` to a prefix
+containing `include/json-c/json.h` before running `build.sh`:
 
 ```sh
-export JANSSON_PATH=/path/to/jansson-android-prefix
+export JSON_C_PATH=/path/to/json-c-android-prefix
 ./build.sh
-```
-
-Consumers of a JMAP-enabled Android build must also link the matching Jansson
-static library, before the NDK system libraries:
-
-```
-etpan  jansson  sasl2  ssl  crypto  iconv  z  log
 ```
 
 > Note: `libetpan-android-7.zip` currently ships only `libetpan-config.h`. The

@@ -50,13 +50,13 @@ You can use flag --with-poll for using poll() instead of select() for checking c
 
 - Add `libetpan.xcodeproj` as sub-project
 - Link with libetpan.a
-- Link with `build-mac/dependencies/build/Jansson.xcframework` and `build-mac/dependencies/build/CyrusSASL.xcframework`
+- Link with `build-mac/dependencies/build/JsonC.xcframework` and `build-mac/dependencies/build/CyrusSASL.xcframework`
 
 ### Setup an iOS project
 
 - Add `libetpan.xcodeproj` as sub-project
 - Link with libetpan-ios.a
-- Link with `build-mac/dependencies/build/Jansson.xcframework` and `build-mac/dependencies/build/CyrusSASL.xcframework`
+- Link with `build-mac/dependencies/build/JsonC.xcframework` and `build-mac/dependencies/build/CyrusSASL.xcframework`
 
 ### Build on Windows
 

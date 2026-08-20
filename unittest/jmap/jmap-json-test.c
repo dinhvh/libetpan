@@ -8,7 +8,6 @@
 
 #include "../../src/data-types/mailjson.h"
 
-#include <jansson.h>
 #include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -64,8 +63,15 @@ static int test_parse_duplicate_keys(void)
       strlen("{\"outer\":{\"id\":\"a\",\"id\":\"b\"}}"), &value);
 
   mailjson_free(value);
-  return check(r == MAILJSON_ERROR_PARSE,
+  ok = check(r == MAILJSON_ERROR_PARSE,
       "nested duplicate JSON object keys were not rejected") && ok;
+
+  value = NULL;
+  r = mailjson_parse("{\"id\":1,\"\\u0069d\":2}",
+      strlen("{\"id\":1,\"\\u0069d\":2}"), &value);
+  mailjson_free(value);
+  return check(r == MAILJSON_ERROR_PARSE,
+      "escaped duplicate JSON object keys were not rejected") && ok;
 }
 
 static int test_parse_trailing_data(void)
@@ -83,6 +89,27 @@ static int test_parse_trailing_data(void)
   return check(r == MAILJSON_ERROR_PARSE,
       "JSON with trailing data was not rejected") &&
       check(value == NULL, "trailing JSON did not clear result");
+}
+
+static int test_parse_top_level_scalars(void)
+{
+  static const char * inputs[] = { "null", "true", "7", "\"value\"" };
+  size_t index;
+
+  for (index = 0; index < sizeof(inputs) / sizeof(inputs[0]); index ++) {
+    mailjson_value * value;
+    int r;
+
+    value = NULL;
+    r = mailjson_parse(inputs[index], strlen(inputs[index]), &value);
+    if (!check(r == MAILJSON_NO_ERROR,
+        "top-level JSON scalar was not accepted")) {
+      mailjson_free(value);
+      return 0;
+    }
+    mailjson_free(value);
+  }
+  return 1;
 }
 
 static int test_parse_and_lookup(void)
@@ -313,20 +340,13 @@ static int test_integer_creation_bounds(void)
   ok = 0;
 
   r = mailjson_new_integer(INT64_C(9223372036854775807), &value);
-  if (sizeof(json_int_t) >= sizeof(int64_t)) {
-    if (!check(r == MAILJSON_NO_ERROR, "INT64_MAX allocation failed"))
-      goto cleanup;
-    r = mailjson_integer_value(value, &parsed);
-    if (!check(r == MAILJSON_NO_ERROR, "INT64_MAX lookup failed"))
-      goto cleanup;
-    ok = check(parsed == INT64_C(9223372036854775807),
-        "INT64_MAX value mismatch");
-  }
-  else {
-    ok = check(r == MAILJSON_ERROR_BAD_STATE,
-        "out-of-range integer was not rejected") &&
-        check(value == NULL, "out-of-range integer did not clear result");
-  }
+  if (!check(r == MAILJSON_NO_ERROR, "INT64_MAX allocation failed"))
+    goto cleanup;
+  r = mailjson_integer_value(value, &parsed);
+  if (!check(r == MAILJSON_NO_ERROR, "INT64_MAX lookup failed"))
+    goto cleanup;
+  ok = check(parsed == INT64_C(9223372036854775807),
+      "INT64_MAX value mismatch");
 
  cleanup:
   mailjson_free(value);
@@ -341,6 +361,7 @@ int main(void)
   ok = test_parse_invalid_json() && ok;
   ok = test_parse_duplicate_keys() && ok;
   ok = test_parse_trailing_data() && ok;
+  ok = test_parse_top_level_scalars() && ok;
   ok = test_parse_and_lookup() && ok;
   ok = test_build_and_serialize() && ok;
   ok = test_build_scalars_and_sorted_serialize() && ok;

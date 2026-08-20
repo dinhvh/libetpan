@@ -277,7 +277,7 @@ let package = Package(
                 .linkedFramework("Foundation"),
                 .linkedFramework("Security"),
                 .linkedLibrary("curl"),
-                .linkedLibrary("jansson"),
+                .linkedLibrary("json-c"),
                 .linkedLibrary("z"),
             ]
         ),

@@ -58,7 +58,7 @@ build() {
     OPENSSL_PATH="$current_dir/third-party/openssl-android-$openssl_build_version" \
     CYRUS_SASL_PATH="$current_dir/third-party/cyrus-sasl-android-$cyrus_sasl_build_version" \
     ICONV_PATH="$current_dir/third-party/iconv-android-$iconv_build_version" \
-    JANSSON_PATH="$JANSSON_PATH"
+    JSON_C_PATH="$JSON_C_PATH"
 
   mkdir -p "$current_dir/$package_name-$build_version/libs/$TARGET_ARCH_ABI"
   cp "$current_dir/obj/local/$TARGET_ARCH_ABI/libetpan.a" "$current_dir/$package_name-$build_version/libs/$TARGET_ARCH_ABI"

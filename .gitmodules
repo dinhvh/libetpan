@@ -1,6 +1,3 @@
-[submodule "build-mac/dependencies/submodules/jansson"]
-	path = build-mac/dependencies/submodules/jansson
-	url = https://github.com/akheron/jansson.git
 [submodule "build-mac/dependencies/submodules/cyrus-sasl"]
 	path = build-mac/dependencies/submodules/cyrus-sasl
 	url = https://github.com/cyrusimap/cyrus-sasl.git

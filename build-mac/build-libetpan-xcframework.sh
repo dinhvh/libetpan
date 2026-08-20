@@ -16,7 +16,7 @@ for command in xcodebuild xcrun; do
   fi
 done
 
-for dependency in Jansson CyrusSASL; do
+for dependency in JsonC CyrusSASL; do
   if [[ ! -d "$script_dir/dependencies/build/$dependency.xcframework" ]]; then
     echo "$dependency.xcframework is missing." >&2
     echo "Run: $script_dir/dependencies/bootstrap.sh" >&2

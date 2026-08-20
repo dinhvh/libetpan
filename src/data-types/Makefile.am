@@ -46,7 +46,7 @@ etpaninclude_HEADERS = \
 	mailstream_types.h \
 	mmapstring.h
 
-AM_CPPFLAGS = -I$(top_builddir)/include @ICUCPPFLAGS@ @JANSSON_CFLAGS@
+AM_CPPFLAGS = -I$(top_builddir)/include @ICUCPPFLAGS@ @JSON_C_CFLAGS@
 
 # Libtool has no Objective-C language tag. Compile the Apple backend through
 # the C configuration, as is done for the Gmail NSURLSession backend.

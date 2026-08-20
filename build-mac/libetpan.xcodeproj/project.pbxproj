@@ -562,11 +562,11 @@
 		C6F9ED2F105335BD0059C3BA /* mailsmtp_ssl.c in Sources */ = {isa = PBXBuildFile; fileRef = C6F9EAB6105335BC0059C3BA /* mailsmtp_ssl.c */; };
 		C6F9ED39105335BD0059C3BA /* libetpan_version.c in Sources */ = {isa = PBXBuildFile; fileRef = C6F9EAC2105335BD0059C3BA /* libetpan_version.c */; };
 		D10000010000000000000001 /* CyrusSASL.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = D10000000000000000000001 /* CyrusSASL.xcframework */; };
-		D10000010000000000000002 /* Jansson.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = D10000000000000000000002 /* Jansson.xcframework */; };
+		D10000010000000000000002 /* JsonC.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = D10000000000000000000002 /* JsonC.xcframework */; };
 		D10000010000000000000003 /* CyrusSASL.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = D10000000000000000000001 /* CyrusSASL.xcframework */; };
-		D10000010000000000000004 /* Jansson.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = D10000000000000000000002 /* Jansson.xcframework */; };
+		D10000010000000000000004 /* JsonC.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = D10000000000000000000002 /* JsonC.xcframework */; };
 		D10000010000000000000005 /* CyrusSASL.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = D10000000000000000000001 /* CyrusSASL.xcframework */; };
-		D10000010000000000000006 /* Jansson.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = D10000000000000000000002 /* Jansson.xcframework */; };
+		D10000010000000000000006 /* JsonC.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = D10000000000000000000002 /* JsonC.xcframework */; };
 		E10000000000000000000001 /* mailjson.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000001 /* mailjson.c */; };
 		F10000000000000000000001 /* mailhttp.c in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000001 /* mailhttp.c */; };
 		F10000000000000000000002 /* mailhttp_curl.c in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000002 /* mailhttp_curl.c */; };
@@ -1047,7 +1047,7 @@
 		C6F9EAC1105335BD0059C3BA /* libetpan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = libetpan.h; sourceTree = "<group>"; };
 		C6F9EAC2105335BD0059C3BA /* libetpan_version.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = libetpan_version.c; sourceTree = "<group>"; };
 		D10000000000000000000001 /* CyrusSASL.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = CyrusSASL.xcframework; path = dependencies/build/CyrusSASL.xcframework; sourceTree = "<group>"; };
-		D10000000000000000000002 /* Jansson.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = Jansson.xcframework; path = dependencies/build/Jansson.xcframework; sourceTree = "<group>"; };
+		D10000000000000000000002 /* JsonC.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = JsonC.xcframework; path = dependencies/build/JsonC.xcframework; sourceTree = "<group>"; };
 		E00000000000000000000001 /* mailjson.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = mailjson.c; path = "../src/data-types/mailjson.c"; sourceTree = SOURCE_ROOT; };
 		F00000000000000000000001 /* mailhttp.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = mailhttp.c; path = "../src/data-types/mailhttp.c"; sourceTree = SOURCE_ROOT; };
 		F00000000000000000000002 /* mailhttp_curl.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = mailhttp_curl.c; path = "../src/data-types/mailhttp_curl.c"; sourceTree = SOURCE_ROOT; };
@@ -1111,7 +1111,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D10000010000000000000001 /* CyrusSASL.xcframework in Frameworks */,
-				D10000010000000000000002 /* Jansson.xcframework in Frameworks */,
+				D10000010000000000000002 /* JsonC.xcframework in Frameworks */,
 				BDEBB57D30318F7900DBF96D /* OpenSSL.xcframework in Frameworks */,
 				C6EFB8AE1433F58500F805C0 /* CoreFoundation.framework in Frameworks */,
 				F60000000000000000000002 /* Foundation.framework in Frameworks */,
@@ -1128,7 +1128,7 @@
 				BDEBB57F30318F7900DBF96D /* OpenSSL.xcframework in Frameworks */,
 				D10000010000000000000003 /* CyrusSASL.xcframework in Frameworks */,
 				BDEBB58330319DB200DBF96D /* RNP.xcframework in Frameworks */,
-				D10000010000000000000004 /* Jansson.xcframework in Frameworks */,
+				D10000010000000000000004 /* JsonC.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1139,7 +1139,7 @@
 				BDEBB57E30318F7900DBF96D /* OpenSSL.xcframework in Frameworks */,
 				D10000010000000000000005 /* CyrusSASL.xcframework in Frameworks */,
 				BDEBB58230319DB200DBF96D /* RNP.xcframework in Frameworks */,
-				D10000010000000000000006 /* Jansson.xcframework in Frameworks */,
+				D10000010000000000000006 /* JsonC.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1845,7 +1845,7 @@
 				BDEBB58030319DB200DBF96D /* RNP.xcframework */,
 				BDEBB57C30318F7900DBF96D /* OpenSSL.xcframework */,
 				D10000000000000000000001 /* CyrusSASL.xcframework */,
-				D10000000000000000000002 /* Jansson.xcframework */,
+				D10000000000000000000002 /* JsonC.xcframework */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";

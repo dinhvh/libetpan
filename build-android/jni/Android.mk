@@ -14,8 +14,8 @@ ifeq ($(ICONV_PATH),)
 $(error ICONV_PATH must be set)
 endif
 
-ifeq ($(JANSSON_PATH),)
-$(error JANSSON_PATH must be set)
+ifeq ($(JSON_C_PATH),)
+$(error JSON_C_PATH must be set)
 endif
 
 src_files = \
@@ -138,7 +138,6 @@ src_files = \
 ./src/driver/interface/mailstorage.c \
 ./src/driver/interface/mailstorage_tools.c
 
-ifneq ($(JANSSON_PATH),)
 src_files += \
 ./src/low-level/jmap/mailjmap.c \
 ./src/low-level/jmap/mailjmap_blob.c \
@@ -147,7 +146,6 @@ src_files += \
 ./src/low-level/jmap/mailjmap_request.c \
 ./src/low-level/jmap/mailjmap_response.c \
 ./src/low-level/jmap/mailjmap_types.c
-endif
 
 NDK_TOOLCHAIN_VERSION := clang
 LOCAL_MODULE := etpan
@@ -172,7 +170,7 @@ src/driver/interface
 LOCAL_C_INCLUDES = $(addprefix ../../, $(c_includes)) \
   libetpan-android-7/include \
   $(OPENSSL_PATH)/include $(CYRUS_SASL_PATH)/include $(ICONV_PATH)/include	  libetpan-android-7/include/libetpan \
-  $(JANSSON_PATH)/include \
+  $(JSON_C_PATH)/include \
   $(OPENSSL_PATH)/include \
   $(LOCAL_PATH)/../include $(LOCAL_PATH)/../include/libetpan
 
