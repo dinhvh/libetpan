@@ -38,9 +38,6 @@
 #endif
 
 #ifdef HAVE_GNUTLS
-#if defined(__GNUC__) || defined(__clang__)
-#pragma GCC visibility push(hidden)
-#endif
 
 #include "mailstream_ssl.h"
 #include "mailstream_ssl_private.h"
@@ -1097,7 +1094,4 @@ mailstream_low_driver * mailstream_gnutls_low_driver(void)
 }
 
 
-#if defined(__GNUC__) || defined(__clang__)
-#pragma GCC visibility pop
-#endif
 #endif /* HAVE_GNUTLS */

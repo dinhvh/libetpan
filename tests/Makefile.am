@@ -95,6 +95,7 @@ TESTS = mailstream-ssl-backend-selection-test mailstream-ssl-internal-transport-
 CFLAGS += -ULIBETPAN_DLL
 AM_CPPFLAGS = -I$(top_builddir)/include \
 	@JSON_C_CFLAGS@ \
+	-I$(top_srcdir)/src/data-types \
 	-I$(top_srcdir)/src/driver/interface \
 	-I$(top_srcdir)/src/driver/tools \
 	-I$(top_srcdir)/src/driver/implementation/data-message \
