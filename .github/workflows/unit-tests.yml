@@ -10,6 +10,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Install dependencies
+        run: brew install autoconf automake cmake pkgconf
+
       - name: Prepare
         run: build-mac/bootstrap.sh
 
@@ -36,6 +39,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libsasl2-dev \
+            libjson-c-dev \
+            librnp-dev \
+            libtidy-dev
 
       - name: Configure
         run: ./autogen.sh
