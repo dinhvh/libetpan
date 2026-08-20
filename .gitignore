@@ -148,6 +148,9 @@ xcuserdata/
 /tests/mailhttp-test
 /tests/mailpgp-gnupg-interop-test
 /tests/mailpgp-low-level-test
+/tests/mailstream-ssl-backend-selection-test
+/tests/mailstream-ssl-internal-transport-test
+/tests/mailstream-voip-compatibility-test
 /tests/pgp
 /tests/readmsg
 /tests/readmsg-simple
