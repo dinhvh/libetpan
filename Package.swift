@@ -232,6 +232,7 @@ let package = Package(
             cSettings: [
                 .define("HAVE_CONFIG_H", to: "1"),
                 .define("HAVE_CFNETWORK", to: "1"),
+                .define("HAVE_COREFOUNDATION_CHARCONV", to: "1"),
                 .define("HAVE_JMAP", to: "1"),
                 .define("LIBETPAN_IOS_DISABLE_SSL", to: "1"),
                 .define("USE_SMIME_APPLE", to: "1",
@@ -273,6 +274,7 @@ let package = Package(
             ],
             linkerSettings: [
                 .linkedFramework("CFNetwork"),
+                .linkedFramework("CoreFoundation"),
                 .linkedFramework("CoreServices", .when(platforms: [.macOS])),
                 .linkedFramework("Foundation"),
                 .linkedFramework("Security"),

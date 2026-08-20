@@ -45,10 +45,14 @@
 #ifdef HAVE_ICU
 #include <unicode/ucnv.h>
 #endif
+#ifdef HAVE_COREFOUNDATION_CHARCONV
+#include <CoreFoundation/CoreFoundation.h>
+#endif
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 #include <errno.h>
+#include <limits.h>
 
 #include "mmapstring.h"
 
@@ -570,6 +574,99 @@ static size_t mail_iconv (iconv_t cd, const char **inbuf, size_t *inbytesleft,
 }
 #endif
 
+#ifdef HAVE_COREFOUNDATION_CHARCONV
+static CFStringEncoding apple_charset_encoding(const char * charset)
+{
+  CFStringRef charset_string;
+  CFStringEncoding encoding;
+
+  charset_string = CFStringCreateWithCString(NULL, charset,
+      kCFStringEncodingUTF8);
+  if (charset_string == NULL)
+    return kCFStringEncodingInvalidId;
+  encoding = CFStringConvertIANACharSetNameToEncoding(charset_string);
+  CFRelease(charset_string);
+  return encoding;
+}
+
+static int apple_should_try_charset(const char * fromcode)
+{
+  CFStringEncoding encoding;
+
+  encoding = apple_charset_encoding(fromcode);
+  if (encoding == kCFStringEncodingInvalidId ||
+      !CFStringIsEncodingAvailable(encoding))
+    return 0;
+
+  return encoding == kCFStringEncodingISO_2022_JP ||
+      encoding == kCFStringEncodingISO_2022_JP_1 ||
+      encoding == kCFStringEncodingISO_2022_JP_2 ||
+      encoding == kCFStringEncodingShiftJIS ||
+      encoding == kCFStringEncodingDOSJapanese ||
+      encoding == kCFStringEncodingEUC_JP;
+}
+
+static int apple_charconv(const char * tocode, const char * fromcode,
+    const char * str, size_t length, char * result, size_t * result_len)
+{
+  CFStringEncoding from_encoding;
+  CFStringEncoding to_encoding;
+  CFDataRef source_data;
+  CFStringRef string;
+  CFDataRef converted_data;
+  CFIndex converted_length;
+  int res;
+
+  if (length > (size_t) LONG_MAX || *result_len > (size_t) LONG_MAX)
+    return MAIL_CHARCONV_ERROR_MEMORY;
+
+  from_encoding = apple_charset_encoding(fromcode);
+  to_encoding = apple_charset_encoding(tocode);
+  if (from_encoding == kCFStringEncodingInvalidId ||
+      to_encoding == kCFStringEncodingInvalidId ||
+      !CFStringIsEncodingAvailable(from_encoding) ||
+      !CFStringIsEncodingAvailable(to_encoding))
+    return MAIL_CHARCONV_ERROR_UNKNOWN_CHARSET;
+
+  source_data = CFDataCreate(NULL, (const UInt8 *) str, (CFIndex) length);
+  if (source_data == NULL)
+    return MAIL_CHARCONV_ERROR_MEMORY;
+
+  string = CFStringCreateFromExternalRepresentation(NULL, source_data,
+      from_encoding);
+  if (string == NULL) {
+    CFRelease(source_data);
+    return MAIL_CHARCONV_ERROR_CONV;
+  }
+
+  converted_data = CFStringCreateExternalRepresentation(NULL, string,
+      to_encoding, (UInt8) '?');
+  if (converted_data == NULL) {
+    res = MAIL_CHARCONV_ERROR_CONV;
+    goto free_string;
+  }
+
+  converted_length = CFDataGetLength(converted_data);
+  if (converted_length < 0 || (size_t) converted_length > *result_len) {
+    res = MAIL_CHARCONV_ERROR_MEMORY;
+    goto free_converted_data;
+  }
+
+  CFDataGetBytes(converted_data, CFRangeMake(0, converted_length),
+      (UInt8 *) result);
+  result[converted_length] = '\0';
+  *result_len = (size_t) converted_length;
+  res = MAIL_CHARCONV_NO_ERROR;
+
+ free_converted_data:
+  CFRelease(converted_data);
+ free_string:
+  CFRelease(string);
+  CFRelease(source_data);
+  return res;
+}
+#endif
+
 #ifdef HAVE_ICU
 static int icu_should_try_charset(const char * fromcode)
 {
@@ -680,6 +777,34 @@ int charconv(const char * tocode, const char * fromcode,
 			return res;
 		/* else, let's try with iconv, if available */
 	}
+
+#ifdef HAVE_COREFOUNDATION_CHARCONV
+	if (apple_should_try_charset(fromcode))
+	{
+		size_t allocated_length;
+		size_t result_length;
+
+		res = charconv_get_output_size(length, &allocated_length);
+		if (res != MAIL_CHARCONV_NO_ERROR)
+			return res;
+		result_length = allocated_length;
+		*result = malloc(allocated_length + 1);
+		if (*result == NULL)
+			return MAIL_CHARCONV_ERROR_MEMORY;
+		res = apple_charconv(tocode, fromcode, str, length, *result,
+		    &result_length);
+		if (res == MAIL_CHARCONV_NO_ERROR) {
+			out = realloc(*result, result_length + 1);
+			if (out != NULL)
+				*result = out;
+			return MAIL_CHARCONV_NO_ERROR;
+		}
+		free(*result);
+		*result = NULL;
+		if (res != MAIL_CHARCONV_ERROR_UNKNOWN_CHARSET)
+			return res;
+	}
+#endif
 
 #ifdef HAVE_ICU
 	if (icu_should_try_charset(fromcode))
@@ -821,6 +946,41 @@ int charconv_buffer(const char * tocode, const char * fromcode,
 		}
 		/* else, let's try with iconv, if available */
 	}
+
+#ifdef HAVE_COREFOUNDATION_CHARCONV
+	if (apple_should_try_charset(fromcode))
+	{
+		size_t allocated_length;
+		size_t result_length;
+
+		res = charconv_get_output_size(length, &allocated_length);
+		if (res != MAIL_CHARCONV_NO_ERROR)
+			return res;
+		result_length = allocated_length;
+		mmapstr = mmap_string_sized_new(allocated_length + 1);
+		*result_len = 0;
+		if (mmapstr == NULL)
+			return MAIL_CHARCONV_ERROR_MEMORY;
+		res = apple_charconv(tocode, fromcode, str, length, mmapstr->str,
+		    &result_length);
+		if (res == MAIL_CHARCONV_NO_ERROR) {
+			int r;
+
+			*result = mmapstr->str;
+			r = mmap_string_ref(mmapstr);
+			if (r < 0) {
+				mmap_string_free(mmapstr);
+				return MAIL_CHARCONV_ERROR_MEMORY;
+			}
+			mmap_string_set_size(mmapstr, result_length);
+			*result_len = result_length;
+			return MAIL_CHARCONV_NO_ERROR;
+		}
+		mmap_string_free(mmapstr);
+		if (res != MAIL_CHARCONV_ERROR_UNKNOWN_CHARSET)
+			return res;
+	}
+#endif
 
 #ifdef HAVE_ICU
 	if (icu_should_try_charset(fromcode))

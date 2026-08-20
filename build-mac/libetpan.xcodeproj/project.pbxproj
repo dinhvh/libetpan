@@ -2734,6 +2734,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"HAVE_JMAP=1",
+					"HAVE_COREFOUNDATION_CHARCONV=1",
 					"USE_SMIME_APPLE=1",
 					"USE_SMIME_OPENSSL=1",
 					"HAVE_JMAP=1",
@@ -2767,6 +2768,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"HAVE_JMAP=1",
+					"HAVE_COREFOUNDATION_CHARCONV=1",
 					"USE_SMIME_APPLE=1",
 					"USE_SMIME_OPENSSL=1",
 					"HAVE_JMAP=1",
@@ -2844,6 +2846,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"HAVE_JMAP=1",
+					"HAVE_COREFOUNDATION_CHARCONV=1",
 					"USE_SMIME_OPENSSL=1",
 				);
 				INSTALL_PATH = /usr/local/lib;
@@ -2865,6 +2868,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"HAVE_JMAP=1",
+					"HAVE_COREFOUNDATION_CHARCONV=1",
 					"USE_SMIME_OPENSSL=1",
 				);
 				INSTALL_PATH = /usr/local/lib;
@@ -2888,6 +2892,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"HAVE_JMAP=1",
+					"HAVE_COREFOUNDATION_CHARCONV=1",
 					"USE_SMIME_APPLE=1",
 					"USE_SMIME_OPENSSL=1",
 				);
@@ -2910,6 +2915,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"HAVE_JMAP=1",
+					"HAVE_COREFOUNDATION_CHARCONV=1",
 					"USE_SMIME_APPLE=1",
 					"USE_SMIME_OPENSSL=1",
 				);

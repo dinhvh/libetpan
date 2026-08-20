@@ -445,6 +445,25 @@ if test "x$enable_iconv" = xyes; then
 fi
 AC_SUBST(LIBICONV)
 
+dnl CoreFoundation charset conversion
+COREFOUNDATIONLIB=""
+case "${host_os}" in
+  darwin*)
+    SAVED_LIBS="$LIBS"
+    LIBS="$LIBS -framework CoreFoundation"
+    AC_LINK_IFELSE([AC_LANG_PROGRAM(
+      [[#include <CoreFoundation/CoreFoundation.h>]],
+      [[CFStringEncoding encoding =
+          CFStringConvertIANACharSetNameToEncoding(CFSTR("utf-8"));
+        return encoding == kCFStringEncodingInvalidId;]])],
+      [AC_DEFINE(HAVE_COREFOUNDATION_CHARCONV, 1,
+         [Define if you have CoreFoundation charset conversion.])
+       COREFOUNDATIONLIB="-framework CoreFoundation"])
+    LIBS="$SAVED_LIBS"
+    ;;
+esac
+AC_SUBST(COREFOUNDATIONLIB)
+
 dnl ICU
 ICULIB=""
 ICUCPPFLAGS=""
