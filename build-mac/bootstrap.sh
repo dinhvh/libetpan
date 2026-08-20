@@ -4,7 +4,7 @@ set -euo pipefail
 
 script_dir="$(cd "$(dirname "$0")" && pwd)"
 repository_root="$(cd "$script_dir/.." && pwd)"
-logfile="$script_dir/bootstrap.log"
+logfile="$(mktemp "${TMPDIR:-/tmp}/libetpan-bootstrap.XXXXXX")"
 archive="$script_dir/autogen-result.tar.gz"
 no_cache=false
 configure_flags=(
@@ -12,6 +12,8 @@ configure_flags=(
   --enable-debug
   --with-smime=no
 )
+
+echo "Bootstrap log: $logfile"
 
 for argument in "$@"; do
   case "$argument" in
