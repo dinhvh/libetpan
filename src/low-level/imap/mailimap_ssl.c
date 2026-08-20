@@ -60,12 +60,6 @@
 int mailimap_ssl_connect_with_callback(mailimap * f, const char * server, uint16_t port,
     void (* callback)(struct mailstream_ssl_context * ssl_context, void * data), void * data)
 {
-  return mailimap_ssl_connect_voip_with_callback(f, server, port, mailstream_cfstream_voip_enabled, callback, data);
-}
-
-int mailimap_ssl_connect_voip_with_callback(mailimap * f, const char * server, uint16_t port, int voip_enabled,
-    void (* callback)(struct mailstream_ssl_context * ssl_context, void * data), void * data)
-{
   enum mailstream_ssl_connect_error connect_error;
   mailstream * stream;
 
@@ -75,8 +69,8 @@ int mailimap_ssl_connect_voip_with_callback(mailimap * f, const char * server, u
       port = DEFAULT_IMAPS_PORT;
   }
 
-  stream = mailstream_ssl_connect_voip_timeout(server, port, f->imap_timeout,
-      voip_enabled, callback, data, &connect_error);
+  stream = mailstream_ssl_connect_timeout(server, port, f->imap_timeout,
+      callback, data, &connect_error);
   if (stream == NULL) {
     if (connect_error == MAILSTREAM_SSL_CONNECT_ERROR_CONNECTION_REFUSED)
       return MAILIMAP_ERROR_CONNECTION_REFUSED;
@@ -86,13 +80,22 @@ int mailimap_ssl_connect_voip_with_callback(mailimap * f, const char * server, u
   return mailimap_connect(f, stream);
 }
 
+int mailimap_ssl_connect_voip_with_callback(mailimap * f, const char * server,
+    uint16_t port, int voip_enabled,
+    void (* callback)(struct mailstream_ssl_context * ssl_context, void * data),
+    void * data)
+{
+  (void) voip_enabled;
+  return mailimap_ssl_connect_with_callback(f, server, port, callback, data);
+}
+
 int mailimap_ssl_connect(mailimap * f, const char * server, uint16_t port)
 {
-  return mailimap_ssl_connect_voip(f, server, port, mailstream_cfstream_voip_enabled);
+  return mailimap_ssl_connect_with_callback(f, server, port, NULL, NULL);
 }
 
 int mailimap_ssl_connect_voip(mailimap * f, const char * server, uint16_t port, int voip_enabled)
 {
-  return mailimap_ssl_connect_voip_with_callback(f, server, port, voip_enabled,
-      NULL, NULL);
+  (void) voip_enabled;
+  return mailimap_ssl_connect(f, server, port);
 }

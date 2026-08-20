@@ -62,9 +62,6 @@ enum mailstream_socket_connect_error {
 mailstream * mailstream_socket_connect_timeout(const char * server,
     uint16_t port, time_t timeout,
     enum mailstream_socket_connect_error * error);
-mailstream * mailstream_socket_connect_voip_timeout(const char * server,
-    uint16_t port, time_t timeout, int voip_enabled,
-    enum mailstream_socket_connect_error * error);
 
 #ifdef __cplusplus
 }

@@ -516,14 +516,6 @@ mailstream * mailstream_socket_connect_timeout(const char * server,
     uint16_t port, time_t timeout,
     enum mailstream_socket_connect_error * error)
 {
-  return mailstream_socket_connect_voip_timeout(server, port, timeout, 0,
-      error);
-}
-
-mailstream * mailstream_socket_connect_voip_timeout(const char * server,
-    uint16_t port, time_t timeout, int voip_enabled,
-    enum mailstream_socket_connect_error * error)
-{
   mailstream * stream;
   int fd;
 
@@ -534,14 +526,11 @@ mailstream * mailstream_socket_connect_voip_timeout(const char * server,
   if (mailstream_ssl_get_backend() == MAILSTREAM_SSL_BACKEND_CFNETWORK) {
     if (error != NULL)
       * error = MAILSTREAM_SOCKET_CONNECT_ERROR_CFNETWORK;
-    stream = mailstream_cfstream_open_voip_timeout(server, port, voip_enabled,
-        timeout);
+    stream = mailstream_cfstream_open_timeout(server, port, timeout);
     if (stream != NULL && error != NULL)
       * error = MAILSTREAM_SOCKET_CONNECT_NO_ERROR;
     return stream;
   }
-#else
-  (void) voip_enabled;
 #endif
 
   fd = mail_tcp_connect_timeout(server, port, timeout);

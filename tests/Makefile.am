@@ -78,12 +78,12 @@ noinst_PROGRAMS = smime decrypt pgp frm frm-tree frm-simple	\
 	readmsg compose-msg imap-sample mime-create mime-parse \
 	pop-sample activesync-sample mailhttp-test feed-http-test \
 	gmail-http-test gmail-sample \
-	mailstream-ssl-backend-selection-test \
+	mailstream-ssl-backend-selection-test mailstream-voip-compatibility-test \
 	smime-low-level-test smime-openssl-interop-test \
 	mailpgp-low-level-test mailpgp-gnupg-interop-test \
 	$(jmap_test_programs) $(jmap_sample_programs)
 
-TESTS = mailstream-ssl-backend-selection-test \
+TESTS = mailstream-ssl-backend-selection-test mailstream-voip-compatibility-test \
 	mailhttp-test feed-http-test smime-low-level-test mailpgp-low-level-test \
 	smime-openssl-fixture-test.sh mailpgp-gnupg-fixture-test.sh \
 	$(jmap_test_programs) $(jmap_live_tests) $(gmail_live_tests)
@@ -141,6 +141,9 @@ mailhttp_test_SOURCES = $(top_srcdir)/unittest/http/mailhttp_test.c
 
 mailstream_ssl_backend_selection_test_SOURCES = \
 	$(top_srcdir)/unittest/mailstream-ssl/backend_selection_test.c
+
+mailstream_voip_compatibility_test_SOURCES = \
+	$(top_srcdir)/unittest/mailstream-voip/compatibility_test.c
 
 feed_http_test_SOURCES = $(top_srcdir)/unittest/feed/feed_http_test.c
 

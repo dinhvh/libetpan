@@ -262,7 +262,7 @@ int mailstorage_generic_connect_with_local_address_tls(mailsession_driver * driv
   case CONNECTION_TYPE_TLS:
 #if HAVE_CFNETWORK
     if (mailstream_ssl_get_backend() == MAILSTREAM_SSL_BACKEND_CFNETWORK) {
-      stream = mailstream_cfstream_open_voip(servername, port, mailstream_cfstream_voip_enabled);
+      stream = mailstream_cfstream_open(servername, port);
       if (stream == NULL) {
         res = MAIL_ERROR_CONNECT;
         goto err;

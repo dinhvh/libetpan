@@ -111,12 +111,6 @@ mailstream * mailstream_ssl_connect_timeout(const char * server,
     void * callback_data, enum mailstream_ssl_connect_error * error);
 
 LIBETPAN_EXPORT
-mailstream * mailstream_ssl_connect_voip_timeout(const char * server,
-    uint16_t port, time_t timeout, int voip_enabled,
-    void (* callback)(struct mailstream_ssl_context *, void *),
-    void * callback_data, enum mailstream_ssl_connect_error * error);
-
-LIBETPAN_EXPORT
 void mailstream_gnutls_init_not_required(void);
 
 LIBETPAN_EXPORT

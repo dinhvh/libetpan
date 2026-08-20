@@ -60,6 +60,13 @@
 LIBETPAN_EXPORT
 int mailimap_socket_connect_voip(mailimap * f, const char * server, uint16_t port, int voip_enabled)
 {
+  (void) voip_enabled;
+  return mailimap_socket_connect(f, server, port);
+}
+
+LIBETPAN_EXPORT
+int mailimap_socket_connect(mailimap * f, const char * server, uint16_t port)
+{
     enum mailstream_socket_connect_error connect_error;
     mailstream * stream;
 
@@ -69,8 +76,8 @@ int mailimap_socket_connect_voip(mailimap * f, const char * server, uint16_t por
         port = DEFAULT_IMAP_PORT;
     }
 
-    stream = mailstream_socket_connect_voip_timeout(server, port,
-        f->imap_timeout, voip_enabled, &connect_error);
+    stream = mailstream_socket_connect_timeout(server, port, f->imap_timeout,
+        &connect_error);
     if (stream == NULL) {
       if (connect_error == MAILSTREAM_SOCKET_CONNECT_ERROR_MEMORY)
         return MAILIMAP_ERROR_MEMORY;
@@ -78,12 +85,6 @@ int mailimap_socket_connect_voip(mailimap * f, const char * server, uint16_t por
     }
 
     return mailimap_connect(f, stream);
-}
-
-LIBETPAN_EXPORT
-int mailimap_socket_connect(mailimap * f, const char * server, uint16_t port)
-{
-  return mailimap_socket_connect_voip(f, server, port, mailstream_cfstream_voip_enabled);
 }
 
 

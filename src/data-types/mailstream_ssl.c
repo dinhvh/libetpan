@@ -50,15 +50,6 @@ mailstream * mailstream_ssl_connect_timeout(const char * server,
     void (* callback)(struct mailstream_ssl_context *, void *),
     void * callback_data, enum mailstream_ssl_connect_error * error)
 {
-  return mailstream_ssl_connect_voip_timeout(server, port, timeout, 0,
-      callback, callback_data, error);
-}
-
-mailstream * mailstream_ssl_connect_voip_timeout(const char * server,
-    uint16_t port, time_t timeout, int voip_enabled,
-    void (* callback)(struct mailstream_ssl_context *, void *),
-    void * callback_data, enum mailstream_ssl_connect_error * error)
-{
   mailstream * stream;
   int fd;
 
@@ -70,8 +61,7 @@ mailstream * mailstream_ssl_connect_voip_timeout(const char * server,
       callback == NULL) {
     int r;
 
-    stream = mailstream_cfstream_open_voip_timeout(server, port, voip_enabled,
-        timeout);
+    stream = mailstream_cfstream_open_timeout(server, port, timeout);
     if (stream == NULL)
       return NULL;
 
@@ -92,8 +82,6 @@ mailstream * mailstream_ssl_connect_voip_timeout(const char * server,
       * error = MAILSTREAM_SSL_CONNECT_NO_ERROR;
     return stream;
   }
-#else
-  (void) voip_enabled;
 #endif
 
   fd = mail_tcp_connect_timeout(server, port, timeout);

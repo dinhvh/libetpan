@@ -225,27 +225,16 @@ static CFArrayRef cfstream_copy_trust_certificates(SecTrustRef secTrust)
 
 mailstream * mailstream_cfstream_open(const char * hostname, int16_t port)
 {
-	return mailstream_cfstream_open_voip_timeout(hostname, port, 0, 0);
+	return mailstream_cfstream_open_timeout(hostname, port, 0);
 }
 
 mailstream * mailstream_cfstream_open_timeout(const char * hostname, int16_t port, time_t timeout)
-{
-	return mailstream_cfstream_open_voip_timeout(hostname, port, 0, timeout);
-}
-
-mailstream * mailstream_cfstream_open_voip(const char * hostname, int16_t port, int voip_enabled)
-{
-	return mailstream_cfstream_open_voip_timeout(hostname, port, voip_enabled, 0);
-}
-
-mailstream * mailstream_cfstream_open_voip_timeout(const char * hostname, int16_t port, int voip_enabled,
-  time_t timeout)
 {
 #if HAVE_CFNETWORK
   mailstream_low * low;
   mailstream * s;
   
-  low = mailstream_low_cfstream_open_voip_timeout(hostname, port, voip_enabled, timeout);
+  low = mailstream_low_cfstream_open_timeout(hostname, port, timeout);
   if (low == NULL) {
     return NULL;
   }
@@ -254,6 +243,20 @@ mailstream * mailstream_cfstream_open_voip_timeout(const char * hostname, int16_
 #else
   return NULL;
 #endif
+}
+
+mailstream * mailstream_cfstream_open_voip(const char * hostname, int16_t port,
+  int voip_enabled)
+{
+  (void) voip_enabled;
+  return mailstream_cfstream_open(hostname, port);
+}
+
+mailstream * mailstream_cfstream_open_voip_timeout(const char * hostname,
+  int16_t port, int voip_enabled, time_t timeout)
+{
+  (void) voip_enabled;
+  return mailstream_cfstream_open_timeout(hostname, port, timeout);
 }
 
 #if HAVE_CFNETWORK
@@ -471,40 +474,24 @@ static void writeStreamCallback(CFWriteStreamRef stream, CFStreamEventType event
 
 mailstream_low * mailstream_low_cfstream_open(const char * hostname, int16_t port)
 {
-    return mailstream_low_cfstream_open_voip_timeout(hostname, port, mailstream_cfstream_voip_enabled, 0);
-}
-
-mailstream_low * mailstream_low_cfstream_open_timeout(const char * hostname, int16_t port,
-  time_t timeout)
-{
-	return mailstream_low_cfstream_open_voip_timeout(hostname, port,
-	  mailstream_cfstream_voip_enabled, timeout);
-}
-
-mailstream_low * mailstream_low_cfstream_open_voip(const char * hostname, int16_t port, int voip_enabled)
-{
-	return mailstream_low_cfstream_open_voip_timeout(hostname, port, voip_enabled, 0);
+  return mailstream_low_cfstream_open_timeout(hostname, port, 0);
 }
 
 #if HAVE_CFNETWORK
 static int numberIntValue(CFNumberRef nb)
 {
-  if (nb == NULL) {
-    return 0;
-  }
-
   int result;
+
+  if (nb == NULL)
+    return 0;
   CFNumberGetValue(nb, kCFNumberIntType, &result);
   return result;
 }
 #endif
 
-mailstream_low * mailstream_low_cfstream_open_voip_timeout(const char * hostname, int16_t port,
-  int voip_enabled, time_t timeout)
+mailstream_low * mailstream_low_cfstream_open_timeout(const char * hostname, int16_t port,
+  time_t timeout)
 {
-  /* kCFStreamNetworkServiceTypeVoIP is deprecated; keep this parameter for API compatibility. */
-  (void) voip_enabled;
-
 #if HAVE_CFNETWORK
   mailstream_low * s;
   struct mailstream_cfstream_data * cfstream_data;
@@ -571,6 +558,21 @@ mailstream_low * mailstream_low_cfstream_open_voip_timeout(const char * hostname
 #else
   return NULL;
 #endif
+}
+
+mailstream_low * mailstream_low_cfstream_open_voip(const char * hostname,
+  int16_t port, int voip_enabled)
+{
+  (void) voip_enabled;
+  return mailstream_low_cfstream_open(hostname, port);
+}
+
+mailstream_low * mailstream_low_cfstream_open_voip_timeout(
+  const char * hostname, int16_t port, int voip_enabled, time_t timeout)
+{
+  /* Retained for compatibility; the platform VoIP service type is deprecated. */
+  (void) voip_enabled;
+  return mailstream_low_cfstream_open_timeout(hostname, port, timeout);
 }
 
 
