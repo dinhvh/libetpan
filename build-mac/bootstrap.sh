@@ -35,16 +35,20 @@ for argument in "$@"; do
 done
 
 autogen_available=true
+autogen_unavailable_reasons=()
 if [[ ! -x "$repository_root/autogen.sh" ]]; then
   autogen_available=false
+  autogen_unavailable_reasons+=("$repository_root/autogen.sh is missing or not executable")
 fi
 for command_name in aclocal autoconf automake; do
   if ! command -v "$command_name" >/dev/null 2>&1; then
     autogen_available=false
+    autogen_unavailable_reasons+=("$command_name was not found in PATH")
   fi
 done
 if ! command -v glibtoolize >/dev/null 2>&1 && ! command -v libtoolize >/dev/null 2>&1; then
   autogen_available=false
+  autogen_unavailable_reasons+=("neither glibtoolize nor libtoolize was found in PATH")
 fi
 
 cd "$repository_root"
@@ -52,6 +56,7 @@ cd "$repository_root"
 if "$no_cache" || [[ ! -f "$archive" ]]; then
   if ! "$autogen_available"; then
     echo "Autotools are required to create build-mac/autogen-result.tar.gz" >&2
+    printf '  - %s\n' "${autogen_unavailable_reasons[@]}" >&2
     exit 1
   fi
 
@@ -70,7 +75,12 @@ if "$no_cache" || [[ ! -f "$archive" ]]; then
     printf '%s\0' configure install-sh config.sub missing config.guess
   } | tar --null -T - -czf "$archive"
 else
-  echo "Autotools are unavailable; using build-mac/autogen-result.tar.gz"
+  if "$autogen_available"; then
+    echo "Using build-mac/autogen-result.tar.gz"
+  else
+    echo "Autotools are unavailable; using build-mac/autogen-result.tar.gz"
+    printf '  - %s\n' "${autogen_unavailable_reasons[@]}"
+  fi
   tar -xzf "$archive"
   SDKROOT= IPHONEOS_DEPLOYMENT_TARGET= \
     ./configure "${configure_flags[@]}" >"$logfile" 2>&1 || {
