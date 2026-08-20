@@ -34,7 +34,7 @@ run_step "Building JSON-C XCFramework" \
   "$script_dir/build-json-c-xcframework.sh"
 run_step "Building Cyrus SASL XCFramework" \
   "$script_dir/build-cyrus-sasl-xcframework.sh"
-run_step "Building OpenSSL libcrypto XCFramework" \
+run_step "Building OpenSSL libcrypto and libssl XCFrameworks" \
   "$script_dir/build-openssl-xcframework.sh"
 run_step "Building tidy-html5 XCFramework" \
   "$script_dir/build-tidy-html5-xcframework.sh"

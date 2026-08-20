@@ -5,7 +5,8 @@ set -euo pipefail
 script_dir="$(cd "$(dirname "$0")" && pwd)"
 source_dir="$script_dir/submodules/openssl"
 build_root="${BUILD_DIR:-$script_dir/build/openssl}"
-output="${OUTPUT:-$script_dir/build/OpenSSL.xcframework}"
+crypto_output="${CRYPTO_OUTPUT:-$script_dir/build/OpenSSL-Crypto.xcframework}"
+ssl_output="${SSL_OUTPUT:-$script_dir/build/OpenSSL-SSL.xcframework}"
 macos_deployment_target="${MACOSX_DEPLOYMENT_TARGET:-10.13}"
 ios_deployment_target="${IPHONEOS_DEPLOYMENT_TARGET:-12.0}"
 jobs="${JOBS:-$(getconf _NPROCESSORS_ONLN 2>/dev/null || echo 4)}"
@@ -15,7 +16,7 @@ if [[ ! -f "$source_dir/Configure" ]]; then
   exit 1
 fi
 
-for command in make perl xcodebuild xcrun lipo libtool rsync; do
+for command in make perl xcodebuild xcrun lipo rsync; do
   if ! command -v "$command" >/dev/null 2>&1; then
     echo "Required command not found: $command" >&2
     exit 1
@@ -60,10 +61,6 @@ build_arch() {
         "$minimum_flag"
     make -j "$jobs" build_libs
     make install_dev
-    xcrun libtool -static \
-      -o "$prefix/lib/libopenssl.a" \
-      "$prefix/lib/libssl.a" \
-      "$prefix/lib/libcrypto.a"
   )
 }
 
@@ -74,10 +71,12 @@ make_universal() {
   rm -rf "$destination"
   mkdir -p "$destination/lib"
   cp -R "$build_root/$name-arm64/install/include" "$destination/include"
-  lipo -create \
-    "$build_root/$name-arm64/install/lib/libopenssl.a" \
-    "$build_root/$name-x86_64/install/lib/libopenssl.a" \
-    -output "$destination/lib/libopenssl.a"
+  for library in libcrypto.a libssl.a; do
+    lipo -create \
+      "$build_root/$name-arm64/install/lib/$library" \
+      "$build_root/$name-x86_64/install/lib/$library" \
+      -output "$destination/lib/$library"
+  done
 }
 
 rm -rf "$build_root"
@@ -98,14 +97,24 @@ build_arch ios-simulator iphonesimulator x86_64 iossimulator-x86_64-xcrun \
   "-mios-simulator-version-min=$ios_deployment_target"
 make_universal ios-simulator
 
-rm -rf "$output"
+rm -rf "$crypto_output" "$ssl_output"
 xcodebuild -create-xcframework \
-  -library "$build_root/macos-universal/lib/libopenssl.a" \
+  -library "$build_root/macos-universal/lib/libcrypto.a" \
   -headers "$build_root/macos-universal/include" \
-  -library "$build_root/ios-arm64/install/lib/libopenssl.a" \
+  -library "$build_root/ios-arm64/install/lib/libcrypto.a" \
   -headers "$build_root/ios-arm64/install/include" \
-  -library "$build_root/ios-simulator-universal/lib/libopenssl.a" \
+  -library "$build_root/ios-simulator-universal/lib/libcrypto.a" \
   -headers "$build_root/ios-simulator-universal/include" \
-  -output "$output"
+  -output "$crypto_output"
 
-echo "Created $output"
+xcodebuild -create-xcframework \
+  -library "$build_root/macos-universal/lib/libssl.a" \
+  -headers "$build_root/macos-universal/include" \
+  -library "$build_root/ios-arm64/install/lib/libssl.a" \
+  -headers "$build_root/ios-arm64/install/include" \
+  -library "$build_root/ios-simulator-universal/lib/libssl.a" \
+  -headers "$build_root/ios-simulator-universal/include" \
+  -output "$ssl_output"
+
+echo "Created $crypto_output"
+echo "Created $ssl_output"
