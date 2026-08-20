@@ -159,7 +159,7 @@ AH_BOTTOM([#endif /* LIBETPAN_CONFIG_H_INCLUDED */])
 AC_C_INLINE
 
 # Checks for programs.
-LT_INIT(win32-dll)
+LT_INIT([disable-static win32-dll])
 LT_PROG_RC
 LT_LANG(Windows Resource)
 AC_PROG_MKDIR_P
