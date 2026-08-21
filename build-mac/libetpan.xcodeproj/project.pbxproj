@@ -2066,9 +2066,10 @@
 			);
 			outputPaths = (
 			);
+			name = "Export Public Headers";
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "mkdir -p \"$BUILT_PRODUCTS_DIR/include\"\nrsync -aL \"$SRCROOT/../include/libetpan/\" \"$BUILT_PRODUCTS_DIR/include/libetpan/\"\n";
+			shellScript = "public_include_dir=\"$BUILT_PRODUCTS_DIR/include/libetpan\"\nmkdir -p \"$public_include_dir\"\n\"${PYTHON:-python3}\" \"$SRCROOT/../tools/public_headers.py\" export-android --destination \"$public_include_dir\"\n";
 		};
 		C6635C3416DFF0030066276E /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2079,9 +2080,10 @@
 			);
 			outputPaths = (
 			);
+			name = "Export Public Headers";
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "mkdir -p \"$BUILT_PRODUCTS_DIR/include\"\nrsync -aL \"$SRCROOT/../include/libetpan/\" \"$BUILT_PRODUCTS_DIR/include/libetpan/\"\n";
+			shellScript = "public_include_dir=\"$BUILT_PRODUCTS_DIR/include/libetpan\"\nmkdir -p \"$public_include_dir\"\n\"${PYTHON:-python3}\" \"$SRCROOT/../tools/public_headers.py\" export-android --destination \"$public_include_dir\"\n";
 		};
 		C6635C5316E002ED0066276E /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
