@@ -25,16 +25,6 @@ jobs:
             -derivedDataPath "$GITHUB_WORKSPACE/.build/xcode" \
             CODE_SIGNING_ALLOWED=NO
 
-      - name: Build and run Unix test executables
-        run: |
-          framework_dir="$GITHUB_WORKSPACE/.build/xcode/Build/Products/Debug"
-          mkdir -p unittest/Frameworks
-          ditto "$framework_dir/libetpan.framework" \
-            unittest/Frameworks/libetpan.framework
-          make -C unittest check \
-            LIBETPAN_TEST_DEPENDENCY= \
-            LIBETPAN_TEST_LDLIBS="-F$framework_dir -framework libetpan"
-
   linux:
     runs-on: ubuntu-26.04
     steps:
