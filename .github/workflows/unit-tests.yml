@@ -47,7 +47,10 @@ jobs:
             librnp-dev \
             libtidy-dev \
             libcurl4-openssl-dev \
-            libicu-dev
+            libicu-dev \
+            libgnutls28-dev \
+            build-essential \
+            libjson-c-dev \
 
       - name: Configure
         run: ./autogen.sh --enable-static --enable-debug
