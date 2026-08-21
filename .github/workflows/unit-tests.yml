@@ -25,6 +25,15 @@ jobs:
             -derivedDataPath "$GITHUB_WORKSPACE/.build/xcode" \
             CODE_SIGNING_ALLOWED=NO
 
+      - name: Run iOS OpenSSL S/MIME XCTest
+        run: |
+          xcodebuild test \
+            -workspace build-mac/libetpan.xcworkspace \
+            -scheme libetpan-ios-smime-tests \
+            -destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=latest' \
+            -derivedDataPath "$GITHUB_WORKSPACE/.build/xcode-ios" \
+            CODE_SIGNING_ALLOWED=NO
+
   linux:
     runs-on: ubuntu-26.04
     steps:
