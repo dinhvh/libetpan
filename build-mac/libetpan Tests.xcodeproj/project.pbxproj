@@ -257,6 +257,7 @@
 		C6ED6D1617A1884E00A4A14C /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6ED6D0817A1883000A4A14C /* CoreServices.framework */; };
 		C6ED6D1717A1884E00A4A14C /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6ED6D0817A1883000A4A14C /* CoreServices.framework */; };
 		C6ED6D1817A1884F00A4A14C /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6ED6D0817A1883000A4A14C /* CoreServices.framework */; };
+		E10000000000000000000001 /* Tidy.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = E10000000000000000000002 /* Tidy.xcframework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -364,6 +365,34 @@
 			proxyType = 1;
 			remoteGlobalIDString = 3678623A16AB4F32002F2B96;
 			remoteInfo = smtpsend;
+		};
+		BD2AC2E33038141E000E8D2A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E10000000000000000000004 /* libetpan.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8DC2EF5B0486A6940098B216;
+			remoteInfo = libetpan;
+		};
+		BD2AC2E53038141E000E8D2A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E10000000000000000000004 /* libetpan.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = C69AB10A10546FE500F32FBD;
+			remoteInfo = "static libetpan";
+		};
+		BD2AC2E73038141E000E8D2A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E10000000000000000000004 /* libetpan.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = C682E2C015B315EF00BE9DA7;
+			remoteInfo = "libetpan ios";
+		};
+		E10000000000000000000003 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E10000000000000000000004 /* libetpan.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
+			remoteInfo = libetpan;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -506,10 +535,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		F20000000000000000000001 /* tests-project.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = xcconfig/tests-project.xcconfig; sourceTree = "<group>"; };
-		F20000000000000000000002 /* tests-samples.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = xcconfig/tests-samples.xcconfig; sourceTree = "<group>"; };
-		F20000000000000000000003 /* tests-unit.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = xcconfig/tests-unit.xcconfig; sourceTree = "<group>"; };
-
 		367860DC16AB36DF002F2B96 /* compose-msg.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "compose-msg.c"; sourceTree = "<group>"; };
 		367860DD16AB36DF002F2B96 /* decrypt.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = decrypt.c; sourceTree = "<group>"; };
 		367860DE16AB36DF002F2B96 /* fetch-attachment.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "fetch-attachment.c"; sourceTree = "<group>"; };
@@ -623,6 +648,11 @@
 		C30000000000000000000101 /* SMIMETests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = SMIMETests.m; path = ../unittest/xctest/SMIMETests.m; sourceTree = SOURCE_ROOT; };
 		C6ED6CF817A1862C00A4A14C /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		C6ED6D0817A1883000A4A14C /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = System/Library/Frameworks/CoreServices.framework; sourceTree = SDKROOT; };
+		E10000000000000000000002 /* Tidy.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = dependencies/build/Tidy.xcframework; sourceTree = SOURCE_ROOT; };
+		E10000000000000000000004 /* libetpan.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = libetpan.xcodeproj; sourceTree = "<group>"; };
+		F20000000000000000000001 /* xcconfig/tests-project.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "xcconfig/tests-project.xcconfig"; sourceTree = "<group>"; };
+		F20000000000000000000002 /* xcconfig/tests-samples.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "xcconfig/tests-samples.xcconfig"; sourceTree = "<group>"; };
+		F20000000000000000000003 /* xcconfig/tests-unit.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "xcconfig/tests-unit.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -866,6 +896,7 @@
 			files = (
 				A10000000000000000000005 /* XCTest.framework in Frameworks */,
 				A10000000000000000000006 /* libetpan.framework in Frameworks */,
+				E10000000000000000000001 /* Tidy.xcframework in Frameworks */,
 				A10000000000000000000007 /* libz.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -876,6 +907,7 @@
 		367860B016AB35BC002F2B96 = {
 			isa = PBXGroup;
 			children = (
+				E10000000000000000000004 /* libetpan.xcodeproj */,
 				F20000000000000000000010 /* xcconfig */,
 				A10000000000000000000030 /* unittest */,
 				367860BE16AB35BC002F2B96 /* libetpan Tests */,
@@ -886,16 +918,6 @@
 			sourceTree = "<group>";
 			tabWidth = 2;
 			usesTabs = 0;
-		};
-		F20000000000000000000010 /* xcconfig */ = {
-			isa = PBXGroup;
-			children = (
-				F20000000000000000000001 /* tests-project.xcconfig */,
-				F20000000000000000000002 /* tests-samples.xcconfig */,
-				F20000000000000000000003 /* tests-unit.xcconfig */,
-			);
-			name = xcconfig;
-			sourceTree = "<group>";
 		};
 		367860BC16AB35BC002F2B96 /* Products */ = {
 			isa = PBXGroup;
@@ -972,6 +994,7 @@
 				3678639816AB61BA002F2B96 /* libetpan.a */,
 				A10000000000000000000015 /* XCTest.framework */,
 				A10000000000000000000016 /* libetpan.framework */,
+				E10000000000000000000002 /* Tidy.xcframework */,
 			);
 			name = "External Frameworks and Libraries";
 			sourceTree = "<group>";
@@ -1151,6 +1174,16 @@
 			name = data;
 			sourceTree = "<group>";
 		};
+		BD2AC2DD3038141D000E8D2A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				BD2AC2E43038141E000E8D2A /* libetpan.framework */,
+				BD2AC2E63038141E000E8D2A /* libetpan.a */,
+				BD2AC2E83038141E000E8D2A /* libetpan-ios.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		C10000000000000000000201 /* gmail */ = {
 			isa = PBXGroup;
 			children = (
@@ -1189,6 +1222,16 @@
 				C1000000000000000000010E /* smime_low_level_test.c */,
 			);
 			name = smime;
+			sourceTree = "<group>";
+		};
+		F20000000000000000000010 /* xcconfig */ = {
+			isa = PBXGroup;
+			children = (
+				F20000000000000000000001 /* xcconfig/tests-project.xcconfig */,
+				F20000000000000000000002 /* xcconfig/tests-samples.xcconfig */,
+				F20000000000000000000003 /* xcconfig/tests-unit.xcconfig */,
+			);
+			name = xcconfig;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1465,6 +1508,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				E10000000000000000000005 /* PBXTargetDependency */,
 			);
 			name = "libetpan-unit-tests";
 			productName = "libetpan-unit-tests";
@@ -1490,6 +1534,12 @@
 			mainGroup = 367860B016AB35BC002F2B96;
 			productRefGroup = 367860BC16AB35BC002F2B96 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = BD2AC2DD3038141D000E8D2A /* Products */;
+					ProjectRef = E10000000000000000000004 /* libetpan.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				A10000000000000000000040 /* libetpan-unit-tests */,
@@ -1512,6 +1562,30 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		BD2AC2E43038141E000E8D2A /* libetpan.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = libetpan.framework;
+			remoteRef = BD2AC2E33038141E000E8D2A /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		BD2AC2E63038141E000E8D2A /* libetpan.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libetpan.a;
+			remoteRef = BD2AC2E53038141E000E8D2A /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		BD2AC2E83038141E000E8D2A /* libetpan-ios.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libetpan-ios.a";
+			remoteRef = BD2AC2E73038141E000E8D2A /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		A10000000000000000000022 /* Resources */ = {
@@ -1892,223 +1966,264 @@
 			target = 3678623A16AB4F32002F2B96 /* smtpsend */;
 			targetProxy = 3678624B16AB4F70002F2B96 /* PBXContainerItemProxy */;
 		};
+		E10000000000000000000005 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = libetpan;
+			targetProxy = E10000000000000000000003 /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		367860C316AB35BC002F2B96 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F20000000000000000000001 /* tests-project.xcconfig */;
-			buildSettings = {};
+			baseConfigurationReference = F20000000000000000000001 /* xcconfig/tests-project.xcconfig */;
+			buildSettings = {
+			};
 			name = Debug;
 		};
 		367860C416AB35BC002F2B96 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F20000000000000000000001 /* tests-project.xcconfig */;
-			buildSettings = {};
+			baseConfigurationReference = F20000000000000000000001 /* xcconfig/tests-project.xcconfig */;
+			buildSettings = {
+			};
 			name = Release;
 		};
 		3678611316AB3964002F2B96 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F20000000000000000000002 /* tests-samples.xcconfig */;
-			buildSettings = {};
+			baseConfigurationReference = F20000000000000000000002 /* xcconfig/tests-samples.xcconfig */;
+			buildSettings = {
+			};
 			name = Debug;
 		};
 		3678611416AB3964002F2B96 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F20000000000000000000002 /* tests-samples.xcconfig */;
-			buildSettings = {};
+			baseConfigurationReference = F20000000000000000000002 /* xcconfig/tests-samples.xcconfig */;
+			buildSettings = {
+			};
 			name = Release;
 		};
 		3678613416AB4314002F2B96 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F20000000000000000000002 /* tests-samples.xcconfig */;
-			buildSettings = {};
+			baseConfigurationReference = F20000000000000000000002 /* xcconfig/tests-samples.xcconfig */;
+			buildSettings = {
+			};
 			name = Debug;
 		};
 		3678613516AB4314002F2B96 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F20000000000000000000002 /* tests-samples.xcconfig */;
-			buildSettings = {};
+			baseConfigurationReference = F20000000000000000000002 /* xcconfig/tests-samples.xcconfig */;
+			buildSettings = {
+			};
 			name = Release;
 		};
 		3678614616AB4411002F2B96 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F20000000000000000000002 /* tests-samples.xcconfig */;
-			buildSettings = {};
+			baseConfigurationReference = F20000000000000000000002 /* xcconfig/tests-samples.xcconfig */;
+			buildSettings = {
+			};
 			name = Debug;
 		};
 		3678614716AB4411002F2B96 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F20000000000000000000002 /* tests-samples.xcconfig */;
-			buildSettings = {};
+			baseConfigurationReference = F20000000000000000000002 /* xcconfig/tests-samples.xcconfig */;
+			buildSettings = {
+			};
 			name = Release;
 		};
 		3678615816AB44A6002F2B96 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F20000000000000000000002 /* tests-samples.xcconfig */;
-			buildSettings = {};
+			baseConfigurationReference = F20000000000000000000002 /* xcconfig/tests-samples.xcconfig */;
+			buildSettings = {
+			};
 			name = Debug;
 		};
 		3678615916AB44A6002F2B96 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F20000000000000000000002 /* tests-samples.xcconfig */;
-			buildSettings = {};
+			baseConfigurationReference = F20000000000000000000002 /* xcconfig/tests-samples.xcconfig */;
+			buildSettings = {
+			};
 			name = Release;
 		};
 		3678616916AB4547002F2B96 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F20000000000000000000002 /* tests-samples.xcconfig */;
-			buildSettings = {};
+			baseConfigurationReference = F20000000000000000000002 /* xcconfig/tests-samples.xcconfig */;
+			buildSettings = {
+			};
 			name = Debug;
 		};
 		3678616A16AB4547002F2B96 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F20000000000000000000002 /* tests-samples.xcconfig */;
-			buildSettings = {};
+			baseConfigurationReference = F20000000000000000000002 /* xcconfig/tests-samples.xcconfig */;
+			buildSettings = {
+			};
 			name = Release;
 		};
 		3678617916AB4551002F2B96 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F20000000000000000000002 /* tests-samples.xcconfig */;
-			buildSettings = {};
+			baseConfigurationReference = F20000000000000000000002 /* xcconfig/tests-samples.xcconfig */;
+			buildSettings = {
+			};
 			name = Debug;
 		};
 		3678617A16AB4551002F2B96 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F20000000000000000000002 /* tests-samples.xcconfig */;
-			buildSettings = {};
+			baseConfigurationReference = F20000000000000000000002 /* xcconfig/tests-samples.xcconfig */;
+			buildSettings = {
+			};
 			name = Release;
 		};
 		3678618916AB4559002F2B96 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F20000000000000000000002 /* tests-samples.xcconfig */;
-			buildSettings = {};
+			baseConfigurationReference = F20000000000000000000002 /* xcconfig/tests-samples.xcconfig */;
+			buildSettings = {
+			};
 			name = Debug;
 		};
 		3678618A16AB4559002F2B96 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F20000000000000000000002 /* tests-samples.xcconfig */;
-			buildSettings = {};
+			baseConfigurationReference = F20000000000000000000002 /* xcconfig/tests-samples.xcconfig */;
+			buildSettings = {
+			};
 			name = Release;
 		};
 		367861A616AB470B002F2B96 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F20000000000000000000002 /* tests-samples.xcconfig */;
-			buildSettings = {};
+			baseConfigurationReference = F20000000000000000000002 /* xcconfig/tests-samples.xcconfig */;
+			buildSettings = {
+			};
 			name = Debug;
 		};
 		367861A716AB470B002F2B96 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F20000000000000000000002 /* tests-samples.xcconfig */;
-			buildSettings = {};
+			baseConfigurationReference = F20000000000000000000002 /* xcconfig/tests-samples.xcconfig */;
+			buildSettings = {
+			};
 			name = Release;
 		};
 		367861BB16AB48E1002F2B96 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F20000000000000000000002 /* tests-samples.xcconfig */;
-			buildSettings = {};
+			baseConfigurationReference = F20000000000000000000002 /* xcconfig/tests-samples.xcconfig */;
+			buildSettings = {
+			};
 			name = Debug;
 		};
 		367861BC16AB48E1002F2B96 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F20000000000000000000002 /* tests-samples.xcconfig */;
-			buildSettings = {};
+			baseConfigurationReference = F20000000000000000000002 /* xcconfig/tests-samples.xcconfig */;
+			buildSettings = {
+			};
 			name = Release;
 		};
 		367861CB16AB48E4002F2B96 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F20000000000000000000002 /* tests-samples.xcconfig */;
-			buildSettings = {};
+			baseConfigurationReference = F20000000000000000000002 /* xcconfig/tests-samples.xcconfig */;
+			buildSettings = {
+			};
 			name = Debug;
 		};
 		367861CC16AB48E4002F2B96 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F20000000000000000000002 /* tests-samples.xcconfig */;
-			buildSettings = {};
+			baseConfigurationReference = F20000000000000000000002 /* xcconfig/tests-samples.xcconfig */;
+			buildSettings = {
+			};
 			name = Release;
 		};
 		367861D716AB4C1C002F2B96 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F20000000000000000000002 /* tests-samples.xcconfig */;
-			buildSettings = {};
+			baseConfigurationReference = F20000000000000000000002 /* xcconfig/tests-samples.xcconfig */;
+			buildSettings = {
+			};
 			name = Debug;
 		};
 		367861D816AB4C1C002F2B96 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F20000000000000000000002 /* tests-samples.xcconfig */;
-			buildSettings = {};
+			baseConfigurationReference = F20000000000000000000002 /* xcconfig/tests-samples.xcconfig */;
+			buildSettings = {
+			};
 			name = Release;
 		};
 		367861F916AB4D4F002F2B96 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F20000000000000000000002 /* tests-samples.xcconfig */;
-			buildSettings = {};
+			baseConfigurationReference = F20000000000000000000002 /* xcconfig/tests-samples.xcconfig */;
+			buildSettings = {
+			};
 			name = Debug;
 		};
 		367861FA16AB4D4F002F2B96 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F20000000000000000000002 /* tests-samples.xcconfig */;
-			buildSettings = {};
+			baseConfigurationReference = F20000000000000000000002 /* xcconfig/tests-samples.xcconfig */;
+			buildSettings = {
+			};
 			name = Release;
 		};
 		3678620D16AB4DFE002F2B96 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F20000000000000000000002 /* tests-samples.xcconfig */;
-			buildSettings = {};
+			baseConfigurationReference = F20000000000000000000002 /* xcconfig/tests-samples.xcconfig */;
+			buildSettings = {
+			};
 			name = Debug;
 		};
 		3678620E16AB4DFE002F2B96 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F20000000000000000000002 /* tests-samples.xcconfig */;
-			buildSettings = {};
+			baseConfigurationReference = F20000000000000000000002 /* xcconfig/tests-samples.xcconfig */;
+			buildSettings = {
+			};
 			name = Release;
 		};
 		3678622016AB4E63002F2B96 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F20000000000000000000002 /* tests-samples.xcconfig */;
-			buildSettings = {};
+			baseConfigurationReference = F20000000000000000000002 /* xcconfig/tests-samples.xcconfig */;
+			buildSettings = {
+			};
 			name = Debug;
 		};
 		3678622116AB4E63002F2B96 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F20000000000000000000002 /* tests-samples.xcconfig */;
-			buildSettings = {};
+			baseConfigurationReference = F20000000000000000000002 /* xcconfig/tests-samples.xcconfig */;
+			buildSettings = {
+			};
 			name = Release;
 		};
 		3678623316AB4EE6002F2B96 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F20000000000000000000002 /* tests-samples.xcconfig */;
-			buildSettings = {};
+			baseConfigurationReference = F20000000000000000000002 /* xcconfig/tests-samples.xcconfig */;
+			buildSettings = {
+			};
 			name = Debug;
 		};
 		3678623416AB4EE6002F2B96 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F20000000000000000000002 /* tests-samples.xcconfig */;
-			buildSettings = {};
+			baseConfigurationReference = F20000000000000000000002 /* xcconfig/tests-samples.xcconfig */;
+			buildSettings = {
+			};
 			name = Release;
 		};
 		3678624616AB4F32002F2B96 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F20000000000000000000002 /* tests-samples.xcconfig */;
-			buildSettings = {};
+			baseConfigurationReference = F20000000000000000000002 /* xcconfig/tests-samples.xcconfig */;
+			buildSettings = {
+			};
 			name = Debug;
 		};
 		3678624716AB4F32002F2B96 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F20000000000000000000002 /* tests-samples.xcconfig */;
-			buildSettings = {};
+			baseConfigurationReference = F20000000000000000000002 /* xcconfig/tests-samples.xcconfig */;
+			buildSettings = {
+			};
 			name = Release;
 		};
 		A10000000000000000000051 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F20000000000000000000003 /* tests-unit.xcconfig */;
-			buildSettings = {};
+			baseConfigurationReference = F20000000000000000000003 /* xcconfig/tests-unit.xcconfig */;
+			buildSettings = {
+			};
 			name = Debug;
 		};
 		A10000000000000000000052 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F20000000000000000000003 /* tests-unit.xcconfig */;
-			buildSettings = {};
+			baseConfigurationReference = F20000000000000000000003 /* xcconfig/tests-unit.xcconfig */;
+			buildSettings = {
+			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
