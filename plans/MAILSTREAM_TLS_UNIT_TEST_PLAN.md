@@ -35,12 +35,14 @@ test can cover socket OpenSSL, socket GnuTLS, and CFStream direct-TLS client
 paths. The server remains OpenSSL-only by design; changing the server backend
 would mostly test TLS library interoperability rather than libetpan behavior.
 
-## Future Follow-Up
+## STARTTLS Follow-Up
 
-Add a STARTTLS-specific fixture once direct TLS round-trip coverage is stable.
-That fixture should minimally script IMAP, POP3, and SMTP greetings and STARTTLS
-commands, then upgrade the same connection to TLS. The assertions should focus
-on libetpan low-stream replacement and post-upgrade read/write behavior.
+The round-trip fixture also scripts IMAP, POP3, and SMTP greetings and STARTTLS
+commands, then upgrades the same connection to TLS. For each compiled socket
+backend it verifies the TLS callback, low-stream replacement, and a protocol
+NOOP request and response after the upgrade. CFNetwork remains covered by the
+direct-TLS case; its in-place STARTTLS path does not use the socket low-stream
+replacement exercised here.
 
 ## Non-Goals
 

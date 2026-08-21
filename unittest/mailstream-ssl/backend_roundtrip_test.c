@@ -5,6 +5,12 @@
 
 #include <libetpan/mailstream.h>
 #include <libetpan/mailstream_ssl.h>
+#include <libetpan/mailimap.h>
+#include <libetpan/mailimap_socket.h>
+#include <libetpan/mailpop3.h>
+#include <libetpan/mailpop3_socket.h>
+#include <libetpan/mailsmtp.h>
+#include <libetpan/mailsmtp_socket.h>
 
 #if defined(HAVE_OPENSSL) && !defined(WIN32)
 #include <arpa/inet.h>
@@ -72,6 +78,14 @@ struct test_server {
   int listen_fd;
   int result;
   pthread_t thread;
+  int protocol;
+};
+
+enum test_protocol {
+  TEST_DIRECT_TLS,
+  TEST_IMAP_STARTTLS,
+  TEST_POP3_STARTTLS,
+  TEST_SMTP_STARTTLS
 };
 
 struct callback_state {
@@ -164,6 +178,124 @@ static int ssl_write_exact(SSL * ssl, const char * buf, size_t len)
   return 0;
 }
 
+static int socket_write_exact(int fd, const char * buf, size_t len)
+{
+  size_t done = 0;
+
+  while (done < len) {
+    ssize_t r = write(fd, buf + done, len - done);
+    if (r <= 0)
+      return -1;
+    done += (size_t) r;
+  }
+  return 0;
+}
+
+static int socket_read_line(int fd, char * buf, size_t size)
+{
+  size_t len = 0;
+
+  while (len + 1 < size) {
+    ssize_t r = read(fd, buf + len, 1);
+    if (r != 1)
+      return -1;
+    if (buf[len++] == '\n') {
+      buf[len] = '\0';
+      return 0;
+    }
+  }
+  return -1;
+}
+
+static int ssl_read_line(SSL * ssl, char * buf, size_t size)
+{
+  size_t len = 0;
+
+  while (len + 1 < size) {
+    int r = SSL_read(ssl, buf + len, 1);
+    if (r != 1)
+      return -1;
+    if (buf[len++] == '\n') {
+      buf[len] = '\0';
+      return 0;
+    }
+  }
+  return -1;
+}
+
+static int prepare_starttls(int fd, int protocol)
+{
+  char line[256];
+  char response[320];
+  char * space;
+
+  switch (protocol) {
+  case TEST_IMAP_STARTTLS:
+    if (socket_write_exact(fd,
+        "* OK [CAPABILITY IMAP4rev1 STARTTLS] Server ready\r\n",
+        strlen("* OK [CAPABILITY IMAP4rev1 STARTTLS] Server ready\r\n")) < 0 ||
+        socket_read_line(fd, line, sizeof(line)) < 0)
+      return -1;
+    space = strchr(line, ' ');
+    if (space == NULL || strcmp(space + 1, "STARTTLS\r\n") != 0)
+      return -1;
+    *space = '\0';
+    snprintf(response, sizeof(response), "%s OK Begin TLS\r\n", line);
+    return socket_write_exact(fd, response, strlen(response));
+  case TEST_POP3_STARTTLS:
+    if (socket_write_exact(fd, "+OK local POP3 ready\r\n",
+        strlen("+OK local POP3 ready\r\n")) < 0 ||
+        socket_read_line(fd, line, sizeof(line)) < 0 ||
+        strcmp(line, "STLS\r\n") != 0)
+      return -1;
+    return socket_write_exact(fd, "+OK Begin TLS\r\n",
+        strlen("+OK Begin TLS\r\n"));
+  case TEST_SMTP_STARTTLS:
+    if (socket_write_exact(fd, "220 local SMTP ready\r\n",
+        strlen("220 local SMTP ready\r\n")) < 0 ||
+        socket_read_line(fd, line, sizeof(line)) < 0 ||
+        strncmp(line, "EHLO ", 5) != 0 ||
+        socket_write_exact(fd, "250-local\r\n250 STARTTLS\r\n",
+            strlen("250-local\r\n250 STARTTLS\r\n")) < 0 ||
+        socket_read_line(fd, line, sizeof(line)) < 0 ||
+        strcmp(line, "STARTTLS\r\n") != 0)
+      return -1;
+    return socket_write_exact(fd, "220 Begin TLS\r\n",
+        strlen("220 Begin TLS\r\n"));
+  default:
+    return -1;
+  }
+}
+
+static int serve_post_starttls(SSL * ssl, int protocol)
+{
+  char line[256];
+  char response[320];
+  char * space;
+
+  if (ssl_read_line(ssl, line, sizeof(line)) < 0)
+    return -1;
+  switch (protocol) {
+  case TEST_IMAP_STARTTLS:
+    space = strchr(line, ' ');
+    if (space == NULL || strcmp(space + 1, "NOOP\r\n") != 0)
+      return -1;
+    *space = '\0';
+    snprintf(response, sizeof(response), "%s OK NOOP completed\r\n", line);
+    return ssl_write_exact(ssl, response, strlen(response));
+  case TEST_POP3_STARTTLS:
+    if (strcmp(line, "NOOP\r\n") != 0)
+      return -1;
+    return ssl_write_exact(ssl, "+OK\r\n", 5);
+  case TEST_SMTP_STARTTLS:
+    if (strcmp(line, "NOOP\r\n") != 0)
+      return -1;
+    return ssl_write_exact(ssl, "250 OK\r\n", 8);
+  default:
+    return -1;
+  }
+}
+
 static void * server_thread_main(void * data)
 {
   struct test_server * server = data;
@@ -182,6 +314,10 @@ static void * server_thread_main(void * data)
   if (client_fd < 0)
     goto err_ctx;
 
+  if (server->protocol != TEST_DIRECT_TLS &&
+      prepare_starttls(client_fd, server->protocol) < 0)
+    goto err_client;
+
   ssl = SSL_new(ctx);
   if (ssl == NULL)
     goto err_client;
@@ -189,11 +325,13 @@ static void * server_thread_main(void * data)
     goto err_ssl;
   if (SSL_accept(ssl) != 1)
     goto err_ssl;
-  if (ssl_read_exact(ssl, input, sizeof(input)) < 0)
-    goto err_ssl;
-  if (memcmp(input, "ping", sizeof(input)) != 0)
-    goto err_ssl;
-  if (ssl_write_exact(ssl, "pong", 4) < 0)
+  if (server->protocol == TEST_DIRECT_TLS) {
+    if (ssl_read_exact(ssl, input, sizeof(input)) < 0 ||
+        memcmp(input, "ping", sizeof(input)) != 0 ||
+        ssl_write_exact(ssl, "pong", 4) < 0)
+      goto err_ssl;
+  }
+  else if (serve_post_starttls(ssl, server->protocol) < 0)
     goto err_ssl;
 
   SSL_shutdown(ssl);
@@ -218,17 +356,15 @@ err:
   return NULL;
 }
 
-static uint16_t server_start(struct test_server * server)
+static uint16_t server_start(struct test_server * server, int protocol)
 {
   struct sockaddr_in addr;
   socklen_t addr_len;
-  int opt = 1;
 
   memset(server, 0, sizeof(*server));
+  server->protocol = protocol;
   server->listen_fd = socket(AF_INET, SOCK_STREAM, 0);
   assert(server->listen_fd >= 0);
-  assert(setsockopt(server->listen_fd, SOL_SOCKET, SO_REUSEADDR,
-      &opt, sizeof(opt)) == 0);
 
   memset(&addr, 0, sizeof(addr));
   addr.sin_family = AF_INET;
@@ -248,6 +384,7 @@ static uint16_t server_start(struct test_server * server)
 
 static int loopback_sockets_are_available(void)
 {
+  struct sockaddr_in addr;
   int fd;
 
   fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -260,6 +397,19 @@ static int loopback_sockets_are_available(void)
     assert(fd >= 0);
   }
 
+  memset(&addr, 0, sizeof(addr));
+  addr.sin_family = AF_INET;
+  addr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
+  addr.sin_port = 0;
+  if (bind(fd, (struct sockaddr *) &addr, sizeof(addr)) < 0) {
+    if (errno == EACCES || errno == EPERM) {
+      close(fd);
+      fputs("loopback sockets are not permitted in this environment\n",
+          stderr);
+      return 0;
+    }
+    assert(0);
+  }
   close(fd);
   return 1;
 }
@@ -304,7 +454,7 @@ static void test_backend(enum mailstream_ssl_backend backend,
 
   assert(mailstream_ssl_set_backend(backend) == 0);
   callback.called = 0;
-  port = server_start(&server);
+  port = server_start(&server, TEST_DIRECT_TLS);
   error = MAILSTREAM_SSL_CONNECT_ERROR_CONNECTION_REFUSED;
   stream = mailstream_ssl_connect_timeout("127.0.0.1", port, 5,
       expect_callback ? ssl_callback : NULL, &callback, &error);
@@ -314,7 +464,78 @@ static void test_backend(enum mailstream_ssl_backend backend,
   server_join(&server);
 }
 
-int main(void)
+
+static void test_starttls_protocol(enum mailstream_ssl_backend backend,
+    int protocol)
+{
+  struct test_server server;
+  struct callback_state callback;
+  uint16_t port;
+  int r;
+
+  if (!mailstream_ssl_backend_is_available(backend))
+    return;
+  /* CFStream performs the upgrade in-place and does not use this callback. */
+  assert(mailstream_ssl_set_backend(backend) == 0);
+  callback.called = 0;
+  port = server_start(&server, protocol);
+
+  if (protocol == TEST_IMAP_STARTTLS) {
+    mailimap * session = mailimap_new(0, NULL);
+    mailstream_low * old_low;
+    assert(session != NULL);
+    r = mailimap_socket_connect(session, "127.0.0.1", port);
+    assert(r == MAILIMAP_NO_ERROR);
+    old_low = mailstream_get_low(session->imap_stream);
+    r = mailimap_socket_starttls_with_callback(session, ssl_callback, &callback);
+    assert(r == MAILIMAP_NO_ERROR);
+    assert(mailstream_get_low(session->imap_stream) != old_low ||
+        backend == MAILSTREAM_SSL_BACKEND_CFNETWORK);
+    assert(mailimap_noop(session) == MAILIMAP_NO_ERROR);
+    mailimap_free(session);
+  }
+  else if (protocol == TEST_POP3_STARTTLS) {
+    mailpop3 * session = mailpop3_new(0, NULL);
+    mailstream_low * old_low;
+    assert(session != NULL);
+    r = mailpop3_socket_connect(session, "127.0.0.1", port);
+    assert(r == MAILPOP3_NO_ERROR);
+    old_low = mailstream_get_low(session->pop3_stream);
+    r = mailpop3_socket_starttls_with_callback(session, ssl_callback, &callback);
+    assert(r == MAILPOP3_NO_ERROR);
+    assert(mailstream_get_low(session->pop3_stream) != old_low ||
+        backend == MAILSTREAM_SSL_BACKEND_CFNETWORK);
+    assert(mailpop3_noop(session) == MAILPOP3_NO_ERROR);
+    mailpop3_free(session);
+  }
+  else {
+    mailsmtp * session = mailsmtp_new(0, NULL);
+    mailstream_low * old_low;
+    assert(session != NULL);
+    r = mailsmtp_socket_connect(session, "127.0.0.1", port);
+    assert(r == MAILSMTP_NO_ERROR);
+    assert(mailesmtp_ehlo(session) == MAILSMTP_NO_ERROR);
+    old_low = mailstream_get_low(session->stream);
+    r = mailsmtp_socket_starttls_with_callback(session, ssl_callback, &callback);
+    assert(r == MAILSMTP_NO_ERROR);
+    assert(mailstream_get_low(session->stream) != old_low ||
+        backend == MAILSTREAM_SSL_BACKEND_CFNETWORK);
+    assert(mailsmtp_noop(session) == MAILSMTP_NO_ERROR);
+    mailsmtp_free(session);
+  }
+
+  assert(callback.called == (backend != MAILSTREAM_SSL_BACKEND_CFNETWORK));
+  server_join(&server);
+}
+
+static void test_starttls_backend(enum mailstream_ssl_backend backend)
+{
+  test_starttls_protocol(backend, TEST_IMAP_STARTTLS);
+  test_starttls_protocol(backend, TEST_POP3_STARTTLS);
+  test_starttls_protocol(backend, TEST_SMTP_STARTTLS);
+}
+
+int mailstream_tls_backend_roundtrip_test(void)
 {
   if (!loopback_sockets_are_available())
     return 77;
@@ -324,15 +545,27 @@ int main(void)
 
   test_backend(MAILSTREAM_SSL_BACKEND_OPENSSL, 1);
   test_backend(MAILSTREAM_SSL_BACKEND_GNUTLS, 1);
+  test_starttls_backend(MAILSTREAM_SSL_BACKEND_OPENSSL);
+  test_starttls_backend(MAILSTREAM_SSL_BACKEND_GNUTLS);
+
   test_backend(MAILSTREAM_SSL_BACKEND_CFNETWORK, 0);
 
   return 0;
 }
 
+#ifndef MAILSTREAM_TLS_NO_MAIN
+int main(void)
+{
+  return mailstream_tls_backend_roundtrip_test();
+}
+#endif
+
 #else
+#ifndef MAILSTREAM_TLS_NO_MAIN
 int main(void)
 {
   fputs("OpenSSL and POSIX sockets are required for this fixture\n", stderr);
   return 77;
 }
+#endif
 #endif

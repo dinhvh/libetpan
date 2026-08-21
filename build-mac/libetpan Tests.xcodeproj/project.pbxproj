@@ -213,6 +213,8 @@
 		AG0000000000000000000002 /* http_test.c in Sources */ = {isa = PBXBuildFile; fileRef = AG0000000000000000000012 /* http_test.c */; settings = {COMPILER_FLAGS = "-DACTIVESYNC_HTTP_NO_MAIN"; }; };
 		AH0000000000000000000001 /* ActiveSyncSampleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = AH0000000000000000000011 /* ActiveSyncSampleTests.m */; };
 		AH0000000000000000000002 /* sample_test.c in Sources */ = {isa = PBXBuildFile; fileRef = AH0000000000000000000012 /* sample_test.c */; settings = {COMPILER_FLAGS = "-DACTIVESYNC_SAMPLE_NO_MAIN"; }; };
+		F30000000000000000000001 /* MailstreamTLSTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F30000000000000000000011 /* MailstreamTLSTests.m */; };
+		F30000000000000000000002 /* backend_roundtrip_test.c in Sources */ = {isa = PBXBuildFile; fileRef = F30000000000000000000012 /* backend_roundtrip_test.c */; settings = {COMPILER_FLAGS = "-DHAVE_OPENSSL=1 -DMAILSTREAM_TLS_NO_MAIN=1"; }; };
 		C10000000000000000000003 /* JMAPBlobTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C10000000000000000000103 /* JMAPBlobTests.m */; };
 		C10000000000000000000004 /* JMAPCallTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C10000000000000000000104 /* JMAPCallTests.m */; };
 		C10000000000000000000005 /* JMAPEmailTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C10000000000000000000105 /* JMAPEmailTests.m */; };
@@ -660,6 +662,8 @@
 		AG0000000000000000000012 /* http_test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = http_test.c; path = ../unittest/activesync/http_test.c; sourceTree = SOURCE_ROOT; };
 		AH0000000000000000000011 /* ActiveSyncSampleTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = ActiveSyncSampleTests.m; path = ../unittest/xctest/ActiveSyncSampleTests.m; sourceTree = SOURCE_ROOT; };
 		AH0000000000000000000012 /* sample_test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = sample_test.c; path = ../unittest/activesync/sample_test.c; sourceTree = SOURCE_ROOT; };
+		F30000000000000000000011 /* MailstreamTLSTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = MailstreamTLSTests.m; path = ../unittest/xctest/MailstreamTLSTests.m; sourceTree = SOURCE_ROOT; };
+		F30000000000000000000012 /* backend_roundtrip_test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = backend_roundtrip_test.c; path = "../unittest/mailstream-ssl/backend_roundtrip_test.c"; sourceTree = SOURCE_ROOT; };
 		C10000000000000000000103 /* JMAPBlobTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = JMAPBlobTests.m; path = ../unittest/xctest/JMAPBlobTests.m; sourceTree = SOURCE_ROOT; };
 		C10000000000000000000104 /* JMAPCallTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = JMAPCallTests.m; path = ../unittest/xctest/JMAPCallTests.m; sourceTree = SOURCE_ROOT; };
 		C10000000000000000000105 /* JMAPEmailTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = JMAPEmailTests.m; path = ../unittest/xctest/JMAPEmailTests.m; sourceTree = SOURCE_ROOT; };
@@ -1960,6 +1964,8 @@
 				AG0000000000000000000002 /* http_test.c in Sources */,
 				AH0000000000000000000001 /* ActiveSyncSampleTests.m in Sources */,
 				AH0000000000000000000002 /* sample_test.c in Sources */,
+				F30000000000000000000001 /* MailstreamTLSTests.m in Sources */,
+				F30000000000000000000002 /* backend_roundtrip_test.c in Sources */,
 				C20000000000000000000001 /* GmailTests.m in Sources */,
 				C10000000000000000000003 /* JMAPBlobTests.m in Sources */,
 				C10000000000000000000004 /* JMAPCallTests.m in Sources */,
