@@ -30,7 +30,7 @@ jobs:
           xcodebuild test \
             -workspace build-mac/libetpan.xcworkspace \
             -scheme libetpan-ios-smime-tests \
-            -destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=latest' \
+            -destination 'platform=iOS Simulator,name=iPhone 17,OS=latest' \
             -derivedDataPath "$GITHUB_WORKSPACE/.build/xcode-ios" \
             CODE_SIGNING_ALLOWED=NO
 
