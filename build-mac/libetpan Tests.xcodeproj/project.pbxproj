@@ -227,6 +227,19 @@
 		C1000000000000000000000E /* smime_low_level_test.c in Sources */ = {isa = PBXBuildFile; fileRef = C1000000000000000000010E /* smime_low_level_test.c */; settings = {COMPILER_FLAGS = "-DUSE_SMIME_APPLE -DSMIME_LOW_LEVEL_NO_MAIN"; }; };
 		C20000000000000000000001 /* GmailTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C20000000000000000000101 /* GmailTests.m */; };
 		C30000000000000000000001 /* SMIMETests.m in Sources */ = {isa = PBXBuildFile; fileRef = C30000000000000000000101 /* SMIMETests.m */; };
+		D40000000000000000000001 /* smime_low_level_test.c in Sources */ = {isa = PBXBuildFile; fileRef = C1000000000000000000010E /* smime_low_level_test.c */; settings = {COMPILER_FLAGS = "-DSMIME_LOW_LEVEL_NO_MAIN"; }; };
+		D40000000000000000000002 /* SMIMETests.m in Sources */ = {isa = PBXBuildFile; fileRef = C30000000000000000000101 /* SMIMETests.m */; };
+		D40000000000000000000003 /* alice-cert.pem in Resources */ = {isa = PBXBuildFile; fileRef = D40000000000000000000070 /* alice-cert.pem */; };
+		D40000000000000000000004 /* alice-key.pem in Resources */ = {isa = PBXBuildFile; fileRef = D40000000000000000000071 /* alice-key.pem */; };
+		D40000000000000000000005 /* bob-cert.pem in Resources */ = {isa = PBXBuildFile; fileRef = D40000000000000000000072 /* bob-cert.pem */; };
+		D40000000000000000000006 /* bob-key.pem in Resources */ = {isa = PBXBuildFile; fileRef = D40000000000000000000073 /* bob-key.pem */; };
+		D40000000000000000000007 /* carol-cert.pem in Resources */ = {isa = PBXBuildFile; fileRef = D40000000000000000000074 /* carol-cert.pem */; };
+		D40000000000000000000008 /* carol-key-encrypted.pem in Resources */ = {isa = PBXBuildFile; fileRef = D40000000000000000000075 /* carol-key-encrypted.pem */; };
+		D40000000000000000000009 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A10000000000000000000015 /* XCTest.framework */; };
+		D4000000000000000000000A /* libetpan-ios.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BD2AC2E83038141E000E8D2A /* libetpan-ios.a */; };
+		D4000000000000000000000C /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6ED6CF817A1862C00A4A14C /* Security.framework */; };
+		D4000000000000000000000D /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3678611E16AB410C002F2B96 /* CoreFoundation.framework */; };
+		D4000000000000000000000E /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 8568A3DE1C609B8500FF4470 /* libz.tbd */; };
 		C6ED6CF917A1862C00A4A14C /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6ED6CF817A1862C00A4A14C /* Security.framework */; };
 		C6ED6CFA17A1863E00A4A14C /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6ED6CF817A1862C00A4A14C /* Security.framework */; };
 		C6ED6CFB17A1865600A4A14C /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6ED6CF817A1862C00A4A14C /* Security.framework */; };
@@ -393,6 +406,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
 			remoteInfo = libetpan;
+		};
+		D40000000000000000000061 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E10000000000000000000004 /* libetpan.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = C682E21815B315EF00BE9DA7;
+			remoteInfo = "libetpan ios";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -580,6 +600,14 @@
 		3678639816AB61BA002F2B96 /* libetpan.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libetpan.a; path = "../../../Library/Developer/Xcode/DerivedData/libetpan-dazyuihjymonnybirhcistixjbll/Build/Products/Debug/libetpan.a"; sourceTree = "<group>"; };
 		8568A3DE1C609B8500FF4470 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		A10000000000000000000010 /* libetpan-unit-tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "libetpan-unit-tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D40000000000000000000010 /* libetpan-ios-smime-tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "libetpan-ios-smime-tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D40000000000000000000011 /* xcconfig/tests-ios-smime.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "xcconfig/tests-ios-smime.xcconfig"; sourceTree = "<group>"; };
+		D40000000000000000000070 /* alice-cert.pem */ = {isa = PBXFileReference; lastKnownFileType = text; name = "alice-cert.pem"; path = "../unittest/smime/fixtures/alice-cert.pem"; sourceTree = SOURCE_ROOT; };
+		D40000000000000000000071 /* alice-key.pem */ = {isa = PBXFileReference; lastKnownFileType = text; name = "alice-key.pem"; path = "../unittest/smime/fixtures/alice-key.pem"; sourceTree = SOURCE_ROOT; };
+		D40000000000000000000072 /* bob-cert.pem */ = {isa = PBXFileReference; lastKnownFileType = text; name = "bob-cert.pem"; path = "../unittest/smime/fixtures/bob-cert.pem"; sourceTree = SOURCE_ROOT; };
+		D40000000000000000000073 /* bob-key.pem */ = {isa = PBXFileReference; lastKnownFileType = text; name = "bob-key.pem"; path = "../unittest/smime/fixtures/bob-key.pem"; sourceTree = SOURCE_ROOT; };
+		D40000000000000000000074 /* carol-cert.pem */ = {isa = PBXFileReference; lastKnownFileType = text; name = "carol-cert.pem"; path = "../unittest/smime/fixtures/carol-cert.pem"; sourceTree = SOURCE_ROOT; };
+		D40000000000000000000075 /* carol-key-encrypted.pem */ = {isa = PBXFileReference; lastKnownFileType = text; name = "carol-key-encrypted.pem"; path = "../unittest/smime/fixtures/carol-key-encrypted.pem"; sourceTree = SOURCE_ROOT; };
 		A10000000000000000000011 /* IMAPResponseDoneTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = IMAPResponseDoneTests.m; path = ../unittest/xctest/IMAPResponseDoneTests.m; sourceTree = SOURCE_ROOT; };
 		A10000000000000000000012 /* response_done_test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = response_done_test.c; path = ../unittest/imap/response_done_test.c; sourceTree = SOURCE_ROOT; };
 		A10000000000000000000013 /* imap_test_utils.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = imap_test_utils.c; path = ../unittest/imap/imap_test_utils.c; sourceTree = SOURCE_ROOT; };
@@ -656,6 +684,18 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		D40000000000000000000022 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D40000000000000000000009 /* XCTest.framework in Frameworks */,
+				D4000000000000000000000A /* libetpan-ios.a in Frameworks */,
+				D4000000000000000000000C /* Security.framework in Frameworks */,
+				D4000000000000000000000D /* CoreFoundation.framework in Frameworks */,
+				D4000000000000000000000E /* libz.tbd in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		3678610816AB3964002F2B96 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -922,6 +962,7 @@
 		367860BC16AB35BC002F2B96 /* Products */ = {
 			isa = PBXGroup;
 			children = (
+				D40000000000000000000010 /* libetpan-ios-smime-tests.xctest */,
 				A10000000000000000000010 /* libetpan-unit-tests.xctest */,
 				3678610B16AB3964002F2B96 /* imap-sample */,
 				3678613616AB4314002F2B96 /* mime-parse */,
@@ -1220,6 +1261,12 @@
 			isa = PBXGroup;
 			children = (
 				C1000000000000000000010E /* smime_low_level_test.c */,
+				D40000000000000000000070 /* alice-cert.pem */,
+				D40000000000000000000071 /* alice-key.pem */,
+				D40000000000000000000072 /* bob-cert.pem */,
+				D40000000000000000000073 /* bob-key.pem */,
+				D40000000000000000000074 /* carol-cert.pem */,
+				D40000000000000000000075 /* carol-key-encrypted.pem */,
 			);
 			name = smime;
 			sourceTree = "<group>";
@@ -1230,6 +1277,7 @@
 				F20000000000000000000001 /* xcconfig/tests-project.xcconfig */,
 				F20000000000000000000002 /* xcconfig/tests-samples.xcconfig */,
 				F20000000000000000000003 /* xcconfig/tests-unit.xcconfig */,
+				D40000000000000000000011 /* xcconfig/tests-ios-smime.xcconfig */,
 			);
 			name = xcconfig;
 			sourceTree = "<group>";
@@ -1237,6 +1285,24 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		D40000000000000000000040 /* libetpan-ios-smime-tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D40000000000000000000050 /* Build configuration list for PBXNativeTarget "libetpan-ios-smime-tests" */;
+			buildPhases = (
+				D40000000000000000000021 /* Sources */,
+				D40000000000000000000022 /* Frameworks */,
+				D40000000000000000000023 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D40000000000000000000060 /* PBXTargetDependency */,
+			);
+			name = "libetpan-ios-smime-tests";
+			productName = "libetpan-ios-smime-tests";
+			productReference = D40000000000000000000010 /* libetpan-ios-smime-tests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		3678610A16AB3964002F2B96 /* imap-sample */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 3678611216AB3964002F2B96 /* Build configuration list for PBXNativeTarget "imap-sample" */;
@@ -1543,6 +1609,7 @@
 			projectRoot = "";
 			targets = (
 				A10000000000000000000040 /* libetpan-unit-tests */,
+				D40000000000000000000040 /* libetpan-ios-smime-tests */,
 				3678610A16AB3964002F2B96 /* imap-sample */,
 				3678612816AB4314002F2B96 /* mime-parse */,
 				3678613A16AB4411002F2B96 /* mime-create */,
@@ -1588,6 +1655,19 @@
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
+		D40000000000000000000023 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D40000000000000000000003 /* alice-cert.pem in Resources */,
+				D40000000000000000000004 /* alice-key.pem in Resources */,
+				D40000000000000000000005 /* bob-cert.pem in Resources */,
+				D40000000000000000000006 /* bob-key.pem in Resources */,
+				D40000000000000000000007 /* carol-cert.pem in Resources */,
+				D40000000000000000000008 /* carol-key-encrypted.pem in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A10000000000000000000022 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1692,6 +1772,15 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		D40000000000000000000021 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D40000000000000000000001 /* smime_low_level_test.c in Sources */,
+				D40000000000000000000002 /* SMIMETests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		3678610716AB3964002F2B96 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1891,6 +1980,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		D40000000000000000000060 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "libetpan ios";
+			targetProxy = D40000000000000000000061 /* PBXContainerItemProxy */;
+		};
 		367861DA16AB4C3E002F2B96 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 3678610A16AB3964002F2B96 /* imap-sample */;
@@ -1974,6 +2068,20 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		D40000000000000000000051 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = D40000000000000000000011 /* xcconfig/tests-ios-smime.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		D40000000000000000000052 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = D40000000000000000000011 /* xcconfig/tests-ios-smime.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
 		367860C316AB35BC002F2B96 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F20000000000000000000001 /* xcconfig/tests-project.xcconfig */;
@@ -2229,6 +2337,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		D40000000000000000000050 /* Build configuration list for PBXNativeTarget "libetpan-ios-smime-tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D40000000000000000000051 /* Debug */,
+				D40000000000000000000052 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		367860B516AB35BC002F2B96 /* Build configuration list for PBXProject "libetpan Tests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

@@ -1,0 +1,16 @@
+BUNDLE_LOADER = $(TEST_HOST)
+CLANG_ENABLE_OBJC_ARC = YES
+CODE_SIGNING_ALLOWED = NO
+GCC_C_LANGUAGE_STANDARD = gnu99
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) HAVE_OPENSSL=1 USE_SMIME_OPENSSL=1
+GENERATE_INFOPLIST_FILE = YES
+HEADER_SEARCH_PATHS = $(SRCROOT)/../include $(SRCROOT)/../include/libetpan $(SRCROOT)/../src/data-types $(SRCROOT)/../src/low-level/imap $(SRCROOT)/dependencies/build/OpenSSL-Crypto.xcframework/ios-arm64_x86_64-simulator/Headers
+IPHONEOS_DEPLOYMENT_TARGET = 15.6
+LIBRARY_SEARCH_PATHS = $(inherited) $(SRCROOT)/dependencies/build/OpenSSL-Crypto.xcframework/ios-arm64_x86_64-simulator
+OTHER_LDFLAGS = $(inherited) -lcrypto -liconv -lxml2 -lm -lz
+PRODUCT_BUNDLE_IDENTIFIER = org.libetpan.ios-smime-tests
+PRODUCT_NAME = libetpan-ios-smime-tests
+SDKROOT = iphonesimulator
+SKIP_INSTALL = YES
+SUPPORTED_PLATFORMS = iphonesimulator
+TEST_HOST =

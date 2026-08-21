@@ -1,8 +1,33 @@
-# Xcode configuration cleanup plan
+# Apple build and S/MIME test plan
 
-## Intended feature matrix
+## Goal
 
-| Capability | iOS | macOS |
+Keep the Apple build feature split explicit and add deterministic iOS Simulator
+coverage for the OpenSSL S/MIME implementation. The test must validate the
+same static-library linkage that an iOS consumer uses, not only compile the
+archive.
+
+## Status
+
+Completed on 2026-08-20.
+
+- Added the shared `libetpan-ios-smime-tests` scheme and iOS Simulator XCTest
+  product.
+- Added an explicit dependency on the real `libetpan ios` static-library target.
+- Linked the OpenSSL Crypto simulator slice as a static-consumer dependency.
+- Bundled the deterministic PEM fixtures and made the reusable C test helpers
+  accept a fixture directory.
+- Restricted the iOS suite to OpenSSL tests and verified that the default backend
+  executes the OpenSSL round trip.
+- Ran the iOS suite successfully: 3 tests, 0 failures.
+- Ran the macOS regression suite successfully: 509 tests, 0 failures, including
+  all 6 Apple S/MIME tests.
+
+## Current state (2026-08-20)
+
+### Product feature matrix
+
+| Capability | iOS static library | macOS static library/framework |
 | --- | --- | --- |
 | OpenSSL transport | Enabled | Disabled |
 | S/MIME OpenSSL | Enabled | Disabled |
@@ -14,104 +39,137 @@
 | curl | Disabled | Disabled |
 | zlib | Enabled | Enabled |
 
-Disabled feature macros must be absent from the effective preprocessor definitions.
+The feature split is implemented in the xcconfigs:
 
-## Configuration structure
+- `libetpan-static-ios.xcconfig` defines `HAVE_OPENSSL=1` and
+  `USE_SMIME_OPENSSL=1`, with device and simulator header paths for the
+  dependency XCFrameworks.
+- `libetpan-macos.xcconfig` defines `USE_SMIME_APPLE=1` and is included by the
+  macOS framework and static-library configurations.
+- Common features remain in `libetpan-project.xcconfig`.
+- Static-library targets do not link their transitive dependency XCFrameworks;
+  the final consumer supplies them.
 
-1. Keep settings shared by all product targets in `libetpan-project.xcconfig`:
-   - `HAVE_CFNETWORK=1`
-   - `HAVE_CONFIG_H=1`
-   - `HAVE_COREFOUNDATION_CHARCONV=1`
-   - `HAVE_JMAP=1`
-   - `HAVE_ZLIB=1`
-   - `USE_PGP_RNP=1`
-   - `USE_SASL=1`
-   - Common language, warning, header-search, and Debug settings.
+### Existing S/MIME tests
 
-2. Add `libetpan-macos.xcconfig` for settings shared by the macOS framework and
-   static-library targets:
-   - `USE_SMIME_APPLE=1`
-   - The common macOS deployment target and SDK settings.
-   - Any other settings that are genuinely common to both macOS products.
+- `unittest/smime/smime_low_level_test.c` contains deterministic fixture,
+  sign/verify, tamper, encrypt/decrypt, multiple-recipient, signer-certificate,
+  wrong-key, and encrypted-private-key/passphrase-callback coverage.
+- The reusable crypto functions accept an explicit `enum mailsmime_backend`.
+- `unittest/xctest/SMIMETests.m` exposes Apple and conditionally compiled
+  OpenSSL XCTest methods.
+- The only XCTest product is currently `libetpan-unit-tests`, configured by
+  `tests-unit.xcconfig` for macOS only (`SDKROOT=macosx`,
+  `SUPPORTED_PLATFORMS=macosx`, and `USE_SMIME_APPLE=1`). Therefore its OpenSSL
+  XCTest methods are not compiled or run.
+- The macOS XCTest target builds against the nested `libetpan.xcodeproj`; the
+  shared scheme was repaired in commit `383b6a6` (`Fix Xcode unit test build`).
+- The Autotools test suite can exercise the OpenSSL backend on a host, including
+  command-line OpenSSL interoperability, but that does not validate iOS SDK
+  compilation, simulator linkage, or execution.
 
-3. Add `libetpan-macos.xcconfig` to the Xcode project's xcconfig group and include
-   it from both `libetpan-framework.xcconfig` and
-   `libetpan-static-macos.xcconfig`.
+### Remaining coverage gap
 
-4. Keep only the iOS-specific feature definitions in
-   `libetpan-static-ios.xcconfig`:
-   - `HAVE_OPENSSL=1`
-   - `USE_SMIME_OPENSSL=1`
+The `libetpan ios` target can compile for `iphonesimulator`, but no iOS test
+consumer links `libetpan-ios.a` with its required dependencies and executes the
+OpenSSL S/MIME backend. An archive-only build cannot detect missing symbols,
+incorrect XCFramework slice selection, resource access failures, or an
+incorrect default backend at runtime.
 
-5. Keep product-specific settings in the leaf configurations:
-   - Framework versioning, wrapper, install path, product name, and framework
-     linker settings in `libetpan-framework.xcconfig`.
-   - Static-library product name and install behavior in the static macOS and
-     iOS configurations.
-   - XCFramework aggregate settings in `libetpan-xcframework.xcconfig`.
+## Implemented plan
 
-All target-level `GCC_PREPROCESSOR_DEFINITIONS` values must begin with
-`$(inherited)` so project-level definitions remain effective.
+### 1. Make deterministic fixtures bundle-aware
 
-## Dependency linkage
+- Add a fixture-root or fixture-path injection mechanism to the reusable S/MIME
+  test helpers. Preserve the existing repository-relative fallback for the C
+  command-line and macOS test paths.
+- Add the PEM certificates and private keys required by the OpenSSL tests to the
+  iOS test bundle's Resources phase.
+- Resolve bundled resources with `NSBundle` in the XCTest adapter and pass
+  absolute paths to the C helpers. Do not depend on `__FILE__`, the repository
+  checkout, or changing the process working directory on iOS.
+- Keep these deterministic tests and fixtures under `unittest/`.
 
-1. Link static dependency XCFrameworks only into the dynamic `libetpan.framework`
-   target. For the requested feature matrix, that means RNP, CyrusSASL, JsonC,
-   and OpenSSL Crypto as RNP's transitive cryptographic dependency. Do not link
-   OpenSSL SSL, and do not define libetpan's OpenSSL feature macros on macOS.
+### 2. Add an iOS Simulator XCTest target
 
-2. Remove OpenSSL, RNP, CyrusSASL, and JsonC from the Frameworks build phases of
-   the iOS and macOS static-library targets. A static archive does not absorb or
-   re-export these dependencies; the final consumer is responsible for linking
-   the dependency libraries required by the selected libetpan features.
+- Add a separate `libetpan-ios-smime-tests` unit-test bundle to
+  `build-mac/libetpan Tests.xcodeproj` with its own shared scheme and leaf
+  xcconfig.
+- Configure it for `iphonesimulator`, define `HAVE_OPENSSL=1` and
+  `USE_SMIME_OPENSSL=1`, and ensure `USE_SMIME_APPLE` is absent.
+- Compile `SMIMETests.m` and `smime_low_level_test.c` with
+  `SMIME_LOW_LEVEL_NO_MAIN`.
+- Add a target dependency on `libetpan ios` from the nested library project.
+- Link the produced `libetpan-ios.a` plus the simulator slices of all required
+  static dependencies: OpenSSL Crypto, RNP, CyrusSASL, JsonC, Tidy where needed,
+  zlib, and required Apple system frameworks. Do not link OpenSSL SSL unless an
+  unresolved transport symbol proves it is required by this consumer.
+- Give the test bundle a unique product name and bundle identifier so it cannot
+  collide with the macOS XCTest product.
 
-3. Preserve explicit compile-time header visibility for the static targets after
-   removing the Frameworks-phase entries. In particular:
-   - iOS needs OpenSSL headers for OpenSSL S/MIME.
-   - Both platforms need RNP, CyrusSASL, and JsonC headers.
-   Prefer shared xcconfig search-path definitions over target-local project-file
-   settings.
+### 3. Exercise the iOS OpenSSL contract
 
-4. Keep the Apple Security, CoreFoundation, Foundation, and other required system
-   frameworks on the dynamic macOS framework target. Document the corresponding
-   system-library requirements for consumers of the static archives.
+- Run the existing signed/encrypted MIME recognition tests using bundled
+  fixtures where they remain useful.
+- Run `smime_test_crypto_round_trip_with_backend(MAILSMIME_BACKEND_OPENSSL)`.
+- Run
+  `smime_test_passphrase_callback_with_backend(MAILSMIME_BACKEND_OPENSSL)`.
+- Add a small assertion that `MAILSMIME_BACKEND_DEFAULT` selects OpenSSL in the
+  iOS configuration. Prefer exposing a backend query if one already exists;
+  otherwise verify it by successfully running the default-backend round trip.
+- Keep Apple-backend tests out of this target so an accidental feature-matrix
+  change fails at compile or link time instead of silently testing the wrong
+  implementation.
 
-5. Keep `-lz` on the dynamic framework link. Document that static-library
-   consumers must link zlib themselves.
+### 4. Verify build settings, linkage, and execution
 
-## Source membership
+- Use `xcodebuild -showBuildSettings` for the iOS test target in Debug and
+  Release and confirm:
+  - `SDKROOT` resolves to `iphonesimulator`;
+  - `SUPPORTED_PLATFORMS` contains only `iphonesimulator`;
+  - `HAVE_OPENSSL=1` and `USE_SMIME_OPENSSL=1` are present;
+  - `USE_SMIME_APPLE`, `HAVE_GNUTLS`, and `HAVE_CURL` are absent;
+  - simulator dependency header and library slices are selected.
+- Build the iOS test target for a generic simulator destination to catch compile
+  and link errors without requiring a booted simulator.
+- Run the shared scheme on an available iOS Simulator and require all OpenSSL
+  S/MIME tests to pass.
+- Re-run the macOS `libetpan-unit-tests` scheme to ensure its Apple S/MIME tests
+  still pass and its feature settings remain unchanged.
+- Build the iOS static library and XCFramework aggregate after the test-project
+  changes.
 
-- Leave `mailhttp_curl.c` in the source tree and in the existing target source
-  phases. With `HAVE_CURL` undefined, its curl implementation is compiled out.
+## Acceptance criteria
 
-## Remove deprecated, obsolete, or redundant settings
+- A shared iOS Simulator test scheme is present and runnable from both Xcode and
+  `xcodebuild`.
+- The test target links the real `libetpan-ios.a` and simulator dependency
+  slices with no unresolved or duplicate crypto symbols.
+- OpenSSL sign/verify, encrypt/decrypt, trust status, tamper detection,
+  multi-recipient encryption, wrong-key handling, certificate export, and
+  encrypted-key passphrase callback execute successfully on the simulator.
+- The default S/MIME backend is proven to be OpenSSL in the iOS build.
+- Tests use bundled deterministic fixtures and require no network, credentials,
+  keychain state, or repository-relative runtime paths.
+- Existing macOS Apple-backend XCTest coverage remains green.
 
-- Remove `ALWAYS_SEARCH_USER_PATHS` from all xcconfigs.
-- Remove `ENABLE_BITCODE`.
-- Remove `GCC_MODEL_TUNING = G5`.
-- Remove `ZERO_LINK`.
-- Remove duplicated target-level `GCC_OPTIMIZATION_LEVEL[config=Debug]` and keep
-  the project-level definition.
-- Remove `COMBINE_HIDPI_IMAGES` from these library/framework targets.
-- Verify and remove redundant `COPY_PHASE_STRIP[config=Debug]` and
-  `GCC_DYNAMIC_NO_PIC[config=Debug]` settings when Xcode's effective defaults are
-  equivalent.
-- Review remaining settings with `xcodebuild -showBuildSettings` before deleting
-  any whose effect is uncertain.
+## Optional follow-up
 
-## Verification
+Add a minimal device-hosted smoke test only if CI or release validation needs to
+prove the `iphoneos` slice links and starts on physical hardware. It should
+reuse the same test helpers; full crypto behavior belongs in the deterministic
+simulator suite.
 
-1. Run `xcodebuild -showBuildSettings` for each product target in Debug and
-   Release and verify the complete feature matrix above.
-2. Confirm that `HAVE_OPENSSL`, `USE_SMIME_OPENSSL`, `HAVE_GNUTLS`, and
-   `HAVE_CURL` are absent from macOS settings as applicable, rather than defined
-   as zero.
-3. Confirm that the static targets retain all dependency header search paths but
-   no longer attempt to link dependency XCFrameworks.
-4. Build the macOS framework, macOS static library, iOS static library, and the
-   XCFramework aggregate.
-5. Link small consumer fixtures against each static archive plus its documented
-   transitive dependencies. Building an archive alone cannot detect missing
-   downstream linkage.
-6. Run the deterministic unit tests covering S/MIME, JMAP, compression, and
-   authentication.
+## Verification results
+
+- Debug effective settings resolve `SDKROOT` to the iPhone Simulator SDK and
+  `SUPPORTED_PLATFORMS` to `iphonesimulator` only.
+- The iOS test compile definitions contain `HAVE_OPENSSL=1` and
+  `USE_SMIME_OPENSSL=1`; `USE_SMIME_APPLE`, `HAVE_GNUTLS`, and `HAVE_CURL` are
+  absent.
+- A generic iOS Simulator build successfully compiled `libetpan-ios.a`, selected
+  the simulator OpenSSL Crypto archive, and linked the XCTest bundle for arm64
+  and x86_64.
+- The shared scheme passed on an iPhone 17 Pro simulator running iOS 27.0: 3
+  tests, 0 failures.
+- The existing macOS shared scheme passed: 509 tests, 0 failures.

@@ -22,6 +22,39 @@ static int check(int condition, const char * message)
   return 1;
 }
 
+static char * smime_fixture_directory;
+static char * existing_path(const char * filename);
+
+void smime_test_set_fixture_directory(const char * directory)
+{
+  char * copy;
+
+  copy = directory != NULL ? strdup(directory) : NULL;
+  free(smime_fixture_directory);
+  smime_fixture_directory = copy;
+}
+
+static char * fixture_path(const char * repository_path,
+    const char * bundled_name)
+{
+  char * path;
+  size_t directory_len;
+
+  if (smime_fixture_directory == NULL)
+    return existing_path(repository_path);
+
+  directory_len = strlen(smime_fixture_directory);
+  path = malloc(directory_len + strlen(bundled_name) + 2);
+  if (path == NULL)
+    return NULL;
+
+  strcpy(path, smime_fixture_directory);
+  if ((directory_len > 0) && (path[directory_len - 1] != '/'))
+    strcat(path, "/");
+  strcat(path, bundled_name);
+  return path;
+}
+
 static char * existing_path(const char * filename)
 {
   char * parent_filename;
@@ -393,8 +426,8 @@ int smime_test_passphrase_callback_with_backend(enum mailsmime_backend backend)
   original = make_text_part();
   signed_mime = NULL;
   verify_result = NULL;
-  cert_path = existing_path(cert_filename);
-  key_path = existing_path(key_filename);
+  cert_path = fixture_path(cert_filename, "carol-cert.pem");
+  key_path = fixture_path(key_filename, "carol-key-encrypted.pem");
   pass_context.email = email;
   pass_context.passphrase = passphrase;
   pass_context.called = 0;
@@ -509,10 +542,13 @@ int smime_test_crypto_round_trip_with_backend(enum mailsmime_backend backend)
   tampered_result = NULL;
   signer = NULL;
   pem = NULL;
-  cert_path = existing_path(cert_filename);
-  wrong_cert_path = existing_path(wrong_cert_filename);
-  key_path = existing_path(key_filename);
-  wrong_key_path = existing_path(wrong_key_filename);
+  cert_path = fixture_path(cert_filename, "alice-cert.pem");
+  wrong_cert_path = fixture_path(wrong_cert_filename, "bob-cert.pem");
+  key_path = fixture_path(key_filename, backend == MAILSMIME_BACKEND_APPLE ?
+      "alice-identity.p12" : "alice-key.pem");
+  wrong_key_path = fixture_path(wrong_key_filename,
+      backend == MAILSMIME_BACKEND_APPLE ? "bob-identity.p12" :
+      "bob-key.pem");
 
   ok = check(smime != NULL, "could not create S/MIME context") &&
       check(untrusted_smime != NULL,
