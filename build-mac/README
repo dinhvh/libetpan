@@ -2,3 +2,13 @@ For a new checkout, run:
 ./bootstrap.sh
 It configures libEtPan with the options required by the Xcode projects, refreshes
 autogen-result.tar.gz when autotools are available, and builds the dependencies.
+
+The dynamic libetpan framework links its RNP, Cyrus SASL, Json-C, zlib, and Apple
+system-library dependencies. The static macOS and iOS archives do not contain
+their dependencies. Applications linking a static archive must also link the
+dependency libraries required by the enabled features: RNP, Cyrus SASL, Json-C,
+zlib, OpenSSL Crypto as required by RNP, and the applicable Apple system
+frameworks, including CFNetwork on iOS. iOS uses OpenSSL Crypto directly for
+S/MIME as well. The macOS
+libetpan OpenSSL transport and S/MIME backends remain disabled even though RNP's
+transitive OpenSSL Crypto dependency is linked.

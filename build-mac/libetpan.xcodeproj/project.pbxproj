@@ -21,6 +21,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		BDEBB57D30318F7900DBF96D /* OpenSSL-Crypto.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BDEBB57C30318F7900DBF96D /* OpenSSL-Crypto.xcframework */; };
 		D30000000000000000000011 /* mailstream_openssl.c in Sources */ = {isa = PBXBuildFile; fileRef = D30000000000000000000001 /* mailstream_openssl.c */; };
 		D30000000000000000000012 /* mailstream_gnutls.c in Sources */ = {isa = PBXBuildFile; fileRef = D30000000000000000000002 /* mailstream_gnutls.c */; };
 		D30000000000000000000013 /* mailstream_openssl.c in Sources */ = {isa = PBXBuildFile; fileRef = D30000000000000000000001 /* mailstream_openssl.c */; };
@@ -38,15 +39,7 @@
 		8A75ECE6170414BA007F9972 /* mailimap_sort_types.c in Sources */ = {isa = PBXBuildFile; fileRef = 8A75ECE5170414B8007F9972 /* mailimap_sort_types.c */; };
 		8A75ECE7170414BA007F9972 /* mailimap_sort_types.c in Sources */ = {isa = PBXBuildFile; fileRef = 8A75ECE5170414B8007F9972 /* mailimap_sort_types.c */; };
 		8A75ECE8170414BA007F9972 /* mailimap_sort_types.c in Sources */ = {isa = PBXBuildFile; fileRef = 8A75ECE5170414B8007F9972 /* mailimap_sort_types.c */; };
-		BDEBB57D30318F7900DBF96D /* OpenSSL-Crypto.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BDEBB57C30318F7900DBF96D /* OpenSSL-Crypto.xcframework */; };
-		BDEBB57E30318F7900DBF96D /* OpenSSL-Crypto.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BDEBB57C30318F7900DBF96D /* OpenSSL-Crypto.xcframework */; };
-		BDEBB57F30318F7900DBF96D /* OpenSSL-Crypto.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BDEBB57C30318F7900DBF96D /* OpenSSL-Crypto.xcframework */; };
-		BDEBB58430319DB200DBF96D /* OpenSSL-SSL.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BDEBB58730319DB200DBF96D /* OpenSSL-SSL.xcframework */; };
-		BDEBB58530319DB200DBF96D /* OpenSSL-SSL.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BDEBB58730319DB200DBF96D /* OpenSSL-SSL.xcframework */; };
-		BDEBB58630319DB200DBF96D /* OpenSSL-SSL.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BDEBB58730319DB200DBF96D /* OpenSSL-SSL.xcframework */; };
 		BDEBB58130319DB200DBF96D /* RNP.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BDEBB58030319DB200DBF96D /* RNP.xcframework */; };
-		BDEBB58230319DB200DBF96D /* RNP.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BDEBB58030319DB200DBF96D /* RNP.xcframework */; };
-		BDEBB58330319DB200DBF96D /* RNP.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BDEBB58030319DB200DBF96D /* RNP.xcframework */; };
 		C60136981776D16A00A5AF45 /* mailimap_oauth2.c in Sources */ = {isa = PBXBuildFile; fileRef = C60136961776D16A00A5AF45 /* mailimap_oauth2.c */; };
 		C60136991776D16A00A5AF45 /* mailimap_oauth2.c in Sources */ = {isa = PBXBuildFile; fileRef = C60136961776D16A00A5AF45 /* mailimap_oauth2.c */; };
 		C601369A1776D16A00A5AF45 /* mailimap_oauth2.c in Sources */ = {isa = PBXBuildFile; fileRef = C60136961776D16A00A5AF45 /* mailimap_oauth2.c */; };
@@ -575,10 +568,6 @@
 		C6F9ED39105335BD0059C3BA /* libetpan_version.c in Sources */ = {isa = PBXBuildFile; fileRef = C6F9EAC2105335BD0059C3BA /* libetpan_version.c */; };
 		D10000010000000000000001 /* CyrusSASL.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = D10000000000000000000001 /* CyrusSASL.xcframework */; };
 		D10000010000000000000002 /* JsonC.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = D10000000000000000000002 /* JsonC.xcframework */; };
-		D10000010000000000000003 /* CyrusSASL.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = D10000000000000000000001 /* CyrusSASL.xcframework */; };
-		D10000010000000000000004 /* JsonC.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = D10000000000000000000002 /* JsonC.xcframework */; };
-		D10000010000000000000005 /* CyrusSASL.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = D10000000000000000000001 /* CyrusSASL.xcframework */; };
-		D10000010000000000000006 /* JsonC.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = D10000000000000000000002 /* JsonC.xcframework */; };
 		E10000000000000000000001 /* mailjson.c in Sources */ = {isa = PBXBuildFile; fileRef = E00000000000000000000001 /* mailjson.c */; };
 		F10000000000000000000001 /* mailhttp.c in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000001 /* mailhttp.c */; };
 		F10000000000000000000002 /* mailhttp_curl.c in Sources */ = {isa = PBXBuildFile; fileRef = F00000000000000000000002 /* mailhttp_curl.c */; };
@@ -672,6 +661,7 @@
 		C0D100000000000000000003 /* libetpan-static-macos.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "xcconfig/libetpan-static-macos.xcconfig"; sourceTree = "<group>"; };
 		C0D100000000000000000004 /* libetpan-static-ios.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "xcconfig/libetpan-static-ios.xcconfig"; sourceTree = "<group>"; };
 		C0D100000000000000000005 /* libetpan-xcframework.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = xcconfig/libetpan-xcframework.xcconfig; sourceTree = "<group>"; };
+		C0D100000000000000000006 /* libetpan-macos.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = xcconfig/libetpan-macos.xcconfig; sourceTree = "<group>"; };
 
 		2307A00A170AAA5500C43C59 /* mailstream_compress.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mailstream_compress.c; sourceTree = "<group>"; };
 		2307A00B170AAA5500C43C59 /* mailstream_compress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mailstream_compress.h; sourceTree = "<group>"; };
@@ -1135,10 +1125,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BDEBB57D30318F7900DBF96D /* OpenSSL-Crypto.xcframework in Frameworks */,
 				D10000010000000000000001 /* CyrusSASL.xcframework in Frameworks */,
 				D10000010000000000000002 /* JsonC.xcframework in Frameworks */,
-				BDEBB58430319DB200DBF96D /* OpenSSL-SSL.xcframework in Frameworks */,
-				BDEBB57D30318F7900DBF96D /* OpenSSL-Crypto.xcframework in Frameworks */,
 				C6EFB8AE1433F58500F805C0 /* CoreFoundation.framework in Frameworks */,
 				F60000000000000000000002 /* Foundation.framework in Frameworks */,
 				C6EFB8B41433F5A400F805C0 /* CoreServices.framework in Frameworks */,
@@ -1151,11 +1140,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BDEBB58630319DB200DBF96D /* OpenSSL-SSL.xcframework in Frameworks */,
-				BDEBB57F30318F7900DBF96D /* OpenSSL-Crypto.xcframework in Frameworks */,
-				D10000010000000000000003 /* CyrusSASL.xcframework in Frameworks */,
-				BDEBB58330319DB200DBF96D /* RNP.xcframework in Frameworks */,
-				D10000010000000000000004 /* JsonC.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1163,11 +1147,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BDEBB58530319DB200DBF96D /* OpenSSL-SSL.xcframework in Frameworks */,
-				BDEBB57E30318F7900DBF96D /* OpenSSL-Crypto.xcframework in Frameworks */,
-				D10000010000000000000005 /* CyrusSASL.xcframework in Frameworks */,
-				BDEBB58230319DB200DBF96D /* RNP.xcframework in Frameworks */,
-				D10000010000000000000006 /* JsonC.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1204,6 +1183,7 @@
 			children = (
 				C0D100000000000000000001 /* libetpan-project.xcconfig */,
 				C0D100000000000000000002 /* libetpan-framework.xcconfig */,
+				C0D100000000000000000006 /* libetpan-macos.xcconfig */,
 				C0D100000000000000000003 /* libetpan-static-macos.xcconfig */,
 				C0D100000000000000000004 /* libetpan-static-ios.xcconfig */,
 				C0D100000000000000000005 /* libetpan-xcframework.xcconfig */,

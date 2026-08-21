@@ -91,6 +91,7 @@ static int runBackendTestFromRepositoryRoot(
       MAILSMIME_BACKEND_APPLE));
 }
 
+#ifdef USE_SMIME_OPENSSL
 - (void)testOpenSSLCryptoRoundTrip
 {
   XCTAssertTrue(runBackendTestFromRepositoryRoot(
@@ -104,5 +105,6 @@ static int runBackendTestFromRepositoryRoot(
       smime_test_passphrase_callback_with_backend,
       MAILSMIME_BACKEND_OPENSSL));
 }
+#endif
 
 @end
