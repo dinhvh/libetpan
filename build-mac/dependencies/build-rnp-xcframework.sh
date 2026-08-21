@@ -35,6 +35,7 @@ build_variant() {
   local json_c_prefix="$json_c_root/$name/install"
   local rnp_build="$variant_root/rnp-build"
   local combined="$variant_root/librnp.a"
+  local openssl_configure_prefix="$openssl_root/macos-universal"
   local sdk_path
 
   if [[ ! -f "$openssl_prefix/lib/libcrypto.a" ]]; then
@@ -70,9 +71,9 @@ build_variant() {
     -DENABLE_CRYPTO_REFRESH=OFF \
     -DENABLE_PQC=OFF \
     -DCRYPTO_BACKEND=openssl \
-    -DOPENSSL_ROOT_DIR="$openssl_prefix" \
-    -DOPENSSL_INCLUDE_DIR="$openssl_prefix/include" \
-    -DOPENSSL_CRYPTO_LIBRARY="$openssl_prefix/lib/libcrypto.a" \
+    -DOPENSSL_ROOT_DIR="$openssl_configure_prefix" \
+    -DOPENSSL_INCLUDE_DIR="$openssl_configure_prefix/include" \
+    -DOPENSSL_CRYPTO_LIBRARY="$openssl_configure_prefix/lib/libcrypto.a" \
     -DOPENSSL_USE_STATIC_LIBS=TRUE \
     -DJSON-C_INCLUDE_DIR="$json_c_prefix/include/json-c" \
     -DJSON-C_LIBRARY="$json_c_prefix/lib/libjson-c.a"
