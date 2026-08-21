@@ -13,8 +13,29 @@ jobs:
       - name: Install dependencies
         run: brew install autoconf automake cmake pkgconf m4 libtool
 
+      - name: Compute dependency cache key
+        id: dependency-key
+        run: |
+          dependency_tree="$(git rev-parse HEAD:build-mac/dependencies)"
+          xcode_version="$(xcodebuild -version | shasum -a 256 | cut -d ' ' -f 1)"
+          echo "value=${dependency_tree}-${xcode_version}" >> "$GITHUB_OUTPUT"
+
+      - name: Restore macOS dependencies
+        id: dependency-cache
+        uses: actions/cache@v5
+        with:
+          path: |
+            build-mac/dependencies/build/*.xcframework
+            build-mac/dependencies/build/openssl/macos-universal
+          key: macos-26-${{ runner.arch }}-libetpan-dependencies-${{ steps.dependency-key.outputs.value }}
+
       - name: Prepare
-        run: build-mac/bootstrap.sh
+        run: |
+          arguments=()
+          if [[ "${{ steps.dependency-cache.outputs.cache-hit }}" == "true" ]]; then
+            arguments+=(--skip-dependencies)
+          fi
+          build-mac/bootstrap.sh "${arguments[@]}"
 
       - name: Run XCTest
         run: |

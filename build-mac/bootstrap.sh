@@ -7,6 +7,7 @@ repository_root="$(cd "$script_dir/.." && pwd)"
 logfile="$(mktemp "${TMPDIR:-/tmp}/libetpan-bootstrap.XXXXXX")"
 archive="$script_dir/autogen-result.tar.gz"
 no_cache=false
+skip_dependencies=false
 configure_flags=(
   --quiet
   --with-curl=no
@@ -26,9 +27,12 @@ for argument in "$@"; do
     --no-cache)
       no_cache=true
       ;;
+    --skip-dependencies)
+      skip_dependencies=true
+      ;;
     *)
       echo "Unknown argument: $argument" >&2
-      echo "Usage: $0 [--no-cache]" >&2
+      echo "Usage: $0 [--no-cache] [--skip-dependencies]" >&2
       exit 1
       ;;
   esac
@@ -92,7 +96,11 @@ fi
 make stamp-prepare-target >> "$logfile" 2>&1
 make libetpan-config.h >> "$logfile" 2>&1
 
-echo "Building macOS/iOS dependencies"
-"$script_dir/dependencies/bootstrap.sh"
+if "$skip_dependencies"; then
+  echo "Using cached macOS/iOS dependencies"
+else
+  echo "Building macOS/iOS dependencies"
+  "$script_dir/dependencies/bootstrap.sh"
+fi
 
 echo "libEtPan is ready to build from build-mac/libetpan.xcworkspace"
