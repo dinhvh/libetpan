@@ -284,9 +284,9 @@ static int serve_post_starttls(SSL * ssl, int protocol)
     snprintf(response, sizeof(response), "%s OK NOOP completed\r\n", line);
     return ssl_write_exact(ssl, response, strlen(response));
   case TEST_POP3_STARTTLS:
-    if (strcmp(line, "NOOP\r\n") != 0)
+    if (strcmp(line, "CAPA\r\n") != 0)
       return -1;
-    return ssl_write_exact(ssl, "+OK\r\n", 5);
+    return ssl_write_exact(ssl, "+OK\r\nSTLS\r\n.\r\n", 14);
   case TEST_SMTP_STARTTLS:
     if (strcmp(line, "NOOP\r\n") != 0)
       return -1;
@@ -485,7 +485,7 @@ static void test_starttls_protocol(enum mailstream_ssl_backend backend,
     mailstream_low * old_low;
     assert(session != NULL);
     r = mailimap_socket_connect(session, "127.0.0.1", port);
-    assert(r == MAILIMAP_NO_ERROR);
+    assert(r == MAILIMAP_NO_ERROR_NON_AUTHENTICATED);
     old_low = mailstream_get_low(session->imap_stream);
     r = mailimap_socket_starttls_with_callback(session, ssl_callback, &callback);
     assert(r == MAILIMAP_NO_ERROR);
@@ -497,6 +497,7 @@ static void test_starttls_protocol(enum mailstream_ssl_backend backend,
   else if (protocol == TEST_POP3_STARTTLS) {
     mailpop3 * session = mailpop3_new(0, NULL);
     mailstream_low * old_low;
+    clist * capa_list;
     assert(session != NULL);
     r = mailpop3_socket_connect(session, "127.0.0.1", port);
     assert(r == MAILPOP3_NO_ERROR);
@@ -505,7 +506,9 @@ static void test_starttls_protocol(enum mailstream_ssl_backend backend,
     assert(r == MAILPOP3_NO_ERROR);
     assert(mailstream_get_low(session->pop3_stream) != old_low ||
         backend == MAILSTREAM_SSL_BACKEND_CFNETWORK);
-    assert(mailpop3_noop(session) == MAILPOP3_NO_ERROR);
+    capa_list = NULL;
+    assert(mailpop3_capa(session, &capa_list) == MAILPOP3_NO_ERROR);
+    mailpop3_capa_resp_free(capa_list);
     mailpop3_free(session);
   }
   else {
