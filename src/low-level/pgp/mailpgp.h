@@ -213,6 +213,11 @@ int mailpgp_key_export_armored(struct mailpgp_key * key,
 LIBETPAN_EXPORT
 void mailpgp_key_free(struct mailpgp_key * key);
 
+/*
+ * Frees MIME entities returned by mailpgp_sign(), mailpgp_encrypt(),
+ * mailpgp_decrypt(), and mailpgp_message_decrypt(). These MIME trees can
+ * reference internal backing buffers that are not released by mailmime_free().
+ */
 LIBETPAN_EXPORT
 void mailpgp_mime_free(struct mailmime * mime);
 

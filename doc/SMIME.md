@@ -4,6 +4,11 @@ The low-level S/MIME API works with `struct mailmime *` values directly. The
 caller configures certificates and keys on a `struct mailsmime *` context, then
 passes MIME entities in and gets MIME entities back.
 
+MIME entities returned by `mailsmime_sign()`, `mailsmime_encrypt()`, and
+`mailsmime_decrypt()` can reference backing buffers owned by the S/MIME layer.
+Free those results with `mailsmime_mime_free()`, not `mailmime_free()`. The input
+`struct mailmime *` remains owned by the caller.
+
 ## Backend Selection
 
 `mailsmime_new()` keeps the platform's default behavior. When a build contains
@@ -44,7 +49,7 @@ if (r == MAILSMIME_NO_ERROR) {
       &signed_mime);
   if (r == MAILSMIME_NO_ERROR) {
     /* signed_mime is a multipart/signed MIME entity. */
-    mailmime_free(signed_mime);
+    mailsmime_mime_free(signed_mime);
   }
 }
 
@@ -84,6 +89,8 @@ if (r == MAILSMIME_NO_ERROR) {
       mailsmime_certificate_free(cert);
     }
   }
+  /* The signed MIME returned by mailsmime_result_get_signed_mime() is borrowed
+     from result and is freed by mailsmime_result_free(). */
   mailsmime_result_free(result);
 }
 
@@ -117,7 +124,7 @@ if (r == MAILSMIME_NO_ERROR) {
       &encrypted_mime);
   if (r == MAILSMIME_NO_ERROR) {
     /* encrypted_mime is an application/pkcs7-mime entity. */
-    mailmime_free(encrypted_mime);
+    mailsmime_mime_free(encrypted_mime);
   }
 }
 
@@ -143,7 +150,7 @@ r = mailsmime_set_private_key_file(smime,
 if (r == MAILSMIME_NO_ERROR) {
   r = mailsmime_decrypt(smime, encrypted_mime, &decrypted_mime);
   if (r == MAILSMIME_NO_ERROR)
-    mailmime_free(decrypted_mime);
+    mailsmime_mime_free(decrypted_mime);
 }
 
 mailsmime_free(smime);

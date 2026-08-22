@@ -82,6 +82,11 @@ int mailsmime_decrypt(struct mailsmime * smime,
     struct mailmime * mime,
     struct mailmime ** result);
 
+/*
+ * Frees MIME entities returned by mailsmime_sign(), mailsmime_encrypt(),
+ * and mailsmime_decrypt(). These MIME trees can reference internal backing
+ * buffers that are not released by mailmime_free().
+ */
 LIBETPAN_EXPORT
 void mailsmime_mime_free(struct mailmime * mime);
 
@@ -102,6 +107,10 @@ LIBETPAN_EXPORT
 int mailsmime_result_signed_by_from(struct mailsmime_result * result,
     struct mailimf_fields * fields);
 
+/*
+ * Returns a MIME entity owned by result. Do not free it directly; it is released
+ * by mailsmime_result_free().
+ */
 LIBETPAN_EXPORT
 struct mailmime * mailsmime_result_get_signed_mime(
     struct mailsmime_result * result);
