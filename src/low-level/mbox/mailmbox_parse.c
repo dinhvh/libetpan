@@ -47,6 +47,7 @@
 #include <stdlib.h>
 
 #define UID_HEADER "X-LibEtPan-UID:"
+#define UID_HEADER_LEN (sizeof(UID_HEADER) - 1)
 
 #ifndef TRUE
 #define TRUE 1
@@ -88,12 +89,13 @@ mailmbox_fields_parse(char * str, size_t length,
     r = mailimf_ignore_field_parse(str, length, &cur_token);
     switch (r) {
     case MAILIMF_NO_ERROR:
-      if (str[begin] == 'X') {
+      if ((begin < length) && (str[begin] == 'X')) {
 
-	if (strncasecmp(str + begin, UID_HEADER, strlen(UID_HEADER)) == 0) {
-	  begin += strlen(UID_HEADER);
+	if ((UID_HEADER_LEN <= cur_token - begin) &&
+	    (strncasecmp(str + begin, UID_HEADER, UID_HEADER_LEN) == 0)) {
+	  begin += UID_HEADER_LEN;
 
-	  while (str[begin] == ' ')
+	  while ((begin < cur_token) && (str[begin] == ' '))
 	    begin ++;
 	  
 	  uid = (uint32_t) strtoul(str + begin, NULL, 10);
@@ -178,10 +180,8 @@ mailmbox_single_parse(char * str, size_t length,
   if (cur_token + 5 < length) {
     if (strncmp(str + cur_token, "From ", 5) == 0) {
       cur_token += 5;
-      while (str[cur_token] != '\n') {
+      while ((cur_token < length) && (str[cur_token] != '\n')) {
         cur_token ++;
-        if (cur_token >= length)
-          break;
       }
       if (cur_token < length) {
         cur_token ++;

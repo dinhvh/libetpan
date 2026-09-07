@@ -78,6 +78,7 @@
 /* mbox is a file with a corresponding filename */
 
 #define UID_HEADER "X-LibEtPan-UID:"
+#define UID_HEADER_LEN (sizeof(UID_HEADER) - 1)
 
 #ifndef TRUE
 #define TRUE 1
@@ -431,10 +432,10 @@ static size_t get_fixed_message_size(const char * message, size_t size,
 
     ignore = FALSE;
     begin = cur_token;
-    if (cur_token + strlen(UID_HEADER) <= size) {
+    if ((cur_token <= size) && (UID_HEADER_LEN <= size - cur_token)) {
       if (message[cur_token] == 'X') {
 	if (strncasecmp(message + cur_token, UID_HEADER,
-			strlen(UID_HEADER)) == 0) {
+			UID_HEADER_LEN) == 0) {
 	  ignore = TRUE;
 	}
       }
@@ -540,10 +541,10 @@ static char * write_fixed_message(char * str,
 
     ignore = FALSE;
     begin = cur_token;
-    if (cur_token + strlen(UID_HEADER) <= size) {
+    if ((cur_token <= size) && (UID_HEADER_LEN <= size - cur_token)) {
       if (message[cur_token] == 'X') {
 	if (strncasecmp(message + cur_token, UID_HEADER,
-			strlen(UID_HEADER)) == 0) {
+			UID_HEADER_LEN) == 0) {
 	  ignore = TRUE;
 	}
       }
