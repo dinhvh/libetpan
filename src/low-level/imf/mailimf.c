@@ -501,13 +501,8 @@ mailimf_custom_string_parse(const char * message, size_t length,
 
   end = begin;
 
-  if (end >= length)
-    return MAILIMF_ERROR_PARSE;
-
-  while (is_custom_char(message[end])) {
+  while ((end < length) && is_custom_char(message[end])) {
     end ++;
-    if (end >= length)
-      break;
   }
 
   if (end != begin) {
@@ -1149,15 +1144,8 @@ int mailimf_atom_parse(const char * message, size_t length,
   }
   
   end = cur_token;
-  if (end >= length) {
-    res = MAILIMF_ERROR_PARSE;
-    goto err;
-  }
-
-  while (is_atext(message[end])) {
+  while ((end < length) && is_atext(message[end])) {
     end ++;
-    if (end >= length)
-      break;
   }
   if (end == cur_token) {
     res = MAILIMF_ERROR_PARSE;
@@ -1255,15 +1243,8 @@ int mailimf_fws_atom_parse(const char * message, size_t length,
   }
 
   end = cur_token;
-  if (end >= length) {
-    res = MAILIMF_ERROR_PARSE;
-    goto err;
-  }
-
-  while (is_atext(message[end])) {
+  while ((end < length) && is_atext(message[end])) {
     end ++;
-    if (end >= length)
-      break;
   }
   if (end == cur_token) {
     res = MAILIMF_ERROR_PARSE;
@@ -3317,17 +3298,13 @@ static int mailimf_addr_spec_parse(const char * message, size_t length,
   }
 
   end = cur_token;
-  if (end >= length) {
-    res = MAILIMF_ERROR_PARSE;
-    goto err;
-  }
-
   begin = cur_token;
 
   final = FALSE;
   while (1) {
     if (end >= length)
       break;
+
     switch (message[end]) {
     case '>':
     case ',':
@@ -3365,8 +3342,6 @@ static int mailimf_addr_spec_parse(const char * message, size_t length,
       break;
 
     end ++;
-    if (end >= length)
-      break;
   }
 
   if (end == begin) {
@@ -3491,17 +3466,13 @@ static int mailimf_addr_spec_msg_id_parse(const char * message, size_t length,
     }
     
     end = cur_token;
-    if (end >= length) {
-        res = MAILIMF_ERROR_PARSE;
-        goto err;
-    }
-    
     begin = cur_token;
     
     final = FALSE;
     while (1) {
         if (end >= length)
             break;
+
         switch (message[end]) {
             case '>':
                 final = TRUE;
@@ -3534,8 +3505,6 @@ static int mailimf_addr_spec_msg_id_parse(const char * message, size_t length,
             break;
         
         end ++;
-        if (end >= length)
-            break;
     }
     
     if (end == begin) {
@@ -7349,14 +7318,8 @@ static int mailimf_field_name_parse(const char * message, size_t length,
   cur_token = * indx;
 
   end = cur_token;
-  if (end >= length) {
-    return MAILIMF_ERROR_PARSE;
-  }
-
-  while (is_ftext(message[end])) {
+  while ((end < length) && is_ftext(message[end])) {
     end ++;
-    if (end >= length)
-      break;
   }
   if (end == cur_token) {
     return MAILIMF_ERROR_PARSE;
