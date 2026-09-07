@@ -576,6 +576,7 @@ int maildriver_imf_error_to_mail_error(int error)
     return MAIL_NO_ERROR;
 
   case MAILIMF_ERROR_PARSE:
+  case MAILIMF_ERROR_PARSE_DEPTH:
     return MAIL_ERROR_PARSE;
 
   case MAILIMF_ERROR_MEMORY:

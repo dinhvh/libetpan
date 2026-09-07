@@ -666,6 +666,50 @@ static void check_boundary_quoted_pair_quote(void)
   mailmime_content_free(content);
 }
 
+static MMAPString * build_nested_message(unsigned int message_depth)
+{
+  MMAPString * input;
+  unsigned int i;
+
+  input = mmap_string_new("");
+  assert(input != NULL);
+
+  for (i = 0; i < message_depth; i++) {
+    assert(mmap_string_append(input,
+        "Content-Type: message/rfc822\r\n\r\n") != NULL);
+  }
+
+  assert(mmap_string_append(input,
+      "Content-Type: text/plain\r\n\r\nbody") != NULL);
+
+  return input;
+}
+
+static void check_mime_parse_depth_limit(void)
+{
+  struct mailmime * mime;
+  MMAPString * input;
+  size_t indx;
+  int r;
+
+  input = build_nested_message(19);
+  indx = 0;
+  mime = NULL;
+  r = mailmime_parse(input->str, input->len, &indx, &mime);
+  assert(r == MAILIMF_NO_ERROR);
+  assert(mime != NULL);
+  mailmime_free(mime);
+  mmap_string_free(input);
+
+  input = build_nested_message(20);
+  indx = 0;
+  mime = NULL;
+  r = mailmime_parse(input->str, input->len, &indx, &mime);
+  assert(r == MAILIMF_ERROR_PARSE_DEPTH);
+  assert(mime == NULL);
+  mmap_string_free(input);
+}
+
 struct mime_parser_case {
   const char * name;
   void (* run)(void);
@@ -684,6 +728,7 @@ static const struct mime_parser_case parser_cases[] = {
   { "RFC 822 alternative file", check_rfc822_alternative_file },
   { "full RFC 822 multipart", check_full_rfc822_multipart },
   { "quoted-pair boundary quote", check_boundary_quoted_pair_quote },
+  { "MIME parse depth limit", check_mime_parse_depth_limit },
 };
 
 size_t mime_parser_test_count(void)

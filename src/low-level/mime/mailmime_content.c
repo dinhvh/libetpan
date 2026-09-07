@@ -54,6 +54,8 @@
 #define FALSE 0
 #endif
 
+#define MAILMIME_MAX_PARSE_DEPTH 20
+
 /*
   RFC 2045
   RFC 2046
@@ -67,6 +69,7 @@ static int mailmime_parse_with_default(const char * message, size_t length,
     size_t * indx, int default_type,
     struct mailmime_content * content_type,
     struct mailmime_fields * mime_fields,
+    unsigned int mime_depth,
     struct mailmime ** result);
 
 
@@ -830,6 +833,7 @@ static int
 mailmime_multipart_body_parse(const char * message, size_t length,
     size_t * indx, char * boundary,
     int default_subtype,
+    unsigned int mime_depth,
     clist ** result,
     struct mailmime_data ** p_preamble,
     struct mailmime_data ** p_epilogue)
@@ -986,7 +990,7 @@ mailmime_multipart_body_parse(const char * message, size_t length,
       
       r = mailmime_parse_with_default(data_str, data_size,
           &bp_token, default_subtype, NULL,
-          mime_fields, &mime_bp);
+          mime_fields, mime_depth + 1, &mime_bp);
       if (r == MAILIMF_NO_ERROR) {
         r = clist_append(list, mime_bp);
         if (r < 0) {
@@ -1140,7 +1144,7 @@ int mailmime_parse(const char * message, size_t length,
   bp_token = 0;
   r = mailmime_parse_with_default(data_str, data_size,
       &bp_token, MAILMIME_DEFAULT_TYPE_TEXT_PLAIN,
-      content_message, mime_fields, &mime);
+      content_message, mime_fields, 0, &mime);
   cur_token += bp_token;
   if (r != MAILIMF_NO_ERROR) {
     res = r;
@@ -1242,6 +1246,7 @@ static int mailmime_parse_with_default(const char * message, size_t length,
     size_t * indx, int default_type,
     struct mailmime_content * content_type,
     struct mailmime_fields * mime_fields,
+    unsigned int mime_depth,
     struct mailmime ** result)
 {
   size_t cur_token;
@@ -1269,6 +1274,12 @@ static int mailmime_parse_with_default(const char * message, size_t length,
 
   preamble = NULL;
   epilogue = NULL;
+  body = NULL;
+
+  if (mime_depth > MAILMIME_MAX_PARSE_DEPTH) {
+    res = MAILIMF_ERROR_PARSE_DEPTH;
+    goto err;
+  }
   
   cur_token = * indx;
 
@@ -1398,29 +1409,39 @@ static int mailmime_parse_with_default(const char * message, size_t length,
           &cur_token, &fields);
       if ((r != MAILIMF_NO_ERROR) && (r != MAILIMF_ERROR_PARSE)) {
         res = r;
-        goto free_content;
+        goto free;
       }
       
       r = mailimf_crlf_parse(message, length, &cur_token);
       if ((r != MAILIMF_NO_ERROR) && (r != MAILIMF_ERROR_PARSE)) {
         mailimf_fields_free(fields);
+        fields = NULL;
         res = r;
-        goto free_content;
+        goto free;
       }
       
       submime_fields = NULL;
       r = mailmime_fields_parse(fields, &submime_fields);
       if ((r != MAILIMF_NO_ERROR) && (r != MAILIMF_ERROR_PARSE)) {
         mailimf_fields_free(fields);
+        fields = NULL;
         res = r;
-        goto free_content;
+        goto free;
       }
       
       remove_unparsed_mime_headers(fields);
+
+      if (mime_depth >= MAILMIME_MAX_PARSE_DEPTH) {
+        mailmime_fields_free(submime_fields);
+        mailimf_fields_free(fields);
+        fields = NULL;
+        res = MAILIMF_ERROR_PARSE_DEPTH;
+        goto free;
+      }
       
       r = mailmime_parse_with_default(message, length,
           &cur_token, MAILMIME_DEFAULT_TYPE_TEXT_PLAIN,
-          NULL, submime_fields, &msg_mime);
+          NULL, submime_fields, mime_depth + 1, &msg_mime);
       if (r == MAILIMF_NO_ERROR) {
         /* do nothing */
       }
@@ -1430,8 +1451,10 @@ static int mailmime_parse_with_default(const char * message, size_t length,
       }
       else {
         mailmime_fields_free(submime_fields);
+        mailimf_fields_free(fields);
+        fields = NULL;
         res = r;
-        goto free_content;
+        goto free;
       }
     }
     
@@ -1446,10 +1469,17 @@ static int mailmime_parse_with_default(const char * message, size_t length,
 	if (strcasecmp(content_type->ct_subtype, "digest") == 0)
 	  default_subtype = MAILMIME_DEFAULT_TYPE_MESSAGE;
 
+      if (mime_depth >= MAILMIME_MAX_PARSE_DEPTH) {
+        free(boundary);
+        res = MAILIMF_ERROR_PARSE_DEPTH;
+        goto free;
+      }
+
       cur_token = * indx;
       r = mailmime_multipart_body_parse(message, length,
           &cur_token, boundary,
           default_subtype,
+          mime_depth,
           &list, &preamble, &epilogue);
       if (r == MAILIMF_NO_ERROR) {
 	/* do nothing */
@@ -1459,13 +1489,13 @@ static int mailmime_parse_with_default(const char * message, size_t length,
         if (list == NULL) {
           free(boundary);
           res = MAILIMF_ERROR_MEMORY;
-          goto free_content;
+          goto free;
         }
       }
       else {
 	free(boundary);
 	res = r;
-	goto free_content;
+	goto free;
       }
 
       free(boundary);
@@ -1493,12 +1523,16 @@ static int mailmime_parse_with_default(const char * message, size_t length,
   return MAILIMF_NO_ERROR;
 
  free:
+  if (body != NULL)
+    mailmime_data_free(body);
   if (epilogue != NULL)
     mailmime_data_free(epilogue);
   if (preamble != NULL)
     mailmime_data_free(preamble);
   if (msg_mime != NULL)
     mailmime_free(msg_mime);
+  if (fields != NULL)
+    mailimf_fields_free(fields);
   if (list != NULL) {
     clist_foreach(list, (clist_func) mailmime_free, NULL);
     clist_free(list);
