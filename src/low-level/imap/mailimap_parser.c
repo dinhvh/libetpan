@@ -1394,7 +1394,7 @@ mailimap_custom_string_parse(mailstream * fd, MMAPString * buffer, struct mailim
 
   end = begin;
 
-  while (is_custom_char(buffer->str[end]))
+  while ((end < buffer->len) && is_custom_char(buffer->str[end]))
     end ++;
 
   if (end != begin) {
@@ -1494,6 +1494,9 @@ static int mailimap_digit_parse(mailstream * fd, MMAPString * buffer,
   size_t cur_token;
 
   cur_token = * indx;
+
+  if (cur_token >= buffer->len)
+    return MAILIMAP_ERROR_PARSE;
 
   if (is_digit(buffer->str[cur_token])) {
     * result = buffer->str[cur_token] - '0';
@@ -1843,8 +1846,8 @@ static int mailimap_auth_type_parse(mailstream * fd, MMAPString * buffer, struct
    base64          = *(4base64-char) [base64-terminal]
 */
 
-static int is_base64_4char(char * str);
-static int is_base64_terminal(char * str);
+static int is_base64_4char(const char * str, size_t len);
+static int is_base64_terminal(const char * str, size_t len);
 
 static int mailimap_base64_parse(mailstream * fd, MMAPString * buffer, struct mailimap_parser_context * parser_ctx,
 				 size_t * indx, char ** result,
@@ -1858,9 +1861,11 @@ static int mailimap_base64_parse(mailstream * fd, MMAPString * buffer, struct ma
   begin = * indx;
   end = begin;
 
-  while (is_base64_4char(buffer->str + end))
+  while ((end <= buffer->len) &&
+      is_base64_4char(buffer->str + end, buffer->len - end))
     end += 4;
-  if (is_base64_terminal(buffer->str + end))
+  if ((end <= buffer->len) &&
+      is_base64_terminal(buffer->str + end, buffer->len - end))
     end += 4;
 
   if (begin == end)
@@ -1888,9 +1893,12 @@ static int is_base64_char(char ch)
   return (is_alpha(ch) || is_digit(ch) || ch == '+' || ch == '/');
 }
 
-static int is_base64_4char(char * str)
+static int is_base64_4char(const char * str, size_t len)
 {
   size_t i;
+
+  if (len < 4)
+    return FALSE;
 
   for (i = 0 ; i < 4 ; i++)
     if (!is_base64_char(str[i]))
@@ -1902,15 +1910,9 @@ static int is_base64_4char(char * str)
    base64-terminal = (2base64-char "==") / (3base64-char "=")
 */
 
-static int is_base64_terminal(char * str)
+static int is_base64_terminal(const char * str, size_t len)
 {
-  if (str[0] == 0)
-    return FALSE;
-  if (str[1] == 0)
-    return FALSE;
-  if (str[2] == 0)
-    return FALSE;
-  if (str[3] == 0)
+  if (len < 4)
     return FALSE;
 
   if (is_base64_char(str[0]) && is_base64_char(str[1])
@@ -4752,6 +4754,9 @@ static int mailimap_digit_nz_parse(mailstream * fd, MMAPString * buffer, struct 
 
   cur_token = * indx;
 
+  if (cur_token >= buffer->len)
+    return MAILIMAP_ERROR_PARSE;
+
   if (is_digit_nz(buffer->str[cur_token])) {
     * result = buffer->str[cur_token] - '0';
     cur_token ++;
@@ -5954,13 +5959,16 @@ static int mailimap_flag_list_skip_group_parse(mailstream * fd,
 
   cur_token = * indx;
 
+  if (cur_token >= buffer->len)
+    return MAILIMAP_ERROR_PARSE;
+
   if (buffer->str[cur_token] != '(')
     return MAILIMAP_ERROR_PARSE;
 
   cur_token ++;
   depth = 1;
 
-  while (buffer->str[cur_token] != '\0') {
+  while (cur_token < buffer->len) {
     switch (buffer->str[cur_token]) {
     case '(':
       depth ++;

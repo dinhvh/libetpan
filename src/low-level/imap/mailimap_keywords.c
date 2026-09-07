@@ -69,6 +69,12 @@ int mailimap_token_case_insensitive_parse(mailstream * fd,
     return r;
 #endif
 
+  if (cur_token > buffer->len)
+    return MAILIMAP_ERROR_PARSE;
+
+  if (len > buffer->len - cur_token)
+    return MAILIMAP_ERROR_PARSE;
+
   if (strncasecmp(buffer->str + cur_token, token, len) == 0) {
     cur_token += len;
     * indx = cur_token;
@@ -91,6 +97,9 @@ int mailimap_char_parse(mailstream * fd, MMAPString * buffer,
 
   cur_token = * indx;
 
+  if (cur_token >= buffer->len)
+    return MAILIMAP_ERROR_PARSE;
+
   if (buffer->str[cur_token] == token) {
     cur_token ++;
     * indx = cur_token;
@@ -110,7 +119,8 @@ int mailimap_space_parse(mailstream * fd, MMAPString * buffer,
 
   cur_token = * indx;
 
-  while (is_space_or_tab(* (buffer->str + cur_token)))
+  while ((cur_token < buffer->len) &&
+      is_space_or_tab(* (buffer->str + cur_token)))
     cur_token ++;
 
   if (cur_token == * indx)
