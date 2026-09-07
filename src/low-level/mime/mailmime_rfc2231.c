@@ -68,7 +68,8 @@ static int rfc2231_append_percent_decoded(MMAPString * result,
   size_t i;
 
   for(i = 0 ; value[i] != '\0' ; i ++) {
-    if (value[i] == '%') {
+    if ((value[i] == '%') && (value[i + 1] != '\0') &&
+        (value[i + 2] != '\0')) {
       int hi;
       int lo;
 

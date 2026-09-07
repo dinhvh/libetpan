@@ -387,13 +387,8 @@ static int mailmime_lwsp_parse(const char * message, size_t length,
 
   cur_token = * indx;
 
-  if (cur_token >= length)
-    return MAILIMF_ERROR_PARSE;
-
-  while (is_wsp(message[cur_token])) {
+  while ((cur_token < length) && is_wsp(message[cur_token])) {
     cur_token ++;
-    if (cur_token >= length)
-      break;
   }
 
   if (cur_token == * indx)

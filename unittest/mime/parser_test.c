@@ -383,6 +383,28 @@ static void check_rfc2231_content_type_parameters(void)
   indx = 0;
   content = NULL;
   r = mailmime_content_parse(
+      "application/pdf; name*=utf-8''bad%",
+      strlen("application/pdf; name*=utf-8''bad%"),
+      &indx, &content);
+  assert_parse_consumes(r, indx,
+      "application/pdf; name*=utf-8''bad%");
+  assert(strcmp(mailmime_content_param_get(content, "name"), "bad%") == 0);
+  mailmime_content_free(content);
+
+  indx = 0;
+  content = NULL;
+  r = mailmime_content_parse(
+      "application/pdf; name*=utf-8''bad%A",
+      strlen("application/pdf; name*=utf-8''bad%A"),
+      &indx, &content);
+  assert_parse_consumes(r, indx,
+      "application/pdf; name*=utf-8''bad%A");
+  assert(strcmp(mailmime_content_param_get(content, "name"), "bad%A") == 0);
+  mailmime_content_free(content);
+
+  indx = 0;
+  content = NULL;
+  r = mailmime_content_parse(
       "application/pdf; name=\"fallback.pdf\"; name*1*=ignored.pdf",
       strlen("application/pdf; name=\"fallback.pdf\"; name*1*=ignored.pdf"),
       &indx, &content);
