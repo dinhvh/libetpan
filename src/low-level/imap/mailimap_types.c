@@ -3262,6 +3262,13 @@ mailimap_parser_context_is_qip_workaround_enabled(struct mailimap_parser_context
 }
 
 LIBETPAN_EXPORT
+int
+mailimap_parser_context_is_skip_malformed_fetch_response_enabled(struct mailimap_parser_context * parser_ctx)
+{
+  return parser_ctx != NULL && parser_ctx->is_skip_malformed_fetch_response_enabled;
+}
+
+LIBETPAN_EXPORT
 struct mailimap_parser_context *
 mailimap_parser_context_new(mailimap * session)
 {
@@ -3273,6 +3280,8 @@ mailimap_parser_context_new(mailimap * session)
 
   ctx->is_rambler_workaround_enabled = mailimap_is_rambler_workaround_enabled(session);
   ctx->is_qip_workaround_enabled = mailimap_is_qip_workaround_enabled(session);
+  ctx->is_skip_malformed_fetch_response_enabled =
+    mailimap_is_skip_malformed_fetch_response_enabled(session);
 
   ctx->msg_body_handler = session->imap_msg_body_handler;
   ctx->msg_body_handler_context = session->imap_msg_body_handler_context;

@@ -46,6 +46,32 @@ cleanup:
   return result;
 }
 
+static void check_skip_malformed_fetch_response(int compressed)
+{
+  char path[4096];
+  struct mailimap_response * response = NULL;
+  int r;
+
+  r = snprintf(path, sizeof(path), "%s/%s", "data/response-done",
+      "fetch-skip-malformed.imap");
+  assert(r >= 0 && (size_t) r < sizeof(path));
+
+  r = imap_test_parse_response_file(path, compressed != 0, &response);
+  assert(r == MAILIMAP_ERROR_PARSE);
+  assert(response == NULL);
+
+  r = imap_test_parse_response_file_with_skip_malformed_fetch(path,
+      compressed != 0, &response);
+  assert(r == MAILIMAP_NO_ERROR);
+  assert(response != NULL);
+  assert(response->rsp_cont_req_or_resp_data_list != NULL);
+  assert(clist_count(response->rsp_cont_req_or_resp_data_list) == 1);
+  assert(response->rsp_resp_done->rsp_data.rsp_tagged->rsp_cond_state
+      ->rsp_type == MAILIMAP_RESP_COND_STATE_OK);
+
+  mailimap_response_free(response);
+}
+
 int imap_response_done_test_run(void)
 {
   static const struct {
@@ -69,6 +95,9 @@ int imap_response_done_test_run(void)
     assert(imap_response_done_test_case("data/response-done", cases[i].path,
         true, cases[i].cond_type, cases[i].elements, NULL, NULL) == 0);
   }
+
+  check_skip_malformed_fetch_response(false);
+  check_skip_malformed_fetch_response(true);
 
   puts("response_done_test: ok");
   return 0;

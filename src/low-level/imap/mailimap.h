@@ -928,6 +928,23 @@ int mailimap_is_qip_workaround_enabled(mailimap * session);
 LIBETPAN_EXPORT
 void mailimap_set_qip_workaround_enabled(mailimap * session, int enabled);
 
+#ifndef LIBETPAN_HAS_MAILIMAP_SKIP_MALFORMED_FETCH_RESPONSE
+#define LIBETPAN_HAS_MAILIMAP_SKIP_MALFORMED_FETCH_RESPONSE	1
+#endif
+
+/*
+    Enable workaround to skip malformed untagged FETCH responses.
+
+    When enabled, a malformed "* n FETCH ..." response line is discarded and
+    parsing continues with the next response line. This is disabled by default.
+*/
+
+LIBETPAN_EXPORT
+int mailimap_is_skip_malformed_fetch_response_enabled(mailimap * session);
+
+LIBETPAN_EXPORT
+void mailimap_set_skip_malformed_fetch_response_enabled(mailimap * session, int enabled);
+
 #ifdef __cplusplus
 }
 #endif

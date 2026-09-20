@@ -13,6 +13,9 @@ typedef int imap_test_sender(mailstream * stream, void * context);
 int imap_test_parse_response_file(const char * path, bool compressed,
     struct mailimap_response ** result);
 
+int imap_test_parse_response_file_with_skip_malformed_fetch(const char * path,
+    bool compressed, struct mailimap_response ** result);
+
 int imap_test_parse_response_data_file(const char * path, bool compressed,
     struct mailimap_response_data ** result);
 

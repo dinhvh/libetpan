@@ -373,8 +373,8 @@ static MMAPString * read_stream(mailstream * stream)
   return buffer;
 }
 
-static int parse_buffer_as_response(MMAPString * buffer,
-    struct mailimap_response ** result)
+static int parse_buffer_as_response_with_options(MMAPString * buffer,
+    bool skip_malformed_fetch, struct mailimap_response ** result)
 {
   mailimap * session;
   struct mailimap_parser_context * parser_ctx;
@@ -383,6 +383,8 @@ static int parse_buffer_as_response(MMAPString * buffer,
 
   session = mailimap_new(0, NULL);
   assert(session != NULL);
+  mailimap_set_skip_malformed_fetch_response_enabled(session,
+      skip_malformed_fetch ? 1 : 0);
 
   parser_ctx = mailimap_parser_context_new(session);
   assert(parser_ctx != NULL);
@@ -392,6 +394,12 @@ static int parse_buffer_as_response(MMAPString * buffer,
   mailimap_parser_context_free(parser_ctx);
   mailimap_free(session);
   return r;
+}
+
+static int parse_buffer_as_response(MMAPString * buffer,
+    struct mailimap_response ** result)
+{
+  return parse_buffer_as_response_with_options(buffer, false, result);
 }
 
 static int parse_buffer_as_response_data(MMAPString * buffer,
@@ -432,6 +440,30 @@ int imap_test_parse_response_file(const char * path, bool compressed,
 
   *result = NULL;
   r = parse_buffer_as_response(buffer, result);
+
+  mmap_string_free(buffer);
+  mailstream_close(stream);
+  mmap_string_free(fixture);
+  return r;
+}
+
+int imap_test_parse_response_file_with_skip_malformed_fetch(const char * path,
+    bool compressed, struct mailimap_response ** result)
+{
+  MMAPString * fixture;
+  MMAPString * buffer;
+  mailstream * stream;
+  int r;
+
+  printf("testing %s (%s, skip malformed FETCH)\n", path,
+      compressed ? "compressed" : "plain");
+
+  fixture = read_fixture(path);
+  stream = stream_from_fixture(fixture, compressed);
+  buffer = read_stream(stream);
+
+  *result = NULL;
+  r = parse_buffer_as_response_with_options(buffer, true, result);
 
   mmap_string_free(buffer);
   mailstream_close(stream);
