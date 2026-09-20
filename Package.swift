@@ -237,6 +237,7 @@ let package = Package(
                 .define("HAVE_CFNETWORK", to: "1"),
                 .define("HAVE_COREFOUNDATION_CHARCONV", to: "1"),
                 .define("HAVE_JMAP", to: "1"),
+                .define("HAVE_JSON", to: "1"),
                 .define("USE_SMIME_APPLE", to: "1",
                     .when(platforms: [.macOS])),
                 .headerSearchPath("build-spm/config"),

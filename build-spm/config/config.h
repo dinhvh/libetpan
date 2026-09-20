@@ -20,6 +20,7 @@
 #define HAVE_ICONV 1
 #define HAVE_INTTYPES_H 1
 #define HAVE_IPV6 1
+#define HAVE_JSON 1
 #define HAVE_LIMITS_H 1
 #define HAVE_MMAP 1
 #define HAVE_NETDB_H 1
