@@ -151,8 +151,11 @@ IMAP_UTF7_TEST_SRCS = \
 	imap-utf7/imap_utf7_tests.c
 DATA_TYPES_TEST_SRCS = \
 	data-types/main.c \
+	data-types/base64_test.c \
+	data-types/carray_test.c \
 	data-types/md5_test.c \
 	$(TOP)/src/data-types/base64.c \
+	$(TOP)/src/data-types/carray.c \
 	$(TOP)/src/data-types/md5.c
 CHARCONV_TEST_SRCS = charconv/main.c
 MAILHTTP_TEST_SRCS = http/mailhttp_test.c
@@ -212,6 +215,7 @@ IMAP_UTF7_TEST_DEPS = $(IMAP_UTF7_TEST_SRCS) imap-utf7/*.h common/test_case.h
 DATA_TYPES_TEST_DEPS = $(DATA_TYPES_TEST_SRCS) \
 	data-types/data_types_tests.h common/test_case.h \
         $(TOP)/src/data-types/base64.h \
+        $(TOP)/src/data-types/carray.h \
         $(TOP)/src/data-types/md5.h \
         $(TOP)/src/data-types/md5global.h \
         $(TOP)/src/data-types/hmac-md5.h

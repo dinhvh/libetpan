@@ -47,6 +47,11 @@
 
 #define MIN_ARRAY_SIZE 4
 
+static int size_mul_overflows(unsigned int count, size_t item_size)
+{
+  return count > ((size_t) -1) / item_size;
+}
+
 LIBETPAN_EXPORT
 carray * carray_new(unsigned int initsize) {
   carray * array;
@@ -57,7 +62,7 @@ carray * carray_new(unsigned int initsize) {
   if (initsize < MIN_ARRAY_SIZE)
     initsize = MIN_ARRAY_SIZE;
   
-  if (((size_t) initsize) > ((size_t) -1) / sizeof(void *)) {
+  if (size_mul_overflows(initsize, sizeof(void *))) {
     free(array);
     return NULL;
   }
@@ -93,6 +98,10 @@ int carray_add(carray * array, void * data, unsigned int * indx) {
 LIBETPAN_EXPORT
 int carray_set_size(carray * array, unsigned int new_size)
 {
+  unsigned int old_size;
+
+  old_size = array->len;
+
   if (new_size > array->max) {
     unsigned int n;
     void * new;
@@ -108,7 +117,7 @@ int carray_set_size(carray * array, unsigned int new_size)
       n *= 2;
     }
 
-    if (((size_t) n) > ((size_t) -1) / sizeof(void *))
+    if (size_mul_overflows(n, sizeof(void *)))
       return -1;
 
     new = (void **) realloc(array->array, sizeof(void *) * n);
@@ -117,6 +126,12 @@ int carray_set_size(carray * array, unsigned int new_size)
     array->array = new;
     array->max = n;
   }
+
+  if (new_size > old_size) {
+    memset(array->array + old_size, 0,
+        sizeof(void *) * (new_size - old_size));
+  }
+
   array->len = new_size;
 
   return 0;

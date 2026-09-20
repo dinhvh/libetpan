@@ -3,10 +3,8 @@
 #include <assert.h>
 #include <setjmp.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
-#include "base64.h"
 #include "md5.h"
 #include "hmac-md5.h"
 
@@ -196,30 +194,6 @@ static void check_hmac_md5_streaming(void)
         sizeof(one_shot_digest)) == 0);
 }
 
-static void check_base64_codec(void)
-{
-  char * encoded;
-  char * decoded;
-  const char plain[] = "Hello, base64!";
-  const char encoded_plain[] = "SGVsbG8sIGJhc2U2NCE=";
-  const char prefixed_encoded[] = "+ SGVsbG8sIGJhc2U2NCE=";
-
-  encoded = encode_base64(plain, (int) strlen(plain));
-  assert(encoded != NULL);
-  assert(strcmp(encoded, encoded_plain) == 0);
-  free(encoded);
-
-  decoded = decode_base64(encoded_plain, (int) strlen(encoded_plain));
-  assert(decoded != NULL);
-  assert(strcmp(decoded, plain) == 0);
-  free(decoded);
-
-  decoded = decode_base64(prefixed_encoded, (int) strlen(prefixed_encoded));
-  assert(decoded != NULL);
-  assert(strcmp(decoded, plain) == 0);
-  free(decoded);
-}
-
 static void check_uint4_size(void)
 {
   assert(sizeof(UINT4) == 4);
@@ -236,24 +210,37 @@ static const struct data_types_case cases[] = {
   { "MD5 chunked updates", check_md5_chunked_updates },
   { "HMAC-MD5 vectors", check_hmac_md5_vectors },
   { "HMAC-MD5 streaming", check_hmac_md5_streaming },
-  { "Base64 codec", check_base64_codec },
 };
 
 size_t data_types_test_count(void)
 {
-  return sizeof(cases) / sizeof(cases[0]);
+  return sizeof(cases) / sizeof(cases[0]) + base64_test_count() +
+      carray_test_count();
 }
 
 const char * data_types_test_name(size_t index)
 {
-  if (index >= data_types_test_count())
-    return NULL;
-  return cases[index].name;
+  size_t md5_count;
+  size_t base64_count;
+
+  md5_count = sizeof(cases) / sizeof(cases[0]);
+  if (index < md5_count)
+    return cases[index].name;
+  index -= md5_count;
+
+  base64_count = base64_test_count();
+  if (index < base64_count)
+    return base64_test_name(index);
+  return carray_test_name(index - base64_count);
 }
 
 int data_types_test_run_case(size_t index,
     test_failure_callback failure_callback, void * context)
 {
+  size_t md5_count;
+  size_t base64_count;
+
+  md5_count = sizeof(cases) / sizeof(cases[0]);
   if (index >= data_types_test_count()) {
     if (failure_callback != NULL)
       failure_callback(__FILE__, __LINE__, "index < data_types_test_count()",
@@ -261,12 +248,21 @@ int data_types_test_run_case(size_t index,
     return -1;
   }
 
-  active_failure_callback = failure_callback;
-  active_failure_context = context;
-  if (setjmp(test_abort) != 0)
-    return -1;
-  cases[index].run();
-  return 0;
+  if (index >= md5_count)
+    index -= md5_count;
+  else {
+    active_failure_callback = failure_callback;
+    active_failure_context = context;
+    if (setjmp(test_abort) != 0)
+      return -1;
+    cases[index].run();
+    return 0;
+  }
+
+  base64_count = base64_test_count();
+  if (index < base64_count)
+    return base64_test_run_case(index, failure_callback, context);
+  return carray_test_run_case(index - base64_count, failure_callback, context);
 }
 
 int data_types_test_run(void)
