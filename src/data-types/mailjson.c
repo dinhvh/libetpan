@@ -8,6 +8,8 @@
 
 #include "mailjson.h"
 
+#ifdef HAVE_JSON
+
 #include <json-c/json.h>
 
 #include <limits.h>
@@ -703,3 +705,225 @@ int mailjson_boolean_value(mailjson_value * value, int * result)
   * result = json_object_get_boolean(value->json);
   return MAILJSON_NO_ERROR;
 }
+
+#else
+
+#include <stdlib.h>
+
+int mailjson_parse(const char * data, size_t len, mailjson_value ** result)
+{
+  (void) data;
+  (void) len;
+  if (result != NULL)
+    * result = NULL;
+  return MAILJSON_ERROR_BAD_STATE;
+}
+
+int mailjson_serialize(mailjson_value * value, int flags,
+    char ** result, size_t * result_len)
+{
+  (void) value;
+  (void) flags;
+  if (result != NULL)
+    * result = NULL;
+  if (result_len != NULL)
+    * result_len = 0;
+  return MAILJSON_ERROR_BAD_STATE;
+}
+
+void mailjson_free(mailjson_value * value)
+{
+  (void) value;
+}
+
+int mailjson_deep_copy(mailjson_value * value, mailjson_value ** result)
+{
+  (void) value;
+  if (result != NULL)
+    * result = NULL;
+  return MAILJSON_ERROR_BAD_STATE;
+}
+
+int mailjson_new_object(mailjson_value ** result)
+{
+  if (result != NULL)
+    * result = NULL;
+  return MAILJSON_ERROR_BAD_STATE;
+}
+
+int mailjson_new_array(mailjson_value ** result)
+{
+  if (result != NULL)
+    * result = NULL;
+  return MAILJSON_ERROR_BAD_STATE;
+}
+
+int mailjson_new_string(const char * value, mailjson_value ** result)
+{
+  (void) value;
+  if (result != NULL)
+    * result = NULL;
+  return MAILJSON_ERROR_BAD_STATE;
+}
+
+int mailjson_new_integer(int64_t value, mailjson_value ** result)
+{
+  (void) value;
+  if (result != NULL)
+    * result = NULL;
+  return MAILJSON_ERROR_BAD_STATE;
+}
+
+int mailjson_new_boolean(int value, mailjson_value ** result)
+{
+  (void) value;
+  if (result != NULL)
+    * result = NULL;
+  return MAILJSON_ERROR_BAD_STATE;
+}
+
+int mailjson_new_null(mailjson_value ** result)
+{
+  if (result != NULL)
+    * result = NULL;
+  return MAILJSON_ERROR_BAD_STATE;
+}
+
+int mailjson_is_object(mailjson_value * value)
+{
+  (void) value;
+  return 0;
+}
+
+int mailjson_is_array(mailjson_value * value)
+{
+  (void) value;
+  return 0;
+}
+
+int mailjson_is_string(mailjson_value * value)
+{
+  (void) value;
+  return 0;
+}
+
+int mailjson_is_integer(mailjson_value * value)
+{
+  (void) value;
+  return 0;
+}
+
+int mailjson_is_boolean(mailjson_value * value)
+{
+  (void) value;
+  return 0;
+}
+
+int mailjson_is_null(mailjson_value * value)
+{
+  (void) value;
+  return 0;
+}
+
+int mailjson_object_set_new(mailjson_value * object,
+    const char * key, mailjson_value * value)
+{
+  (void) object;
+  (void) key;
+  (void) value;
+  return MAILJSON_ERROR_BAD_STATE;
+}
+
+int mailjson_object_get(mailjson_value * object,
+    const char * key, mailjson_value ** result)
+{
+  (void) object;
+  (void) key;
+  if (result != NULL)
+    * result = NULL;
+  return MAILJSON_ERROR_BAD_STATE;
+}
+
+int mailjson_object_get_string_dup(mailjson_value * object,
+    const char * key, char ** result)
+{
+  (void) object;
+  (void) key;
+  if (result != NULL)
+    * result = NULL;
+  return MAILJSON_ERROR_BAD_STATE;
+}
+
+int mailjson_object_get_integer(mailjson_value * object,
+    const char * key, int64_t * result)
+{
+  (void) object;
+  (void) key;
+  (void) result;
+  return MAILJSON_ERROR_BAD_STATE;
+}
+
+int mailjson_object_get_boolean(mailjson_value * object,
+    const char * key, int * result)
+{
+  (void) object;
+  (void) key;
+  (void) result;
+  return MAILJSON_ERROR_BAD_STATE;
+}
+
+int mailjson_object_foreach(mailjson_value * object,
+    mailjson_object_iter_func func, void * context)
+{
+  (void) object;
+  (void) func;
+  (void) context;
+  return MAILJSON_ERROR_BAD_STATE;
+}
+
+int mailjson_array_append_new(mailjson_value * array, mailjson_value * value)
+{
+  (void) array;
+  (void) value;
+  return MAILJSON_ERROR_BAD_STATE;
+}
+
+size_t mailjson_array_size(mailjson_value * array)
+{
+  (void) array;
+  return 0;
+}
+
+int mailjson_array_get(mailjson_value * array,
+    size_t index, mailjson_value ** result)
+{
+  (void) array;
+  (void) index;
+  if (result != NULL)
+    * result = NULL;
+  return MAILJSON_ERROR_BAD_STATE;
+}
+
+int mailjson_string_dup(mailjson_value * value, char ** result)
+{
+  (void) value;
+  if (result != NULL)
+    * result = NULL;
+  return MAILJSON_ERROR_BAD_STATE;
+}
+
+int mailjson_integer_value(mailjson_value * value, int64_t * result)
+{
+  (void) value;
+  (void) result;
+  return MAILJSON_ERROR_BAD_STATE;
+}
+
+int mailjson_boolean_value(mailjson_value * value, int * result)
+{
+  (void) value;
+  (void) result;
+  return MAILJSON_ERROR_BAD_STATE;
+}
+
+#endif

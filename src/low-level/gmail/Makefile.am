@@ -5,6 +5,8 @@ include $(top_srcdir)/rules.mk
 etpaninclude_HEADERS = \
 	mailgmail.h mailgmail_types.h
 
+etpaninclude_CONDITION = defined(HAVE_JSON) || (defined(LIBETPAN_HAS_JSON) && LIBETPAN_HAS_JSON)
+
 noinst_HEADERS = \
 	mailgmail_http.h mailgmail_parser.h mailgmail_private.h mailgmail_url.h
 

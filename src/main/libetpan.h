@@ -116,8 +116,10 @@ extern "C" {
 #include <libetpan/mailactivesync_types.h>
 
 /* src/low-level/gmail */
+#if defined(HAVE_JSON) || (defined(LIBETPAN_HAS_JSON) && LIBETPAN_HAS_JSON)
 #include <libetpan/mailgmail.h>
 #include <libetpan/mailgmail_types.h>
+#endif
 
 /* src/low-level/imap */
 #include <libetpan/acl.h>

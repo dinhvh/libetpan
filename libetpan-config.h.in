@@ -36,6 +36,12 @@
 @define LIBETPAN_HAS_JMAP 0
 #endif
 
+#ifdef HAVE_JSON
+@define LIBETPAN_HAS_JSON 1
+#else
+@define LIBETPAN_HAS_JSON 0
+#endif
+
 @ifdef _MSC_VER
 @    ifdef LIBETPAN_DLL
 @       define LIBETPAN_EXPORT __declspec(dllexport)

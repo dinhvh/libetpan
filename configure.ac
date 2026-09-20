@@ -838,9 +838,22 @@ fi
 AM_CONDITIONAL([HAVE_CURL], [test "x$libcurl" = "xyes"])
 
 dnl JSON
-PKG_CHECK_MODULES([JSON_C], [json-c >= 0.14],
-  [],
-  [AC_MSG_ERROR([JSON-C is required for JSON support])])
+AC_ARG_WITH([json],
+  [AS_HELP_STRING([--with-json],
+    [include JSON-C backed JSON support @<:@default=auto@:>@])],
+  [], [with_json=auto])
+
+have_json=no
+AS_IF([test "x$with_json" != xno], [
+  PKG_CHECK_MODULES([JSON_C], [json-c >= 0.14],
+    [have_json=yes],
+    [AS_IF([test "x$with_json" = xyes],
+      [AC_MSG_ERROR([JSON-C support requested but json-c >= 0.14 was not found])],
+      [have_json=no])])
+])
+AS_IF([test "x$have_json" = xyes],
+  [AC_DEFINE([HAVE_JSON], [1], [Define to include JSON-C backed JSON support])])
+AM_CONDITIONAL([HAVE_JSON], [test "x$have_json" = xyes])
 
 dnl JMAP
 AC_ARG_WITH([jmap],
@@ -850,7 +863,11 @@ AC_ARG_WITH([jmap],
 
 have_jmap=no
 AS_IF([test "x$with_jmap" != xno], [
-  AS_IF([test "x$libcurl" = xyes || test "x$have_nsurlsession" = xyes], [
+  AS_IF([test "x$have_json" != xyes], [
+    AS_IF([test "x$with_jmap" = xyes],
+      [AC_MSG_ERROR([JMAP support requested but JSON support was not found])],
+      [have_jmap=no])
+  ], [test "x$libcurl" = xyes || test "x$have_nsurlsession" = xyes], [
     have_jmap=yes
   ], [
     AS_IF([test "x$with_jmap" = xyes],

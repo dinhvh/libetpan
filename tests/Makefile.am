@@ -71,13 +71,19 @@ jmap_sample_programs =
 jmap_live_tests =
 endif
 
+if HAVE_JSON
+gmail_test_programs = gmail-http-test gmail-sample
 gmail_live_tests = gmail-live-smoke-test.sh
+else
+gmail_test_programs =
+gmail_live_tests =
+endif
 
 noinst_PROGRAMS = smime decrypt pgp frm frm-tree frm-simple	\
 	readmsg-simple fetch-attachment smtpsend readmsg-uid \
 	readmsg compose-msg imap-sample mime-create mime-parse \
 	pop-sample activesync-sample mailhttp-test feed-http-test \
-	gmail-http-test gmail-sample \
+	$(gmail_test_programs) \
 	mailstream-ssl-backend-selection-test mailstream-ssl-internal-transport-test \
 	mailstream-ssl-backend-roundtrip-test \
 	mailstream-voip-compatibility-test \
