@@ -176,6 +176,8 @@
 		A40000000000000000000002 /* parser_test.c in Sources */ = {isa = PBXBuildFile; fileRef = A40000000000000000000012 /* parser_test.c */; };
 		A50000000000000000000001 /* DataTypesTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A50000000000000000000011 /* DataTypesTests.m */; };
 		A50000000000000000000002 /* md5_test.c in Sources */ = {isa = PBXBuildFile; fileRef = A50000000000000000000012 /* md5_test.c */; };
+		A50000000000000000000006 /* base64_test.c in Sources */ = {isa = PBXBuildFile; fileRef = A50000000000000000000016 /* base64_test.c */; };
+		A50000000000000000000007 /* carray_test.c in Sources */ = {isa = PBXBuildFile; fileRef = A50000000000000000000017 /* carray_test.c */; };
 		A50000000000000000000003 /* CharsetDetectionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A50000000000000000000013 /* CharsetDetectionTests.m */; };
 		A50000000000000000000004 /* charset_detection_tests.c in Sources */ = {isa = PBXBuildFile; fileRef = A50000000000000000000014 /* charset_detection_tests.c */; };
 		A50000000000000000000005 /* test_utils.c in Sources */ = {isa = PBXBuildFile; fileRef = A50000000000000000000015 /* test_utils.c */; };
@@ -625,6 +627,8 @@
 		A40000000000000000000012 /* parser_test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = parser_test.c; path = ../unittest/mime/parser_test.c; sourceTree = SOURCE_ROOT; };
 		A50000000000000000000011 /* DataTypesTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = DataTypesTests.m; path = ../unittest/xctest/DataTypesTests.m; sourceTree = SOURCE_ROOT; };
 		A50000000000000000000012 /* md5_test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = md5_test.c; path = "../unittest/data-types/md5_test.c"; sourceTree = SOURCE_ROOT; };
+		A50000000000000000000016 /* base64_test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = base64_test.c; path = "../unittest/data-types/base64_test.c"; sourceTree = SOURCE_ROOT; };
+		A50000000000000000000017 /* carray_test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = carray_test.c; path = "../unittest/data-types/carray_test.c"; sourceTree = SOURCE_ROOT; };
 		A50000000000000000000013 /* CharsetDetectionTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = CharsetDetectionTests.m; path = ../unittest/xctest/CharsetDetectionTests.m; sourceTree = SOURCE_ROOT; };
 		A50000000000000000000014 /* charset_detection_tests.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = charset_detection_tests.c; path = "../unittest/charset-detection/charset_detection_tests.c"; sourceTree = SOURCE_ROOT; };
 		A50000000000000000000015 /* test_utils.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = test_utils.c; path = ../unittest/common/test_utils.c; sourceTree = SOURCE_ROOT; };
@@ -1097,6 +1101,8 @@
 		B10000000000000000000004 /* data-types */ = {
 			isa = PBXGroup;
 			children = (
+				A50000000000000000000016 /* base64_test.c */,
+				A50000000000000000000017 /* carray_test.c */,
 				A50000000000000000000012 /* md5_test.c */,
 			);
 			name = "data-types";
@@ -1931,6 +1937,8 @@
 				A40000000000000000000002 /* parser_test.c in Sources */,
 				A50000000000000000000001 /* DataTypesTests.m in Sources */,
 				A50000000000000000000002 /* md5_test.c in Sources */,
+				A50000000000000000000006 /* base64_test.c in Sources */,
+				A50000000000000000000007 /* carray_test.c in Sources */,
 				A50000000000000000000003 /* CharsetDetectionTests.m in Sources */,
 				A50000000000000000000004 /* charset_detection_tests.c in Sources */,
 				A50000000000000000000005 /* test_utils.c in Sources */,
