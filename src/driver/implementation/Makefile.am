@@ -29,6 +29,14 @@
 
 include $(top_srcdir)/rules.mk
 
+if HAVE_FEED
+feed_subdir = feed
+feed_lib = feed/libfeed.la
+else
+feed_subdir =
+feed_lib =
+endif
+
 SUBDIRS = data-message \
 	imap \
 	maildir \
@@ -39,7 +47,7 @@ SUBDIRS = data-message \
 	pop3 \
 	hotmail \
 	db \
-	feed
+	$(feed_subdir)
 
 noinst_LTLIBRARIES = libimplementation.la
 libimplementation_la_SOURCES = 
@@ -54,4 +62,4 @@ libimplementation_la_LIBADD = \
 	pop3/libpop3.la \
 	hotmail/libhotmail.la \
 	db/libdb.la \
-	feed/libfeed.la
+	$(feed_lib)

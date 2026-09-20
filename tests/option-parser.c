@@ -55,7 +55,9 @@ static struct storage_name storage_tab[] = {
   {MBOX_STORAGE, "mbox"},
   {MH_STORAGE, "mh"},
   {MAILDIR_STORAGE, "maildir"},
+#ifdef HAVE_FEED
   {FEED_STORAGE, "feed"},
+#endif
 };
 
 static int get_driver(char * name)
@@ -261,6 +263,7 @@ int init_storage(struct mailstorage * storage,
       goto err;
     }
     break;
+#ifdef HAVE_FEED
   case FEED_STORAGE:
     r = feed_mailstorage_init(storage, path, cached, cache_directory,
         flags_directory);
@@ -269,6 +272,7 @@ int init_storage(struct mailstorage * storage,
       goto err;
     }
     break;
+#endif
   }
   
   return MAIL_NO_ERROR;
@@ -276,4 +280,3 @@ int init_storage(struct mailstorage * storage,
  err:
   return r;
 }
-

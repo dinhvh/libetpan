@@ -79,10 +79,16 @@ gmail_test_programs =
 gmail_live_tests =
 endif
 
+if HAVE_FEED
+feed_test_programs = feed-http-test
+else
+feed_test_programs =
+endif
+
 noinst_PROGRAMS = smime decrypt pgp frm frm-tree frm-simple	\
 	readmsg-simple fetch-attachment smtpsend readmsg-uid \
 	readmsg compose-msg imap-sample mime-create mime-parse \
-	pop-sample activesync-sample mailhttp-test feed-http-test \
+	pop-sample activesync-sample mailhttp-test $(feed_test_programs) \
 	$(gmail_test_programs) \
 	mailstream-ssl-backend-selection-test mailstream-ssl-internal-transport-test \
 	mailstream-ssl-backend-roundtrip-test \
@@ -94,7 +100,7 @@ noinst_PROGRAMS = smime decrypt pgp frm frm-tree frm-simple	\
 TESTS = mailstream-ssl-backend-selection-test mailstream-ssl-internal-transport-test \
 	mailstream-ssl-backend-roundtrip-test \
 	mailstream-voip-compatibility-test \
-	mailhttp-test feed-http-test smime-low-level-test mailpgp-low-level-test \
+	mailhttp-test $(feed_test_programs) smime-low-level-test mailpgp-low-level-test \
 	smime-openssl-fixture-test.sh mailpgp-gnupg-fixture-test.sh \
 	$(jmap_test_programs) $(jmap_live_tests) $(gmail_live_tests)
 

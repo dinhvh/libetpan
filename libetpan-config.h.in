@@ -42,6 +42,12 @@
 @define LIBETPAN_HAS_JSON 0
 #endif
 
+#ifdef HAVE_FEED
+@define LIBETPAN_HAS_FEED 1
+#else
+@define LIBETPAN_HAS_FEED 0
+#endif
+
 @ifdef _MSC_VER
 @    ifdef LIBETPAN_DLL
 @       define LIBETPAN_EXPORT __declspec(dllexport)

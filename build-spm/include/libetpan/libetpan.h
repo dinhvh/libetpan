@@ -66,7 +66,9 @@ extern "C" {
 #include <libetpan/dbstorage.h>
 
 /* src/driver/implementation/feed */
+#if defined(HAVE_FEED) || (defined(LIBETPAN_HAS_FEED) && LIBETPAN_HAS_FEED)
 #include <libetpan/feedstorage.h>
+#endif
 
 /* src/driver/implementation/hotmail */
 #include <libetpan/hotmailstorage.h>

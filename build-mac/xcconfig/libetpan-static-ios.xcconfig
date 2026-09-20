@@ -1,6 +1,6 @@
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) HAVE_OPENSSL=1 USE_SMIME_OPENSSL=1
-HEADER_SEARCH_PATHS[sdk=iphoneos*] = $(inherited) $(SRCROOT)/dependencies/build/CyrusSASL.xcframework/ios-arm64/Headers $(SRCROOT)/dependencies/build/JsonC.xcframework/ios-arm64/Headers $(SRCROOT)/dependencies/build/OpenSSL-Crypto.xcframework/ios-arm64/Headers $(SRCROOT)/dependencies/build/RNP.xcframework/ios-arm64/Headers
-HEADER_SEARCH_PATHS[sdk=iphonesimulator*] = $(inherited) $(SRCROOT)/dependencies/build/CyrusSASL.xcframework/ios-arm64_x86_64-simulator/Headers $(SRCROOT)/dependencies/build/JsonC.xcframework/ios-arm64_x86_64-simulator/Headers $(SRCROOT)/dependencies/build/OpenSSL-Crypto.xcframework/ios-arm64_x86_64-simulator/Headers $(SRCROOT)/dependencies/build/RNP.xcframework/ios-arm64_x86_64-simulator/Headers
+HEADER_SEARCH_PATHS[sdk=iphoneos*] = $(inherited) $(SDKROOT)/usr/include/libxml2 $(SRCROOT)/dependencies/build/CyrusSASL.xcframework/ios-arm64/Headers $(SRCROOT)/dependencies/build/JsonC.xcframework/ios-arm64/Headers $(SRCROOT)/dependencies/build/OpenSSL-Crypto.xcframework/ios-arm64/Headers $(SRCROOT)/dependencies/build/RNP.xcframework/ios-arm64/Headers
+HEADER_SEARCH_PATHS[sdk=iphonesimulator*] = $(inherited) $(SDKROOT)/usr/include/libxml2 $(SRCROOT)/dependencies/build/CyrusSASL.xcframework/ios-arm64_x86_64-simulator/Headers $(SRCROOT)/dependencies/build/JsonC.xcframework/ios-arm64_x86_64-simulator/Headers $(SRCROOT)/dependencies/build/OpenSSL-Crypto.xcframework/ios-arm64_x86_64-simulator/Headers $(SRCROOT)/dependencies/build/RNP.xcframework/ios-arm64_x86_64-simulator/Headers
 INSTALL_PATH = /usr/local/lib
 IPHONEOS_DEPLOYMENT_TARGET = 15.6
 PRODUCT_NAME = etpan-ios

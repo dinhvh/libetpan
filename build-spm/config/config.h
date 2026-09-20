@@ -15,6 +15,7 @@
 #define HAVE_CTYPE_H 1
 #define HAVE_DLFCN_H 1
 #define HAVE_FCNTL_H 1
+#define HAVE_FEED 1
 #define HAVE_GETOPT_LONG 1
 #define HAVE_GETPAGESIZE 1
 #define HAVE_ICONV 1

@@ -879,9 +879,23 @@ AS_IF([test "x$have_jmap" = xyes],
   [AC_DEFINE([HAVE_JMAP], [1], [Define to include low-level JMAP support])])
 AM_CONDITIONAL([HAVE_JMAP], [test "x$have_jmap" = xyes])
 
-dnl XML (feed parsing is independent from the selected HTTP backend)
-PKG_CHECK_MODULES([LIBXML2], [libxml-2.0], [],
-  [AC_MSG_ERROR([libxml2 is required for feed XML support])])
+dnl RSS/Atom feed support
+AC_ARG_WITH([feed],
+  [AS_HELP_STRING([--with-feed],
+    [include RSS/Atom feed support using libxml2 @<:@default=auto@:>@])],
+  [], [with_feed=auto])
+
+have_feed=no
+AS_IF([test "x$with_feed" != xno], [
+  PKG_CHECK_MODULES([LIBXML2], [libxml-2.0],
+    [have_feed=yes],
+    [AS_IF([test "x$with_feed" = xyes],
+      [AC_MSG_ERROR([feed support requested but libxml2 was not found])],
+      [have_feed=no])])
+])
+AS_IF([test "x$have_feed" = xyes],
+  [AC_DEFINE([HAVE_FEED], [1], [Define to include RSS/Atom feed support])])
+AM_CONDITIONAL([HAVE_FEED], [test "x$have_feed" = xyes])
 
 AC_ARG_WITH([zlib],
   [AS_HELP_STRING([--with-zlib],

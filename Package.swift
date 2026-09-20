@@ -236,6 +236,7 @@ let package = Package(
                 .define("HAVE_CONFIG_H", to: "1"),
                 .define("HAVE_CFNETWORK", to: "1"),
                 .define("HAVE_COREFOUNDATION_CHARCONV", to: "1"),
+                .define("HAVE_FEED", to: "1"),
                 .define("HAVE_JMAP", to: "1"),
                 .define("HAVE_JSON", to: "1"),
                 .define("USE_SMIME_APPLE", to: "1",
@@ -283,6 +284,7 @@ let package = Package(
                 .linkedFramework("Security"),
                 .linkedLibrary("curl"),
                 .linkedLibrary("json-c"),
+                .linkedLibrary("xml2"),
                 .linkedLibrary("z"),
             ]
         ),
