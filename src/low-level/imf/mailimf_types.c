@@ -250,6 +250,9 @@ mailimf_address_list_new(clist * ad_list)
 LIBETPAN_EXPORT
 void mailimf_address_list_free(struct mailimf_address_list * addr_list)
 {
+  if (addr_list == NULL)
+    return;
+
   clist_foreach(addr_list->ad_list, (clist_func) mailimf_address_free, NULL);
   clist_free(addr_list->ad_list);
   free(addr_list);

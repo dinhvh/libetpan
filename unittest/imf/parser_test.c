@@ -464,6 +464,24 @@ static void check_resent_trace_rfc822_message(void)
   check_message_file("messages/resent-trace-rfc822.eml");
 }
 
+static void check_malformed_resent_bcc_does_not_crash(void)
+{
+  const char * input =
+    "From: a@b.c\r\n"
+    "Resent-Bcc: (\r\n"
+    "Subject: hello\r\n";
+  struct mailimf_fields * fields;
+  size_t indx;
+  int r;
+
+  indx = 0;
+  fields = NULL;
+  r = mailimf_fields_parse(input, strlen(input), &indx, &fields);
+  assert(r == MAILIMF_NO_ERROR);
+  assert(fields != NULL);
+  mailimf_fields_free(fields);
+}
+
 struct imf_parser_case {
   const char * name;
   void (* run)(void);
@@ -478,6 +496,7 @@ static const struct imf_parser_case parser_cases[] = {
   { "simple RFC 822 message", check_simple_rfc822_message },
   { "folded comments RFC 822 message", check_folded_comments_rfc822_message },
   { "resent trace RFC 822 message", check_resent_trace_rfc822_message },
+  { "malformed Resent-Bcc does not crash", check_malformed_resent_bcc_does_not_crash },
 };
 
 size_t imf_parser_test_count(void)

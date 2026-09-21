@@ -6545,7 +6545,8 @@ mailimf_resent_bcc_parse(const char * message, size_t length,
   return MAILIMF_NO_ERROR;
 
  free_addr_list:
-  mailimf_address_list_free(addr_list);
+  if (addr_list != NULL)
+    mailimf_address_list_free(addr_list);
  err:
   return res;
 }
