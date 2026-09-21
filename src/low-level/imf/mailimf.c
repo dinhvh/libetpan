@@ -6781,7 +6781,7 @@ static int mailimf_path_parse(const char * message, size_t length,
   r = mailimf_greater_parse(message, length, &cur_token);
   if (r != MAILIMF_NO_ERROR) {
     res = r;
-    goto err;
+    goto free_addr_spec;
   }
 
   path = mailimf_path_new(addr_spec);
@@ -6796,7 +6796,7 @@ static int mailimf_path_parse(const char * message, size_t length,
   return MAILIMF_NO_ERROR;
 
  free_addr_spec:
-  if (addr_spec == NULL)
+  if (addr_spec != NULL)
     mailimf_addr_spec_free(addr_spec);
  err:
   return res;

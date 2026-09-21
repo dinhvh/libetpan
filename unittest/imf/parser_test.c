@@ -482,6 +482,25 @@ static void check_malformed_resent_bcc_does_not_crash(void)
   mailimf_fields_free(fields);
 }
 
+static void check_malformed_return_path_does_not_leak(void)
+{
+  const char * input =
+    "Return-Path: <aaaa\r\n"
+    "Subject: x\r\n"
+    "\r\n"
+    "body\r\n";
+  struct mailimf_message * message;
+  size_t indx;
+  int r;
+
+  indx = 0;
+  message = NULL;
+  r = mailimf_message_parse(input, strlen(input), &indx, &message);
+  assert(r == MAILIMF_NO_ERROR);
+  assert(message != NULL);
+  mailimf_message_free(message);
+}
+
 struct imf_parser_case {
   const char * name;
   void (* run)(void);
@@ -497,6 +516,7 @@ static const struct imf_parser_case parser_cases[] = {
   { "folded comments RFC 822 message", check_folded_comments_rfc822_message },
   { "resent trace RFC 822 message", check_resent_trace_rfc822_message },
   { "malformed Resent-Bcc does not crash", check_malformed_resent_bcc_does_not_crash },
+  { "malformed Return-Path does not leak", check_malformed_return_path_does_not_leak },
 };
 
 size_t imf_parser_test_count(void)
