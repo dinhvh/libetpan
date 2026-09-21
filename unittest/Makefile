@@ -53,6 +53,7 @@ ACTIVESYNC_WBXML_TEST = activesync/wbxml_test
 ACTIVESYNC_HTTP_TEST = activesync/http_test
 ACTIVESYNC_SAMPLE_TEST = activesync/sample_test
 POP3_TEST = pop3/pop3_test
+NNTP_TEST = nntp/nntp_test
 GMAIL_TEST = gmail/gmail_test
 JMAP_JSON_TEST = jmap/jmap_json_test
 JMAP_HTTP_TEST = jmap/jmap_http_test
@@ -83,6 +84,7 @@ TEST_PROGRAMS = \
 	$(ACTIVESYNC_HTTP_TEST) \
 	$(ACTIVESYNC_SAMPLE_TEST) \
 	$(POP3_TEST) \
+	$(NNTP_TEST) \
 	$(GMAIL_TEST) \
 	$(JMAP_JSON_TEST) \
 	$(JMAP_HTTP_TEST) \
@@ -171,6 +173,8 @@ ACTIVESYNC_SAMPLE_TEST_SRCS = \
 	activesync/sample_test.c
 POP3_TEST_SRCS = \
 	pop3/main.c
+NNTP_TEST_SRCS = \
+	nntp/main.c
 GMAIL_TEST_SRCS = \
 	gmail/http_test.c
 JMAP_JSON_TEST_SRCS = \
@@ -231,6 +235,7 @@ ACTIVESYNC_SAMPLE_TEST_DEPS = $(ACTIVESYNC_SAMPLE_TEST_SRCS) \
 	$(TOP)/tests/activesync-sample.c \
 	$(TOP)/src/low-level/activesync/mailactivesync_command.h
 POP3_TEST_DEPS = $(POP3_TEST_SRCS) pop3/*.h common/test_case.h
+NNTP_TEST_DEPS = $(NNTP_TEST_SRCS) common/test_case.h
 GMAIL_TEST_DEPS = $(GMAIL_TEST_SRCS) common/test_case.h
 JMAP_FIXTURES = $(wildcard jmap/data/*/*.json) \
 	$(wildcard jmap/data/*/*.eml)
@@ -279,6 +284,7 @@ check: all
 	@cd activesync && ./http_test
 	@cd activesync && ./sample_test
 	@cd pop3 && ./pop3_test
+	@cd nntp && ./nntp_test
 	@cd gmail && ./gmail_test
 	@./jmap/jmap_json_test
 	@./jmap/jmap_http_test
@@ -361,6 +367,9 @@ $(ACTIVESYNC_SAMPLE_TEST): $(ACTIVESYNC_SAMPLE_TEST_DEPS) $(LIBETPAN_TEST_DEPEND
 $(POP3_TEST): $(POP3_TEST_DEPS) $(LIBETPAN_TEST_DEPENDENCY)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(POP3_TEST_SRCS) $(LDLIBS) -o $@
 
+$(NNTP_TEST): $(NNTP_TEST_DEPS) $(LIBETPAN_TEST_DEPENDENCY)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(NNTP_TEST_SRCS) $(LDLIBS) -o $@
+
 $(GMAIL_TEST): $(GMAIL_TEST_DEPS) $(LIBETPAN_TEST_DEPENDENCY)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(GMAIL_TEST_SRCS) $(LDLIBS) $(JSON_C_LDLIBS) -o $@
 
@@ -408,7 +417,7 @@ clean:
 	rm -f $(MAILHTTP_TEST)
 	rm -f $(FEED_HTTP_TEST)
 	rm -f $(ACTIVESYNC_WBXML_TEST) $(ACTIVESYNC_HTTP_TEST)
-	rm -f $(ACTIVESYNC_SAMPLE_TEST) $(POP3_TEST)
+	rm -f $(ACTIVESYNC_SAMPLE_TEST) $(POP3_TEST) $(NNTP_TEST)
 	rm -f $(GMAIL_TEST) $(JMAP_JSON_TEST) $(JMAP_HTTP_TEST)
 	rm -f $(JMAP_REQUEST_TEST) $(JMAP_RESPONSE_TEST)
 	rm -f $(JMAP_CALL_TEST) $(JMAP_MAILBOX_TEST)

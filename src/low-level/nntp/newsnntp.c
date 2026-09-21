@@ -1368,6 +1368,9 @@ int newsnntp_date(newsnntp * f, struct tm * tm)
 
   switch (r) {
   case 111:
+    if (strlen(f->nntp_response) < 14)
+      return NEWSNNTP_ERROR_INVALID_RESPONSE;
+
     strfcpy(year, f->nntp_response, 4);
     strfcpy(month, f->nntp_response + 4, 2);
     strfcpy(day, f->nntp_response + 6, 2);
