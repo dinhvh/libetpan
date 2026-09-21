@@ -1921,10 +1921,10 @@ static int mailmime_quoted_printable_body_parse_impl(
               break;
             }
             /* error but ignore it */
-            cur_token ++;
-            
             start = message + cur_token;
-            
+
+            cur_token ++;
+
             count ++;
 	    state = STATE_NORMAL;
 	    break;

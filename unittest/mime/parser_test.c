@@ -631,6 +631,26 @@ static void check_full_rfc822_multipart(void)
   mmap_string_free(input);
 }
 
+static void check_truncated_quoted_printable_escape(void)
+{
+  const char * input = "=4";
+  char * decoded;
+  size_t decoded_len;
+  size_t indx;
+  int r;
+
+  indx = 0;
+  decoded = NULL;
+  decoded_len = 0;
+  r = mailmime_part_parse(input, strlen(input), &indx,
+      MAILMIME_MECHANISM_QUOTED_PRINTABLE, &decoded, &decoded_len);
+  assert(r == MAILIMF_NO_ERROR);
+  assert(decoded != NULL);
+  assert(decoded_len == strlen(input));
+  assert(memcmp(decoded, input, decoded_len) == 0);
+  mailmime_decoded_part_free(decoded);
+}
+
 static void check_rfc822_multipart_file(void)
 {
   check_message_file("messages/rfc822-multipart.eml", 3);
@@ -727,6 +747,7 @@ static const struct mime_parser_case parser_cases[] = {
   { "RFC 822 multipart file", check_rfc822_multipart_file },
   { "RFC 822 alternative file", check_rfc822_alternative_file },
   { "full RFC 822 multipart", check_full_rfc822_multipart },
+  { "truncated quoted-printable escape", check_truncated_quoted_printable_escape },
   { "quoted-pair boundary quote", check_boundary_quoted_pair_quote },
   { "MIME parse depth limit", check_mime_parse_depth_limit },
 };
