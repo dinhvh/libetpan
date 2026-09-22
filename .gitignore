@@ -175,6 +175,7 @@ xcuserdata/
 /tests/mime-create
 /tests/mime-parse
 /tests/pop-sample
+/tests/mailstream-ssl-backend-roundtrip-test
 
 /unittest/*/*_test
 *.py[cod]
@@ -220,3 +221,4 @@ libetpan.pc
 /tests/activesync-state.local.txt
 /tests/gmail-google-oauth.local.json
 /tests/gmail-token.local.json
+
