@@ -44,7 +44,7 @@ static void free_string_item(void * value, void * data)
   free(value);
 }
 
-static void string_list_free(clist * list)
+static void string_list_free(clist /* char * */ * list)
 {
   if (list == NULL)
     return;
@@ -457,7 +457,7 @@ int mailactivesync_sync(mailactivesync * session,
 }
 
 int mailactivesync_sync_multi(mailactivesync * session,
-    clist * requests,
+    clist /* struct mailactivesync_sync_request * */ * requests,
     struct mailactivesync_sync_result ** result)
 {
   clistiter * cur;
@@ -563,7 +563,8 @@ int mailactivesync_get_item_estimate(mailactivesync * session,
 }
 
 int mailactivesync_get_item_estimate_multi(mailactivesync * session,
-    clist * collections,
+    clist /* struct mailactivesync_get_item_estimate_collection * */ *
+    collections,
     struct mailactivesync_get_item_estimate_result ** result)
 {
   int r;
@@ -640,7 +641,8 @@ int mailactivesync_item_operations_fetch_body_part(mailactivesync * session,
 }
 
 int mailactivesync_item_operations_fetch_multi(mailactivesync * session,
-    clist * requests,
+    clist /* struct mailactivesync_item_operations_fetch_request * */ *
+    requests,
     struct mailactivesync_item_operations_fetch_result ** result)
 {
   clistiter * cur;
@@ -756,7 +758,7 @@ int mailactivesync_mail_find(mailactivesync * session,
 }
 
 int mailactivesync_resolve_recipients(mailactivesync * session,
-    clist * recipients,
+    clist /* char * */ * recipients,
     uint32_t max_ambiguous_recipients,
     struct mailactivesync_resolve_recipients_result ** result)
 {
@@ -824,7 +826,7 @@ static int sync_result_command_status(
 static int sync_result_commands_status(
     struct mailactivesync_sync_result * result,
     int type,
-    clist * server_ids)
+    clist /* const char * */ * server_ids)
 {
   clistiter * cur;
   int r;
@@ -913,8 +915,8 @@ static int run_sync_commands(mailactivesync * session,
     const char * collection_id,
     const char * sync_key,
     int command_type,
-    clist * server_ids,
-    clist * commands,
+    clist /* const char * */ * server_ids,
+    clist /* struct mailactivesync_sync_command * */ * commands,
     int deletes_as_moves_set,
     int deletes_as_moves,
     struct mailactivesync_sync_result ** result)
@@ -962,7 +964,8 @@ static int run_sync_commands(mailactivesync * session,
   return r;
 }
 
-static void free_sync_command_list(clist * commands)
+static void free_sync_command_list(
+    clist /* struct mailactivesync_sync_command * */ * commands)
 {
   clistiter * cur;
 
@@ -1121,7 +1124,7 @@ static int draft_add_attachment_node(
 
 static int draft_add_attachments(
     struct mailactivesync_sync_command * command,
-    clist * attachments)
+    clist /* struct mailactivesync_draft_attachment * */ * attachments)
 {
   struct mailactivesync_wbxml_node * attachments_node;
   clistiter * cur;
@@ -1263,7 +1266,7 @@ static int draft_add_application_data(
 int mailactivesync_mark_messages_read(mailactivesync * session,
     const char * collection_id,
     const char * sync_key,
-    clist * server_ids,
+    clist /* const char * */ * server_ids,
     int read,
     struct mailactivesync_sync_result ** result)
 {
@@ -1324,7 +1327,7 @@ int mailactivesync_mark_messages_read(mailactivesync * session,
 int mailactivesync_set_messages_flagged(mailactivesync * session,
     const char * collection_id,
     const char * sync_key,
-    clist * server_ids,
+    clist /* const char * */ * server_ids,
     int flagged,
     struct mailactivesync_sync_result ** result)
 {
@@ -1408,7 +1411,7 @@ int mailactivesync_set_messages_flagged(mailactivesync * session,
 int mailactivesync_delete_messages(mailactivesync * session,
     const char * collection_id,
     const char * sync_key,
-    clist * server_ids,
+    clist /* const char * */ * server_ids,
     int deletes_as_moves,
     struct mailactivesync_sync_result ** result)
 {
@@ -1638,7 +1641,7 @@ int mailactivesync_smart_forward_ext(mailactivesync * session,
 }
 
 int mailactivesync_move_items(mailactivesync * session,
-    clist * moves,
+    clist /* struct mailactivesync_move * */ * moves,
     struct mailactivesync_move_items_result ** result)
 {
   int r;

@@ -44,7 +44,7 @@ int mailactivesync_command_sync(mailactivesync * session,
     struct mailactivesync_sync_result ** result);
 
 int mailactivesync_command_sync_multi(mailactivesync * session,
-    clist * requests,
+    clist /* struct mailactivesync_sync_request * */ * requests,
     struct mailactivesync_sync_result ** result);
 
 int mailactivesync_command_provision(mailactivesync * session,
@@ -65,7 +65,8 @@ int mailactivesync_command_get_item_estimate(mailactivesync * session,
     struct mailactivesync_get_item_estimate_result ** result);
 
 int mailactivesync_command_get_item_estimate_multi(mailactivesync * session,
-    clist * collections,
+    clist /* struct mailactivesync_get_item_estimate_collection * */ *
+    collections,
     struct mailactivesync_get_item_estimate_result ** result);
 
 int mailactivesync_command_item_operations_fetch(mailactivesync * session,
@@ -83,7 +84,8 @@ int mailactivesync_command_item_operations_fetch_body_part(
 
 int mailactivesync_command_item_operations_fetch_multi(
     mailactivesync * session,
-    clist * requests,
+    clist /* struct mailactivesync_item_operations_fetch_request * */ *
+    requests,
     struct mailactivesync_item_operations_fetch_result ** result);
 
 int mailactivesync_command_item_operations_fetch_attachment(
@@ -101,7 +103,7 @@ int mailactivesync_command_mail_find(mailactivesync * session,
     struct mailactivesync_mail_find_result ** result);
 
 int mailactivesync_command_resolve_recipients(mailactivesync * session,
-    clist * recipients,
+    clist /* char * */ * recipients,
     uint32_t max_ambiguous_recipients,
     struct mailactivesync_resolve_recipients_result ** result);
 
@@ -142,7 +144,7 @@ int mailactivesync_command_smart_forward_ext(mailactivesync * session,
     const struct mailactivesync_composemail_request * request);
 
 int mailactivesync_command_move_items(mailactivesync * session,
-    clist * moves,
+    clist /* struct mailactivesync_move * */ * moves,
     struct mailactivesync_move_items_result ** result);
 
 int mailactivesync_command_ping(mailactivesync * session,

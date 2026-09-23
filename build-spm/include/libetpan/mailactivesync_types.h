@@ -56,7 +56,7 @@ struct mailactivesync {
   char * as_last_authenticate_header;
   int as_connected;
   int as_authenticated;
-  clist * as_advertised_commands;
+  clist * as_advertised_commands; /* char * */
   struct mailactivesync_http_transport * as_http_transport;
 };
 
@@ -214,7 +214,7 @@ struct mailactivesync_sync_request {
   struct mailactivesync_body_preference * body_preference;
   clist * body_preferences; /* struct mailactivesync_body_preference * */
   clist * supported_properties; /* struct mailactivesync_wbxml_node * */
-  clist * client_commands;
+  clist * client_commands; /* struct mailactivesync_sync_command * */
 };
 
 enum {

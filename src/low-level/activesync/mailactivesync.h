@@ -107,7 +107,7 @@ int mailactivesync_sync(mailactivesync * session,
 
 LIBETPAN_EXPORT
 int mailactivesync_sync_multi(mailactivesync * session,
-    clist * requests,
+    clist /* struct mailactivesync_sync_request * */ * requests,
     struct mailactivesync_sync_result ** result);
 
 LIBETPAN_EXPORT
@@ -131,7 +131,8 @@ int mailactivesync_get_item_estimate(mailactivesync * session,
 
 LIBETPAN_EXPORT
 int mailactivesync_get_item_estimate_multi(mailactivesync * session,
-    clist * collections,
+    clist /* struct mailactivesync_get_item_estimate_collection * */ *
+    collections,
     struct mailactivesync_get_item_estimate_result ** result);
 
 LIBETPAN_EXPORT
@@ -150,7 +151,8 @@ int mailactivesync_item_operations_fetch_body_part(mailactivesync * session,
 
 LIBETPAN_EXPORT
 int mailactivesync_item_operations_fetch_multi(mailactivesync * session,
-    clist * requests,
+    clist /* struct mailactivesync_item_operations_fetch_request * */ *
+    requests,
     struct mailactivesync_item_operations_fetch_result ** result);
 
 LIBETPAN_EXPORT
@@ -170,7 +172,7 @@ int mailactivesync_mail_find(mailactivesync * session,
     struct mailactivesync_mail_find_result ** result);
 
 int mailactivesync_resolve_recipients(mailactivesync * session,
-    clist * recipients,
+    clist /* char * */ * recipients,
     uint32_t max_ambiguous_recipients,
     struct mailactivesync_resolve_recipients_result ** result);
 
@@ -188,7 +190,7 @@ LIBETPAN_EXPORT
 int mailactivesync_mark_messages_read(mailactivesync * session,
     const char * collection_id,
     const char * sync_key,
-    clist * server_ids,
+    clist /* const char * */ * server_ids,
     int read,
     struct mailactivesync_sync_result ** result);
 
@@ -196,7 +198,7 @@ LIBETPAN_EXPORT
 int mailactivesync_set_messages_flagged(mailactivesync * session,
     const char * collection_id,
     const char * sync_key,
-    clist * server_ids,
+    clist /* const char * */ * server_ids,
     int flagged,
     struct mailactivesync_sync_result ** result);
 
@@ -204,7 +206,7 @@ LIBETPAN_EXPORT
 int mailactivesync_delete_messages(mailactivesync * session,
     const char * collection_id,
     const char * sync_key,
-    clist * server_ids,
+    clist /* const char * */ * server_ids,
     int deletes_as_moves,
     struct mailactivesync_sync_result ** result);
 
@@ -260,7 +262,7 @@ int mailactivesync_smart_forward_ext(mailactivesync * session,
 
 LIBETPAN_EXPORT
 int mailactivesync_move_items(mailactivesync * session,
-    clist * moves,
+    clist /* struct mailactivesync_move * */ * moves,
     struct mailactivesync_move_items_result ** result);
 
 LIBETPAN_EXPORT

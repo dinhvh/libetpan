@@ -144,7 +144,7 @@ static void free_wbxml_node_item(void * value, void * data)
   mailactivesync_wbxml_node_free(value);
 }
 
-static void string_list_free(clist * list)
+static void string_list_free(clist /* char * */ * list)
 {
   if (list == NULL)
     return;
@@ -152,7 +152,8 @@ static void string_list_free(clist * list)
   clist_free(list);
 }
 
-static int string_list_contains(clist * list, const char * value)
+static int string_list_contains(clist /* char * */ * list,
+    const char * value)
 {
   clistiter * cur;
 
@@ -1159,7 +1160,8 @@ int mailactivesync_body_part_needs_fetch(
   return (body_part->status == 1) && (body_part->truncated != 0);
 }
 
-static int body_part_list_needs_fetch(clist * body_parts)
+static int body_part_list_needs_fetch(
+    clist /* struct mailactivesync_body_part * */ * body_parts)
 {
   clistiter * cur;
 
