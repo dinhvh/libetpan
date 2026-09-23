@@ -291,7 +291,7 @@ static struct mailjmap_http_transport * fake_transport_new(
   return transport;
 }
 
-static void string_list_free(clist * list)
+static void string_list_free(clist /* char * */ * list)
 {
   clistiter * cur;
 
@@ -303,7 +303,7 @@ static void string_list_free(clist * list)
   clist_free(list);
 }
 
-static int string_list_append(clist * list, const char * value)
+static int string_list_append(clist /* char * */ * list, const char * value)
 {
   char * copy;
 
@@ -318,7 +318,8 @@ static int string_list_append(clist * list, const char * value)
   return MAILJMAP_NO_ERROR;
 }
 
-static void mailbox_set_item_list_free(clist * list)
+static void mailbox_set_item_list_free(
+    clist /* struct mailjmap_mailbox_set_item * */ * list)
 {
   clistiter * cur;
 
@@ -337,7 +338,7 @@ static int test_mailbox_get(void)
   struct mailjmap_session * session_object;
   struct mailjmap_mailbox_get_result * result;
   struct mailjmap_mailbox * mailbox;
-  clist * ids;
+  clist /* char * */ * ids;
   chashdatum map_key;
   chashdatum map_value;
   int right_value;
@@ -444,9 +445,9 @@ static int test_mailbox_set(void)
   struct mailjmap_set_error * not_created;
   struct mailjmap_set_error * not_updated;
   struct mailjmap_set_error * not_destroyed;
-  clist * create;
-  clist * update;
-  clist * destroy;
+  clist /* struct mailjmap_mailbox_set_item * */ * create;
+  clist /* struct mailjmap_mailbox_set_item * */ * update;
+  clist /* char * */ * destroy;
   char * updated;
   char * destroyed;
   int r;
@@ -618,7 +619,7 @@ static int test_mailbox_set_fastmail_updated_map(void)
   struct mailjmap_session * session_object;
   struct mailjmap_mailbox_set_item * update_item;
   struct mailjmap_set_result * set_result;
-  clist * update;
+  clist /* struct mailjmap_mailbox_set_item * */ * update;
   char * updated;
   int r;
   int ok;

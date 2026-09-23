@@ -231,7 +231,7 @@ static int rfc2231_convert_to_utf8(const char * charset, const char * str,
   return MAILIMF_NO_ERROR;
 }
 
-static struct mailmime_parameter * rfc2231_find_section(clist * parameters,
+static struct mailmime_parameter * rfc2231_find_section(clist /* struct mailmime_parameter * */ * parameters,
     const char * base, int section, int * encoded)
 {
   clistiter * cur;
@@ -260,7 +260,7 @@ static struct mailmime_parameter * rfc2231_find_section(clist * parameters,
 }
 
 static struct mailmime_parameter * rfc2231_find_single_extended(
-    clist * parameters, const char * base)
+    clist /* struct mailmime_parameter * */ * parameters, const char * base)
 {
   clistiter * cur;
 
@@ -286,7 +286,8 @@ static struct mailmime_parameter * rfc2231_find_single_extended(
   return NULL;
 }
 
-static int rfc2231_decode_continuation(clist * parameters, const char * base,
+static int rfc2231_decode_continuation(
+    clist /* struct mailmime_parameter * */ * parameters, const char * base,
     char ** result)
 {
   MMAPString * decoded;
@@ -394,7 +395,8 @@ static int rfc2231_decode_single_extended(struct mailmime_parameter * param,
   return r;
 }
 
-static int rfc2231_decode_for_base(clist * parameters, const char * base,
+static int rfc2231_decode_for_base(
+    clist /* struct mailmime_parameter * */ * parameters, const char * base,
     char ** result)
 {
   struct mailmime_parameter * param;
@@ -413,7 +415,7 @@ static int rfc2231_decode_for_base(clist * parameters, const char * base,
   return rfc2231_decode_single_extended(param, result);
 }
 
-static int rfc2231_base_was_seen(clist * seen, const char * base)
+static int rfc2231_base_was_seen(clist /* char * */ * seen, const char * base)
 {
   clistiter * cur;
 
@@ -428,7 +430,8 @@ static int rfc2231_base_was_seen(clist * seen, const char * base)
   return 0;
 }
 
-static int rfc2231_remove_base_parameters(clist * parameters,
+static int rfc2231_remove_base_parameters(
+    clist /* struct mailmime_parameter * */ * parameters,
     const char * base)
 {
   clistiter * cur;
@@ -448,9 +451,10 @@ static int rfc2231_remove_base_parameters(clist * parameters,
   return MAILIMF_NO_ERROR;
 }
 
-int mailmime_rfc2231_normalize_parameters(clist * parameters)
+int mailmime_rfc2231_normalize_parameters(
+    clist /* struct mailmime_parameter * */ * parameters)
 {
-  clist * seen;
+  clist /* char * */ * seen;
   clistiter * cur;
   int res;
 
@@ -546,7 +550,8 @@ int mailmime_rfc2231_normalize_parameters(clist * parameters)
   return res;
 }
 
-static int rfc2231_disposition_append_parameter(clist * parameters,
+static int rfc2231_disposition_append_parameter(
+    clist /* struct mailmime_parameter * */ * parameters,
     const char * name, const char * value)
 {
   char * dup_name;
@@ -580,7 +585,8 @@ static int rfc2231_disposition_append_parameter(clist * parameters,
   return MAILIMF_NO_ERROR;
 }
 
-static char * rfc2231_find_parameter_value(clist * parameters,
+static char * rfc2231_find_parameter_value(
+    clist /* struct mailmime_parameter * */ * parameters,
     const char * name)
 {
   clistiter * cur;
@@ -598,7 +604,8 @@ static char * rfc2231_find_parameter_value(clist * parameters,
   return result;
 }
 
-static int rfc2231_disposition_has_rfc2231_filename(clist * parameters)
+static int rfc2231_disposition_has_rfc2231_filename(
+    clist /* struct mailmime_disposition_parm * */ * parameters)
 {
   clistiter * cur;
 
@@ -625,7 +632,8 @@ static int rfc2231_disposition_has_rfc2231_filename(clist * parameters)
   return 0;
 }
 
-static void rfc2231_disposition_remove_filename(clist * parameters)
+static void rfc2231_disposition_remove_filename(
+    clist /* struct mailmime_disposition_parm * */ * parameters)
 {
   clistiter * cur;
 
@@ -649,9 +657,10 @@ static void rfc2231_disposition_remove_filename(clist * parameters)
   }
 }
 
-int mailmime_rfc2231_normalize_disposition_parameters(clist * parameters)
+int mailmime_rfc2231_normalize_disposition_parameters(
+    clist /* struct mailmime_disposition_parm * */ * parameters)
 {
-  clist * raw_parameters;
+  clist /* struct mailmime_parameter * */ * raw_parameters;
   clistiter * cur;
   char * filename;
   char * filename_dup;

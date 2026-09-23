@@ -69,7 +69,7 @@ static int mailesmtp_send_mail(mailsmtp * session,
                                const char * from,
                                int return_full,
                                const char * envid,
-                               clist * addresses,
+                               clist /* struct esmtp_address * */ * addresses,
                                const char * message, size_t size)
 {
   int r;
@@ -112,7 +112,7 @@ int mailesmtp_send(mailsmtp * session,
 		    const char * from,
 		    int return_full,
 		    const char * envid,
-		    clist * addresses,
+		    clist /* struct esmtp_address * */ * addresses,
 		    const char * message, size_t size)
 {
   int r = mailesmtp_send_mail(session, from, return_full, envid, addresses, message, size);
@@ -131,7 +131,7 @@ int mailesmtp_send_quit(mailsmtp * session,
                         const char * from,
                         int return_full,
                         const char * envid,
-                        clist * addresses,
+                        clist /* struct esmtp_address * */ * addresses,
                         const char * message, size_t size)
 {
   int r = mailesmtp_send_mail(session, from, return_full, envid, addresses, message, size);
@@ -150,7 +150,7 @@ int mailesmtp_send_quit_no_disconnect(mailsmtp * session,
                                       const char * from,
                                       int return_full,
                                       const char * envid,
-                                      clist * addresses,
+                                      clist /* struct esmtp_address * */ * addresses,
                                       const char * message, size_t size)
 {
   int r = mailesmtp_send_mail(session, from, return_full, envid, addresses, message, size);
@@ -167,7 +167,7 @@ int mailesmtp_send_quit_no_disconnect(mailsmtp * session,
 LIBETPAN_EXPORT
 int mailsmtp_send(mailsmtp * session,
 		   const char * from,
-		   clist * addresses,
+		   clist /* struct esmtp_address * */ * addresses,
 		   const char * message, size_t size)
 {
   int r;
@@ -252,20 +252,20 @@ static void esmtp_address_free(struct esmtp_address * addr)
 }
 
 LIBETPAN_EXPORT
-clist * esmtp_address_list_new(void)
+clist /* struct esmtp_address * */ * esmtp_address_list_new(void)
 {
   return clist_new();
 }
 
 LIBETPAN_EXPORT
-void esmtp_address_list_free(clist * l)
+void esmtp_address_list_free(clist /* struct esmtp_address * */ * l)
 {
   clist_foreach(l, (clist_func) esmtp_address_free, NULL);
   clist_free(l);
 }
 
 LIBETPAN_EXPORT
-int esmtp_address_list_add(clist * list, char * address,
+int esmtp_address_list_add(clist /* struct esmtp_address * */ * list, char * address,
 			       int notify, char * orcpt)
 {
   struct esmtp_address * esmtpa;
@@ -285,19 +285,19 @@ int esmtp_address_list_add(clist * list, char * address,
 }
 
 LIBETPAN_EXPORT
-clist * smtp_address_list_new(void)
+clist /* struct esmtp_address * */ * smtp_address_list_new(void)
 {
   return esmtp_address_list_new();
 }
 
 LIBETPAN_EXPORT
-int smtp_address_list_add(clist * list, char * address)
+int smtp_address_list_add(clist /* struct esmtp_address * */ * list, char * address)
 {
   return esmtp_address_list_add(list, address, 0, NULL);
 }
 
 LIBETPAN_EXPORT
-void smtp_address_list_free(clist * l)
+void smtp_address_list_free(clist /* struct esmtp_address * */ * l)
 {
   esmtp_address_list_free(l);
 }

@@ -263,7 +263,7 @@ static int db_get_next_msg_number(struct mail_cache_db * maildb,
 }
 
 static int db_set_message_list(struct mail_cache_db * maildb,
-    carray * msglist)
+    carray /* uint32_t * */ * msglist)
 {
   MMAPString * mmapstr;
   char key_value[PATH_MAX];
@@ -309,9 +309,9 @@ static int db_set_message_list(struct mail_cache_db * maildb,
 }
 
 static int db_get_message_list(struct mail_cache_db * maildb,
-    carray ** p_msglist)
+    carray /* uint32_t * */ ** p_msglist)
 {
-  carray * msglist;
+  carray /* uint32_t * */ * msglist;
   void * serialized;
   size_t serialized_len;
   int r;
@@ -445,11 +445,11 @@ static int expunge_folder(mailsession * session)
   int r;
   char key_value[PATH_MAX];
   struct mail_cache_db * maildb;
-  carray * msglist;
+  carray /* uint32_t * */ * msglist;
   unsigned int i;
   struct db_session_state_data * data;
   int res;
-  chash * msg_table;
+  chash /* char * cache key -> empty */ * msg_table;
   MMAPString * mmapstr;
   
   data = get_data(session);
@@ -575,7 +575,7 @@ static int status_folder(mailsession * session, const char * mb,
   struct db_session_state_data * data;
   int r;
   int res;
-  carray * msglist;
+  carray /* uint32_t * */ * msglist;
   unsigned int i;
   
   data = get_data(session);
@@ -695,7 +695,7 @@ static int append_message(mailsession * session,
 static int append_message_flags(mailsession * session,
     const char * message, size_t size, struct mail_flags * flags)
 {
-  carray * msglist;
+  carray /* uint32_t * */ * msglist;
   unsigned int i;
   uint32_t * msg;
   uint32_t num;
@@ -845,9 +845,9 @@ static int get_messages_list(mailsession * session,
   struct mail_cache_db * maildb;
   struct db_session_state_data * data;
   int res;
-  carray * msglist;
+  carray /* uint32_t * */ * msglist;
   unsigned int i;
-  carray * msgtab;
+  carray /* mailmessage * */ * msgtab;
   struct mailmessage_list * driver_msglist;
   
   data = get_data(session);

@@ -168,7 +168,7 @@ Java_com_libetpan_demo_ImapClient_fetchInbox(JNIEnv *env, jobject thiz,
         }
         mailimap_fetch_type_new_fetch_att_list_add(ft, mailimap_fetch_att_new_envelope());
 
-        clist *fetch_result = NULL;
+        clist /* struct mailimap_msg_att * */ *fetch_result = NULL;
         r = mailimap_fetch(imap, set, ft, &fetch_result);
 
         if (r == MAILIMAP_NO_ERROR && fetch_result != NULL) {

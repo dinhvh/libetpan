@@ -89,7 +89,7 @@ static size_t mmap_string_ceil = MMAP_STRING_DEFAULT_CEIL;
 #	define MUTEX_LOCK(x) 
 #	define MUTEX_UNLOCK(x)
 #endif
-static chash * mmapstring_hashtable = NULL;
+static chash /* char ** -> MMAPString * */ * mmapstring_hashtable = NULL;
 
 void mmapstring_init_lock(void)
 {
@@ -119,7 +119,7 @@ void mmap_string_set_tmpdir(const char * directory)
 
 int mmap_string_ref(MMAPString * string)
 {
-  chash * ht;
+  chash /* char ** -> MMAPString * */ * ht;
   int r;
   chashdatum key;
   chashdatum data;
@@ -155,7 +155,7 @@ int mmap_string_ref(MMAPString * string)
 int mmap_string_unref(char * str)
 {
   MMAPString * string;
-  chash * ht;
+  chash /* char ** -> MMAPString * */ * ht;
   chashdatum key;
   chashdatum data;
   int r;

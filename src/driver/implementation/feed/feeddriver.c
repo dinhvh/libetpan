@@ -700,7 +700,7 @@ static int feeddriver_get_messages_list(mailsession * session,
   struct feed_session_state_data * data;
   unsigned int count;
   struct mailmessage_list * msg_list;
-  carray * tab;
+  carray /* mailmessage * */ * tab;
   int res;
   int r;
   

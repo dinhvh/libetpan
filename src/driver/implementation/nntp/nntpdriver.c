@@ -414,12 +414,12 @@ static int nntpdriver_list_folders(mailsession * session, const char * mb,
 				    struct mail_list ** result)
 {
   int r;
-  clist * group_list;
+  clist /* struct newsnntp_group_info * */ * group_list;
   newsnntp * nntp;
   clistiter * cur;
   char * new_mb;
   int done;
-  clist * list;
+  clist /* char * */ * list;
   struct mail_list * ml;
   int res;
 
@@ -527,8 +527,8 @@ static int nntpdriver_list_folders(mailsession * session, const char * mb,
 static int nntpdriver_lsub_folders(mailsession * session, const char * mb,
 				   struct mail_list ** result)
 {
-  clist * subscribed;
-  clist * lsub_result;
+  clist /* char * */ * subscribed;
+  clist /* char * */ * lsub_result;
   clistiter * cur;
   struct mail_list * lsub;
   size_t length;
@@ -658,7 +658,7 @@ nntpdriver_get_envelopes_list(mailsession * session,
   newsnntp * nntp;
   int r;
   struct nntp_session_state_data * data;
-  clist * list;
+  clist /* struct newsnntp_xover_resp_item * */ * list;
   int done;
   clistiter * cur;
   uint32_t first_seq;
@@ -886,7 +886,7 @@ static int xover_resp_to_fields(struct newsnntp_xover_resp_item * item,
 				struct mailimf_fields ** result)
 {
   size_t cur_token;
-  clist * list;
+  clist /* struct mailimf_field * */ * list;
   int r;
   struct mailimf_fields * fields;
   int res;
@@ -1066,7 +1066,7 @@ static int xover_resp_to_fields(struct newsnntp_xover_resp_item * item,
   }
 
   if (item->ovr_references != NULL) {
-    clist * msgid_list;
+    clist /* char * */ * msgid_list;
     struct mailimf_references * references;
     struct mailimf_field * field;
     

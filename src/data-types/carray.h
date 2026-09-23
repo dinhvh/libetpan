@@ -57,29 +57,29 @@ typedef struct carray_s carray;
 
 /* Creates a new array of pointers, with initsize preallocated cells */
 LIBETPAN_EXPORT
-carray *   carray_new(unsigned int initsize);
+carray /* void * */ *   carray_new(unsigned int initsize);
 
 /* Adds the pointer to data in the array.
    Returns the index of the pointer in the array or -1 on error */
 LIBETPAN_EXPORT
-int       carray_add(carray * array, void * data, unsigned int * indx);
+int       carray_add(carray /* void * */ * array, void * data, unsigned int * indx);
 
 LIBETPAN_EXPORT
-int carray_set_size(carray * array, unsigned int new_size);
+int carray_set_size(carray /* void * */ * array, unsigned int new_size);
 
 /* Removes the cell at this index position. Returns TRUE on success.
    Order of elements in the array IS changed. */
 LIBETPAN_EXPORT
-int       carray_delete(carray * array, unsigned int indx);
+int       carray_delete(carray /* void * */ * array, unsigned int indx);
 
 /* Removes the cell at this index position. Returns TRUE on success.
    Order of elements in the array IS not changed. */
 LIBETPAN_EXPORT
-int       carray_delete_slow(carray * array, unsigned int indx);
+int       carray_delete_slow(carray /* void * */ * array, unsigned int indx);
 
 /* remove without decreasing the size of the array */
 LIBETPAN_EXPORT
-int carray_delete_fast(carray * array, unsigned int indx);
+int carray_delete_fast(carray /* void * */ * array, unsigned int indx);
 
 /* Some of the following routines can be implemented as macros to
    be faster. If you don't want it, define NO_MACROS */
@@ -87,19 +87,19 @@ int carray_delete_fast(carray * array, unsigned int indx);
 
 /* Returns the array itself */
 LIBETPAN_EXPORT
-void **   carray_data(carray *);
+void **   carray_data(carray /* void * */ *);
 
 /* Returns the number of elements in the array */
 LIBETPAN_EXPORT
-unsigned int carray_count(carray *);
+unsigned int carray_count(carray /* void * */ *);
 
 /* Returns the contents of one cell */
 LIBETPAN_EXPORT
-void *    carray_get(carray * array, unsigned int indx);
+void *    carray_get(carray /* void * */ * array, unsigned int indx);
 
 /* Sets the contents of one cell */
 LIBETPAN_EXPORT
-void      carray_set(carray * array, unsigned int indx, void * value);
+void      carray_set(carray /* void * */ * array, unsigned int indx, void * value);
 
 #else
 
@@ -118,29 +118,29 @@ void      carray_set(carray * array, unsigned int indx, void * value);
 #endif
 #endif
 
-static INLINE void ** carray_data(carray * array)
+static INLINE void ** carray_data(carray /* void * */ * array)
 {
   return array->array;
 }
 
-static INLINE unsigned int carray_count(carray * array)
+static INLINE unsigned int carray_count(carray /* void * */ * array)
 {
   return array->len;
 }
 
-static INLINE void * carray_get(carray * array, unsigned int indx)
+static INLINE void * carray_get(carray /* void * */ * array, unsigned int indx)
 {
   return array->array[indx];
 }
 
-static INLINE void carray_set(carray * array, unsigned int indx, void * value)
+static INLINE void carray_set(carray /* void * */ * array, unsigned int indx, void * value)
 {
   array->array[indx] = value;
 }
 #endif
 
 LIBETPAN_EXPORT
-void carray_free(carray * array);
+void carray_free(carray /* void * */ * array);
 
 #ifdef __cplusplus
 }

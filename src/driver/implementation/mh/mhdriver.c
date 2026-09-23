@@ -515,10 +515,11 @@ static int mhdriver_messages_number(mailsession * session, const char * mb,
 }
 
 
-static int get_list_folders(struct mailmh_folder * folder, clist ** result)
+static int get_list_folders(struct mailmh_folder * folder,
+    clist /* char * */ ** result)
 {
   unsigned int i;
-  clist * list;
+  clist /* char * */ * list;
   char * new_filename;
   int res;
   int r;
@@ -580,7 +581,7 @@ static int get_list_folders(struct mailmh_folder * folder, clist ** result)
 static int mhdriver_list_folders(mailsession * session, const char * mb,
 				 struct mail_list ** result)
 {
-  clist * list;
+  clist /* char * */ * list;
   int r;
   struct mailmh * mh;
   struct mail_list * ml;
@@ -615,8 +616,8 @@ static int mhdriver_list_folders(mailsession * session, const char * mb,
 static int mhdriver_lsub_folders(mailsession * session, const char * mb,
 				 struct mail_list ** result)
 {
-  clist * subscribed;
-  clist * lsub_result;
+  clist /* char * */ * subscribed;
+  clist /* char * */ * lsub_result;
   clistiter * cur;
   struct mail_list * lsub;
   size_t length;

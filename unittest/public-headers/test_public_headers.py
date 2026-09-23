@@ -126,8 +126,9 @@ class RepositoryIntegrationTests(unittest.TestCase):
     def test_current_static_public_set_matches_audited_result(self):
         result = self.run_tool("list")
         names = result.stdout.splitlines()
-        self.assertEqual(len(names), 123)
+        self.assertEqual(len(names), 125)
         self.assertEqual(names, sorted(names, key=lambda value: value.encode()))
+        self.assertIn("data_message_driver.h", names)
         self.assertIn("mailjmap.h", names)
 
     def test_audit_is_clean_after_migration(self):

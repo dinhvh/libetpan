@@ -57,7 +57,7 @@ int mailesmtp_send(mailsmtp * session,
 		    const char * from,
 		    int return_full,
 		    const char * envid,
-		    clist * addresses,
+		    clist /* struct esmtp_address * */ * addresses,
 		    const char * message, size_t size);
 
 LIBETPAN_EXPORT
@@ -65,40 +65,40 @@ int mailesmtp_send_quit(mailsmtp * session,
                         const char * from,
                         int return_full,
                         const char * envid,
-                        clist * addresses,
+                        clist /* struct esmtp_address * */ * addresses,
                         const char * message, size_t size);
 LIBETPAN_EXPORT
 int mailesmtp_send_quit_no_disconnect(mailsmtp * session,
                                       const char * from,
                                       int return_full,
                                       const char * envid,
-                                      clist * addresses,
+                                      clist /* struct esmtp_address * */ * addresses,
                                       const char * message, size_t size);
 
 LIBETPAN_EXPORT
 int mailsmtp_send(mailsmtp * session,
 		   const char * from,
-		   clist * addresses,
+		   clist /* char * */ * addresses,
 		   const char * message, size_t size);
 
 LIBETPAN_EXPORT
-clist * esmtp_address_list_new(void);
+clist /* struct esmtp_address * */ * esmtp_address_list_new(void);
 
 LIBETPAN_EXPORT
-int esmtp_address_list_add(clist * list, char * address,
+int esmtp_address_list_add(clist /* struct esmtp_address * */ * list, char * address,
 			       int notify, char * orcpt);
 
 LIBETPAN_EXPORT
-void esmtp_address_list_free(clist * l);
+void esmtp_address_list_free(clist /* struct esmtp_address * */ * l);
 
 LIBETPAN_EXPORT
-clist * smtp_address_list_new(void);
+clist /* char * */ * smtp_address_list_new(void);
 
 LIBETPAN_EXPORT
-int smtp_address_list_add(clist * list, char * address);
+int smtp_address_list_add(clist /* char * */ * list, char * address);
 
 LIBETPAN_EXPORT
-void smtp_address_list_free(clist * l);
+void smtp_address_list_free(clist /* char * */ * l);
 
 #ifdef __cplusplus
 }

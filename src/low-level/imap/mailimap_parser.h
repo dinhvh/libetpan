@@ -112,7 +112,7 @@ mailimap_string_parse(mailstream * fd, MMAPString * buffer, struct mailimap_pars
 
 int
 mailimap_struct_spaced_list_parse(mailstream * fd, MMAPString * buffer, struct mailimap_parser_context * parser_ctx,
-				  size_t * indx, clist ** result,
+				  size_t * indx, clist /* parser result */ ** result,
 				  mailimap_struct_parser * parser,
 				  mailimap_struct_destructor * destructor,
 				  size_t progr_rate,
@@ -146,7 +146,7 @@ mailimap_nz_number_parse(mailstream * fd, MMAPString * buffer, struct mailimap_p
 
 int
 mailimap_struct_list_parse(mailstream * fd, MMAPString * buffer, struct mailimap_parser_context * parser_ctx,
-    size_t * indx, clist ** result,
+    size_t * indx, clist /* parser result */ ** result,
     char symbol,
     mailimap_struct_parser * parser,
     mailimap_struct_destructor * destructor,
@@ -171,7 +171,7 @@ int mailimap_nil_parse(mailstream * fd, MMAPString * buffer, struct mailimap_par
 
 int
 mailimap_struct_multiple_parse(mailstream * fd, MMAPString * buffer, struct mailimap_parser_context * parser_ctx,
-			       size_t * indx, clist ** result,
+			       size_t * indx, clist /* parser result */ ** result,
 			       mailimap_struct_parser * parser,
 			       mailimap_struct_destructor * destructor,
 			       size_t progr_rate,
@@ -186,7 +186,7 @@ int mailimap_capability_data_parse(mailstream * fd, MMAPString * buffer, struct 
 int mailimap_capability_list_parse(mailstream * fd,
   MMAPString * buffer, struct mailimap_parser_context * parser_ctx,
   size_t * indx,
-  clist ** result,
+  clist /* struct mailimap_capability * */ ** result,
   size_t progr_rate,
   progress_function * progr_fun);
 

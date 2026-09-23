@@ -68,7 +68,8 @@ mailimap_quota_quota_resource_free(
 
 LIBETPAN_EXPORT
 struct mailimap_quota_quota_data *
-mailimap_quota_quota_data_new(char * quotaroot, clist * quota_list)
+mailimap_quota_quota_data_new(char * quotaroot,
+    clist /* struct mailimap_quota_quota_resource * */ * quota_list)
 {
   struct mailimap_quota_quota_data * data;
 
@@ -95,7 +96,8 @@ mailimap_quota_quota_data_free(struct mailimap_quota_quota_data * data)
 
 LIBETPAN_EXPORT
 struct mailimap_quota_quotaroot_data *
-mailimap_quota_quotaroot_data_new(char * mailbox, clist * quotaroot_list)
+mailimap_quota_quotaroot_data_new(char * mailbox,
+    clist /* char * */ * quotaroot_list)
 {
   struct mailimap_quota_quotaroot_data * data;
 
@@ -124,7 +126,7 @@ LIBETPAN_EXPORT
 struct mailimap_quota_complete_data *
 mailimap_quota_complete_data_new(
     struct mailimap_quota_quotaroot_data * quotaroot_data,
-    clist * quota_list)
+    clist /* struct mailimap_quota_quota_data * */ * quota_list)
 {
   struct mailimap_quota_complete_data * data;
 
@@ -148,4 +150,3 @@ mailimap_quota_complete_data_free(struct mailimap_quota_complete_data * data)
   clist_free(data->quota_list);
   free(data);
 }
-

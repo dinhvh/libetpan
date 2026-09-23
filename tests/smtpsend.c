@@ -151,7 +151,7 @@ int send_message(char *data, size_t len, char**rcpts) {
   int esmtp = 0;
   mailsmtp *smtp = NULL;
   int *retcodes = NULL;
-  clist *recipients = clist_new();
+  clist /* char * */ *recipients = clist_new();
 
   if ((smtp = mailsmtp_new(0, NULL)) == NULL) {
     perror("mailsmtp_new");

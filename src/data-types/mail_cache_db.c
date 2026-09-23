@@ -284,7 +284,7 @@ int mail_cache_db_del(struct mail_cache_db * cache_db,
 
 #if DBVERS > 1  
 int mail_cache_db_clean_up(struct mail_cache_db * cache_db,
-    chash * exist)
+    chash /* void * key bytes -> empty */ * exist)
 {
   DB * dbp;
   int r;
@@ -332,7 +332,7 @@ int mail_cache_db_clean_up(struct mail_cache_db * cache_db,
 }
 #elif DBVERS == 1
 int mail_cache_db_clean_up(struct mail_cache_db * cache_db,
-    chash * exist)
+    chash /* void * key bytes -> empty */ * exist)
 {
   DB * dbp;
   int r;
@@ -368,7 +368,7 @@ int mail_cache_db_clean_up(struct mail_cache_db * cache_db,
 }
 #else
 int mail_cache_db_clean_up(struct mail_cache_db * cache_db,
-    chash * exist)
+    chash /* void * key bytes -> empty */ * exist)
 {
   return -1;
 }
@@ -415,7 +415,7 @@ int mail_cache_db_get_size(struct mail_cache_db * cache_db,
 
 #if DBVERS > 1  
 int mail_cache_db_get_keys(struct mail_cache_db * cache_db,
-    chash * keys)
+    chash /* void * key bytes -> empty */ * keys)
 {
   DB * dbp;
   int r;
@@ -459,7 +459,7 @@ int mail_cache_db_get_keys(struct mail_cache_db * cache_db,
 }
 #elif DBVERS == 1
 int mail_cache_db_get_keys(struct mail_cache_db * cache_db,
-    chash * keys)
+    chash /* void * key bytes -> empty */ * keys)
 {
   DB * dbp;
   int r;
@@ -495,7 +495,7 @@ int mail_cache_db_get_keys(struct mail_cache_db * cache_db,
 }
 #else
 int mail_cache_db_get_keys(struct mail_cache_db * cache_db,
-    chash * keys)
+    chash /* void * key bytes -> empty */ * keys)
 {
   return -1;
 }

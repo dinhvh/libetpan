@@ -39,7 +39,8 @@ static char * get_msg_att_msg_content(struct mailimap_msg_att * msg_att, size_t 
 	return NULL;
 }
 
-static char * get_msg_content(clist * fetch_result, size_t * p_msg_size)
+static char * get_msg_content(clist /* struct mailimap_msg_att * */ * fetch_result,
+    size_t * p_msg_size)
 {
 	clistiter * cur;
 	
@@ -73,7 +74,7 @@ static void fetch_msg(struct mailimap * imap, uint32_t uid)
 	struct mailimap_fetch_type * fetch_type;
 	struct mailimap_fetch_att * fetch_att;
 	int r;
-	clist * fetch_result;
+		clist /* struct mailimap_msg_att * */ * fetch_result;
 	struct stat stat_info;
 	
 	snprintf(filename, sizeof(filename), "download/%u.eml", (unsigned int) uid);
@@ -144,7 +145,7 @@ static void fetch_messages(struct mailimap * imap)
 	struct mailimap_set * set;
 	struct mailimap_fetch_type * fetch_type;
 	struct mailimap_fetch_att * fetch_att;
-	clist * fetch_result;
+		clist /* struct mailimap_msg_att * */ * fetch_result;
 	clistiter * cur;
 	int r;
 	

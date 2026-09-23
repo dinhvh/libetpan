@@ -169,7 +169,7 @@ int mailimap_enable(mailimap * session, struct mailimap_capability_data * capabi
 		break;
   }
   if (cap_data == NULL) {
-    clist * list;
+    clist /* struct mailimap_capability * */ * list;
     
     list = clist_new();
     if (list == NULL) {
@@ -223,7 +223,7 @@ static int mailimap_enable_parse(mailstream * fd, MMAPString * buffer, struct ma
   int r;
   int res;
 	struct mailimap_capability_data * capabilities;
-  clist * cap_list;
+  clist /* struct mailimap_capability * */ * cap_list;
   
   cur_token = * indx;
   
@@ -314,4 +314,3 @@ mailimap_enable_extension_parse(int calling_parser, mailstream * fd,
       return MAILIMAP_ERROR_PARSE;
   }
 }
-

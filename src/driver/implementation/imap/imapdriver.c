@@ -347,7 +347,7 @@ static int imapdriver_build_folder_name(mailsession * session, const char * mb,
   mailimap * imap;
   struct mailimap_mailbox_list * mb_list;
   int r;
-  clist * imap_list;
+  clist /* struct mailimap_mailbox_list * */ * imap_list;
 
   imap = get_imap_session(session);
 
@@ -487,7 +487,7 @@ static int status_selected_folder(mailsession * session, const char * mb,
   uint32_t unseen;
   uint32_t recent;
   struct mailimap_search_key * search_key;
-  clist * search_result;
+  clist /* uint32_t * */ * search_result;
   
   imap = get_imap_session(session);
   
@@ -711,7 +711,7 @@ static int imapdriver_list_lsub_folders(mailsession * session, int type,
 					const char * mb,
 					struct mail_list ** result)
 {
-  clist * imap_list;
+  clist /* struct mailimap_mailbox_list * */ * imap_list;
   struct mail_list * resp;
   int r;
   int res;
@@ -869,10 +869,10 @@ imapdriver_get_envelopes_list(mailsession * session,
   struct mailimap_fetch_att * fetch_att;
   struct mailimap_fetch_type * fetch_type;
   int res;
-  clist * fetch_result;
+  clist /* struct mailimap_msg_att * */ * fetch_result;
   int r;
   uint32_t exists;
-  clist * msg_list;
+  clist /* uint32_t * */ * msg_list;
   clistiter * set_iter;
   
   if (get_imap_session(session)->imap_selection_info == NULL) {
@@ -1056,8 +1056,8 @@ static int imapdriver_search_messages(mailsession * session, const char * charse
 {
   struct mailimap_search_key * imap_key;
   int r;
-  clist * imap_result;
-  clist * result_list;
+  clist /* uint32_t * */ * imap_result;
+  clist /* uint32_t * */ * result_list;
   struct mail_search_result * search_result;
   clistiter * cur;
 

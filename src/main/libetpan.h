@@ -62,6 +62,9 @@ extern "C" {
 #include <libetpan/mailstream_types.h>
 #include <libetpan/mmapstring.h>
 
+/* src/driver/implementation/data-message */
+#include <libetpan/data_message_driver.h>
+
 /* src/driver/implementation/db */
 #include <libetpan/dbstorage.h>
 

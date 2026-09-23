@@ -14,7 +14,7 @@
 #include <time.h>
 #include <unistd.h>
 
-static unsigned int list_count(clist * list)
+static unsigned int list_count(clist /* void * */ * list)
 {
   clistiter * cur;
   unsigned int count;
@@ -27,7 +27,7 @@ static unsigned int list_count(clist * list)
   return count;
 }
 
-static int string_list_append_dup(clist * list, const char * value)
+static int string_list_append_dup(clist /* char * */ * list, const char * value)
 {
   char * dup_value;
 
@@ -45,7 +45,7 @@ static int string_list_append_dup(clist * list, const char * value)
   return 0;
 }
 
-static void string_list_free(clist * list)
+static void string_list_free(clist /* char * */ * list)
 {
   clistiter * cur;
 
@@ -56,7 +56,8 @@ static void string_list_free(clist * list)
   clist_free(list);
 }
 
-static void mailbox_set_item_list_free(clist * list)
+static void mailbox_set_item_list_free(
+    clist /* struct mailjmap_mailbox_set_item * */ * list)
 {
   clistiter * cur;
 
@@ -67,7 +68,8 @@ static void mailbox_set_item_list_free(clist * list)
   clist_free(list);
 }
 
-static void email_set_item_list_free(clist * list)
+static void email_set_item_list_free(
+    clist /* struct mailjmap_email_set_item * */ * list)
 {
   clistiter * cur;
 
@@ -78,7 +80,8 @@ static void email_set_item_list_free(clist * list)
   clist_free(list);
 }
 
-static void email_copy_item_list_free(clist * list)
+static void email_copy_item_list_free(
+    clist /* struct mailjmap_email_copy_item * */ * list)
 {
   clistiter * cur;
 
@@ -89,7 +92,8 @@ static void email_copy_item_list_free(clist * list)
   clist_free(list);
 }
 
-static void email_submission_item_list_free(clist * list)
+static void email_submission_item_list_free(
+    clist /* struct mailjmap_email_submission_set_item * */ * list)
 {
   clistiter * cur;
 
@@ -107,7 +111,7 @@ static char * dup_string_or_null(const char * value)
   return strdup(value);
 }
 
-static int string_list_contains(clist * list, const char * value)
+static int string_list_contains(clist /* char * */ * list, const char * value)
 {
   clistiter * cur;
 
@@ -210,8 +214,8 @@ static int fetch_one_email(mailjmap * session, const char * account_id,
     const char * email_id)
 {
   struct mailjmap_email_get_result * result;
-  clist * ids;
-  clist * properties;
+  clist /* char * */ * ids;
+  clist /* char * */ * properties;
   clistiter * cur;
   int r;
   int ok;
@@ -393,7 +397,7 @@ static int get_email_state(mailjmap * session, const char * account_id,
     const char * email_id, char ** result)
 {
   struct mailjmap_email_get_result * get_result;
-  clist * ids;
+  clist /* char * */ * ids;
   int r;
 
   get_result = NULL;
@@ -421,7 +425,7 @@ static int get_thread_state(mailjmap * session, const char * account_id,
     char ** result)
 {
   struct mailjmap_thread_get_result * get_result;
-  clist * ids;
+  clist /* char * */ * ids;
   int r;
 
   get_result = NULL;
@@ -445,7 +449,7 @@ static void best_effort_destroy_emails(mailjmap * session,
     const char * account_id, const char * email_id, const char * copied_id)
 {
   struct mailjmap_set_result * set_result;
-  clist * destroy;
+  clist /* char * */ * destroy;
 
   set_result = NULL;
   destroy = clist_new();
@@ -469,7 +473,7 @@ static void best_effort_destroy_mailbox(mailjmap * session,
     const char * account_id, const char * mailbox_id)
 {
   struct mailjmap_set_result * set_result;
-  clist * destroy;
+  clist /* char * */ * destroy;
 
   if (mailbox_id == NULL)
     return;
@@ -512,14 +516,14 @@ static int full_live_self_test(mailjmap * session, const char * account_id,
   struct mailjmap_set_result * email_set_result;
   struct mailjmap_set_result * copy_result;
   struct mailjmap_set_result * submit_result;
-  clist * create;
-  clist * update;
-  clist * destroy;
-  clist * ids;
-  clist * properties;
-  clist * body_properties;
-  clist * mailbox_ids;
-  clist * keywords;
+  clist /* struct mailjmap_mailbox_set_item *, struct mailjmap_email_copy_item *, or struct mailjmap_email_submission_set_item * */ * create;
+  clist /* struct mailjmap_mailbox_set_item * or struct mailjmap_email_set_item * */ * update;
+  clist /* char * */ * destroy;
+  clist /* char * */ * ids;
+  clist /* char * */ * properties;
+  clist /* char * */ * body_properties;
+  clist /* char * */ * mailbox_ids;
+  clist /* char * */ * keywords;
   struct mailjmap_mailbox_set_item * mailbox_item;
   struct mailjmap_email_set_item * email_update_item;
   struct mailjmap_email_copy_item * copy_item;
@@ -1142,10 +1146,10 @@ static int optional_send(mailjmap * session, const char * account_id,
   struct mailjmap_set_result * submit_result;
   struct mailjmap_mailbox_set_item * mailbox_item;
   struct mailjmap_email_submission_set_item * item;
-  clist * mailbox_create;
-  clist * submission_create;
-  clist * mailbox_ids;
-  clist * keywords;
+  clist /* struct mailjmap_mailbox_set_item * */ * mailbox_create;
+  clist /* struct mailjmap_email_submission_set_item * */ * submission_create;
+  clist /* char * */ * mailbox_ids;
+  clist /* char * */ * keywords;
   char mailbox_name[128];
   char * raw_message;
   char * email_id;

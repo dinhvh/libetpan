@@ -91,7 +91,7 @@ static int uint32_for_key(mailjson_value * object, const char * key,
   return MAILGMAIL_NO_ERROR;
 }
 
-static int add_string_to_list(clist * list, const char * value)
+static int add_string_to_list(clist /* char * */ * list, const char * value)
 {
   char * copy;
 
@@ -108,7 +108,7 @@ static int add_string_to_list(clist * list, const char * value)
 }
 
 static int string_array_for_key(mailjson_value * object, const char * key,
-    clist * result)
+    clist /* char * */ * result)
 {
   mailjson_value * array;
   size_t count;

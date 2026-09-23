@@ -1270,7 +1270,7 @@ int mailactivesync_mark_messages_read(mailactivesync * session,
     int read,
     struct mailactivesync_sync_result ** result)
 {
-  clist * commands;
+  clist /* struct mailactivesync_sync_command * */ * commands;
   clistiter * cur;
   struct mailactivesync_sync_command * command;
   int r;
@@ -1331,7 +1331,7 @@ int mailactivesync_set_messages_flagged(mailactivesync * session,
     int flagged,
     struct mailactivesync_sync_result ** result)
 {
-  clist * commands;
+  clist /* struct mailactivesync_sync_command * */ * commands;
   clistiter * cur;
   struct mailactivesync_sync_command * command;
   struct mailactivesync_wbxml_node * flag_node;
@@ -1415,7 +1415,7 @@ int mailactivesync_delete_messages(mailactivesync * session,
     int deletes_as_moves,
     struct mailactivesync_sync_result ** result)
 {
-  clist * commands;
+  clist /* struct mailactivesync_sync_command * */ * commands;
   clistiter * cur;
   struct mailactivesync_sync_command * command;
   int r;

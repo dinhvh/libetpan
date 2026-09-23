@@ -12,14 +12,14 @@ static struct mailimf_fields * build_fields(void)
 {
   struct mailimf_fields * fields;
   struct mailimf_field * f;
-  clist * list;
+  clist /* struct mailimf_mailbox * or struct mailimf_address * */ * list;
   struct mailimf_from * from;
 	struct mailimf_to * to;
   struct mailimf_mailbox * mb;
   struct mailimf_address * addr;
   struct mailimf_mailbox_list * mb_list;
   struct mailimf_address_list * addr_list;
-  clist * fields_list;
+  clist /* struct mailimf_field * */ * fields_list;
 
   /* build headers */
 
@@ -72,7 +72,7 @@ static struct mailmime *
 	int force_single)
 {
 	struct mailmime * build_info;
-	clist * list;
+		clist /* struct mailmime * */ * list;
 	int r;
 	int mime_type;
 
@@ -114,7 +114,7 @@ static struct mailmime *
 		char * attr_name;
 		char * attr_value;
 		struct mailmime_parameter * param;
-		clist * parameters;
+			clist /* struct mailmime_parameter * */ * parameters;
 		char * boundary;
 
 		list = clist_new();

@@ -43,7 +43,8 @@
 #include "mailmessage.h"
 
 LIBETPAN_EXPORT
-struct mailmessage_list * mailmessage_list_new(carray * msg_tab)
+struct mailmessage_list *
+mailmessage_list_new(carray /* mailmessage * */ * msg_tab)
 {
   struct mailmessage_list * env_list;
 
@@ -73,7 +74,8 @@ void mailmessage_list_free(struct mailmessage_list * env_list)
 }
 
 LIBETPAN_EXPORT
-struct mail_list * mail_list_new(clist * list)
+struct mail_list *
+mail_list_new(clist /* char * */ * list)
 {
   struct mail_list * resp;
 
@@ -134,7 +136,7 @@ mail_search_key_new(int sk_type,
 		    struct mail_search_key * sk_or1,
 		    struct mail_search_key * sk_or2,
 		    size_t sk_smaller,
-		    clist * sk_multiple)
+			    clist /* struct mail_search_key * */ * sk_multiple)
 {
   struct mail_search_key * key;
 
@@ -207,7 +209,8 @@ void mail_search_key_free(struct mail_search_key * key)
 }
 
 
-struct mail_search_result * mail_search_result_new(clist * list)
+struct mail_search_result *
+mail_search_result_new(clist /* uint32_t * */ * list)
 {
   struct mail_search_result * search_result;
 
@@ -325,7 +328,8 @@ struct mail_flags * mail_flags_new_empty(void)
 }
 
 LIBETPAN_EXPORT
-struct mail_flags * mail_flags_new(uint32_t fl_flags, clist * fl_extension)
+struct mail_flags *
+mail_flags_new(uint32_t fl_flags, clist /* char * */ * fl_extension)
 {
   struct mail_flags * flags;
 

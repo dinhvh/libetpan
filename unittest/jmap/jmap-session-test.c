@@ -65,7 +65,8 @@ static int str_equal(const char * left, const char * right)
 }
 
 static struct mailjmap_session_capability * find_capability_detail(
-    clist * list, const char * capability)
+    clist /* struct mailjmap_session_capability * */ * list,
+    const char * capability)
 {
   clistiter * cur;
 

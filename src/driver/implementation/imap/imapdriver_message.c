@@ -198,7 +198,7 @@ static int imap_fetch(mailmessage * msg_info,
   struct mailimap_set * set;
   struct mailimap_fetch_att * fetch_att;
   struct mailimap_fetch_type * fetch_type;
-  clist * fetch_result;
+  clist /* struct mailimap_msg_att * */ * fetch_result;
   struct mailimap_msg_att * msg_att;
   struct mailimap_msg_att_item * msg_att_item;
   char * text;
@@ -323,7 +323,7 @@ static int imap_fetch_header(mailmessage * msg_info,
   struct mailimap_set * set;
   struct mailimap_fetch_att * fetch_att;
   struct mailimap_fetch_type * fetch_type;
-  clist * fetch_result;
+  clist /* struct mailimap_msg_att * */ * fetch_result;
   struct mailimap_msg_att * msg_att;
   struct mailimap_msg_att_item * msg_att_item;
   char * text;
@@ -447,7 +447,7 @@ static int imap_fetch_body(mailmessage * msg_info,
   struct mailimap_set * set;
   struct mailimap_fetch_att * fetch_att;
   struct mailimap_fetch_type * fetch_type;
-  clist * fetch_result;
+  clist /* struct mailimap_msg_att * */ * fetch_result;
   struct mailimap_msg_att * msg_att;
   struct mailimap_msg_att_item * msg_att_item;
   char * text;
@@ -571,7 +571,7 @@ static int imap_fetch_size(mailmessage * msg_info,
   struct mailimap_set * set;
   struct mailimap_fetch_att * fetch_att;
   struct mailimap_fetch_type * fetch_type;
-  clist * fetch_result;
+  clist /* struct mailimap_msg_att * */ * fetch_result;
   struct mailimap_msg_att * msg_att;
   struct mailimap_msg_att_item * msg_att_item;
   size_t size;
@@ -657,7 +657,7 @@ static int imap_get_bodystructure(mailmessage * msg_info,
   struct mailimap_set * set;
   struct mailimap_fetch_att * fetch_att;
   struct mailimap_fetch_type * fetch_type;
-  clist * fetch_result;
+  clist /* struct mailimap_msg_att * */ * fetch_result;
   struct mailimap_msg_att * msg_att;
   struct mailimap_body * imap_body;
   struct mailmime * body;
@@ -834,7 +834,7 @@ fetch_imap(mailmessage * msg,
   int r;
   struct mailimap_msg_att * msg_att;
   struct mailimap_msg_att_item * msg_att_item;
-  clist * fetch_result;
+  clist /* struct mailimap_msg_att * */ * fetch_result;
   struct mailimap_set * set;
   char * text;
   size_t text_length;
@@ -1135,7 +1135,7 @@ static int imap_fetch_envelope(mailmessage * msg_info,
   struct mailimap_set * set;
   struct mailimap_fetch_att * fetch_att;
   struct mailimap_fetch_type * fetch_type;
-  clist * fetch_result;
+  clist /* struct mailimap_msg_att * */ * fetch_result;
   struct mailimap_msg_att * msg_att;
   int res;
   struct mailimf_fields * fields;

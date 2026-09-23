@@ -63,7 +63,7 @@ static int mailimf_cache_bcc_write(MMAPString * mmapstr, size_t * indx,
 static int mailimf_cache_message_id_write(MMAPString * mmapstr, size_t * indx,
 					  struct mailimf_message_id * message_id);
 static int mailimf_cache_msg_id_list_write(MMAPString * mmapstr, size_t * indx,
-					   clist * list);
+					   clist /* char * */ * list);
 static int mailimf_cache_in_reply_to_write(MMAPString * mmapstr, size_t * indx,
 					   struct mailimf_in_reply_to *
 					   in_reply_to);
@@ -107,7 +107,7 @@ static int mailimf_cache_bcc_read(MMAPString * mmapstr, size_t * indx,
 static int mailimf_cache_message_id_read(MMAPString * mmapstr, size_t * indx,
 					 struct mailimf_message_id ** result);
 static int mailimf_cache_msg_id_list_read(MMAPString * mmapstr, size_t * indx,
-					  clist ** result);
+					  clist /* char * */ ** result);
 static int
 mailimf_cache_in_reply_to_read(MMAPString * mmapstr, size_t * indx,
 			       struct mailimf_in_reply_to ** result);
@@ -302,7 +302,7 @@ int mailimf_cache_fields_write(MMAPString * mmapstr, size_t * indx,
 int mailimf_cache_fields_read(MMAPString * mmapstr, size_t * indx,
 			      struct mailimf_fields ** result)
 {
-  clist * list;
+  clist /* struct mailimf_field * */ * list;
   int r;
   uint32_t count;
   uint32_t i;
@@ -863,7 +863,7 @@ static int mailimf_cache_message_id_read(MMAPString * mmapstr, size_t * indx,
 
 static int
 mailimf_cache_msg_id_list_write(MMAPString * mmapstr, size_t * indx,
-				clist * list)
+				clist /* char * */ * list)
 {
   clistiter * cur;
   int r;
@@ -886,9 +886,9 @@ mailimf_cache_msg_id_list_write(MMAPString * mmapstr, size_t * indx,
 }
 
 static int mailimf_cache_msg_id_list_read(MMAPString * mmapstr, size_t * indx,
-					  clist ** result)
+					  clist /* char * */ ** result)
 {
-  clist * list;
+  clist /* char * */ * list;
   int r;
   uint32_t count;
   uint32_t i;
@@ -946,7 +946,7 @@ static int mailimf_cache_in_reply_to_read(MMAPString * mmapstr, size_t * indx,
 					  struct mailimf_in_reply_to ** result)
 {
   int r;
-  clist * msg_id_list;
+  clist /* char * */ * msg_id_list;
   struct mailimf_in_reply_to * in_reply_to;
 
   r = mailimf_cache_msg_id_list_read(mmapstr, indx, &msg_id_list);
@@ -976,7 +976,7 @@ static int mailimf_cache_references_read(MMAPString * mmapstr, size_t * indx,
 					 struct mailimf_references ** result)
 {
   int r;
-  clist * msg_id_list;
+  clist /* char * */ * msg_id_list;
   struct mailimf_references * references;
 
   r = mailimf_cache_msg_id_list_read(mmapstr, indx, &msg_id_list);
@@ -1077,7 +1077,7 @@ mailimf_cache_address_list_read(MMAPString * mmapstr, size_t * indx,
   uint32_t count;
   uint32_t i;
   int r;
-  clist * list;
+  clist /* struct mailimf_address * */ * list;
   int res;
   uint32_t type;
   
@@ -1311,7 +1311,7 @@ static int
 mailimf_cache_mailbox_list_read(MMAPString * mmapstr, size_t * indx,
 				struct mailimf_mailbox_list ** result)
 {
-  clist * list;
+  clist /* struct mailimf_mailbox * */ * list;
   int r;
   uint32_t count;
   uint32_t i;

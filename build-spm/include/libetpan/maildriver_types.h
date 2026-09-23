@@ -72,10 +72,11 @@ typedef struct mailmessage mailmessage;
 */
 
 struct mailmessage_list {
-  carray * msg_tab; /* elements are (mailmessage *) */
+  carray /* mailmessage * */ * msg_tab;
 };
 
-struct mailmessage_list * mailmessage_list_new(carray * msg_tab);
+struct mailmessage_list *
+mailmessage_list_new(carray /* mailmessage * */ * msg_tab);
 
 void mailmessage_list_free(struct mailmessage_list * env_list);
 
@@ -86,10 +87,10 @@ void mailmessage_list_free(struct mailmessage_list * env_list);
 */
 
 struct mail_list {
-  clist * mb_list; /* elements are (char *) */
+  clist /* char * */ * mb_list;
 };
 
-struct mail_list * mail_list_new(clist * mb_list);
+struct mail_list * mail_list_new(clist /* char * */ * mb_list);
 
 void mail_list_free(struct mail_list * resp);
 
@@ -118,10 +119,11 @@ enum {
 
 struct mail_flags {
   uint32_t fl_flags;
-  clist * fl_extension; /* elements are (char *) */
+  clist /* char * */ * fl_extension;
 };
 
-struct mail_flags * mail_flags_new(uint32_t fl_flags, clist * fl_ext);
+struct mail_flags * mail_flags_new(uint32_t fl_flags,
+    clist /* char * */ * fl_ext);
 
 void mail_flags_free(struct mail_flags * flags);
 
@@ -270,7 +272,7 @@ struct mail_search_key {
     struct mail_search_key * sk_or1;
     struct mail_search_key * sk_or2;
     size_t sk_smaller;
-    clist * sk_multiple; /* list of (struct mailimap_search_key *) */
+    clist /* struct mailimap_search_key * */ * sk_multiple;
   } sk_data;
 };
 
@@ -284,7 +286,7 @@ mail_search_key_new(int sk_type,
     char * sk_header_name, char * sk_header_value, size_t sk_larger,
     struct mail_search_key * sk_not, struct mail_search_key * sk_or1,
     struct mail_search_key * sk_or2, size_t sk_smaller,
-    clist * sk_multiple);
+    clist /* struct mailimap_search_key * */ * sk_multiple);
 
 void mail_search_key_free(struct mail_search_key * key);
 #endif
@@ -296,10 +298,11 @@ void mail_search_key_free(struct mail_search_key * key);
 
 #if 0
 struct mail_search_result {
-  clist * sr_list; /* list of (uint32_t *) */
+  clist /* uint32_t * */ * sr_list;
 };
 
-struct mail_search_result * mail_search_result_new(clist * sr_list);
+struct mail_search_result *
+mail_search_result_new(clist /* uint32_t * */ * sr_list);
 
 void mail_search_result_free(struct mail_search_result * search_result);
 #endif
@@ -763,7 +766,7 @@ struct mailmessage_tree {
   char * node_msgid;
   time_t node_date;
   mailmessage * node_msg;
-  carray * node_children; /* array of (struct mailmessage_tree *) */
+  carray /* struct mailmessage_tree * */ * node_children;
 
   /* private, used for threading */
   int node_is_reply;

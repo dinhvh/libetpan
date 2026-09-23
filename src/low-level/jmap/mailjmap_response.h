@@ -24,7 +24,7 @@ struct mailjmap_method_response {
 
 struct mailjmap_response {
   char * session_state;
-  clist * method_responses; /* struct mailjmap_method_response * */
+  clist /* struct mailjmap_method_response * */ * method_responses;
   char * error_type;
   char * error_detail;
 };

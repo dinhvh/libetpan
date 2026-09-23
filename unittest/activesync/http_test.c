@@ -1878,7 +1878,7 @@ static int test_get_item_estimate_multi_success(void)
   struct mailactivesync_wbxml_node * request_collection_1;
   struct mailactivesync_wbxml_node * request_collection_2;
   struct mailactivesync_wbxml_node * request_options;
-  clist * requests;
+  clist /* struct mailactivesync_get_item_estimate_collection_request * */ * requests;
   int r;
 
   session = NULL;
@@ -2331,7 +2331,7 @@ static int test_item_operations_fetch_multi_success(void)
   struct mailactivesync_item_operations_fetch_result * result;
   struct mailactivesync_item * item;
   struct mailactivesync_body_part * parsed_body_part;
-  clist * requests;
+  clist /* struct mailactivesync_item_operations_fetch_request * */ * requests;
   clistiter * cur;
   struct mailactivesync_wbxml_node * root;
   struct mailactivesync_wbxml_node * response;
@@ -3670,8 +3670,8 @@ static int test_validate_cert_success_and_status(void)
   struct mailactivesync_wbxml_node * certificates;
   struct mailactivesync_wbxml_node * certificate;
   struct mailactivesync_wbxml_node * chain;
-  clist * cert_list;
-  clist * chain_list;
+  clist /* char * */ * cert_list;
+  clist /* char * */ * chain_list;
   int * status;
   int r;
 
@@ -4017,7 +4017,7 @@ static int test_resolve_recipients_success_and_status(void)
   struct mailactivesync_wbxml_node * options;
   struct mailactivesync_wbxml_node * unresolved_response;
   struct mailactivesync_wbxml_document * request_document;
-  clist * recipients;
+  clist /* char * */ * recipients;
   clistiter * cur;
   const char * second_to;
   int to_count;
@@ -5421,7 +5421,7 @@ static int test_sync_multi_collection_success(void)
   struct mailactivesync_sync_result * result;
   struct mailactivesync_sync_result * collection_result;
   struct mailactivesync_message * message;
-  clist * requests;
+  clist /* struct mailactivesync_sync_request * */ * requests;
   clistiter * cur;
   struct mailactivesync_wbxml_node * root;
   struct mailactivesync_wbxml_node * collections;
@@ -7152,7 +7152,7 @@ static int test_sync_mail_mutation_helpers(void)
   struct mailactivesync_wbxml_node * request_command_2;
   struct mailactivesync_wbxml_node * request_app_data;
   struct mailactivesync_wbxml_node * flag_node;
-  clist * server_ids;
+  clist /* char * */ * server_ids;
   int r;
 
   session = NULL;
@@ -7319,7 +7319,7 @@ static int test_sync_draft_helpers(void)
   struct mailactivesync_wbxml_node * attachments_node;
   struct mailactivesync_wbxml_node * attachment_add_node;
   struct mailactivesync_wbxml_node * attachment_content_node;
-  clist * draft_attachments;
+  clist /* struct mailactivesync_draft_attachment * */ * draft_attachments;
   const unsigned char attachment_content[] = { 'h', 'e', 'l', 'l', 'o' };
   int request_count;
   int r;
@@ -7636,7 +7636,7 @@ static int test_move_items_success(void)
   struct mailactivesync_move_items_result * result;
   struct mailactivesync_move_response * first_response;
   struct mailactivesync_move_response * second_response;
-  clist * moves;
+  clist /* struct mailactivesync_move * */ * moves;
   clistiter * cur;
   int r;
 
@@ -7862,7 +7862,7 @@ static int test_ping_success_and_statuses(void)
   struct mailactivesync_wbxml_document * request_document;
   struct mailactivesync_wbxml_node * request_folders;
   struct mailactivesync_wbxml_node * request_folder;
-  clist * collection_ids;
+  clist /* char * */ * collection_ids;
   clistiter * cur;
   int r;
 
@@ -8423,7 +8423,7 @@ static int test_active_sync_public_bad_state(void)
   struct mailactivesync_item * item_result;
   const char * preferred_versions[] = { "16.1", NULL };
   const char * best_version;
-  clist * moves;
+  clist /* struct mailactivesync_move * */ * moves;
 
   session = NULL;
   search_result = NULL;

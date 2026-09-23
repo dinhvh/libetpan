@@ -423,7 +423,7 @@ static void server_join(struct test_server * server)
 static void assert_stream_roundtrip(mailstream * stream)
 {
   char output[4];
-  carray * certificate_chain;
+  carray /* MMAPString * */ * certificate_chain;
 
   assert(stream != NULL);
   assert(mailstream_write(stream, "ping", 4) == 4);
@@ -497,7 +497,7 @@ static void test_starttls_protocol(enum mailstream_ssl_backend backend,
   else if (protocol == TEST_POP3_STARTTLS) {
     mailpop3 * session = mailpop3_new(0, NULL);
     mailstream_low * old_low;
-    clist * capa_list;
+    clist /* struct mailpop3_capa * */ * capa_list;
     assert(session != NULL);
     r = mailpop3_socket_connect(session, "127.0.0.1", port);
     assert(r == MAILPOP3_NO_ERROR);

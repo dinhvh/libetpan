@@ -78,7 +78,7 @@ struct imap_cached_session_state_data {
   mailsession * imap_ancestor;
   char * imap_quoted_mb;
   char imap_cache_directory[PATH_MAX];
-  carray * imap_uid_list;
+  carray /* struct uid_cache_item * */ * imap_uid_list;
   uint32_t imap_uidvalidity;
 };
 

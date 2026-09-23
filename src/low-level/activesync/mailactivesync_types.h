@@ -56,13 +56,13 @@ struct mailactivesync {
   char * as_last_authenticate_header;
   int as_connected;
   int as_authenticated;
-  clist * as_advertised_commands; /* char * */
+  clist /* char * */ * as_advertised_commands;
   struct mailactivesync_http_transport * as_http_transport;
 };
 
 struct mailactivesync_options {
-  clist * protocol_versions; /* char * */
-  clist * commands;          /* char * */
+  clist /* char * */ * protocol_versions;
+  clist /* char * */ * commands;
 };
 
 struct mailactivesync_folder {
@@ -75,9 +75,9 @@ struct mailactivesync_folder {
 struct mailactivesync_folder_sync_result {
   char * sync_key;
   int status;
-  clist * added;   /* struct mailactivesync_folder * */
-  clist * updated; /* struct mailactivesync_folder * */
-  clist * deleted; /* char * server_id */
+  clist /* struct mailactivesync_folder * */ * added;
+  clist /* struct mailactivesync_folder * */ * updated;
+  clist /* char * server_id */ * deleted;
 };
 
 struct mailactivesync_folder_mutation_result {
@@ -108,7 +108,7 @@ struct mailactivesync_airsyncbase_body {
   int native_body_type;
   char * content_type;
   char * preview;
-  clist * attachments; /* struct mailactivesync_attachment * */
+  clist /* struct mailactivesync_attachment * */ * attachments;
 };
 
 struct mailactivesync_body_part {
@@ -145,7 +145,7 @@ struct mailactivesync_message {
   char * thread_topic;
   char * internet_cpid;
   char * content_class;
-  clist * categories; /* char * */
+  clist /* char * */ * categories;
   char * conversation_id;
   size_t conversation_id_len;
   char * conversation_index;
@@ -162,7 +162,7 @@ struct mailactivesync_message {
   uint32_t mime_size;
   int mime_truncated;
   struct mailactivesync_airsyncbase_body * body;
-  clist * body_parts; /* struct mailactivesync_body_part * */
+  clist /* struct mailactivesync_body_part * */ * body_parts;
 };
 
 struct mailactivesync_draft {
@@ -177,7 +177,7 @@ struct mailactivesync_draft {
   int read;
   int body_type;
   const char * body;
-  clist * attachments; /* struct mailactivesync_draft_attachment * */
+  clist /* struct mailactivesync_draft_attachment * */ * attachments;
 };
 
 struct mailactivesync_draft_attachment {
@@ -212,9 +212,9 @@ struct mailactivesync_sync_request {
   int has_conversation_mode;
   int conversation_mode;
   struct mailactivesync_body_preference * body_preference;
-  clist * body_preferences; /* struct mailactivesync_body_preference * */
-  clist * supported_properties; /* struct mailactivesync_wbxml_node * */
-  clist * client_commands; /* struct mailactivesync_sync_command * */
+  clist /* struct mailactivesync_body_preference * */ * body_preferences;
+  clist /* struct mailactivesync_wbxml_node * */ * supported_properties;
+  clist /* struct mailactivesync_sync_command * */ * client_commands;
 };
 
 enum {
@@ -229,7 +229,7 @@ struct mailactivesync_sync_command {
   char * client_id;
   char * server_id;
   char * collection_class;
-  clist * application_data; /* struct mailactivesync_wbxml_node * */
+  clist /* struct mailactivesync_wbxml_node * */ * application_data;
 };
 
 struct mailactivesync_sync_command_response {
@@ -249,11 +249,11 @@ struct mailactivesync_sync_result {
   int empty_response;
   int sync_key_from_response;
   uint32_t limit;
-  clist * added;   /* struct mailactivesync_message * */
-  clist * changed; /* struct mailactivesync_message * */
-  clist * deleted; /* char * server_id */
-  clist * command_responses; /* struct mailactivesync_sync_command_response * */
-  clist * collections; /* struct mailactivesync_sync_result * */
+  clist /* struct mailactivesync_message * */ * added;
+  clist /* struct mailactivesync_message * */ * changed;
+  clist /* char * server_id */ * deleted;
+  clist /* struct mailactivesync_sync_command_response * */ * command_responses;
+  clist /* struct mailactivesync_sync_result * */ * collections;
 };
 
 struct mailactivesync_provision_result {
@@ -279,7 +279,7 @@ struct mailactivesync_settings_account {
   char * user_display_name;
   int send_disabled;
   char * primary_smtp_address;
-  clist * smtp_addresses; /* char * */
+  clist /* char * */ * smtp_addresses;
 };
 
 struct mailactivesync_settings_result {
@@ -287,8 +287,8 @@ struct mailactivesync_settings_result {
   int device_information_status;
   int user_information_status;
   char * primary_smtp_address;
-  clist * smtp_addresses; /* char * */
-  clist * accounts; /* struct mailactivesync_settings_account * */
+  clist /* char * */ * smtp_addresses;
+  clist /* struct mailactivesync_settings_account * */ * accounts;
 };
 
 struct mailactivesync_get_item_estimate_collection_request {
@@ -313,7 +313,7 @@ struct mailactivesync_get_item_estimate_result {
   int collection_status;
   uint32_t estimate;
   int empty_response;
-  clist * collections; /* struct mailactivesync_get_item_estimate_collection * */
+  clist /* struct mailactivesync_get_item_estimate_collection * */ * collections;
 };
 
 struct mailactivesync_item {
@@ -323,7 +323,7 @@ struct mailactivesync_item {
   char * mime;
   size_t mime_len;
   struct mailactivesync_airsyncbase_body * body;
-  clist * body_parts; /* struct mailactivesync_body_part * */
+  clist /* struct mailactivesync_body_part * */ * body_parts;
 };
 
 struct mailactivesync_item_operations_fetch_request {
@@ -335,7 +335,7 @@ struct mailactivesync_item_operations_fetch_request {
 
 struct mailactivesync_item_operations_fetch_result {
   int status;
-  clist * items; /* struct mailactivesync_item * */
+  clist /* struct mailactivesync_item * */ * items;
 };
 
 struct mailactivesync_attachment_data {
@@ -366,7 +366,7 @@ struct mailactivesync_mail_search_result {
   int status;
   char * range;
   uint32_t total;
-  clist * items; /* struct mailactivesync_mail_search_item * */
+  clist /* struct mailactivesync_mail_search_item * */ * items;
 };
 
 struct mailactivesync_mail_find_request {
@@ -395,11 +395,11 @@ struct mailactivesync_mail_find_result {
   char * store;
   char * range;
   uint32_t total;
-  clist * items; /* struct mailactivesync_mail_find_item * */
+  clist /* struct mailactivesync_mail_find_item * */ * items;
 };
 
 struct mailactivesync_resolve_recipients_request {
-  clist * recipients; /* char * */
+  clist /* char * */ * recipients;
   uint32_t max_ambiguous_recipients;
   int certificate_retrieval;
   uint32_t max_certificates;
@@ -411,7 +411,7 @@ struct mailactivesync_resolved_recipient {
   char * email_address;
   int certificates_status;
   uint32_t certificate_count;
-  clist * certificates; /* char * */
+  clist /* char * */ * certificates;
   char * mini_certificate;
 };
 
@@ -419,27 +419,27 @@ struct mailactivesync_resolve_recipients_response {
   char * to;
   int status;
   uint32_t recipient_count;
-  clist * recipients; /* struct mailactivesync_resolved_recipient * */
+  clist /* struct mailactivesync_resolved_recipient * */ * recipients;
 };
 
 struct mailactivesync_resolve_recipients_result {
   int status;
-  clist * responses; /* struct mailactivesync_resolve_recipients_response * */
+  clist /* struct mailactivesync_resolve_recipients_response * */ * responses;
 };
 
 struct mailactivesync_validate_cert_request {
-  clist * certificates; /* char * */
-  clist * certificate_chain; /* char * */
+  clist /* char * */ * certificates;
+  clist /* char * */ * certificate_chain;
   int check_crl;
 };
 
 struct mailactivesync_validate_cert_certificate {
-  clist * statuses; /* int * */
+  clist /* int * */ * statuses;
 };
 
 struct mailactivesync_validate_cert_result {
   int status;
-  clist * certificates; /* struct mailactivesync_validate_cert_certificate * */
+  clist /* struct mailactivesync_validate_cert_certificate * */ * certificates;
 };
 
 struct mailactivesync_move {
@@ -458,7 +458,7 @@ struct mailactivesync_move_response {
 
 struct mailactivesync_move_items_result {
   int status;
-  clist * responses; /* struct mailactivesync_move_response * */
+  clist /* struct mailactivesync_move_response * */ * responses;
 };
 
 struct mailactivesync_composemail_request {
@@ -475,14 +475,14 @@ struct mailactivesync_composemail_request {
 
 struct mailactivesync_ping_request {
   uint32_t heartbeat_interval;
-  clist * collection_ids; /* char * */
+  clist /* char * */ * collection_ids;
 };
 
 struct mailactivesync_ping_result {
   int status;
   uint32_t heartbeat_interval;
   uint32_t max_folders;
-  clist * changed_collection_ids; /* char * */
+  clist /* char * */ * changed_collection_ids;
 };
 
 LIBETPAN_EXPORT

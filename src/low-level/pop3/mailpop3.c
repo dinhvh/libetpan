@@ -124,7 +124,8 @@ static void mailpop3_msg_info_free(struct mailpop3_msg_info * msg)
   free(msg);
 }
 
-static void mailpop3_msg_info_tab_free(carray * msg_tab)
+static void mailpop3_msg_info_tab_free(
+    carray /* struct mailpop3_msg_info * */ * msg_tab)
 {
   unsigned int i;
 
@@ -137,7 +138,8 @@ static void mailpop3_msg_info_tab_free(carray * msg_tab)
   carray_free(msg_tab);
 }
 
-static void mailpop3_msg_info_tab_reset(carray * msg_tab)
+static void mailpop3_msg_info_tab_reset(
+    carray /* struct mailpop3_msg_info * */ * msg_tab)
 {
   unsigned int i;
 
@@ -149,7 +151,8 @@ static void mailpop3_msg_info_tab_reset(carray * msg_tab)
 }
 
 static inline struct mailpop3_msg_info *
-mailpop3_msg_info_tab_find_msg(carray * msg_tab, unsigned int indx)
+mailpop3_msg_info_tab_find_msg(
+    carray /* struct mailpop3_msg_info * */ * msg_tab, unsigned int indx)
 {
   struct mailpop3_msg_info * msg;
 
@@ -169,7 +172,7 @@ mailpop3_msg_info_tab_find_msg(carray * msg_tab, unsigned int indx)
 int mailpop3_get_msg_info(mailpop3 * f, unsigned int indx,
 			   struct mailpop3_msg_info ** result)
 {
-  carray * tab;
+  carray /* struct mailpop3_msg_info * */ * tab;
   struct mailpop3_msg_info * info;
   int r;
 
@@ -194,7 +197,8 @@ int mailpop3_get_msg_info(mailpop3 * f, unsigned int indx,
   mailpop3_capa
 */
 
-struct mailpop3_capa * mailpop3_capa_new(char * name, clist * param)
+struct mailpop3_capa *
+mailpop3_capa_new(char * name, clist /* char * */ * param)
 {
   struct mailpop3_capa * capa;
 
@@ -606,15 +610,18 @@ int mailpop3_pass(mailpop3 * f, const char * password)
   return MAILPOP3_NO_ERROR;
 }
 
-static int read_list(mailpop3 * f, carray ** result);
+static int read_list(mailpop3 * f,
+    carray /* struct mailpop3_msg_info * */ ** result);
 
 
 
-static int read_uidl(mailpop3 * f, carray * msg_tab);
+static int read_uidl(mailpop3 * f,
+    carray /* struct mailpop3_msg_info * */ * msg_tab);
 
 
 
-static int mailpop3_do_uidl(mailpop3 * f, carray * msg_tab)
+static int mailpop3_do_uidl(mailpop3 * f,
+    carray /* struct mailpop3_msg_info * */ * msg_tab)
 {
   char command[POP3_STRING_SIZE];
   int r;
@@ -651,7 +658,7 @@ static int mailpop3_do_list(mailpop3 * f)
 {
   char command[POP3_STRING_SIZE];
   int r;
-  carray * msg_tab;
+  carray /* struct mailpop3_msg_info * */ * msg_tab;
   char * response;
 
   if (f->pop3_msg_tab != NULL) {
@@ -702,7 +709,8 @@ static int mailpop3_list_if_needed(mailpop3 * f)
   mailpop3_list
 */
 
-int mailpop3_list(mailpop3 * f, carray ** result)
+int mailpop3_list(mailpop3 * f,
+    carray /* struct mailpop3_msg_info * */ ** result)
 {
   int r;
   r = mailpop3_list_if_needed(f);
@@ -926,11 +934,13 @@ int mailpop3_rset(mailpop3 * f)
 
 
 
-static int read_capa_resp(mailpop3 * f, clist ** result);
+static int read_capa_resp(mailpop3 * f,
+    clist /* struct mailpop3_capa * */ ** result);
 
-int mailpop3_capa(mailpop3 * f, clist ** result)
+int mailpop3_capa(mailpop3 * f,
+    clist /* struct mailpop3_capa * */ ** result)
 {
-  clist * capa_list;
+  clist /* struct mailpop3_capa * */ * capa_list;
   char command[POP3_STRING_SIZE];
   int r;
   char * response;
@@ -958,7 +968,7 @@ int mailpop3_capa(mailpop3 * f, clist ** result)
   return MAILPOP3_NO_ERROR;
 }
 
-void mailpop3_capa_resp_free(clist * capa_list)
+void mailpop3_capa_resp_free(clist /* struct mailpop3_capa * */ * capa_list)
 {
   clist_foreach(capa_list, (clist_func) mailpop3_capa_free, NULL);
   clist_free(capa_list);
@@ -1157,11 +1167,12 @@ static int parse_auth(mailpop3 * f, char * response)
 #endif
 
 
-static int read_list(mailpop3 * f, carray ** result)
+static int read_list(mailpop3 * f,
+    carray /* struct mailpop3_msg_info * */ ** result)
 {
   unsigned int indx;
   uint32_t size;
-  carray * msg_tab;
+  carray /* struct mailpop3_msg_info * */ * msg_tab;
   struct mailpop3_msg_info * msg;
   char * line;
 
@@ -1214,7 +1225,8 @@ static int read_list(mailpop3 * f, carray ** result)
 
 
 
-static int read_uidl(mailpop3 * f, carray * msg_tab)
+static int read_uidl(mailpop3 * f,
+    carray /* struct mailpop3_msg_info * */ * msg_tab)
 {
   unsigned int indx;
   struct mailpop3_msg_info * msg;
@@ -1262,14 +1274,15 @@ static int read_uidl(mailpop3 * f, carray * msg_tab)
 
 
 
-static int read_capa_resp(mailpop3 * f, clist ** result)
+static int read_capa_resp(mailpop3 * f,
+    clist /* struct mailpop3_capa * */ ** result)
 {
   char * line;
   int res;
-  clist * list;
+  clist /* struct mailpop3_capa * */ * list;
   int r;
   char * name;
-  clist * param_list;
+  clist /* char * */ * param_list;
 
   list = clist_new();
   if (list == NULL) {

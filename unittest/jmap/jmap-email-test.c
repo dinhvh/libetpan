@@ -549,7 +549,8 @@ static struct mailjmap_http_transport * fake_transport_new(
   return transport;
 }
 
-static void email_set_item_list_free(clist * list)
+static void email_set_item_list_free(
+    clist /* struct mailjmap_email_set_item * */ * list)
 {
   clistiter * cur;
 
@@ -561,7 +562,8 @@ static void email_set_item_list_free(clist * list)
   clist_free(list);
 }
 
-static void email_copy_item_list_free(clist * list)
+static void email_copy_item_list_free(
+    clist /* struct mailjmap_email_copy_item * */ * list)
 {
   clistiter * cur;
 
@@ -573,7 +575,8 @@ static void email_copy_item_list_free(clist * list)
   clist_free(list);
 }
 
-static void email_submission_set_item_list_free(clist * list)
+static void email_submission_set_item_list_free(
+    clist /* struct mailjmap_email_submission_set_item * */ * list)
 {
   clistiter * cur;
 
@@ -585,7 +588,8 @@ static void email_submission_set_item_list_free(clist * list)
   clist_free(list);
 }
 
-static void email_query_sort_comparator_list_free(clist * list)
+static void email_query_sort_comparator_list_free(
+    clist /* struct mailjmap_email_query_sort_comparator * */ * list)
 {
   clistiter * cur;
 
@@ -662,20 +666,20 @@ static int test_email_query_and_changes(void)
   struct mailjmap_email_address * submission_rcpt_to;
   struct mailjmap_email_submission_delivery_status *
       submission_delivery_status;
-  clist * import_mailbox_ids;
-  clist * import_keywords;
-  clist * parse_blob_ids;
-  clist * parse_properties;
-  clist * parse_body_properties;
-  clist * snippet_email_ids;
-  clist * email_set_create;
-  clist * email_set_update;
-  clist * email_set_destroy;
-  clist * email_copy_create;
-  clist * query_sort;
-  clist * submission_create;
-  clist * submission_update;
-  clist * submission_destroy;
+  clist /* char * */ * import_mailbox_ids;
+  clist /* char * */ * import_keywords;
+  clist /* char * */ * parse_blob_ids;
+  clist /* char * */ * parse_properties;
+  clist /* char * */ * parse_body_properties;
+  clist /* char * */ * snippet_email_ids;
+  clist /* struct mailjmap_email_set_item * */ * email_set_create;
+  clist /* struct mailjmap_email_set_item * */ * email_set_update;
+  clist /* char * */ * email_set_destroy;
+  clist /* struct mailjmap_email_copy_item * */ * email_copy_create;
+  clist /* struct mailjmap_email_query_sort_comparator * */ * query_sort;
+  clist /* struct mailjmap_email_submission_set_item * */ * submission_create;
+  clist /* struct mailjmap_email_submission_set_item * */ * submission_update;
+  clist /* char * */ * submission_destroy;
   chashdatum map_key;
   chashdatum map_value;
   char * first_id;

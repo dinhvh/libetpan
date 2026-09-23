@@ -123,7 +123,7 @@ static int test_list_ignores_zero_message_number(const char ** failure_message)
   void * server_result = NULL;
   mailstream * stream = NULL;
   mailpop3 * pop3 = NULL;
-  carray * list = NULL;
+  carray /* struct mailpop3_msg_info * */ * list = NULL;
   struct mailpop3_msg_info * msg;
   int connect_r = -1;
   int user_r = -1;

@@ -56,7 +56,7 @@ int maildriver_generic_search_messages(mailsession * session, char * charset,
 
 int
 maildriver_env_list_to_msg_list(struct mailmessage_list * env_list,
-    clist ** result);
+    clist /* mailmessage * */ ** result);
 
 int maildriver_imf_error_to_mail_error(int error);
 
@@ -64,7 +64,7 @@ char * maildriver_quote_mailbox(const char * mb);
 
 int
 maildriver_env_list_to_msg_list_no_flags(struct mailmessage_list * env_list,
-    clist ** result);
+    clist /* mailmessage * */ ** result);
 
 int maildriver_cache_clean_up(struct mail_cache_db * cache_db_env,
     struct mail_cache_db * cache_db_flags,

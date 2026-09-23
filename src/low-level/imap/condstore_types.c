@@ -94,7 +94,9 @@ void mailimap_condstore_resptextcode_free(struct mailimap_condstore_resptextcode
 }
 
 LIBETPAN_EXPORT
-struct mailimap_condstore_search * mailimap_condstore_search_new(clist * cs_search_result, uint64_t cs_modseq_value)
+struct mailimap_condstore_search *
+mailimap_condstore_search_new(clist /* uint32_t * */ * cs_search_result,
+    uint64_t cs_modseq_value)
 {
   struct mailimap_condstore_search * search_data;
   
@@ -137,4 +139,3 @@ void mailimap_condstore_status_info_free(struct mailimap_condstore_status_info *
 {
   free(status_info);
 }
-

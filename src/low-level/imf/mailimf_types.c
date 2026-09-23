@@ -210,7 +210,7 @@ void mailimf_display_name_free(char * display_name)
 
 LIBETPAN_EXPORT
 struct mailimf_mailbox_list *
-mailimf_mailbox_list_new(clist * mb_list)
+mailimf_mailbox_list_new(clist /* struct mailimf_mailbox * */ * mb_list)
 {
   struct mailimf_mailbox_list * mbl;
 
@@ -234,7 +234,7 @@ void mailimf_mailbox_list_free(struct mailimf_mailbox_list * mb_list)
 
 LIBETPAN_EXPORT
 struct mailimf_address_list *
-mailimf_address_list_new(clist * ad_list)
+mailimf_address_list_new(clist /* struct mailimf_address * */ * ad_list)
 {
   struct mailimf_address_list * addr_list;
 
@@ -510,7 +510,8 @@ void mailimf_field_free(struct mailimf_field * field)
 }
 
 LIBETPAN_EXPORT
-struct mailimf_fields * mailimf_fields_new(clist * fld_list)
+struct mailimf_fields *
+mailimf_fields_new(clist /* struct mailimf_field * */ * fld_list)
 {
   struct mailimf_fields * fields;
 
@@ -714,7 +715,8 @@ void mailimf_message_id_free(struct mailimf_message_id * message_id)
 }
 
 LIBETPAN_EXPORT
-struct mailimf_in_reply_to * mailimf_in_reply_to_new(clist * mid_list)
+struct mailimf_in_reply_to *
+mailimf_in_reply_to_new(clist /* char * */ * mid_list)
 {
   struct mailimf_in_reply_to * in_reply_to;
 
@@ -737,7 +739,8 @@ void mailimf_in_reply_to_free(struct mailimf_in_reply_to * in_reply_to)
 }
 
 LIBETPAN_EXPORT
-struct mailimf_references * mailimf_references_new(clist * mid_list)
+struct mailimf_references *
+mailimf_references_new(clist /* char * */ * mid_list)
 {
   struct mailimf_references * ref;
 
@@ -832,7 +835,8 @@ void mailimf_comments_free(struct mailimf_comments * comments)
 }
 
 LIBETPAN_EXPORT
-struct mailimf_keywords * mailimf_keywords_new(clist * kw_list)
+struct mailimf_keywords *
+mailimf_keywords_new(clist /* char * */ * kw_list)
 {
   struct mailimf_keywords * keywords;
 

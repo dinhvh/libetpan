@@ -834,12 +834,12 @@ mailmime_multipart_body_parse(const char * message, size_t length,
     size_t * indx, char * boundary,
     int default_subtype,
     unsigned int mime_depth,
-    clist ** result,
+    clist /* struct mailmime * */ ** result,
     struct mailmime_data ** p_preamble,
     struct mailmime_data ** p_epilogue)
 {
   size_t cur_token;
-  clist * list;
+  clist /* struct mailmime * */ * list;
   int r;
   int res;
 #if 0
@@ -1257,7 +1257,7 @@ static int mailmime_parse_with_default(const char * message, size_t length,
   struct mailmime_data * body;
   char * boundary;
   struct mailimf_fields * fields;
-  clist * list;
+  clist /* struct mailmime * */ * list;
   struct mailmime * msg_mime;
 
   struct mailmime * mime;
@@ -2217,7 +2217,7 @@ int mailmime_part_parse_partial(const char * message, size_t length,
 int mailmime_get_section_id(struct mailmime * mime,
 			    struct mailmime_section ** result)
 {
-  clist * list;
+  clist /* uint32_t * */ * list;
   int res;
   struct mailmime_section * section_id;
   int r;

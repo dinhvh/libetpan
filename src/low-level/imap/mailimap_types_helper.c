@@ -65,7 +65,7 @@ struct mailimap_set *
 mailimap_set_new_single_item(struct mailimap_set_item * item)
 {
   struct mailimap_set * set;
-  clist * list;
+  clist /* struct mailimap_set_item * */ * list;
   int r;
   
   list = clist_new();
@@ -116,7 +116,7 @@ struct mailimap_set * mailimap_set_new_single(uint32_t indx)
 LIBETPAN_EXPORT
 struct mailimap_set * mailimap_set_new_empty(void)
 {
-  clist * list;
+  clist /* struct mailimap_set_item * */ * list;
 
   list = clist_new();
   if (list == NULL)
@@ -637,7 +637,8 @@ mailimap_fetch_type_new_fetch_att(struct mailimap_fetch_att * fetch_att)
 
 LIBETPAN_EXPORT
 struct mailimap_fetch_type *
-mailimap_fetch_type_new_fetch_att_list(clist * fetch_att_list)
+mailimap_fetch_type_new_fetch_att_list(
+    clist /* struct mailimap_fetch_att * */ * fetch_att_list)
 {
   return mailimap_fetch_type_new(MAILIMAP_FETCH_TYPE_FETCH_ATT_LIST,
 				 NULL, fetch_att_list);
@@ -647,7 +648,7 @@ LIBETPAN_EXPORT
 struct mailimap_fetch_type *
 mailimap_fetch_type_new_fetch_att_list_empty(void)
 {
-  clist * list;
+  clist /* struct mailimap_fetch_att * */ * list;
 
   list = clist_new();
   if (list == NULL)
@@ -1013,7 +1014,8 @@ mailimap_search_key_new_set(struct mailimap_set * sk_set)
 
 LIBETPAN_EXPORT
 struct mailimap_search_key *
-mailimap_search_key_new_multiple(clist * sk_multiple)
+mailimap_search_key_new_multiple(
+    clist /* struct mailimap_search_key * */ * sk_multiple)
 {
   return mailimap_search_key_new(MAILIMAP_SEARCH_KEY_MULTIPLE, NULL, NULL,
 				 NULL, NULL, NULL, NULL, NULL, NULL,
@@ -1027,7 +1029,7 @@ LIBETPAN_EXPORT
 struct mailimap_search_key *
 mailimap_search_key_new_multiple_empty(void)
 {
-  clist * list;
+  clist /* struct mailimap_search_key * */ * list;
 
   list = clist_new();
   if (list == NULL)
@@ -1068,7 +1070,7 @@ LIBETPAN_EXPORT
 struct mailimap_flag_list *
 mailimap_flag_list_new_empty(void)
 {
-  clist * list;
+  clist /* struct mailimap_flag * */ * list;
 
   list = clist_new();
   if (list == NULL)
@@ -1162,7 +1164,7 @@ struct mailimap_flag * mailimap_flag_new_flag_extension(char * flag_extension)
 LIBETPAN_EXPORT
 struct mailimap_status_att_list * mailimap_status_att_list_new_empty(void)
 {
-  clist * list;
+  clist /* int * */ * list;
 
   list = clist_new();
   if (list == NULL)
@@ -1209,14 +1211,14 @@ mailimap_status_att_list_add(struct mailimap_status_att_list * sa_list,
 
 static int recursive_build_path(struct mailimap_body * root_part,
     struct mailimap_body * part,
-    clist ** result);
+    clist /* uint32_t * */ ** result);
 
 static int try_build_part(struct mailimap_body * root_part,
     struct mailimap_body * part, uint32_t count,
-    clist ** result)
+    clist /* uint32_t * */ ** result)
 {
   int r;
-  clist * imap_id_list;
+  clist /* uint32_t * */ * imap_id_list;
   uint32_t * id;
   
   r = recursive_build_path(root_part, part, &imap_id_list);
@@ -1246,12 +1248,12 @@ static int try_build_part(struct mailimap_body * root_part,
 
 static int recursive_build_path(struct mailimap_body * root_part,
     struct mailimap_body * part,
-    clist ** result)
+    clist /* uint32_t * */ ** result)
 {
   clistiter * cur;
   uint32_t count;
   int r;
-  clist * imap_id_list;
+  clist /* uint32_t * */ * imap_id_list;
 
   if (part == root_part) {
     imap_id_list = clist_new();
@@ -1323,7 +1325,7 @@ int mailimap_get_section_part_from_body(struct mailimap_body * root_part,
     struct mailimap_section_part ** result)
 {
   struct mailimap_section_part * section_part;
-  clist * id_list;
+  clist /* uint32_t * */ * id_list;
   int r;
   int res;
   

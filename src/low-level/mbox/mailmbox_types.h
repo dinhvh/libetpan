@@ -80,8 +80,8 @@ struct mailmbox_folder {
   uint32_t mb_written_uid;
   uint32_t mb_max_uid;
 
-  chash * mb_hash;
-  carray * mb_tab;
+  chash /* uint32_t -> struct mailmbox_msg_info * */ * mb_hash;
+  carray /* struct mailmbox_msg_info * */ * mb_tab;
 };
 
 struct mailmbox_folder * mailmbox_folder_new(const char * mb_filename);

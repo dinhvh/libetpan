@@ -59,7 +59,7 @@ int mailimap_annotatemore_getannotation(mailimap * session,
     const char * list_mb,
     struct mailimap_annotatemore_entry_match_list * entries,
     struct mailimap_annotatemore_attrib_match_list * attribs,
-    clist ** result)
+	    clist /* struct mailimap_annotatemore_entry_att * */ ** result)
 {
   struct mailimap_response * response;
   struct mailimap_extension_data * ext_data;

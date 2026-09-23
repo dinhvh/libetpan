@@ -41,13 +41,13 @@ enum {
 
 struct mailimap_namespace_response_extension {
   char * ns_name; /* != NULL */
-  clist * ns_values; /* != NULL, list of char * */
+  clist /* char * */ * ns_values; /* != NULL */
 };
 
 LIBETPAN_EXPORT
 struct mailimap_namespace_response_extension *
 mailimap_namespace_response_extension_new(char * name,
-                                          clist * values);
+                                          clist /* char * */ * values);
 
 LIBETPAN_EXPORT
 void mailimap_namespace_response_extension_free(struct mailimap_namespace_response_extension * ext);
@@ -55,22 +55,23 @@ void mailimap_namespace_response_extension_free(struct mailimap_namespace_respon
 struct mailimap_namespace_info {
   char * ns_prefix; /* != NULL */
   char ns_delimiter;
-  clist * ns_extensions; /* can be NULL, list of mailimap_namespace_response_extension */
+  clist /* struct mailimap_namespace_response_extension * */ * ns_extensions; /* can be NULL */
 };
 
 LIBETPAN_EXPORT
 struct mailimap_namespace_info * mailimap_namespace_info_new(char * prefix, char delimiter,
-                                                             clist * extensions);
+                                                             clist /* struct mailimap_namespace_response_extension * */ * extensions);
 
 LIBETPAN_EXPORT
 void mailimap_namespace_info_free(struct mailimap_namespace_info * info);
 
 struct mailimap_namespace_item {
-  clist * ns_data_list; /* != NULL, list of mailimap_namespace_info */
+  clist /* struct mailimap_namespace_info * */ * ns_data_list; /* != NULL */
 };
 
 LIBETPAN_EXPORT
-struct mailimap_namespace_item * mailimap_namespace_item_new(clist * data_list);
+struct mailimap_namespace_item *
+mailimap_namespace_item_new(clist /* struct mailimap_namespace_info * */ * data_list);
 
 LIBETPAN_EXPORT
 void mailimap_namespace_item_free(struct mailimap_namespace_item * item);

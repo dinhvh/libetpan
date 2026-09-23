@@ -362,7 +362,8 @@ void newsnntp_group_free(struct newsnntp_group_info * info);
 */
 
 LIBETPAN_EXPORT
-int newsnntp_list(newsnntp * session, clist ** result);
+int newsnntp_list(newsnntp * session,
+    clist /* struct newsnntp_group_info * */ ** result);
 
 /*
    newsnntp_list_free()
@@ -374,7 +375,7 @@ int newsnntp_list(newsnntp * session, clist ** result);
 */
 
 LIBETPAN_EXPORT
-void newsnntp_list_free(clist * l);
+void newsnntp_list_free(clist /* struct newsnntp_group_info * */ * l);
 
 /*
    newsnntp_list_overview_fmt() fetch the server's format
@@ -388,7 +389,8 @@ void newsnntp_list_free(clist * l);
 */
 
 LIBETPAN_EXPORT
-int newsnntp_list_overview_fmt(newsnntp * session, clist ** result);
+int newsnntp_list_overview_fmt(newsnntp * session,
+    clist /* char * */ ** result);
 
 /*
    newsnntp_list_overview_fmt_free()
@@ -400,7 +402,7 @@ int newsnntp_list_overview_fmt(newsnntp * session, clist ** result);
 */
 
 LIBETPAN_EXPORT
-void newsnntp_list_overview_fmt_free(clist * l);
+void newsnntp_list_overview_fmt_free(clist /* char * */ * l);
 
 /*
    newsnntp_list_active() fetch groups matching a wildmat string.
@@ -414,7 +416,8 @@ void newsnntp_list_overview_fmt_free(clist * l);
 */
 
 LIBETPAN_EXPORT
-int newsnntp_list_active(newsnntp * session, const char * wildmat, clist ** result);
+int newsnntp_list_active(newsnntp * session, const char * wildmat,
+    clist /* struct newsnntp_group_info * */ ** result);
 
 /*
    newsnntp_list_active_free()
@@ -426,7 +429,7 @@ int newsnntp_list_active(newsnntp * session, const char * wildmat, clist ** resu
 */
 
 LIBETPAN_EXPORT
-void newsnntp_list_active_free(clist * l);
+void newsnntp_list_active_free(clist /* struct newsnntp_group_info * */ * l);
 
 /*
    newsnntp_list_active_times() fetches when the selected newsgroup
@@ -440,7 +443,8 @@ void newsnntp_list_active_free(clist * l);
 */
 
 LIBETPAN_EXPORT
-int newsnntp_list_active_times(newsnntp * session, clist ** result);
+int newsnntp_list_active_times(newsnntp * session,
+    clist /* struct newsnntp_group_time * */ ** result);
 
 /*
    newsnntp_list_active_times_free()
@@ -452,7 +456,7 @@ int newsnntp_list_active_times(newsnntp * session, clist ** result);
 */
 
 LIBETPAN_EXPORT
-void newsnntp_list_active_times_free(clist * l);
+void newsnntp_list_active_times_free(clist /* struct newsnntp_group_time * */ * l);
 
 /*
    newsnntp_list_distribution() fetches a list of descriptions of
@@ -466,7 +470,8 @@ void newsnntp_list_active_times_free(clist * l);
 */
 
 LIBETPAN_EXPORT
-int newsnntp_list_distribution(newsnntp * session, clist ** result);
+int newsnntp_list_distribution(newsnntp * session,
+    clist /* struct newsnntp_distrib_value_meaning * */ ** result);
 
 /*
    newsnntp_list_distribution_free()
@@ -478,7 +483,8 @@ int newsnntp_list_distribution(newsnntp * session, clist ** result);
 */
 
 LIBETPAN_EXPORT
-void newsnntp_list_distribution_free(clist * l);
+void newsnntp_list_distribution_free(
+    clist /* struct newsnntp_distrib_value_meaning * */ * l);
 
 /*
    newsnntp_list_distrib_pats() fetches a list of canonical
@@ -493,7 +499,8 @@ void newsnntp_list_distribution_free(clist * l);
 */
 
 LIBETPAN_EXPORT
-int newsnntp_list_distrib_pats(newsnntp * session, clist ** result);
+int newsnntp_list_distrib_pats(newsnntp * session,
+    clist /* struct newsnntp_distrib_default_value * */ ** result);
 
 /*
    newsnntp_list_distribution_free()
@@ -505,7 +512,8 @@ int newsnntp_list_distrib_pats(newsnntp * session, clist ** result);
 */
 
 LIBETPAN_EXPORT
-void newsnntp_list_distrib_pats_free(clist * l);
+void newsnntp_list_distrib_pats_free(
+    clist /* struct newsnntp_distrib_default_value * */ * l);
 
 /*
    newsnntp_list_newsgroups() fetches a list of newsgroups and
@@ -521,7 +529,7 @@ void newsnntp_list_distrib_pats_free(clist * l);
 
 LIBETPAN_EXPORT
 int newsnntp_list_newsgroups(newsnntp * session, const char * pattern,
-			      clist ** result);
+			      clist /* struct newsnntp_group_description * */ ** result);
 
 /*
    newsnntp_list_newsgroups_free()
@@ -533,7 +541,8 @@ int newsnntp_list_newsgroups(newsnntp * session, const char * pattern,
 */
 
 LIBETPAN_EXPORT
-void newsnntp_list_newsgroups_free(clist * l);
+void newsnntp_list_newsgroups_free(
+    clist /* struct newsnntp_group_description * */ * l);
 
 /*
    newsnntp_list_subscriptions() fetches a default list of
@@ -547,7 +556,8 @@ void newsnntp_list_newsgroups_free(clist * l);
 */
 
 LIBETPAN_EXPORT
-int newsnntp_list_subscriptions(newsnntp * session, clist ** result);
+int newsnntp_list_subscriptions(newsnntp * session,
+    clist /* char * */ ** result);
 
 /*
    newsnntp_list_subscriptions_free()
@@ -559,7 +569,7 @@ int newsnntp_list_subscriptions(newsnntp * session, clist ** result);
 */
 
 LIBETPAN_EXPORT
-void newsnntp_list_subscriptions_free(clist * l);
+void newsnntp_list_subscriptions_free(clist /* char * */ * l);
 
 /*
    newsnntp_listgroup() fetches a list of all article numbers
@@ -575,7 +585,7 @@ void newsnntp_list_subscriptions_free(clist * l);
 
 LIBETPAN_EXPORT
 int newsnntp_listgroup(newsnntp * session, const char * group_name,
-		       clist ** result);
+		       clist /* uint32_t * */ ** result);
 
 /*
    newsnntp_listgroup_free()
@@ -587,7 +597,7 @@ int newsnntp_listgroup(newsnntp * session, const char * group_name,
 */
 
 LIBETPAN_EXPORT
-void newsnntp_listgroup_free(clist * l);
+void newsnntp_listgroup_free(clist /* uint32_t * */ * l);
 
 /*
    newsnntp_xhdr_single() retrieves specific header fields from a
@@ -603,7 +613,7 @@ void newsnntp_listgroup_free(clist * l);
 
 LIBETPAN_EXPORT
 int newsnntp_xhdr_single(newsnntp * session, const char * header, uint32_t article,
-			  clist ** result);
+			  clist /* struct newsnntp_xhdr_resp_item * */ ** result);
 
 /*
    newsnntp_xhdr_range() retrieves specific header fields from
@@ -622,7 +632,7 @@ int newsnntp_xhdr_single(newsnntp * session, const char * header, uint32_t artic
 LIBETPAN_EXPORT
 int newsnntp_xhdr_range(newsnntp * session, const char * header,
 			 uint32_t rangeinf, uint32_t rangesup,
-			 clist ** result);
+			 clist /* struct newsnntp_xhdr_resp_item * */ ** result);
 
 /*
    newsnntp_xhdr_free()
@@ -634,7 +644,7 @@ int newsnntp_xhdr_range(newsnntp * session, const char * header,
 */
 
 LIBETPAN_EXPORT
-void newsnntp_xhdr_free(clist * l);
+void newsnntp_xhdr_free(clist /* struct newsnntp_xhdr_resp_item * */ * l);
 
 /*
    newsnntp_xover_single() retrieves overview data for a specific
@@ -668,7 +678,7 @@ int newsnntp_xover_single(newsnntp * session, uint32_t article,
 
 LIBETPAN_EXPORT
 int newsnntp_xover_range(newsnntp * session, uint32_t rangeinf, uint32_t rangesup,
-			  clist ** result);
+			  clist /* struct newsnntp_xover_resp_item * */ ** result);
 void xover_resp_item_free(struct newsnntp_xover_resp_item * n);
 
 /*
@@ -681,7 +691,8 @@ void xover_resp_item_free(struct newsnntp_xover_resp_item * n);
 */
 
 LIBETPAN_EXPORT
-void newsnntp_xover_resp_list_free(clist * l);
+void newsnntp_xover_resp_list_free(
+    clist /* struct newsnntp_xover_resp_item * */ * l);
 
 /* deprecated */
 LIBETPAN_EXPORT

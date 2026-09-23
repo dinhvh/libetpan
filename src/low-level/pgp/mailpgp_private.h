@@ -17,7 +17,7 @@
 
 struct mailpgp_mime_owner {
   struct mailmime * mime;
-  clist * buffers;
+  clist /* MMAPString * */ * buffers;
 };
 
 struct mailpgp_key_data {
@@ -28,8 +28,8 @@ struct mailpgp_key_data {
 };
 
 struct mailpgp {
-  clist * public_keys;
-  clist * secret_keys;
+  clist /* struct mailpgp_key_data * */ * public_keys;
+  clist /* struct mailpgp_key_data * */ * secret_keys;
   mailpgp_passphrase_callback passphrase_callback;
   void * passphrase_context;
 #ifdef USE_PGP_RNP
@@ -53,7 +53,7 @@ struct mailpgp_key {
 struct mailpgp_result {
   int status;
   char * error;
-  clist * signers;
+  clist /* struct mailpgp_key * */ * signers;
 };
 
 struct mailpgp_fingerprint {
@@ -64,11 +64,11 @@ struct mailpgp_fingerprint {
 };
 
 struct mailpgp_fingerprint_result {
-  clist * fingerprints;
+  clist /* struct mailpgp_fingerprint * */ * fingerprints;
 };
 
 struct mailpgp_key_list {
-  clist * keys;
+  clist /* struct mailpgp_key * */ * keys;
 };
 
 void mailpgp_key_free_internal(struct mailpgp_key * key);

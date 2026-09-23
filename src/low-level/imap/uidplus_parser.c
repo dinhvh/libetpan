@@ -110,7 +110,7 @@ static int mailimap_uid_set_parse(mailstream * fd, MMAPString * buffer, struct m
     struct mailimap_set ** result)
 {
   int r;
-  clist * list;
+  clist /* struct mailimap_set_item * */ * list;
   struct mailimap_set * set;
   size_t cur_token;
   
@@ -408,4 +408,3 @@ static int mailimap_uidplus_resp_code_parse(mailstream * fd, MMAPString * buffer
   
   return MAILIMAP_ERROR_PARSE;
 }
-

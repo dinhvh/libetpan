@@ -122,12 +122,12 @@ void mailimap_acl_identifier_rights_free(
 
 struct mailimap_acl_acl_data {
   char * mailbox;
-  clist * idrights_list;
-  /* list of (struct mailimap_acl_identifier_rights *) */
+  clist /* struct mailimap_acl_identifier_rights * */ * idrights_list;
 };
 
 struct mailimap_acl_acl_data *
-mailimap_acl_acl_data_new(char * mailbox, clist * idrights_list);
+mailimap_acl_acl_data_new(char * mailbox,
+    clist /* struct mailimap_acl_identifier_rights * */ * idrights_list);
 
 LIBETPAN_EXPORT
 void mailimap_acl_acl_data_free(struct
@@ -136,12 +136,12 @@ void mailimap_acl_acl_data_free(struct
 struct mailimap_acl_listrights_data {
   char * mailbox;
   char * identifier;
-  clist * rights_list; /* list of (char *) */
+  clist /* char * */ * rights_list;
 };
 
 struct mailimap_acl_listrights_data *
 mailimap_acl_listrights_data_new(char * mailbox,
-        char * identifier, clist * rights_list);
+        char * identifier, clist /* char * */ * rights_list);
 
 LIBETPAN_EXPORT
 void mailimap_acl_listrights_data_free(struct

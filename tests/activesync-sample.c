@@ -79,9 +79,9 @@ static int set_string(char ** target, const char * value)
   return 0;
 }
 
-static clist * single_server_id_list(const char * server_id)
+static clist /* char * */ * single_server_id_list(const char * server_id)
 {
-  clist * server_ids;
+  clist /* char * */ * server_ids;
 
   if (server_id == NULL)
     return NULL;
@@ -249,7 +249,8 @@ static const char * find_folder_server_id(
 }
 
 static const char * find_folder_server_id_by_name_or_type_in_list(
-    clist * folders, const char * name, int type)
+    clist /* struct mailactivesync_folder * */ * folders, const char * name,
+    int type)
 {
   clistiter * cur;
 
@@ -287,7 +288,8 @@ static const char * find_folder_server_id_by_name_or_type(
 }
 
 static struct mailactivesync_folder * find_folder_by_id_in_list(
-    clist * folders, const char * server_id)
+    clist /* struct mailactivesync_folder * */ * folders,
+    const char * server_id)
 {
   clistiter * cur;
 
@@ -320,7 +322,7 @@ static struct mailactivesync_folder * find_folder_by_id(
   return find_folder_by_id_in_list(result->updated, server_id);
 }
 
-static unsigned int list_count(clist * list)
+static unsigned int list_count(clist /* void * */ * list)
 {
   clistiter * cur;
   unsigned int count;
@@ -333,7 +335,7 @@ static unsigned int list_count(clist * list)
   return count;
 }
 
-static int string_list_contains(clist * list, const char * value)
+static int string_list_contains(clist /* char * */ * list, const char * value)
 {
   clistiter * cur;
 
@@ -680,7 +682,8 @@ static void remember_first_attachment_reference(struct sample_state * state,
   }
 }
 
-static void print_attachments(clist * attachments)
+static void print_attachments(
+    clist /* struct mailactivesync_attachment * */ * attachments)
 {
   clistiter * cur;
 
@@ -1045,7 +1048,8 @@ static int send_compose_seed_message(mailactivesync * as,
   return r;
 }
 
-static const char * find_message_server_id_by_subject(clist * messages,
+static const char * find_message_server_id_by_subject(
+    clist /* struct mailactivesync_message * */ * messages,
     const char * subject)
 {
   clistiter * cur;
@@ -1065,7 +1069,7 @@ static const char * find_message_server_id_by_subject(clist * messages,
 }
 
 static void remember_attachments_from_messages(struct sample_state * state,
-    clist * messages)
+    clist /* struct mailactivesync_message * */ * messages)
 {
   clistiter * cur;
 
@@ -1316,7 +1320,7 @@ static int run_resolve_self_test(mailactivesync * as,
 {
   struct mailactivesync_resolve_recipients_request request;
   struct mailactivesync_resolve_recipients_result * result;
-  clist * recipients;
+  clist /* char * */ * recipients;
   clistiter * response_iter;
   int r;
 
@@ -1439,7 +1443,7 @@ static int run_validate_cert_self_test(mailactivesync * as,
   struct mailactivesync_validate_cert_request request;
   struct mailactivesync_validate_cert_result * result;
   struct mailactivesync_validate_cert_certificate * certificate;
-  clist * certificates;
+  clist /* char * */ * certificates;
   clistiter * cur;
   char * certificate_data;
   unsigned int certificate_index;
@@ -1531,7 +1535,8 @@ static int run_validate_cert_self_test(mailactivesync * as,
   return MAILACTIVESYNC_NO_ERROR;
 }
 
-static void print_search_items(clist * items)
+static void print_search_items(
+    clist /* struct mailactivesync_mail_search_item * */ * items)
 {
   clistiter * cur;
 
@@ -1549,7 +1554,8 @@ static void print_search_items(clist * items)
   }
 }
 
-static void print_find_items(clist * items)
+static void print_find_items(
+    clist /* struct mailactivesync_mail_find_item * */ * items)
 {
   clistiter * cur;
 
@@ -1674,7 +1680,7 @@ static int run_search_self_test(mailactivesync * as,
   return MAILACTIVESYNC_NO_ERROR;
 }
 
-static int string_list_has(clist * values, const char * value)
+static int string_list_has(clist /* char * */ * values, const char * value)
 {
   clistiter * cur;
 
@@ -1696,7 +1702,7 @@ static int run_ping_self_test(mailactivesync * as,
 {
   struct mailactivesync_ping_request request;
   struct mailactivesync_ping_result * result;
-  clist * collection_ids;
+  clist /* char * */ * collection_ids;
   clistiter * cur;
   char subject[160];
   char client_id[160];
@@ -2068,7 +2074,8 @@ static int create_attachment_message_file_reference(mailactivesync * as,
   return r;
 }
 
-static int add_multi_sync_request(clist * requests,
+static int add_multi_sync_request(
+    clist /* struct mailactivesync_sync_request * */ * requests,
     struct mailactivesync_sync_request ** request_slot,
     const struct sample_args * args, const char * collection_id,
     const char * sync_key)
@@ -2124,7 +2131,7 @@ static int update_sync_key_from_collection(char ** target,
 static int run_multi_sync_self_test(mailactivesync * as,
     const struct sample_args * args, struct sample_state * state)
 {
-  clist * requests;
+  clist /* struct mailactivesync_sync_request * */ * requests;
   struct mailactivesync_sync_request * inbox_request;
   struct mailactivesync_sync_request * drafts_request;
   struct mailactivesync_sync_result * result;
@@ -2230,7 +2237,7 @@ static int run_draft_self_test(mailactivesync * as,
   char body[256];
   char updated_body[256];
   char * server_id;
-  clist * server_ids;
+  clist /* char * */ * server_ids;
   time_t now;
   int deleted;
   int r;
@@ -2366,7 +2373,7 @@ static int delete_generated_draft_best_effort(mailactivesync * as,
     const char * server_id)
 {
   struct mailactivesync_sync_result * result;
-  clist * server_ids;
+  clist /* char * */ * server_ids;
   int r;
 
   if ((server_id == NULL) || (state->drafts_id == NULL) ||
@@ -2400,7 +2407,7 @@ static int run_mutation_self_test(mailactivesync * as,
   char subject[160];
   char body[256];
   char * server_id;
-  clist * server_ids;
+  clist /* char * */ * server_ids;
   time_t now;
   int deleted;
   int r;
@@ -2801,7 +2808,7 @@ static int run_move_self_test(mailactivesync * as,
   struct mailactivesync_move_response * move_response;
   struct mailactivesync_draft draft;
   struct mailactivesync_move move;
-  clist * moves;
+  clist /* struct mailactivesync_move * */ * moves;
   char folder_name[160];
   char client_id[160];
   char subject[160];

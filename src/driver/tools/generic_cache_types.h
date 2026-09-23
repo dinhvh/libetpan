@@ -45,8 +45,8 @@ extern "C" {
 #endif
 
 struct mail_flags_store {
-  carray * fls_tab;
-  chash * fls_hash;
+  carray /* mailmessage * */ * fls_tab;
+  chash /* uint32_t -> unsigned int */ * fls_hash;
 };
 
 #ifdef __cplusplus

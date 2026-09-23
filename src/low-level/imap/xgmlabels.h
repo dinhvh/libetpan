@@ -40,7 +40,7 @@ extern "C" {
 #include <libetpan/mailimap_extension.h>
   
   struct mailimap_msg_att_xgmlabels {
-    clist * att_labels; /* != NULL */
+    clist /* char * */ * att_labels; /* != NULL */
   };
   
   LIBETPAN_EXPORT
@@ -53,7 +53,8 @@ extern "C" {
   int mailimap_has_xgmlabels(mailimap * session);
   
   LIBETPAN_EXPORT
-  struct mailimap_msg_att_xgmlabels * mailimap_msg_att_xgmlabels_new(clist * att_labels);
+  struct mailimap_msg_att_xgmlabels *
+  mailimap_msg_att_xgmlabels_new(clist /* char * */ * att_labels);
 
   LIBETPAN_EXPORT
   struct mailimap_msg_att_xgmlabels * mailimap_msg_att_xgmlabels_new_empty(void);

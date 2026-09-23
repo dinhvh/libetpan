@@ -25,7 +25,7 @@
 #define PGP_PUBLIC_KEY_ARMOR "-----BEGIN PGP PUBLIC KEY BLOCK-----"
 #define PGP_PUBLIC_KEY_ARMOR_END "-----END PGP PUBLIC KEY BLOCK-----"
 
-static clist * mailpgp_mime_owners = NULL;
+static clist /* struct mailpgp_mime_owner * */ * mailpgp_mime_owners = NULL;
 
 static int str_case_equal(const char * a, const char * b)
 {
@@ -533,7 +533,8 @@ static int mime_is_text_like(struct mailmime * mime)
   return 0;
 }
 
-static int add_key_data(clist * list, const char * data, size_t length,
+static int add_key_data(clist /* struct mailpgp_key_data * */ * list,
+    const char * data, size_t length,
     const char * filename, const char * passphrase)
 {
   struct mailpgp_key_data * key;

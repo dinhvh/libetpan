@@ -537,11 +537,11 @@ typedef int mailimf_struct_destructor(void * result);
 
 static int
 mailimf_struct_multiple_parse(const char * message, size_t length,
-			      size_t * indx, clist ** result,
+				      size_t * indx, clist /* void * callback-owned item */ ** result,
 			      mailimf_struct_parser * parser,
 			      mailimf_struct_destructor * destructor)
 {
-  clist * struct_list;
+  clist /* void * callback-owned item */ * struct_list;
   size_t cur_token;
   void * value;
   int r;
@@ -603,12 +603,12 @@ mailimf_struct_multiple_parse(const char * message, size_t length,
 
 static int
 mailimf_struct_list_parse(const char * message, size_t length,
-			  size_t * indx, clist ** result,
+				  size_t * indx, clist /* void * callback-owned item */ ** result,
 			  char symbol,
 			  mailimf_struct_parser * parser,
 			  mailimf_struct_destructor * destructor)
 {
-  clist * struct_list;
+  clist /* void * callback-owned item */ * struct_list;
   size_t cur_token;
   void * value;
   size_t final_token;
@@ -3087,7 +3087,7 @@ static int mailimf_group_parse(const char * message, size_t length,
   struct mailimf_group * group;
   int r;
   int res;
-  clist * list;
+  clist /* struct mailimf_mailbox * */ * list;
 
   cur_token = * indx;
 
@@ -3180,7 +3180,7 @@ mailimf_mailbox_list_parse(const char * message, size_t length,
 			   struct mailimf_mailbox_list ** result)
 {
   size_t cur_token;
-  clist * list;
+  clist /* struct mailimf_mailbox * */ * list;
   struct mailimf_mailbox_list * mailbox_list;
   int r;
   int res;
@@ -3228,7 +3228,7 @@ mailimf_address_list_parse(const char * message, size_t length,
 			   struct mailimf_address_list ** result)
 {
   size_t cur_token;
-  clist * list;
+  clist /* struct mailimf_address * */ * list;
   struct mailimf_address_list * address_list;
   int r;
   int res;
@@ -4047,7 +4047,7 @@ mailimf_resent_fields_list_parse(const char * message, size_t length,
 				 size_t * indx,
 				 struct mailimf_resent_fields_list ** result)
 {
-  clist * list;
+  clist /* struct mailimf_resent_field * */ * list;
   size_t cur_token;
   struct mailimf_resent_fields_list * resent_fields_list;
   int r;
@@ -4161,7 +4161,7 @@ mailimf_delivering_info_parse(const char * message, size_t length,
 			      struct mailimf_delivering_info ** result)
 {
   size_t cur_token;
-  clist * list;
+  clist /* struct mailimf_trace_resent_fields * */ * list;
   struct mailimf_delivering_info * delivering_info;
   int r;
   int res;
@@ -4784,7 +4784,7 @@ mailimf_unparsed_fields_parse(const char * message, size_t length,
 			      struct mailimf_unparsed_fields ** result)
 {
   size_t cur_token;
-  clist * list;
+  clist /* struct mailimf_optional_field * */ * list;
   struct mailimf_unparsed_fields * fields;
   int r;
   int res;
@@ -4851,7 +4851,7 @@ int mailimf_fields_parse(const char * message, size_t length,
 			 struct mailimf_fields ** result)
 {
   size_t cur_token;
-  clist * list;
+  clist /* struct mailimf_field * */ * list;
   struct mailimf_fields * fields;
   int r;
   int res;
@@ -5398,7 +5398,7 @@ in-reply-to     =       "In-Reply-To:" 1*msg-id CRLF
 
 LIBETPAN_EXPORT
 int mailimf_msg_id_list_parse(const char * message, size_t length,
-			      size_t * indx, clist ** result)
+			      size_t * indx, clist /* char * */ ** result)
 {
   return mailimf_struct_multiple_parse(message, length, indx,
 				       result,
@@ -5414,7 +5414,7 @@ static int mailimf_in_reply_to_parse(const char * message, size_t length,
 {
   struct mailimf_in_reply_to * in_reply_to;
   size_t cur_token;
-  clist * msg_id_list;
+  clist /* char * */ * msg_id_list;
   int res;
   int r;
 
@@ -5474,7 +5474,7 @@ int mailimf_references_parse(const char * message, size_t length,
 {
   struct mailimf_references * references;
   size_t cur_token;
-  clist * msg_id_list;
+  clist /* char * */ * msg_id_list;
   int r;
   int res;
 
@@ -6145,7 +6145,7 @@ static int mailimf_keywords_parse(const char * message, size_t length,
 				  struct mailimf_keywords ** result)
 {
   struct mailimf_keywords * keywords;
-  clist * list;
+  clist /* char * */ * list;
   size_t cur_token;
   int r;
   int res;
@@ -6622,7 +6622,7 @@ static int mailimf_trace_parse(const char * message, size_t length,
 {
   size_t cur_token;
   struct mailimf_return * return_path;
-  clist * received_list;
+  clist /* struct mailimf_received * */ * received_list;
   struct mailimf_trace * trace;
   int r;
   int res;
@@ -6891,7 +6891,7 @@ mailimf_name_val_list_parse(const char * message, size_t length,
   size_t cur_token;
   struct mailimf_name_val_pair * pair;
   struct mailimf_name_val_list * name_val_list;
-  clist* list;
+  clist /* struct mailimf_name_val_pair * */ * list;
   int res;
   int r;
 
@@ -7148,7 +7148,7 @@ static int mailimf_item_value_parse(const char * message, size_t length,
 				    struct mailimf_item_value ** result)
 {
   size_t cur_token;
-  clist * angle_addr_list;
+  clist /* struct mailimf_angle_addr * */ * angle_addr_list;
   char * addr_spec;
   char * atom;
   char * domain;
@@ -7614,7 +7614,7 @@ int mailimf_envelope_fields_parse(const char * message, size_t length,
 				  struct mailimf_fields ** result)
 {
   size_t cur_token;
-  clist * list;
+  clist /* struct mailimf_field * */ * list;
   struct mailimf_fields * fields;
   int r;
   int res;
@@ -7726,7 +7726,7 @@ mailimf_envelope_and_optional_fields_parse(const char * message, size_t length,
 					   struct mailimf_fields ** result)
 {
   size_t cur_token;
-  clist * list;
+  clist /* struct mailimf_field * */ * list;
   struct mailimf_fields * fields;
   int r;
   int res;
@@ -7823,7 +7823,7 @@ mailimf_optional_fields_parse(const char * message, size_t length,
 			      struct mailimf_fields ** result)
 {
   size_t cur_token;
-  clist * list;
+  clist /* struct mailimf_field * */ * list;
   struct mailimf_fields * fields;
   int r;
   int res;

@@ -15,7 +15,7 @@ int main(int argc, char ** argv)
 {
 	mailpop3 * pop3;
 	int r;
-	carray * list;
+	carray /* struct mailpop3_msg_info * */ * list;
 	unsigned int i;
 	
 	if (argc < 3) {

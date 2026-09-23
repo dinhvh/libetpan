@@ -84,8 +84,8 @@ static int mailprivacy_smime_add_encryption_id(struct mailprivacy * privacy,
     mailmessage * msg, char * encryption_id);
 
 static char cert_dir[PATH_MAX] = "";
-static chash * certificates = NULL;
-static chash * private_keys = NULL;
+static chash /* char * email -> char * filename */ * certificates = NULL;
+static chash /* char * email -> char * filename */ * private_keys = NULL;
 static char CAcert_dir[PATH_MAX] = "";
 static char * CAfile = NULL;
 static int CA_check = 1;
@@ -1309,7 +1309,8 @@ static void strip_string(char * str)
 
 #define MAX_EMAIL_SIZE 1024
 
-static void set_file(chash * hash, char * email, char * filename)
+static void set_file(chash /* char * -> char * */ * hash,
+    char * email, char * filename)
 {
   char * n;
   char buf[MAX_EMAIL_SIZE];
@@ -1330,7 +1331,7 @@ static void set_file(chash * hash, char * email, char * filename)
   chash_set(hash, &key, &data, NULL);
 }
 
-static char * get_file(chash * hash, char * email)
+static char * get_file(chash /* char * -> char * */ * hash, char * email)
 {
   chashdatum key;
   chashdatum data;
@@ -1741,11 +1742,12 @@ static int smime_command_passphrase(struct mailprivacy * privacy,
 
 
 
-static chash * encryption_id_hash = NULL;
+static chash /* mailmessage * -> clist (char *) */ * encryption_id_hash = NULL;
 
-static clist * get_list(struct mailprivacy * privacy, mailmessage * msg)
+static clist /* char * */ * get_list(struct mailprivacy * privacy,
+    mailmessage * msg)
 {
-  clist * encryption_id_list;
+  clist /* char * */ * encryption_id_list;
   
   encryption_id_list = NULL;
   if (encryption_id_hash != NULL) {
@@ -1767,7 +1769,7 @@ static clist * get_list(struct mailprivacy * privacy, mailmessage * msg)
 void mailprivacy_smime_encryption_id_list_clear(struct mailprivacy * privacy,
     mailmessage * msg)
 {
-  clist * encryption_id_list;
+  clist /* char * */ * encryption_id_list;
   clistiter * iter;
   
   LOCK();
@@ -1796,10 +1798,10 @@ void mailprivacy_smime_encryption_id_list_clear(struct mailprivacy * privacy,
   UNLOCK();
 }
 
-clist * mailprivacy_smime_encryption_id_list(struct mailprivacy * privacy,
+clist /* char * */ * mailprivacy_smime_encryption_id_list(struct mailprivacy * privacy,
     mailmessage * msg)
 {
-  clist * encryption_id_list;
+  clist /* char * */ * encryption_id_list;
   
   LOCK();
   encryption_id_list = get_list(privacy, msg);
@@ -1811,7 +1813,7 @@ clist * mailprivacy_smime_encryption_id_list(struct mailprivacy * privacy,
 static int mailprivacy_smime_add_encryption_id(struct mailprivacy * privacy,
     mailmessage * msg, char * encryption_id)
 {
-  clist * encryption_id_list;
+  clist /* char * */ * encryption_id_list;
   int r;
   int res;
   
@@ -1862,7 +1864,7 @@ static int mailprivacy_smime_add_encryption_id(struct mailprivacy * privacy,
   return res;
 }
 
-static chash * passphrase_hash = NULL;
+static chash /* char * user_id -> char * passphrase */ * passphrase_hash = NULL;
 
 int mailprivacy_smime_set_encryption_id(struct mailprivacy * privacy,
     char * user_id, char * passphrase)

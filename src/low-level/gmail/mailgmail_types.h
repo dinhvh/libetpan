@@ -64,14 +64,14 @@ struct mailgmail_label {
 };
 
 struct mailgmail_label_list {
-  clist * labels; /* struct mailgmail_label * */
+  clist /* struct mailgmail_label * */ * labels;
 };
 
 struct mailgmail_message_list_request {
   uint32_t max_results;
   char * page_token;
   char * query;
-  clist * label_ids; /* char * */
+  clist /* char * */ * label_ids;
   int include_spam_trash;
 };
 
@@ -81,14 +81,14 @@ struct mailgmail_message_summary {
 };
 
 struct mailgmail_message_list {
-  clist * messages; /* struct mailgmail_message_summary * */
+  clist /* struct mailgmail_message_summary * */ * messages;
   char * next_page_token;
   uint32_t result_size_estimate;
 };
 
 struct mailgmail_message_get_request {
   enum mailgmail_message_format format;
-  clist * metadata_headers; /* char * */
+  clist /* char * */ * metadata_headers;
 };
 
 struct mailgmail_message_header {
@@ -106,15 +106,15 @@ struct mailgmail_message_part {
   char * part_id;
   char * mime_type;
   char * filename;
-  clist * headers; /* struct mailgmail_message_header * */
+  clist /* struct mailgmail_message_header * */ * headers;
   struct mailgmail_message_part_body * body;
-  clist * parts; /* struct mailgmail_message_part * */
+  clist /* struct mailgmail_message_part * */ * parts;
 };
 
 struct mailgmail_message {
   char * id;
   char * thread_id;
-  clist * label_ids; /* char * */
+  clist /* char * */ * label_ids;
   char * snippet;
   char * history_id;
   char * internal_date;

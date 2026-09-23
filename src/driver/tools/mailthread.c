@@ -68,7 +68,7 @@ static inline char * get_msg_id(mailmessage * msg)
     return NULL;
 }
 
-static inline clist * get_ref(mailmessage * msg)
+static inline clist /* char * */ * get_ref(mailmessage * msg)
 {
   if (msg->msg_single_fields.fld_references != NULL)
     return msg->msg_single_fields.fld_references->mid_list;
@@ -76,7 +76,7 @@ static inline clist * get_ref(mailmessage * msg)
     return NULL;
 }
 
-static inline clist * get_in_reply_to(mailmessage * msg)
+static inline clist /* char * */ * get_in_reply_to(mailmessage * msg)
 {
   if (msg->msg_single_fields.fld_in_reply_to != NULL)
     return msg->msg_single_fields.fld_in_reply_to->mid_list;
@@ -517,7 +517,8 @@ static inline int is_descendant(struct mailmessage_tree * node,
   return FALSE;
 }
 
-static int delete_dummy(carray * rootlist, carray * sibling_list,
+static int delete_dummy(carray /* struct mailmessage_tree * */ * rootlist,
+    carray /* struct mailmessage_tree * */ * sibling_list,
     unsigned int cur, unsigned int * pnext)
 {
   struct mailmessage_tree * env_tree;
@@ -714,13 +715,13 @@ mail_build_thread_references(char * default_from,
 {
   int r;
   int res;
-  chash * msg_id_hash;
+  chash /* char * -> struct mailmessage_tree * */ * msg_id_hash;
   unsigned int cur;
   struct mailmessage_tree * root;
-  carray * rootlist;
-  carray * msg_list;
+  carray /* struct mailmessage_tree * */ * rootlist;
+  carray /* struct mailmessage_tree * */ * msg_list;
   unsigned int i;
-  chash * subject_hash;
+  chash /* char * -> struct mailmessage_tree * */ * subject_hash;
 
   msg_id_hash = chash_new(128, CHASH_COPYNONE);
   if (msg_id_hash == NULL) {
@@ -811,7 +812,7 @@ mail_build_thread_references(char * default_from,
   for(cur = 0 ; cur < carray_count(msg_list) ; cur ++) {
     struct mailmessage_tree * env_tree;
     mailmessage * msg;
-    clist * ref;
+    clist /* char * */ * ref;
 
     env_tree = carray_get(msg_list, cur);
 
@@ -1407,7 +1408,7 @@ mail_build_thread_orderedsubject(char * default_from,
         struct mailmessage_tree **))
 {
   unsigned int i;
-  carray * rootlist;
+  carray /* struct mailmessage_tree * */ * rootlist;
   unsigned int cur;
   struct mailmessage_tree * root;
   int res;
@@ -1572,7 +1573,7 @@ mail_build_thread_none(char * default_from,
         struct mailmessage_tree **))
 {
   unsigned int i;
-  carray * rootlist;
+  carray /* struct mailmessage_tree * */ * rootlist;
   struct mailmessage_tree * root;
   int res;
   int r;

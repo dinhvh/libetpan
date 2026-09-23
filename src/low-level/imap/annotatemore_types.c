@@ -82,7 +82,8 @@ void mailimap_annotatemore_att_value_free(struct
 
 LIBETPAN_EXPORT
 struct mailimap_annotatemore_entry_att *
-mailimap_annotatemore_entry_att_new(char * entry, clist * list)
+mailimap_annotatemore_entry_att_new(char * entry,
+    clist /* struct mailimap_annotatemore_att_value * */ * list)
 {
   struct mailimap_annotatemore_entry_att * entry_att;
 
@@ -117,7 +118,7 @@ struct mailimap_annotatemore_entry_att *
 mailimap_annotatemore_entry_att_new_empty(char * entry)
 {
   struct mailimap_annotatemore_entry_att * entry_att;
-  clist * list;
+  clist /* struct mailimap_annotatemore_att_value * */ * list;
 
   list = clist_new();
   if (list == NULL)
@@ -155,7 +156,9 @@ int mailimap_annotatemore_entry_att_add(struct
 }
 
 struct mailimap_annotatemore_entry_list *
-mailimap_annotatemore_entry_list_new(int type, clist * en_att_list, clist * en_list)
+mailimap_annotatemore_entry_list_new(int type,
+    clist /* struct mailimap_annotatemore_entry_att * */ * en_att_list,
+    clist /* char * */ * en_list)
 {
   struct mailimap_annotatemore_entry_list * entry_list;
 
@@ -234,7 +237,7 @@ void mailimap_annotatemore_annotate_data_free(struct
 
 LIBETPAN_EXPORT
 struct mailimap_annotatemore_entry_match_list *
-mailimap_annotatemore_entry_match_list_new(clist * en_list)
+mailimap_annotatemore_entry_match_list_new(clist /* char * */ * en_list)
 {
   struct mailimap_annotatemore_entry_match_list * entry_match_list;
 
@@ -257,7 +260,7 @@ void mailimap_annotatemore_entry_match_list_free(
 
 LIBETPAN_EXPORT
 struct mailimap_annotatemore_attrib_match_list *
-mailimap_annotatemore_attrib_match_list_new(clist * at_list)
+mailimap_annotatemore_attrib_match_list_new(clist /* char * */ * at_list)
 {
   struct mailimap_annotatemore_attrib_match_list * attrib_match_list;
 
@@ -282,7 +285,7 @@ LIBETPAN_EXPORT
 struct mailimap_annotatemore_entry_match_list *
 mailimap_annotatemore_entry_match_list_new_empty()
 {
-  clist * list;
+  clist /* char * */ * list;
 
   list = clist_new();
   if (list == NULL)
@@ -315,7 +318,7 @@ LIBETPAN_EXPORT
 struct mailimap_annotatemore_attrib_match_list *
 mailimap_annotatemore_attrib_match_list_new_empty()
 {
-  clist * list;
+  clist /* char * */ * list;
 
   list = clist_new();
   if (list == NULL)
@@ -346,7 +349,8 @@ int mailimap_annotatemore_attrib_match_list_add(
 
 LIBETPAN_EXPORT
 struct mailimap_annotatemore_entry_att_list *
-mailimap_annotatemore_entry_att_list_new(clist * en_list)
+mailimap_annotatemore_entry_att_list_new(
+    clist /* struct mailimap_annotatemore_entry_att * */ * en_list)
 {
   struct mailimap_annotatemore_entry_att_list * entry_att_list;
 
@@ -372,7 +376,7 @@ LIBETPAN_EXPORT
 struct mailimap_annotatemore_entry_att_list *
 mailimap_annotatemore_entry_att_list_new_empty(void)
 {
-  clist * list;
+  clist /* struct mailimap_annotatemore_entry_att * */ * list;
 
   list = clist_new();
   if (list == NULL)

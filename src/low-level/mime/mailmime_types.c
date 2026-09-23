@@ -76,7 +76,7 @@ void mailmime_composite_type_free(struct mailmime_composite_type * ct)
 struct mailmime_content *
 mailmime_content_new(struct mailmime_type * ct_type,
 		     char * ct_subtype,
-		     clist * ct_parameters)
+		     clist /* struct mailmime_parameter * */ * ct_parameters)
 {
   struct mailmime_content * content;
 
@@ -341,7 +341,8 @@ void mailmime_field_free(struct mailmime_field * field)
   free(field);
 }
 
-struct mailmime_fields * mailmime_fields_new(clist * fld_list)
+struct mailmime_fields *
+mailmime_fields_new(clist /* struct mailmime_field * */ * fld_list)
 {
   struct mailmime_fields * fields;
 
@@ -385,7 +386,7 @@ void mailmime_body_part_free(struct mailmime_body_part * body_part)
 */
 
 struct mailmime_multipart_body *
-mailmime_multipart_body_new(clist * bd_list)
+mailmime_multipart_body_new(clist /* struct mailmime * */ * bd_list)
 {
   struct mailmime_multipart_body * mp_body;
 
@@ -415,7 +416,7 @@ struct mailmime * mailmime_new(int mm_type,
     struct mailmime_data * mm_body,
     struct mailmime_data * mm_preamble,
     struct mailmime_data * mm_epilogue,
-    clist * mm_mp_list,
+    clist /* struct mailmime * */ * mm_mp_list,
     struct mailimf_fields * mm_fields,
     struct mailmime * mm_msg_mime)
 {
@@ -550,7 +551,7 @@ void mailmime_encoded_word_free(struct mailmime_encoded_word * ew)
 
 struct mailmime_disposition *
 mailmime_disposition_new(struct mailmime_disposition_type * dsp_type,
-			 clist * dsp_parms)
+			 clist /* struct mailmime_disposition_parm * */ * dsp_parms)
 {
   struct mailmime_disposition * dsp;
 
@@ -687,7 +688,8 @@ void mailmime_quoted_date_time_free(char * date)
   mailimf_quoted_string_free(date);
 }
 
-struct mailmime_section * mailmime_section_new(clist * sec_list)
+struct mailmime_section *
+mailmime_section_new(clist /* uint32_t * */ * sec_list)
 {
   struct mailmime_section * section;
 
@@ -709,7 +711,8 @@ void mailmime_section_free(struct mailmime_section * section)
 
 
 
-struct mailmime_language * mailmime_language_new(clist * lg_list)
+struct mailmime_language *
+mailmime_language_new(clist /* char * */ * lg_list)
 {
   struct mailmime_language * lang;
 

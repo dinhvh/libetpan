@@ -86,11 +86,11 @@ static inline char * chash_dup(const void * data, unsigned int len)
 }
 
 LIBETPAN_EXPORT
-chash * chash_new(unsigned int size, int flags)
+chash /* chashdatum key/value */ * chash_new(unsigned int size, int flags)
 {
-  chash * h;
+  chash /* chashdatum key/value */ * h;
 
-  h = (chash *) malloc(sizeof(chash));
+  h = (chash /* chashdatum key/value */ *) malloc(sizeof(chash));
   if (h == NULL)
     return NULL;
 
@@ -111,7 +111,7 @@ chash * chash_new(unsigned int size, int flags)
 }
 
 LIBETPAN_EXPORT
-int chash_get(chash * hash,
+int chash_get(chash /* chashdatum key/value */ * hash,
 	      chashdatum * key, chashdatum * result)
 {
   unsigned int func;
@@ -135,7 +135,7 @@ int chash_get(chash * hash,
 }
 
 LIBETPAN_EXPORT
-int chash_set(chash * hash,
+int chash_set(chash /* chashdatum key/value */ * hash,
 	      chashdatum * key,
 	      chashdatum * value,
 	      chashdatum * oldvalue)
@@ -235,7 +235,7 @@ int chash_set(chash * hash,
 }
 
 LIBETPAN_EXPORT
-int chash_delete(chash * hash, chashdatum * key, chashdatum * oldvalue)
+int chash_delete(chash /* chashdatum key/value */ * hash, chashdatum * key, chashdatum * oldvalue)
 {
   /*  chashdatum result = { NULL, TRUE }; */
   unsigned int func, indx;
@@ -282,7 +282,7 @@ int chash_delete(chash * hash, chashdatum * key, chashdatum * oldvalue)
 }
 
 LIBETPAN_EXPORT
-void chash_free(chash * hash) {
+void chash_free(chash /* chashdatum key/value */ * hash) {
   unsigned int indx;
   chashiter * iter, * next;
 
@@ -304,7 +304,7 @@ void chash_free(chash * hash) {
 }
 
 LIBETPAN_EXPORT
-void chash_clear(chash * hash) {
+void chash_clear(chash /* chashdatum key/value */ * hash) {
   unsigned int indx;
   chashiter * iter, * next;
 
@@ -326,7 +326,7 @@ void chash_clear(chash * hash) {
 }
 
 LIBETPAN_EXPORT
-chashiter * chash_begin(chash * hash) {
+chashiter * chash_begin(chash /* chashdatum key/value */ * hash) {
   chashiter * iter;
   unsigned int indx = 0;
   
@@ -341,7 +341,7 @@ chashiter * chash_begin(chash * hash) {
 }
 
 LIBETPAN_EXPORT
-chashiter * chash_next(chash * hash, chashiter * iter) {
+chashiter * chash_next(chash /* chashdatum key/value */ * hash, chashiter * iter) {
   unsigned int indx;
 
   if (!iter)
@@ -360,7 +360,7 @@ chashiter * chash_next(chash * hash, chashiter * iter) {
 }
 
 LIBETPAN_EXPORT
-int chash_resize(chash * hash, unsigned int size)
+int chash_resize(chash /* chashdatum key/value */ * hash, unsigned int size)
 {
   struct chashcell ** cells;
   unsigned int indx, nindx;
@@ -393,12 +393,12 @@ int chash_resize(chash * hash, unsigned int size)
 
 #ifdef NO_MACROS
 LIBETPAN_EXPORT
-unsigned int chash_count(chash * hash) {
+unsigned int chash_count(chash /* chashdatum key/value */ * hash) {
   return hash->count;
 }
 
 LIBETPAN_EXPORT
-unsigned int chash_size(chash * hash) {
+unsigned int chash_size(chash /* chashdatum key/value */ * hash) {
   return hash->size;
 }
 

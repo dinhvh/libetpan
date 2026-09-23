@@ -426,7 +426,7 @@ static void group_info_free(struct newsnntp_group_info * n)
   free(n);
 }
 
-static void group_info_list_free(clist * l)
+static void group_info_list_free(clist /* struct newsnntp_group_info * */ * l)
 {
   clist_foreach(l, (clist_func) group_info_free, NULL);
   clist_free(l);
@@ -480,9 +480,10 @@ void newsnntp_group_free(struct newsnntp_group_info * info)
 
 /* ******************** LIST ******************************** */
 
-static clist * read_groups_list(newsnntp * f);
+static clist /* struct newsnntp_group_info * */ * read_groups_list(newsnntp * f);
 
-int newsnntp_list(newsnntp * f, clist ** result)
+int newsnntp_list(newsnntp * f,
+    clist /* struct newsnntp_group_info * */ ** result)
 {
   char command[NNTP_STRING_SIZE];
   int r;
@@ -515,7 +516,7 @@ int newsnntp_list(newsnntp * f, clist ** result)
   }
 }
 
-void newsnntp_list_free(clist * l)
+void newsnntp_list_free(clist /* struct newsnntp_group_info * */ * l)
 {
   group_info_list_free(l);
 }
@@ -671,15 +672,16 @@ int newsnntp_authinfo_password(newsnntp * f, const char * password)
 
 /* ******************** LIST OVERVIEW.FMT ******************************** */
 
-static clist * read_headers_list(newsnntp * f);
+static clist /* char * */ * read_headers_list(newsnntp * f);
 
-static void headers_list_free(clist * l)
+static void headers_list_free(clist /* char * */ * l)
 {
   clist_foreach(l, (clist_func) free, NULL);
   clist_free(l);
 }
 
-int newsnntp_list_overview_fmt(newsnntp * f, clist ** result)
+int newsnntp_list_overview_fmt(newsnntp * f,
+    clist /* char * */ ** result)
 {
   char command[NNTP_STRING_SIZE];
   int r;
@@ -715,7 +717,7 @@ int newsnntp_list_overview_fmt(newsnntp * f, clist ** result)
   }
 }
 
-void newsnntp_list_overview_fmt_free(clist * l)
+void newsnntp_list_overview_fmt_free(clist /* char * */ * l)
 {
   headers_list_free(l);
 }
@@ -727,7 +729,8 @@ void newsnntp_list_overview_fmt_free(clist * l)
 
 /* ******************** LIST ACTIVE ******************************** */
 
-int newsnntp_list_active(newsnntp * f, const char * wildcard, clist ** result)
+int newsnntp_list_active(newsnntp * f, const char * wildcard,
+    clist /* struct newsnntp_group_info * */ ** result)
 {
   char command[NNTP_STRING_SIZE];
   int r;
@@ -763,7 +766,7 @@ int newsnntp_list_active(newsnntp * f, const char * wildcard, clist ** result)
   }
 }
 
-void newsnntp_list_active_free(clist * l)
+void newsnntp_list_active_free(clist /* struct newsnntp_group_info * */ * l)
 {
   group_info_list_free(l);
 }
@@ -812,7 +815,7 @@ static void group_time_free(struct newsnntp_group_time * n)
   free(n);
 }
 
-static void group_time_list_free(clist * l)
+static void group_time_list_free(clist /* struct newsnntp_group_time * */ * l)
 {
   clist_foreach(l, (clist_func) group_time_free, NULL);
   clist_free(l);
@@ -824,10 +827,11 @@ static void group_time_list_free(clist * l)
 
 
 
-static clist * read_group_time_list(newsnntp * f);
+static clist /* struct newsnntp_group_time * */ * read_group_time_list(newsnntp * f);
 
 
-int newsnntp_list_active_times(newsnntp * f, clist ** result)
+int newsnntp_list_active_times(newsnntp * f,
+    clist /* struct newsnntp_group_time * */ ** result)
 {
   char command[NNTP_STRING_SIZE];
   int r;
@@ -863,7 +867,7 @@ int newsnntp_list_active_times(newsnntp * f, clist ** result)
   }
 }
 
-void newsnntp_list_active_times_free(clist * l)
+void newsnntp_list_active_times_free(clist /* struct newsnntp_group_time * */ * l)
 {
   group_time_list_free(l);
 }
@@ -914,16 +918,18 @@ distrib_value_meaning_free(struct newsnntp_distrib_value_meaning * n)
   free(n);
 }
 
-static void distrib_value_meaning_list_free(clist * l)
+static void distrib_value_meaning_list_free(
+    clist /* struct newsnntp_distrib_value_meaning * */ * l)
 {
   clist_foreach(l, (clist_func) distrib_value_meaning_free, NULL);
   clist_free(l);
 }
 
-static clist * read_distrib_value_meaning_list(newsnntp * f);
+static clist /* struct newsnntp_distrib_value_meaning * */ * read_distrib_value_meaning_list(newsnntp * f);
 
 
-int newsnntp_list_distribution(newsnntp * f, clist ** result)
+int newsnntp_list_distribution(newsnntp * f,
+    clist /* struct newsnntp_distrib_value_meaning * */ ** result)
 {
   char command[NNTP_STRING_SIZE];
   int r;
@@ -960,7 +966,8 @@ int newsnntp_list_distribution(newsnntp * f, clist ** result)
 }
 
 
-void newsnntp_list_distribution_free(clist * l)
+void newsnntp_list_distribution_free(
+    clist /* struct newsnntp_distrib_value_meaning * */ * l)
 {
   distrib_value_meaning_list_free(l);
 }
@@ -1014,15 +1021,17 @@ distrib_default_value_free(struct newsnntp_distrib_default_value * n)
   free(n);
 }
 
-static void distrib_default_value_list_free(clist * l)
+static void distrib_default_value_list_free(
+    clist /* struct newsnntp_distrib_default_value * */ * l)
 {
   clist_foreach(l, (clist_func) distrib_default_value_free, NULL);
   clist_free(l);
 }
 
-static clist * read_distrib_default_value_list(newsnntp * f);
+static clist /* struct newsnntp_distrib_default_value * */ * read_distrib_default_value_list(newsnntp * f);
 
-int newsnntp_list_distrib_pats(newsnntp * f, clist ** result)
+int newsnntp_list_distrib_pats(newsnntp * f,
+    clist /* struct newsnntp_distrib_default_value * */ ** result)
 {
   char command[NNTP_STRING_SIZE];
   int r;
@@ -1058,7 +1067,8 @@ int newsnntp_list_distrib_pats(newsnntp * f, clist ** result)
   }
 }
 
-void newsnntp_list_distrib_pats_free(clist * l)
+void newsnntp_list_distrib_pats_free(
+    clist /* struct newsnntp_distrib_default_value * */ * l)
 {
   distrib_default_value_list_free(l);
 }
@@ -1110,16 +1120,17 @@ static void group_description_free(struct newsnntp_group_description * n)
   free(n);
 }
 
-static void group_description_list_free(clist * l)
+static void group_description_list_free(
+    clist /* struct newsnntp_group_description * */ * l)
 {
   clist_foreach(l, (clist_func) group_description_free, NULL);
   clist_free(l);
 }
 
-static clist * read_group_description_list(newsnntp * f);
+static clist /* struct newsnntp_group_description * */ * read_group_description_list(newsnntp * f);
 
 int newsnntp_list_newsgroups(newsnntp * f, const char * pattern,
-			      clist ** result)
+			      clist /* struct newsnntp_group_description * */ ** result)
 {
   char command[NNTP_STRING_SIZE];
   int r;
@@ -1159,7 +1170,8 @@ int newsnntp_list_newsgroups(newsnntp * f, const char * pattern,
   }
 }
 
-void newsnntp_list_newsgroups_free(clist * l)
+void newsnntp_list_newsgroups_free(
+    clist /* struct newsnntp_group_description * */ * l)
 {
   group_description_list_free(l);
 }
@@ -1177,15 +1189,16 @@ void newsnntp_list_newsgroups_free(clist * l)
 
 /* ******************** LIST SUBSCRIPTIONS ******************************** */
 
-static void subscriptions_list_free(clist * l)
+static void subscriptions_list_free(clist /* char * */ * l)
 {
   clist_foreach(l, (clist_func) free, NULL);
   clist_free(l);
 }
 
-static clist * read_subscriptions_list(newsnntp * f);
+static clist /* char * */ * read_subscriptions_list(newsnntp * f);
 
-int newsnntp_list_subscriptions(newsnntp * f, clist ** result)
+int newsnntp_list_subscriptions(newsnntp * f,
+    clist /* char * */ ** result)
 {
   char command[NNTP_STRING_SIZE];
   int r;
@@ -1221,7 +1234,7 @@ int newsnntp_list_subscriptions(newsnntp * f, clist ** result)
   }
 }
 
-void newsnntp_list_subscriptions_free(clist * l)
+void newsnntp_list_subscriptions_free(clist /* char * */ * l)
 {
   subscriptions_list_free(l);
 }
@@ -1239,16 +1252,16 @@ void newsnntp_list_subscriptions_free(clist * l)
 
 /* ******************** LISTGROUP ******************************** */
 
-static void articles_list_free(clist * l)
+static void articles_list_free(clist /* uint32_t * */ * l)
 {
   clist_foreach(l, (clist_func) free, NULL);
   clist_free(l);
 }
 
-static clist * read_articles_list(newsnntp * f);
+static clist /* uint32_t * */ * read_articles_list(newsnntp * f);
 
 int newsnntp_listgroup(newsnntp * f, const char * group_name,
-		       clist ** result)
+			       clist /* uint32_t * */ ** result)
 {
   char command[NNTP_STRING_SIZE];
   int r;
@@ -1290,7 +1303,7 @@ int newsnntp_listgroup(newsnntp * f, const char * group_name,
   }
 }
 
-void newsnntp_listgroup_free(clist * l)
+void newsnntp_listgroup_free(clist /* uint32_t * */ * l)
 {
   articles_list_free(l);
 }
@@ -1429,18 +1442,20 @@ static void xhdr_resp_item_free(struct newsnntp_xhdr_resp_item * n)
   free(n);
 }
 
-static void xhdr_resp_list_free(clist * l)
+static void xhdr_resp_list_free(
+    clist /* struct newsnntp_xhdr_resp_item * */ * l)
 {
   clist_foreach(l, (clist_func) xhdr_resp_item_free, NULL);
   clist_free(l);
 }
 
-static clist * read_xhdr_resp_list(newsnntp * f);
+static clist /* struct newsnntp_xhdr_resp_item * */ * read_xhdr_resp_list(newsnntp * f);
 
-static int newsnntp_xhdr_resp(newsnntp * f, clist ** result);
+static int newsnntp_xhdr_resp(newsnntp * f,
+    clist /* struct newsnntp_xhdr_resp_item * */ ** result);
 
 int newsnntp_xhdr_single(newsnntp * f, const char * header, uint32_t article,
-			  clist ** result)
+			  clist /* struct newsnntp_xhdr_resp_item * */ ** result)
 {
   char command[NNTP_STRING_SIZE];
   int r;
@@ -1455,7 +1470,7 @@ int newsnntp_xhdr_single(newsnntp * f, const char * header, uint32_t article,
 
 int newsnntp_xhdr_range(newsnntp * f, const char * header,
 			 uint32_t rangeinf, uint32_t rangesup,
-			 clist ** result)
+			 clist /* struct newsnntp_xhdr_resp_item * */ ** result)
 {
   char command[NNTP_STRING_SIZE];
   int r;
@@ -1469,12 +1484,13 @@ int newsnntp_xhdr_range(newsnntp * f, const char * header,
   return newsnntp_xhdr_resp(f, result);
 }
 
-void newsnntp_xhdr_free(clist * l)
+void newsnntp_xhdr_free(clist /* struct newsnntp_xhdr_resp_item * */ * l)
 {
   xhdr_resp_list_free(l);
 }
 
-static int newsnntp_xhdr_resp(newsnntp * f, clist ** result)
+static int newsnntp_xhdr_resp(newsnntp * f,
+    clist /* struct newsnntp_xhdr_resp_item * */ ** result)
 {
   int r;
   char * response;
@@ -1537,7 +1553,7 @@ xover_resp_item_new(uint32_t article,
 		    char * references,
 		    size_t size,
 		    uint32_t line_count,
-		    clist * others)
+		    clist /* char * */ * others)
 {
   struct newsnntp_xover_resp_item * n;
 
@@ -1611,23 +1627,25 @@ void xover_resp_item_free(struct newsnntp_xover_resp_item * n)
   free(n);
 }
 
-void newsnntp_xover_resp_list_free(clist * l)
+void newsnntp_xover_resp_list_free(
+    clist /* struct newsnntp_xover_resp_item * */ * l)
 {
   clist_foreach(l, (clist_func) xover_resp_item_free, NULL);
   clist_free(l);
 }
 
-static clist * read_xover_resp_list(newsnntp * f);
+static clist /* struct newsnntp_xover_resp_item * */ * read_xover_resp_list(newsnntp * f);
 
 
-static int newsnntp_xover_resp(newsnntp * f, clist ** result);
+static int newsnntp_xover_resp(newsnntp * f,
+    clist /* struct newsnntp_xover_resp_item * */ ** result);
 
 int newsnntp_xover_single(newsnntp * f, uint32_t article,
 			   struct newsnntp_xover_resp_item ** result)
 {
   char command[NNTP_STRING_SIZE];
   int r;
-  clist * list;
+  clist /* struct newsnntp_xover_resp_item * */ * list;
   clistiter * cur;
   struct newsnntp_xover_resp_item * item;
 
@@ -1650,7 +1668,7 @@ int newsnntp_xover_single(newsnntp * f, uint32_t article,
 }
 
 int newsnntp_xover_range(newsnntp * f, uint32_t rangeinf, uint32_t rangesup,
-			  clist ** result)
+			  clist /* struct newsnntp_xover_resp_item * */ ** result)
 {
   int r;
   char command[NNTP_STRING_SIZE];
@@ -1663,7 +1681,8 @@ int newsnntp_xover_range(newsnntp * f, uint32_t rangeinf, uint32_t rangesup,
   return newsnntp_xover_resp(f, result);
 }
 
-static int newsnntp_xover_resp(newsnntp * f, clist ** result)
+static int newsnntp_xover_resp(newsnntp * f,
+    clist /* struct newsnntp_xover_resp_item * */ ** result)
 {
   int r;
   char * response;
@@ -1893,7 +1912,7 @@ static int parse_group_info(char * response,
 }
 
 
-static clist * read_groups_list(newsnntp * f)
+static clist /* struct newsnntp_group_info * */ * read_groups_list(newsnntp * f)
 {
   char * line;
   char * group_name;
@@ -1901,7 +1920,7 @@ static clist * read_groups_list(newsnntp * f)
   uint32_t last;
   uint32_t count;
   int type;
-  clist * groups_list;
+  clist /* struct newsnntp_group_info * */ * groups_list;
   struct newsnntp_group_info * n;
   int r;
 
@@ -1958,10 +1977,10 @@ static clist * read_groups_list(newsnntp * f)
 }
 
 
-static clist * read_headers_list(newsnntp * f)
+static clist /* char * */ * read_headers_list(newsnntp * f)
 {
   char * line;
-  clist * headers_list;
+  clist /* char * */ * headers_list;
   char * header;
   int r;
 
@@ -2000,13 +2019,13 @@ static clist * read_headers_list(newsnntp * f)
 
 
 
-static clist * read_group_time_list(newsnntp * f)
+static clist /* struct newsnntp_group_time * */ * read_group_time_list(newsnntp * f)
 {
   char * line;
   char * group_name;
   time_t date;
   char * email;
-  clist * group_time_list;
+  clist /* struct newsnntp_group_time * */ * group_time_list;
   struct newsnntp_group_time * n;
   int r;
 
@@ -2061,12 +2080,12 @@ static clist * read_group_time_list(newsnntp * f)
 
 
 
-static clist * read_distrib_value_meaning_list(newsnntp * f)
+static clist /* struct newsnntp_distrib_value_meaning * */ * read_distrib_value_meaning_list(newsnntp * f)
 {
   char * line;
   char * value;
   char * meaning;
-  clist * distrib_value_meaning_list;
+  clist /* struct newsnntp_distrib_value_meaning * */ * distrib_value_meaning_list;
   struct newsnntp_distrib_value_meaning * n;
   int r;
 
@@ -2114,13 +2133,13 @@ static clist * read_distrib_value_meaning_list(newsnntp * f)
 
 
 
-static clist * read_distrib_default_value_list(newsnntp * f)
+static clist /* struct newsnntp_distrib_default_value * */ * read_distrib_default_value_list(newsnntp * f)
 {
   char * line;
   uint32_t weight;
   char * group_pattern;
   char * meaning;
-  clist * distrib_default_value_list;
+  clist /* struct newsnntp_distrib_default_value * */ * distrib_default_value_list;
   struct newsnntp_distrib_default_value * n;
   int r;
 
@@ -2173,12 +2192,12 @@ static clist * read_distrib_default_value_list(newsnntp * f)
 
 
 
-static clist * read_group_description_list(newsnntp * f)
+static clist /* struct newsnntp_group_description * */ * read_group_description_list(newsnntp * f)
 {
   char * line;
   char * group_name;
   char * description;
-  clist * group_description_list;
+  clist /* struct newsnntp_group_description * */ * group_description_list;
   struct newsnntp_group_description * n;
   int r;
 
@@ -2225,10 +2244,10 @@ static clist * read_group_description_list(newsnntp * f)
 
 
 
-static clist * read_subscriptions_list(newsnntp * f)
+static clist /* char * */ * read_subscriptions_list(newsnntp * f)
 {
   char * line;
-  clist * subscriptions_list;
+  clist /* char * */ * subscriptions_list;
   char * group_name;
   int r;
 
@@ -2266,10 +2285,10 @@ static clist * read_subscriptions_list(newsnntp * f)
 
 
 
-static clist * read_articles_list(newsnntp * f)
+static clist /* uint32_t * */ * read_articles_list(newsnntp * f)
 {
   char * line;
-  clist * articles_list;
+  clist /* uint32_t * */ * articles_list;
   uint32_t * article_num;
   int r;
 
@@ -2305,12 +2324,12 @@ static clist * read_articles_list(newsnntp * f)
   return NULL;
 }
 
-static clist * read_xhdr_resp_list(newsnntp * f)
+static clist /* struct newsnntp_xhdr_resp_item * */ * read_xhdr_resp_list(newsnntp * f)
 {
   char * line;
   uint32_t article;
   char * value;
-  clist * xhdr_resp_list;
+  clist /* struct newsnntp_xhdr_resp_item * */ * xhdr_resp_list;
   struct newsnntp_xhdr_resp_item * n;
   int r;
 
@@ -2353,12 +2372,12 @@ static clist * read_xhdr_resp_list(newsnntp * f)
 }
 
 
-static clist * read_xover_resp_list(newsnntp * f)
+static clist /* struct newsnntp_xover_resp_item * */ * read_xover_resp_list(newsnntp * f)
 {
   char * line;
-  clist * xover_resp_list;
+  clist /* struct newsnntp_xover_resp_item * */ * xover_resp_list;
   struct newsnntp_xover_resp_item * n;
-  clist * values_list;
+  clist /* char * */ * values_list;
   clistiter * current;
   uint32_t article;
   char * subject;
@@ -2368,7 +2387,7 @@ static clist * read_xover_resp_list(newsnntp * f)
   char * references;
   size_t size;
   uint32_t line_count;
-  clist * others;
+  clist /* char * */ * others;
   int r;
   
   xover_resp_list = clist_new();

@@ -117,8 +117,8 @@ mailimap_annotatemore_entry_list_parse(mailstream * fd, MMAPString * buffer, str
     progress_function * progr_fun)
 {
   size_t cur_token;
-  clist * en_att_list;
-  clist * en_list;
+  clist /* struct mailimap_annotatemore_entry_att * */ * en_att_list;
+  clist /* char * */ * en_list;
   int type;
   struct mailimap_annotatemore_entry_list * entry_list;
   int r;
@@ -209,7 +209,7 @@ mailimap_annotatemore_entry_att_parse(mailstream * fd, MMAPString * buffer, stru
 {
   size_t cur_token;
   char * entry;
-  clist * list;
+  clist /* struct mailimap_annotatemore_att_value * */ * list;
   struct mailimap_annotatemore_entry_att * entry_att;
   int r;
   int res;

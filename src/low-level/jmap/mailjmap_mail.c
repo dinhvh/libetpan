@@ -17,7 +17,7 @@
 #define MAILJMAP_CAPABILITY_MAIL "urn:ietf:params:jmap:mail"
 #define MAILJMAP_CAPABILITY_SUBMISSION "urn:ietf:params:jmap:submission"
 
-static void string_list_free(clist * list)
+static void string_list_free(clist /* char * */ * list)
 {
   clistiter * cur;
 
@@ -145,7 +145,8 @@ void mailjmap_email_address_free(struct mailjmap_email_address * address)
   free(address);
 }
 
-static void email_address_list_free(clist * list)
+static void email_address_list_free(
+    clist /* struct mailjmap_email_address * */ * list)
 {
   clistiter * cur;
 
@@ -157,7 +158,8 @@ static void email_address_list_free(clist * list)
   clist_free(list);
 }
 
-static void email_header_list_free(clist * list)
+static void email_header_list_free(
+    clist /* struct mailjmap_email_header * */ * list)
 {
   clistiter * cur;
 
@@ -227,7 +229,8 @@ void mailjmap_email_body_part_free(struct mailjmap_email_body_part * part)
   free(part);
 }
 
-static void email_body_part_list_free(clist * list)
+static void email_body_part_list_free(
+    clist /* struct mailjmap_email_body_part * */ * list)
 {
   clistiter * cur;
 
@@ -264,7 +267,8 @@ void mailjmap_email_body_value_free(
   free(body_value);
 }
 
-static void email_body_value_list_free(clist * list)
+static void email_body_value_list_free(
+    clist /* struct mailjmap_email_body_value * */ * list)
 {
   clistiter * cur;
 
@@ -363,7 +367,7 @@ void mailjmap_email_free(struct mailjmap_email * email)
   free(email);
 }
 
-static void mailbox_list_free(clist * list)
+static void mailbox_list_free(clist /* struct mailjmap_mailbox * */ * list)
 {
   clistiter * cur;
 
@@ -375,7 +379,7 @@ static void mailbox_list_free(clist * list)
   clist_free(list);
 }
 
-static void thread_list_free(clist * list)
+static void thread_list_free(clist /* struct mailjmap_thread * */ * list)
 {
   clistiter * cur;
 
@@ -387,7 +391,7 @@ static void thread_list_free(clist * list)
   clist_free(list);
 }
 
-static void email_list_free(clist * list)
+static void email_list_free(clist /* struct mailjmap_email * */ * list)
 {
   clistiter * cur;
 
@@ -432,7 +436,7 @@ void mailjmap_identity_free(struct mailjmap_identity * identity)
   free(identity);
 }
 
-static void identity_list_free(clist * list)
+static void identity_list_free(clist /* struct mailjmap_identity * */ * list)
 {
   clistiter * cur;
 
@@ -674,7 +678,8 @@ void mailjmap_query_change_free(struct mailjmap_query_change * change)
   free(change);
 }
 
-static void query_change_list_free(clist * list)
+static void query_change_list_free(
+    clist /* struct mailjmap_query_change * */ * list)
 {
   clistiter * cur;
 
@@ -851,7 +856,8 @@ mailjmap_email_query_filter_operator_new(const char * filter_operator)
   return filter;
 }
 
-static void email_query_filter_list_free(clist * list)
+static void email_query_filter_list_free(
+    clist /* struct mailjmap_email_query_filter * */ * list)
 {
   clistiter * cur;
 
@@ -1079,7 +1085,8 @@ void mailjmap_import_not_created_free(
   free(not_created);
 }
 
-static void import_created_list_free(clist * list)
+static void import_created_list_free(
+    clist /* struct mailjmap_import_created * */ * list)
 {
   clistiter * cur;
 
@@ -1091,7 +1098,8 @@ static void import_created_list_free(clist * list)
   clist_free(list);
 }
 
-static void import_not_created_list_free(clist * list)
+static void import_not_created_list_free(
+    clist /* struct mailjmap_import_not_created * */ * list)
 {
   clistiter * cur;
 
@@ -1162,7 +1170,8 @@ void mailjmap_email_parse_item_free(
   free(item);
 }
 
-static void email_parse_item_list_free(clist * list)
+static void email_parse_item_list_free(
+    clist /* struct mailjmap_email_parse_item * */ * list)
 {
   clistiter * cur;
 
@@ -1232,7 +1241,8 @@ void mailjmap_search_snippet_free(
   free(snippet);
 }
 
-static void search_snippet_list_free(clist * list)
+static void search_snippet_list_free(
+    clist /* struct mailjmap_search_snippet * */ * list)
 {
   clistiter * cur;
 
@@ -1468,7 +1478,8 @@ void mailjmap_email_set_item_free(
   free(item);
 }
 
-static int email_set_item_add_string(clist * list, const char * string)
+static int email_set_item_add_string(clist /* char * */ * list,
+    const char * string)
 {
   char * copy;
 
@@ -1795,7 +1806,8 @@ void mailjmap_email_submission_delivery_status_free(
   free(status);
 }
 
-static void email_submission_delivery_status_list_free(clist * list)
+static void email_submission_delivery_status_list_free(
+    clist /* struct mailjmap_email_submission_delivery_status * */ * list)
 {
   clistiter * cur;
 
@@ -1855,7 +1867,8 @@ void mailjmap_set_created_free(struct mailjmap_set_created * created)
   free(created);
 }
 
-static void set_created_list_free(clist * list)
+static void set_created_list_free(
+    clist /* struct mailjmap_set_created * */ * list)
 {
   clistiter * cur;
 
@@ -1892,7 +1905,8 @@ void mailjmap_set_error_free(struct mailjmap_set_error * error)
   free(error);
 }
 
-static void set_error_list_free(clist * list)
+static void set_error_list_free(
+    clist /* struct mailjmap_set_error * */ * list)
 {
   clistiter * cur;
 
@@ -1948,7 +1962,7 @@ void mailjmap_set_result_free(struct mailjmap_set_result * result)
   free(result);
 }
 
-static int json_array_from_string_list(clist * list,
+static int json_array_from_string_list(clist /* char * */ * list,
     mailjson_value ** result)
 {
   mailjson_value * array;
@@ -2071,7 +2085,7 @@ static int object_set_null(mailjson_value * object, const char * key)
   return MAILJMAP_NO_ERROR;
 }
 
-static int json_true_object_from_string_list(clist * list,
+static int json_true_object_from_string_list(clist /* char * */ * list,
     mailjson_value ** result)
 {
   mailjson_value * object;
@@ -2109,7 +2123,8 @@ static int json_true_object_from_string_list(clist * list,
 }
 
 static int build_mailbox_get_arguments(const char * account_id,
-    clist * ids, clist * properties, mailjson_value ** result)
+    clist /* char * */ * ids, clist /* char * */ * properties,
+    mailjson_value ** result)
 {
   mailjson_value * root;
   mailjson_value * value;
@@ -2163,7 +2178,7 @@ static int json_from_email_query_filter(
     mailjson_value ** result);
 
 static int build_search_snippet_get_arguments(const char * account_id,
-    clist * email_ids, const char * text,
+    clist /* char * */ * email_ids, const char * text,
     struct mailjmap_email_query_filter * filter,
     mailjson_value ** result)
 {
@@ -2318,7 +2333,8 @@ static int object_set_text_filter(mailjson_value * object,
   return r;
 }
 
-static int json_array_from_email_query_sort_comparators(clist * sort,
+static int json_array_from_email_query_sort_comparators(
+    clist /* struct mailjmap_email_query_sort_comparator * */ * sort,
     mailjson_value ** result)
 {
   mailjson_value * array;
@@ -2384,7 +2400,8 @@ static int json_from_email_query_filter(
     struct mailjmap_email_query_filter * filter,
     mailjson_value ** result);
 
-static int json_array_from_email_query_filters(clist * filters,
+static int json_array_from_email_query_filters(
+    clist /* struct mailjmap_email_query_filter * */ * filters,
     mailjson_value ** result)
 {
   mailjson_value * array;
@@ -2552,7 +2569,8 @@ static int json_from_email_query_filter(
 
 static int build_email_query_arguments(const char * account_id,
     const char * text, struct mailjmap_email_query_filter * filter,
-    clist * sort, int position, const char * anchor, int anchor_offset,
+    clist /* struct mailjmap_email_query_sort_comparator * */ * sort,
+    int position, const char * anchor, int anchor_offset,
     int limit, int calculate_total, int collapse_threads,
     mailjson_value ** result)
 {
@@ -2633,7 +2651,8 @@ static int build_email_query_arguments(const char * account_id,
 
 static int build_query_changes_arguments(const char * account_id,
     const char * since_query_state, const char * text,
-    struct mailjmap_email_query_filter * filter, clist * sort,
+    struct mailjmap_email_query_filter * filter,
+    clist /* struct mailjmap_email_query_sort_comparator * */ * sort,
     int max_changes, const char * up_to_id, int calculate_total,
     int collapse_threads, mailjson_value ** result)
 {
@@ -2712,8 +2731,9 @@ static int build_query_changes_arguments(const char * account_id,
 }
 
 static int build_email_import_arguments(const char * account_id,
-    const char * creation_id, const char * blob_id, clist * mailbox_ids,
-    clist * keywords, const char * received_at,
+    const char * creation_id, const char * blob_id,
+    clist /* char * */ * mailbox_ids,
+    clist /* char * */ * keywords, const char * received_at,
     mailjson_value ** result)
 {
   mailjson_value * root;
@@ -2796,7 +2816,9 @@ static int build_email_import_arguments(const char * account_id,
 }
 
 static int build_email_parse_arguments(const char * account_id,
-    clist * blob_ids, clist * properties, clist * body_properties,
+    clist /* char * */ * blob_ids,
+    clist /* char * */ * properties,
+    clist /* char * */ * body_properties,
     mailjson_value ** result)
 {
   mailjson_value * root;
@@ -2911,7 +2933,8 @@ static int json_from_mailbox_set_item(
   return r;
 }
 
-static int json_object_from_mailbox_set_item_list(clist * list,
+static int json_object_from_mailbox_set_item_list(
+    clist /* struct mailjmap_mailbox_set_item * */ * list,
     mailjson_value ** result)
 {
   mailjson_value * object;
@@ -2955,8 +2978,10 @@ static int json_object_from_mailbox_set_item_list(clist * list,
 }
 
 static int build_mailbox_set_arguments(const char * account_id,
-    const char * if_in_state, clist * create, clist * update,
-    clist * destroy, mailjson_value ** result)
+    const char * if_in_state,
+    clist /* struct mailjmap_mailbox_set_item * */ * create,
+    clist /* struct mailjmap_mailbox_set_item * */ * update,
+    clist /* char * */ * destroy, mailjson_value ** result)
 {
   mailjson_value * root;
   mailjson_value * value;
@@ -3061,7 +3086,8 @@ static int json_from_email_set_item(
   return r;
 }
 
-static int json_object_from_email_set_item_list(clist * list,
+static int json_object_from_email_set_item_list(
+    clist /* struct mailjmap_email_set_item * */ * list,
     mailjson_value ** result)
 {
   mailjson_value * object;
@@ -3105,8 +3131,10 @@ static int json_object_from_email_set_item_list(clist * list,
 }
 
 static int build_email_set_arguments(const char * account_id,
-    const char * if_in_state, clist * create, clist * update,
-    clist * destroy, mailjson_value ** result)
+    const char * if_in_state,
+    clist /* struct mailjmap_email_set_item * */ * create,
+    clist /* struct mailjmap_email_set_item * */ * update,
+    clist /* char * */ * destroy, mailjson_value ** result)
 {
   mailjson_value * root;
   mailjson_value * value;
@@ -3219,7 +3247,8 @@ static int json_from_email_copy_item(
   return r;
 }
 
-static int json_object_from_email_copy_item_list(clist * list,
+static int json_object_from_email_copy_item_list(
+    clist /* struct mailjmap_email_copy_item * */ * list,
     mailjson_value ** result)
 {
   mailjson_value * object;
@@ -3296,7 +3325,8 @@ static int json_from_email_address(struct mailjmap_email_address * address,
   return r;
 }
 
-static int json_array_from_email_address_list(clist * list,
+static int json_array_from_email_address_list(
+    clist /* struct mailjmap_email_address * */ * list,
     mailjson_value ** result)
 {
   mailjson_value * array;
@@ -3381,7 +3411,8 @@ static int json_from_email_submission_envelope(
 
 static int build_email_copy_arguments(const char * account_id,
     const char * from_account_id, const char * if_from_in_state,
-    clist * create, int on_success_destroy_original,
+    clist /* struct mailjmap_email_copy_item * */ * create,
+    int on_success_destroy_original,
     mailjson_value ** result)
 {
   mailjson_value * root;
@@ -3492,7 +3523,8 @@ static int json_from_email_submission_set_item(
   return r;
 }
 
-static int json_object_from_email_submission_set_item_list(clist * list,
+static int json_object_from_email_submission_set_item_list(
+    clist /* struct mailjmap_email_submission_set_item * */ * list,
     mailjson_value ** result)
 {
   mailjson_value * object;
@@ -3536,8 +3568,10 @@ static int json_object_from_email_submission_set_item_list(clist * list,
 }
 
 static int build_email_submission_set_arguments(const char * account_id,
-    const char * if_in_state, clist * create, clist * update,
-    clist * destroy, mailjson_value ** result)
+    const char * if_in_state,
+    clist /* struct mailjmap_email_submission_set_item * */ * create,
+    clist /* struct mailjmap_email_submission_set_item * */ * update,
+    clist /* char * */ * destroy, mailjson_value ** result)
 {
   mailjson_value * root;
   mailjson_value * value;
@@ -3703,7 +3737,7 @@ static int object_get_nullable_string_dup(mailjson_value * object,
 }
 
 static int parse_bool_map(mailjson_value * object,
-    const char * key, chash * result);
+    const char * key, chash /* char * -> int boolean */ * result);
 
 static int parse_mailbox(mailjson_value * value,
     struct mailjmap_mailbox ** result)
@@ -3815,7 +3849,7 @@ static int parse_mailbox_list(mailjson_value * arguments,
 }
 
 static int parse_string_array(mailjson_value * arguments,
-    const char * key, clist * result)
+    const char * key, clist /* char * */ * result)
 {
   mailjson_value * array;
   size_t count;
@@ -3868,7 +3902,7 @@ static int parse_string_array(mailjson_value * arguments,
 }
 
 struct parse_string_object_keys_context {
-  clist * list;
+  clist /* char * */ * list;
 };
 
 static int parse_string_object_key(const char * key,
@@ -3895,7 +3929,7 @@ static int parse_string_object_key(const char * key,
 }
 
 static int parse_string_array_or_object_keys(mailjson_value * arguments,
-    const char * key, clist * result)
+    const char * key, clist /* char * */ * result)
 {
   struct parse_string_object_keys_context context;
   mailjson_value * value;
@@ -3928,7 +3962,7 @@ static int parse_string_array_or_object_keys(mailjson_value * arguments,
 }
 
 static int parse_required_string_array(mailjson_value * arguments,
-    const char * key, clist * result)
+    const char * key, clist /* char * */ * result)
 {
   mailjson_value * array;
   int r;
@@ -4108,7 +4142,7 @@ static int parse_thread_get_arguments(mailjson_value * arguments,
 }
 
 struct parse_bool_map_context {
-  chash * map;
+  chash /* char * -> int boolean */ * map;
 };
 
 static int parse_bool_map_entry(const char * key, mailjson_value * value,
@@ -4139,7 +4173,7 @@ static int parse_bool_map_entry(const char * key, mailjson_value * value,
 }
 
 static int parse_bool_map(mailjson_value * object,
-    const char * key, chash * result)
+    const char * key, chash /* char * -> int boolean */ * result)
 {
   struct parse_bool_map_context context;
   mailjson_value * value;
@@ -4166,7 +4200,7 @@ static int parse_bool_map(mailjson_value * object,
 }
 
 struct parse_string_map_context {
-  chash * map;
+  chash /* char * -> char * */ * map;
 };
 
 static int parse_string_map_entry(const char * key,
@@ -4203,7 +4237,7 @@ static int parse_string_map_entry(const char * key,
 }
 
 static int parse_string_map(mailjson_value * object,
-    const char * key, chash * result)
+    const char * key, chash /* char * -> char * */ * result)
 {
   struct parse_string_map_context context;
   mailjson_value * value;
@@ -4233,7 +4267,8 @@ static int parse_string_map(mailjson_value * object,
   return r;
 }
 
-static int duplicate_first_string_list_value(clist * list, char ** result)
+static int duplicate_first_string_list_value(clist /* char * */ * list,
+    char ** result)
 {
   const char * value;
 
@@ -4331,7 +4366,7 @@ static int parse_email_header(mailjson_value * value,
 }
 
 static int parse_email_header_list(mailjson_value * object,
-    const char * key, clist * result)
+    const char * key, clist /* struct mailjmap_email_header * */ * result)
 {
   mailjson_value * array;
   size_t count;
@@ -4409,7 +4444,7 @@ static int parse_email_address(mailjson_value * value,
 }
 
 static int parse_email_address_list(mailjson_value * object,
-    const char * key, clist * result)
+    const char * key, clist /* struct mailjmap_email_address * */ * result)
 {
   mailjson_value * array;
   size_t count;
@@ -4544,7 +4579,7 @@ static int parse_body_part_language(mailjson_value * object,
 }
 
 static int parse_email_body_part_array(mailjson_value * object,
-    const char * key, clist * result)
+    const char * key, clist /* struct mailjmap_email_body_part * */ * result)
 {
   mailjson_value * array;
   size_t count;
@@ -4653,7 +4688,7 @@ static int parse_email_body_part(mailjson_value * value,
 }
 
 struct parse_body_values_context {
-  clist * list;
+  clist /* struct mailjmap_email_body_value * */ * list;
 };
 
 static int parse_body_value_entry(const char * key,
@@ -4702,7 +4737,8 @@ static int parse_body_value_entry(const char * key,
   return (r == MAILJMAP_ERROR_BAD_STATE) ? MAILJMAP_ERROR_PROTOCOL : r;
 }
 
-static int parse_body_values(mailjson_value * object, clist * result)
+static int parse_body_values(mailjson_value * object,
+    clist /* struct mailjmap_email_body_value * */ * result)
 {
   struct parse_body_values_context context;
   mailjson_value * values;
@@ -5087,7 +5123,7 @@ static int parse_identity_get_arguments(mailjson_value * arguments,
 }
 
 struct parse_import_created_context {
-  clist * list;
+  clist /* struct mailjmap_import_created * */ * list;
 };
 
 static int parse_import_created_entry(const char * key,
@@ -5157,7 +5193,7 @@ static int parse_import_created_map(mailjson_value * arguments,
 }
 
 struct parse_import_not_created_context {
-  clist * list;
+  clist /* struct mailjmap_import_not_created * */ * list;
 };
 
 static int parse_import_not_created_entry(const char * key,
@@ -5515,7 +5551,7 @@ static int parse_search_snippet_get_arguments(
 }
 
 struct parse_set_created_context {
-  clist * list;
+  clist /* struct mailjmap_set_created * */ * list;
 };
 
 static int parse_set_created_envelope(mailjson_value * object,
@@ -5568,7 +5604,7 @@ static int parse_set_created_envelope(mailjson_value * object,
 }
 
 struct parse_delivery_status_context {
-  clist * list;
+  clist /* struct mailjmap_email_submission_delivery_status * */ * list;
 };
 
 static int parse_delivery_status_entry(const char * key,
@@ -5753,7 +5789,7 @@ static int parse_set_created_map(mailjson_value * arguments,
 }
 
 struct parse_set_error_context {
-  clist * list;
+  clist /* struct mailjmap_set_error * */ * list;
 };
 
 static int parse_set_error_entry(const char * key,
@@ -5802,7 +5838,7 @@ static int parse_set_error_entry(const char * key,
 }
 
 static int parse_set_error_map(mailjson_value * arguments,
-    const char * key, clist * result)
+    const char * key, clist /* struct mailjmap_set_error * */ * result)
 {
   struct parse_set_error_context context;
   mailjson_value * errors;
@@ -6028,7 +6064,7 @@ static int parse_query_change(mailjson_value * value,
 }
 
 static int parse_query_change_array(mailjson_value * arguments,
-    const char * key, clist * result)
+    const char * key, clist /* struct mailjmap_query_change * */ * result)
 {
   mailjson_value * array;
   size_t count;
@@ -6190,8 +6226,8 @@ static int method_error_response_code(
 
 int mailjmap_mailbox_get(mailjmap * session,
     const char * account_id,
-    clist * ids,
-    clist * properties,
+    clist /* char * */ * ids,
+    clist /* char * */ * properties,
     struct mailjmap_mailbox_get_result ** result)
 {
   struct mailjmap_request * request;
@@ -6358,9 +6394,9 @@ int mailjmap_mailbox_query(mailjmap * session,
 int mailjmap_mailbox_set(mailjmap * session,
     const char * account_id,
     const char * if_in_state,
-    clist * create,
-    clist * update,
-    clist * destroy,
+    clist /* struct mailjmap_set_created * */ * create,
+    clist /* struct mailjmap_set_created * */ * update,
+    clist /* char * */ * destroy,
     struct mailjmap_set_result ** result)
 {
   struct mailjmap_request * request;
@@ -6416,7 +6452,7 @@ int mailjmap_mailbox_set(mailjmap * session,
 
 int mailjmap_thread_get(mailjmap * session,
     const char * account_id,
-    clist * ids,
+    clist /* char * */ * ids,
     struct mailjmap_thread_get_result ** result)
 {
   struct mailjmap_request * request;
@@ -6565,7 +6601,7 @@ static int email_query_execute(mailjmap * session,
     const char * account_id,
     const char * text,
     struct mailjmap_email_query_filter * filter,
-    clist * sort,
+    clist /* struct mailjmap_email_query_sort_comparator * */ * sort,
     int position,
     const char * anchor,
     int anchor_offset,
@@ -6629,7 +6665,7 @@ static int email_query_execute(mailjmap * session,
 int mailjmap_email_query_with_sort_options(mailjmap * session,
     const char * account_id,
     const char * text,
-    clist * sort,
+    clist /* struct mailjmap_email_query_sort_comparator * */ * sort,
     int position,
     const char * anchor,
     int anchor_offset,
@@ -6646,7 +6682,7 @@ int mailjmap_email_query_with_sort_options(mailjmap * session,
 int mailjmap_email_query_with_filter_options(mailjmap * session,
     const char * account_id,
     struct mailjmap_email_query_filter * filter,
-    clist * sort,
+    clist /* struct mailjmap_email_query_sort_comparator * */ * sort,
     int position,
     const char * anchor,
     int anchor_offset,
@@ -6684,7 +6720,7 @@ static int email_query_changes_execute(mailjmap * session,
     const char * since_query_state,
     const char * text,
     struct mailjmap_email_query_filter * filter,
-    clist * sort,
+    clist /* struct mailjmap_email_query_sort_comparator * */ * sort,
     int max_changes,
     const char * up_to_id,
     int calculate_total,
@@ -6763,7 +6799,7 @@ int mailjmap_email_query_changes_with_filter_options(mailjmap * session,
     const char * account_id,
     const char * since_query_state,
     struct mailjmap_email_query_filter * filter,
-    clist * sort,
+    clist /* struct mailjmap_email_query_sort_comparator * */ * sort,
     int max_changes,
     const char * up_to_id,
     int calculate_total,
@@ -6833,8 +6869,8 @@ int mailjmap_email_changes(mailjmap * session,
 
 int mailjmap_email_get(mailjmap * session,
     const char * account_id,
-    clist * ids,
-    clist * properties,
+    clist /* char * */ * ids,
+    clist /* char * */ * properties,
     struct mailjmap_email_get_result ** result)
 {
   struct mailjmap_request * request;
@@ -6889,9 +6925,9 @@ int mailjmap_email_get(mailjmap * session,
 int mailjmap_email_set(mailjmap * session,
     const char * account_id,
     const char * if_in_state,
-    clist * create,
-    clist * update,
-    clist * destroy,
+    clist /* struct mailjmap_email_set_item * */ * create,
+    clist /* struct mailjmap_email_set_item * */ * update,
+    clist /* char * */ * destroy,
     struct mailjmap_set_result ** result)
 {
   struct mailjmap_request * request;
@@ -6949,7 +6985,7 @@ int mailjmap_email_copy(mailjmap * session,
     const char * account_id,
     const char * from_account_id,
     const char * if_from_in_state,
-    clist * create,
+    clist /* struct mailjmap_email_copy_item * */ * create,
     int on_success_destroy_original,
     struct mailjmap_set_result ** result)
 {
@@ -7009,8 +7045,8 @@ int mailjmap_email_import(mailjmap * session,
     const char * account_id,
     const char * creation_id,
     const char * blob_id,
-    clist * mailbox_ids,
-    clist * keywords,
+    clist /* char * */ * mailbox_ids,
+    clist /* char * */ * keywords,
     const char * received_at,
     struct mailjmap_import_result ** result)
 {
@@ -7068,9 +7104,9 @@ int mailjmap_email_import(mailjmap * session,
 
 int mailjmap_email_parse(mailjmap * session,
     const char * account_id,
-    clist * blob_ids,
-    clist * properties,
-    clist * body_properties,
+    clist /* char * */ * blob_ids,
+    clist /* char * */ * properties,
+    clist /* char * */ * body_properties,
     struct mailjmap_email_parse_result ** result)
 {
   struct mailjmap_request * request;
@@ -7127,7 +7163,7 @@ int mailjmap_email_parse(mailjmap * session,
 
 int mailjmap_search_snippet_get(mailjmap * session,
     const char * account_id,
-    clist * email_ids,
+    clist /* char * */ * email_ids,
     struct mailjmap_search_snippet_get_result ** result)
 {
   return mailjmap_search_snippet_get_with_text_filter(session, account_id,
@@ -7136,7 +7172,7 @@ int mailjmap_search_snippet_get(mailjmap * session,
 
 static int search_snippet_get_execute(mailjmap * session,
     const char * account_id,
-    clist * email_ids,
+    clist /* char * */ * email_ids,
     const char * text,
     struct mailjmap_email_query_filter * filter,
     struct mailjmap_search_snippet_get_result ** result)
@@ -7196,7 +7232,7 @@ static int search_snippet_get_execute(mailjmap * session,
 
 int mailjmap_search_snippet_get_with_text_filter(mailjmap * session,
     const char * account_id,
-    clist * email_ids,
+    clist /* char * */ * email_ids,
     const char * text,
     struct mailjmap_search_snippet_get_result ** result)
 {
@@ -7206,7 +7242,7 @@ int mailjmap_search_snippet_get_with_text_filter(mailjmap * session,
 
 int mailjmap_search_snippet_get_with_filter(mailjmap * session,
     const char * account_id,
-    clist * email_ids,
+    clist /* char * */ * email_ids,
     struct mailjmap_email_query_filter * filter,
     struct mailjmap_search_snippet_get_result ** result)
 {
@@ -7216,8 +7252,8 @@ int mailjmap_search_snippet_get_with_filter(mailjmap * session,
 
 int mailjmap_identity_get(mailjmap * session,
     const char * account_id,
-    clist * ids,
-    clist * properties,
+    clist /* char * */ * ids,
+    clist /* char * */ * properties,
     struct mailjmap_identity_get_result ** result)
 {
   struct mailjmap_request * request;
@@ -7277,9 +7313,9 @@ int mailjmap_identity_get(mailjmap * session,
 int mailjmap_email_submission_set(mailjmap * session,
     const char * account_id,
     const char * if_in_state,
-    clist * create,
-    clist * update,
-    clist * destroy,
+    clist /* struct mailjmap_email_submission_set_item * */ * create,
+    clist /* struct mailjmap_email_submission_set_item * */ * update,
+    clist /* char * */ * destroy,
     struct mailjmap_set_result ** result)
 {
   struct mailjmap_request * request;

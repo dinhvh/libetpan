@@ -81,7 +81,7 @@ mailmime_disposition_new_filename(int type, char * filename)
 
 struct mailmime_fields * mailmime_fields_new_empty(void)
 {
-  clist * list;
+  clist /* struct mailmime_field * */ * list;
   struct mailmime_fields * fields;
 
   list = clist_new();
@@ -286,7 +286,7 @@ mailmime_fields_new_with_version(struct mailmime_mechanism * encoding,
 
 struct mailmime_content * mailmime_get_content_message(void)
 {
-  clist * list;
+  clist /* struct mailmime_parameter * */ * list;
   struct mailmime_composite_type * composite_type;
   struct mailmime_type * mime_type;
   struct mailmime_content * content;
@@ -333,7 +333,7 @@ struct mailmime_content * mailmime_get_content_message(void)
 
 struct mailmime_content * mailmime_get_content_text(void)
 {
-  clist * list;
+  clist /* struct mailmime_parameter * */ * list;
   struct mailmime_discrete_type * discrete_type;
   struct mailmime_type * mime_type;
   struct mailmime_content * content;
@@ -528,7 +528,7 @@ mailmime_new_empty(struct mailmime_content * content,
 		   struct mailmime_fields * mime_fields)
 {
   struct mailmime * build_info;
-  clist * list;
+  clist /* struct mailmime * */ * list;
   int r;
   int mime_type;
   
@@ -565,7 +565,7 @@ mailmime_new_empty(struct mailmime_content * content,
     char * attr_name;
     char * attr_value;
     struct mailmime_parameter * param;
-    clist * parameters;
+    clist /* struct mailmime_parameter * */ * parameters;
 
     list = clist_new();
     if (list == NULL)
@@ -1108,7 +1108,7 @@ mailmime_disposition_new_with_data(int type,
     char * read_date, size_t size)
 {
   struct mailmime_disposition_type * dsp_type;
-  clist * list;
+  clist /* struct mailmime_disposition_parm * */ * list;
   int r;
   struct mailmime_disposition_parm * parm;
   struct mailmime_disposition * dsp;

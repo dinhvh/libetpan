@@ -2936,7 +2936,7 @@ static int mailprivacy_gnupg_init_lock_done = 0;
 #define LOCK() do while (0)
 #define UNLOCK() do while (0)
 #endif
-static chash * encryption_id_hash = NULL;
+static chash /* mailmessage * -> clist (char *) */ * encryption_id_hash = NULL;
 
 #ifdef LIBETPAN_REENTRANT
 #if defined(HAVE_PTHREAD_H) && !defined(IGNORE_PTHREAD_H)
@@ -2960,9 +2960,10 @@ void mailprivacy_gnupg_done(struct mailprivacy * privacy)
   mailprivacy_unregister(privacy, &pgp_protocol);
 }
 
-static clist * get_list(struct mailprivacy * privacy, mailmessage * msg)
+static clist /* char * */ * get_list(struct mailprivacy * privacy,
+    mailmessage * msg)
 {
-  clist * encryption_id_list;
+  clist /* char * */ * encryption_id_list;
   
   encryption_id_list = NULL;
   if (encryption_id_hash != NULL) {
@@ -2984,7 +2985,7 @@ static clist * get_list(struct mailprivacy * privacy, mailmessage * msg)
 void mailprivacy_gnupg_encryption_id_list_clear(struct mailprivacy * privacy,
     mailmessage * msg)
 {
-  clist * encryption_id_list;
+  clist /* char * */ * encryption_id_list;
   clistiter * iter;
   
   LOCK();
@@ -3013,10 +3014,10 @@ void mailprivacy_gnupg_encryption_id_list_clear(struct mailprivacy * privacy,
   UNLOCK();
 }
 
-clist * mailprivacy_gnupg_encryption_id_list(struct mailprivacy * privacy,
+clist /* char * */ * mailprivacy_gnupg_encryption_id_list(struct mailprivacy * privacy,
     mailmessage * msg)
 {
-  clist * encryption_id_list;
+  clist /* char * */ * encryption_id_list;
   
   LOCK();
   encryption_id_list = get_list(privacy, msg);
@@ -3028,7 +3029,7 @@ clist * mailprivacy_gnupg_encryption_id_list(struct mailprivacy * privacy,
 static int mailprivacy_gnupg_add_encryption_id(struct mailprivacy * privacy,
     mailmessage * msg, char * encryption_id)
 {
-  clist * encryption_id_list;
+  clist /* char * */ * encryption_id_list;
   int r;
   int res;
   
@@ -3081,7 +3082,7 @@ static int mailprivacy_gnupg_add_encryption_id(struct mailprivacy * privacy,
 
 #define MAX_EMAIL_SIZE 1024
 
-static chash * passphrase_hash = NULL;
+static chash /* char * user_id -> char * passphrase */ * passphrase_hash = NULL;
 
 int mailprivacy_gnupg_set_encryption_id(struct mailprivacy * privacy,
     char * user_id, char * passphrase)

@@ -435,7 +435,7 @@ int mh_get_messages_list(struct mailmh_folder * folder,
   unsigned int i;
   struct mailmessage_list * env_list;
   int r;
-  carray * tab;
+  carray /* mailmessage * */ * tab;
   int res;
 
   tab = carray_new(128);

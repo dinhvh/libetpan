@@ -139,7 +139,7 @@ int mail_cache_db_del(struct mail_cache_db * cache_db,
 */
 
 int mail_cache_db_clean_up(struct mail_cache_db * cache_db,
-    chash * exist);
+    chash /* key bytes -> present */ * exist);
 
 /*
   mail_cache_db_get_keys()
@@ -149,7 +149,7 @@ int mail_cache_db_clean_up(struct mail_cache_db * cache_db,
 */
 
 int mail_cache_db_get_keys(struct mail_cache_db * cache_db,
-    chash * keys);
+    chash /* key bytes -> key bytes */ * keys);
 
 #ifdef __cplusplus
 }

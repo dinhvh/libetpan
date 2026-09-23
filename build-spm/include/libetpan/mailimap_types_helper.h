@@ -402,7 +402,8 @@ mailimap_fetch_type_new_fetch_att(struct mailimap_fetch_att * fetch_att);
 
 LIBETPAN_EXPORT
 struct mailimap_fetch_type *
-mailimap_fetch_type_new_fetch_att_list(clist * fetch_att_list);
+mailimap_fetch_type_new_fetch_att_list(
+    clist /* struct mailimap_fetch_att * */ * fetch_att_list);
 
 /*
   this function creates a mailimap_fetch_type structure
@@ -718,7 +719,8 @@ mailimap_search_key_new_set(struct mailimap_set * sk_set);
 
 LIBETPAN_EXPORT
 struct mailimap_search_key *
-mailimap_search_key_new_multiple(clist * sk_multiple);
+mailimap_search_key_new_multiple(
+    clist /* struct mailimap_search_key * */ * sk_multiple);
 
 
 /*

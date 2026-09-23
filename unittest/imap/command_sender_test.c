@@ -30,7 +30,7 @@ static void fail_assertion(const char * file, unsigned line,
 
 static struct mailimap_set * make_set(uint32_t first, uint32_t last)
 {
-  clist * list = clist_new();
+  clist /* struct mailimap_set_item * */ * list = clist_new();
   struct mailimap_set_item * item = mailimap_set_item_new(first, last);
 
   assert(list != NULL);
@@ -41,7 +41,7 @@ static struct mailimap_set * make_set(uint32_t first, uint32_t last)
 
 static struct mailimap_flag_list * make_seen_flag_list(void)
 {
-  clist * list = clist_new();
+  clist /* struct mailimap_flag * */ * list = clist_new();
   struct mailimap_flag * flag = mailimap_flag_new(MAILIMAP_FLAG_SEEN,
       NULL, NULL);
 
@@ -60,7 +60,7 @@ static struct mailimap_status_att_list * make_status_att_list(void)
     MAILIMAP_STATUS_ATT_UNSEEN,
     MAILIMAP_STATUS_ATT_SIZE
   };
-  clist * list = clist_new();
+  clist /* int * */ * list = clist_new();
   size_t i;
 
   assert(list != NULL);

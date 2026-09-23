@@ -252,7 +252,7 @@ static int pop3driver_login(mailsession * session,
 			    const char * userid, const char * password)
 {
   int r;
-  carray * msg_tab;
+  carray /* struct mailpop3_msg_info * */ * msg_tab;
   struct pop3_session_state_data * data;
 
   data = get_data(session);
@@ -323,7 +323,7 @@ static int pop3driver_status_folder(mailsession * session, const char * mb,
 static int pop3driver_messages_number(mailsession * session, const char * mb,
 				      uint32_t * result)
 {
-  carray * msg_tab;
+  carray /* struct mailpop3_msg_info * */ * msg_tab;
   int r;
 
   r = mailpop3_list(get_pop3_session(session), &msg_tab);

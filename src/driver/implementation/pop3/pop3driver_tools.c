@@ -193,7 +193,7 @@ int pop3driver_size(mailsession * session, uint32_t indx,
 		    size_t * result)
 {
   mailpop3 * pop3;
-  carray * msg_tab;
+  carray /* struct mailpop3_msg_info * */ * msg_tab;
   struct mailpop3_msg_info * info;
   int r;
 
@@ -288,8 +288,8 @@ int pop3_get_messages_list(mailpop3 * pop3,
 			   mailmessage_driver * driver,
 			   struct mailmessage_list ** result)
 {
-  carray * msg_tab;
-  carray * tab;
+  carray /* struct mailpop3_msg_info * */ * msg_tab;
+  carray /* mailmessage * */ * tab;
   struct mailmessage_list * env_list;
   unsigned int i;
   int res;

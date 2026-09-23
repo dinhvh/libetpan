@@ -42,8 +42,8 @@ struct mailjmap_session_account {
   char * name;
   int is_personal;
   int is_read_only;
-  clist * capabilities; /* char * */
-  clist * capability_details; /* struct mailjmap_session_capability * */
+  clist /* char * */ * capabilities;
+  clist /* struct mailjmap_session_capability * */ * capability_details;
 };
 
 struct mailjmap_session_primary_account {
@@ -57,10 +57,10 @@ struct mailjmap_session {
   char * download_url;
   char * event_source_url;
   char * session_state;
-  clist * capabilities; /* char * */
-  clist * capability_details; /* struct mailjmap_session_capability * */
-  clist * accounts; /* struct mailjmap_session_account * */
-  clist * primary_accounts; /* struct mailjmap_session_primary_account * */
+  clist /* char * */ * capabilities;
+  clist /* struct mailjmap_session_capability * */ * capability_details;
+  clist /* struct mailjmap_session_account * */ * accounts;
+  clist /* struct mailjmap_session_primary_account * */ * primary_accounts;
 };
 
 struct mailjmap_blob_upload {

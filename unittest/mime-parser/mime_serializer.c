@@ -346,7 +346,7 @@ static void write_address_array(struct serializer * s,
   js(s, "]}");
 }
 
-static void write_msg_id_array(struct serializer * s, clist * list)
+static void write_msg_id_array(struct serializer * s, clist /* char * */ * list)
 {
   clistiter * cur;
   int first = 1;
@@ -610,7 +610,7 @@ static void content_type_string(struct mailmime_content * content,
 
 static void write_part(struct serializer * s, struct mailmime * mime);
 
-static void write_parts_array(struct serializer * s, clist * parts)
+static void write_parts_array(struct serializer * s, clist /* struct mailmime * */ * parts)
 {
   clistiter * cur;
   int first = 1;

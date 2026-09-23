@@ -82,7 +82,8 @@ LIBETPAN_EXPORT
 int mailpop3_pass(mailpop3 * f, const char * password);
 
 LIBETPAN_EXPORT
-int mailpop3_list(mailpop3 * f, carray ** result);
+int mailpop3_list(mailpop3 * f,
+    carray /* struct mailpop3_msg_info * */ ** result);
 
 LIBETPAN_EXPORT
 int mailpop3_retr(mailpop3 * f, unsigned int indx, char ** result,
@@ -113,10 +114,12 @@ int mailpop3_get_msg_info(mailpop3 * f, unsigned int indx,
 			   struct mailpop3_msg_info ** result);
 
 LIBETPAN_EXPORT
-int mailpop3_capa(mailpop3 * f, clist ** result);
+int mailpop3_capa(mailpop3 * f,
+    clist /* struct mailpop3_capa * */ ** result);
 
 LIBETPAN_EXPORT
-void mailpop3_capa_resp_free(clist * capa_list);
+void mailpop3_capa_resp_free(
+    clist /* struct mailpop3_capa * */ * capa_list);
 
 LIBETPAN_EXPORT
 int mailpop3_stat(mailpop3 * f, struct mailpop3_stat_response ** result);

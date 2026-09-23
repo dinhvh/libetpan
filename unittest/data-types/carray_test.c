@@ -5,7 +5,7 @@
 static int check_carray_growth_clears_slots(
     test_failure_callback failure_callback, void * context)
 {
-  carray * array;
+  carray /* int * */ * array;
   int result;
   static int first;
   static int stale;

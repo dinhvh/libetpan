@@ -104,7 +104,7 @@ static void check_nested_invalid_permanentflags(bool compressed)
 {
   struct mailimap_response_data * data = NULL;
   struct mailimap_resp_text_code * code;
-  clist * flags;
+  clist /* struct mailimap_flag_perm * */ * flags;
   int r;
 
   r = imap_test_parse_response_data_file(

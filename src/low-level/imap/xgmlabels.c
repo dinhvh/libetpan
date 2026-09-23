@@ -66,7 +66,8 @@ int mailimap_has_xgmlabels(mailimap * session)
   return mailimap_has_extension(session, "X-GM-EXT-1");
 }
 
-struct mailimap_msg_att_xgmlabels * mailimap_msg_att_xgmlabels_new(clist * att_labels)
+struct mailimap_msg_att_xgmlabels *
+mailimap_msg_att_xgmlabels_new(clist /* char * */ * att_labels)
 {
   struct mailimap_msg_att_xgmlabels * att;
   
@@ -88,7 +89,7 @@ void mailimap_msg_att_xgmlabels_free(struct mailimap_msg_att_xgmlabels * att)
 
 struct mailimap_msg_att_xgmlabels * mailimap_msg_att_xgmlabels_new_empty(void)
 {
-  clist * list;
+  clist /* char * */ * list;
   struct mailimap_msg_att_xgmlabels * att;
   
   list = clist_new();
@@ -134,10 +135,10 @@ struct mailimap_extension_api mailimap_extension_xgmlabels = {
 
 static int mailimap_xgmlabels_parse(mailstream * fd,
                                     MMAPString * buffer, struct mailimap_parser_context * parser_ctx, size_t * indx,
-                                    clist ** result)
+                                    clist /* char * */ ** result)
 {
     size_t cur_token;
-    clist * list;
+    clist /* char * */ * list;
     int r;
     int res;
     
@@ -190,7 +191,7 @@ static int fetch_data_xgmlabels_parse(mailstream * fd,
 {
   size_t cur_token;
   struct mailimap_msg_att_xgmlabels * att;
-  clist * label_list;
+  clist /* char * */ * label_list;
   int r;
   
   cur_token = * indx;

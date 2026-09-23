@@ -80,7 +80,7 @@ static void memory_cancel(mailstream_low * s)
   (void) s;
 }
 
-static carray * memory_get_certificate_chain(mailstream_low * s)
+static carray /* MMAPString * */ * memory_get_certificate_chain(mailstream_low * s)
 {
   (void) s;
   return NULL;
@@ -149,7 +149,7 @@ static void capture_cancel(mailstream_low * s)
   (void) s;
 }
 
-static carray * capture_get_certificate_chain(mailstream_low * s)
+static carray /* MMAPString * */ * capture_get_certificate_chain(mailstream_low * s)
 {
   (void) s;
   return NULL;

@@ -403,7 +403,7 @@ static int pop3driver_cached_expunge_folder(mailsession * session)
   MMAPString * mmapstr;
   unsigned int i;
   int r;
-  carray * msg_tab;
+  carray /* struct mailpop3_msg_info * */ * msg_tab;
   mailpop3 * pop3;
 
   pop3 = get_pop3_session(session);
@@ -481,7 +481,7 @@ static int pop3driver_cached_status_folder(mailsession * session,
   MMAPString * mmapstr;
   unsigned int i;
   int r;
-  carray * msg_tab;
+  carray /* struct mailpop3_msg_info * */ * msg_tab;
   mailpop3 * pop3;
   uint32_t recent;
   uint32_t unseen;

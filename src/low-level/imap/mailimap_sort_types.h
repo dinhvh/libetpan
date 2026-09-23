@@ -59,7 +59,7 @@ extern "C" {
   struct mailimap_sort_key {
     int sortk_type;
     int sortk_is_reverse;
-    clist * sortk_multiple; /* list of (struct mailimap_sort_key *) */
+    clist /* struct mailimap_sort_key * */ * sortk_multiple;
   };
   
   
@@ -67,7 +67,7 @@ extern "C" {
   struct mailimap_sort_key *
   mailimap_sort_key_new(int sortk_type,
                         int is_reverse,
-                        clist * sortk_multiple);
+                        clist /* struct mailimap_sort_key * */ * sortk_multiple);
   
   LIBETPAN_EXPORT
   void mailimap_sort_key_free(struct mailimap_sort_key * key);
@@ -102,7 +102,8 @@ extern "C" {
   
   LIBETPAN_EXPORT
   struct mailimap_sort_key *
-  mailimap_sort_key_new_multiple(clist * keys);
+  mailimap_sort_key_new_multiple(
+      clist /* struct mailimap_sort_key * */ * keys);
   
   LIBETPAN_EXPORT
   struct mailimap_sort_key *

@@ -31,7 +31,7 @@ struct mailactivesync_wbxml_node {
   char * text;
   unsigned char * opaque;
   size_t opaque_len;
-  clist * children; /* struct mailactivesync_wbxml_node * */
+  clist /* struct mailactivesync_wbxml_node * */ * children;
 };
 
 struct mailactivesync_wbxml_document {

@@ -189,7 +189,8 @@ int mailimap_quoted_send(mailstream * fd, const char * quoted);
 typedef int mailimap_struct_sender(mailstream * fd, void * data);
 
 int
-mailimap_struct_spaced_list_send(mailstream * fd, clist * list,
+mailimap_struct_spaced_list_send(mailstream * fd,
+				 clist /* sender callback item */ * list,
 				 mailimap_struct_sender * sender);
 
 int

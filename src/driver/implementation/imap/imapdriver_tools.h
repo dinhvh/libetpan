@@ -45,7 +45,8 @@
 extern "C" {
 #endif
 
-int imap_list_to_list(clist * imap_list, struct mail_list ** result);
+int imap_list_to_list(clist /* struct mailimap_mailbox_list * */ * imap_list,
+    struct mail_list ** result);
 
 int
 imap_section_to_imap_section(struct mailmime_section * section, int type,
@@ -66,13 +67,14 @@ int imap_env_to_fields(struct mailimap_envelope * env,
     struct mailimf_fields ** result);
 
 int
-imap_fetch_result_to_envelop_list(clist * fetch_result,
+imap_fetch_result_to_envelop_list(
+    clist /* struct mailimap_msg_att * */ * fetch_result,
     struct mailmessage_list * env_list);
 
 int imap_body_to_body(struct mailimap_body * imap_body,
     struct mailmime ** result);
 
-int imap_msg_list_to_imap_set(clist * msg_list,
+int imap_msg_list_to_imap_set(clist /* mailmessage * */ * msg_list,
     struct mailimap_set ** result);
 
 int imap_flags_to_imap_flags(struct mail_flags * flags,

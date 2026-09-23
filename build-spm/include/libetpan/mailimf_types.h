@@ -192,12 +192,12 @@ void mailimf_group_free(struct mailimf_group * group);
 */
 
 struct mailimf_mailbox_list {
-  clist * mb_list; /* list of (struct mailimf_mailbox *), != NULL */
+  clist /* struct mailimf_mailbox * */ * mb_list; /* != NULL */
 };
 
 LIBETPAN_EXPORT
 struct mailimf_mailbox_list *
-mailimf_mailbox_list_new(clist * mb_list);
+mailimf_mailbox_list_new(clist /* struct mailimf_mailbox * */ * mb_list);
 
 LIBETPAN_EXPORT
 void mailimf_mailbox_list_free(struct mailimf_mailbox_list * mb_list);
@@ -211,12 +211,12 @@ void mailimf_mailbox_list_free(struct mailimf_mailbox_list * mb_list);
 */
 
 struct mailimf_address_list {
-  clist * ad_list; /* list of (struct mailimf_address *), != NULL */
+  clist /* struct mailimf_address * */ * ad_list; /* != NULL */
 };
 
 LIBETPAN_EXPORT
 struct mailimf_address_list *
-mailimf_address_list_new(clist * ad_list);
+mailimf_address_list_new(clist /* struct mailimf_address * */ * ad_list);
 
 LIBETPAN_EXPORT
 void mailimf_address_list_free(struct mailimf_address_list * addr_list);
@@ -279,11 +279,12 @@ void mailimf_message_free(struct mailimf_message * message);
 */
 
 struct mailimf_fields {
-  clist * fld_list; /* list of (struct mailimf_field *), != NULL */
+  clist /* struct mailimf_field * */ * fld_list; /* != NULL */
 };
 
 LIBETPAN_EXPORT
-struct mailimf_fields * mailimf_fields_new(clist * fld_list);
+struct mailimf_fields *
+mailimf_fields_new(clist /* struct mailimf_field * */ * fld_list);
 
 LIBETPAN_EXPORT
 void mailimf_fields_free(struct mailimf_fields * fields);
@@ -593,11 +594,12 @@ void mailimf_message_id_free(struct mailimf_message_id * message_id);
 */
 
 struct mailimf_in_reply_to {
-  clist * mid_list; /* list of (char *), != NULL */
+  clist /* char * */ * mid_list; /* != NULL */
 };
 
 LIBETPAN_EXPORT
-struct mailimf_in_reply_to * mailimf_in_reply_to_new(clist * mid_list);
+struct mailimf_in_reply_to *
+mailimf_in_reply_to_new(clist /* char * */ * mid_list);
 
 LIBETPAN_EXPORT
 void mailimf_in_reply_to_free(struct mailimf_in_reply_to * in_reply_to);
@@ -611,12 +613,13 @@ void mailimf_in_reply_to_free(struct mailimf_in_reply_to * in_reply_to);
  */
 
 struct mailimf_references {
-  clist * mid_list; /* list of (char *) */
+  clist /* char * */ * mid_list;
        /* != NULL */
 };
 
 LIBETPAN_EXPORT
-struct mailimf_references * mailimf_references_new(clist * mid_list);
+struct mailimf_references *
+mailimf_references_new(clist /* char * */ * mid_list);
 
 LIBETPAN_EXPORT
 void mailimf_references_free(struct mailimf_references * references);
@@ -664,11 +667,12 @@ void mailimf_comments_free(struct mailimf_comments * comments);
 */
 
 struct mailimf_keywords {
-  clist * kw_list; /* list of (char *), != NULL */
+  clist /* char * */ * kw_list; /* != NULL */
 };
 
 LIBETPAN_EXPORT
-struct mailimf_keywords * mailimf_keywords_new(clist * kw_list);
+struct mailimf_keywords *
+mailimf_keywords_new(clist /* char * */ * kw_list);
 
 LIBETPAN_EXPORT
 void mailimf_keywords_free(struct mailimf_keywords * keywords);
@@ -853,7 +857,8 @@ enum {
   MAILIMF_ERROR_PARSE,
   MAILIMF_ERROR_MEMORY,
   MAILIMF_ERROR_INVAL,
-  MAILIMF_ERROR_FILE
+  MAILIMF_ERROR_FILE,
+  MAILIMF_ERROR_PARSE_DEPTH
 };
 
 

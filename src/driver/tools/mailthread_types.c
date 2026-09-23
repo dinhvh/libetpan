@@ -47,7 +47,7 @@ mailmessage_tree_new(char * node_msgid, time_t node_date,
     mailmessage * node_msg)
 {
   struct mailmessage_tree * tree;
-  carray * array;
+  carray /* struct mailmessage_tree * */ * array;
 
   array = carray_new(16);
   if (array == NULL)

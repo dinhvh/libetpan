@@ -118,10 +118,10 @@ void mailstream_interrupt_idle(mailstream * s);
 
 /* Get certificate chain. Returns an array of MMAPString containing DER data or NULL if it's not a SSL connection */
 LIBETPAN_EXPORT
-carray * mailstream_get_certificate_chain(mailstream * s);
+carray /* MMAPString * */ * mailstream_get_certificate_chain(mailstream * s);
 
 LIBETPAN_EXPORT
-void mailstream_certificate_chain_free(carray * certificate_chain);
+void mailstream_certificate_chain_free(carray /* MMAPString * */ * certificate_chain);
 
 #define LIBETPAN_MAILSTREAM_NETWORK_DELAY
 LIBETPAN_EXPORT
@@ -132,4 +132,3 @@ extern struct timeval mailstream_network_delay;
 #endif
 
 #endif
-

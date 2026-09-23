@@ -145,7 +145,7 @@ struct newsnntp_xover_resp_item {
   char * ovr_references;
   size_t ovr_size;
   uint32_t ovr_line_count;
-  clist * ovr_others;
+  clist /* char * */ * ovr_others;
 };
 
 #ifdef __cplusplus

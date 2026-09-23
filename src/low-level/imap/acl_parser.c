@@ -49,7 +49,7 @@ mailimap_acl_acl_data_parse(mailstream * fd, MMAPString * buffer, struct mailima
 {
   size_t cur_token;
   char * mailbox;
-  clist * ir_list;
+  clist /* struct mailimap_acl_identifier_rights * */ * ir_list;
   struct mailimap_acl_acl_data * acl_data;
   int r;
   int res;
@@ -130,7 +130,7 @@ mailimap_acl_listrights_data_parse(mailstream * fd, MMAPString * buffer, struct 
   size_t cur_token;
   char * mailbox;
   char * identifier;
-  clist * rights_list;
+  clist /* struct mailimap_acl_listrights_rights * */ * rights_list;
   struct mailimap_acl_listrights_data * lr_data;
   int r;
   int res;
@@ -457,4 +457,3 @@ int mailimap_acl_parse(int calling_parser, mailstream * fd,
  err:
   return res;
 }
-

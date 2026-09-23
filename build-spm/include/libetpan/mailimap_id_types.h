@@ -39,11 +39,12 @@ extern "C" {
 #endif
 
 struct mailimap_id_params_list {
-  clist * /* struct mailimap_id_param */ idpa_list;
+  clist /* struct mailimap_id_param * */ * idpa_list;
 };
 
 LIBETPAN_EXPORT
-struct mailimap_id_params_list * mailimap_id_params_list_new(clist * items);
+struct mailimap_id_params_list *
+mailimap_id_params_list_new(clist /* struct mailimap_id_param * */ * items);
 
 LIBETPAN_EXPORT
 void mailimap_id_params_list_free(struct mailimap_id_params_list * list);

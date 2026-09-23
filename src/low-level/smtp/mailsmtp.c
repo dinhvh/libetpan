@@ -495,7 +495,7 @@ int mailsmtp_status(int smtpstatus)
 int maillmtp_data_message(mailsmtp * session,
                           const char * message,
                           size_t size,
-                          clist * recipient_list,
+                          clist /* char * */ * recipient_list,
                           int * retcodes)
 {
   int r, ret = MAILSMTP_NO_ERROR;

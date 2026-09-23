@@ -97,7 +97,7 @@ void mailstream_low_set_logger(mailstream_low * s, void (* logger)(mailstream_lo
 
 /* Get certificate chain. Returns an array of MMAPString containing DER data or NULL if it's not a SSL connection */
 LIBETPAN_EXPORT
-carray * mailstream_low_get_certificate_chain(mailstream_low * s);
+carray /* MMAPString * */ * mailstream_low_get_certificate_chain(mailstream_low * s);
 
 LIBETPAN_EXPORT
 int mailstream_low_wait_idle(mailstream_low * low, struct mailstream_cancel * cancel,

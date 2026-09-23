@@ -341,7 +341,8 @@ int mailimap_examine(mailimap * session, const char * mb);
 LIBETPAN_EXPORT
 int
 mailimap_fetch(mailimap * session, struct mailimap_set * set,
-	       struct mailimap_fetch_type * fetch_type, clist ** result);
+	       struct mailimap_fetch_type * fetch_type,
+         clist /* struct mailimap_msg_att * */ ** result);
 
 /*
   mailimap_uid_fetch()
@@ -364,7 +365,8 @@ LIBETPAN_EXPORT
 int
 mailimap_uid_fetch(mailimap * session,
 		   struct mailimap_set * set,
-		   struct mailimap_fetch_type * fetch_type, clist ** result);
+		   struct mailimap_fetch_type * fetch_type,
+       clist /* struct mailimap_msg_att * */ ** result);
 
 /*
    mailimap_fetch_list_free()
@@ -376,7 +378,8 @@ mailimap_uid_fetch(mailimap * session,
 */
 
 LIBETPAN_EXPORT
-void mailimap_fetch_list_free(clist * fetch_list);
+void mailimap_fetch_list_free(
+    clist /* struct mailimap_msg_att * */ * fetch_list);
 
 /*
    mailimap_list()
@@ -397,7 +400,8 @@ void mailimap_fetch_list_free(clist * fetch_list);
 
 LIBETPAN_EXPORT
 int mailimap_list(mailimap * session, const char * mb,
-    const char * list_mb, clist ** result);
+    const char * list_mb,
+    clist /* struct mailimap_mailbox_list * */ ** result);
 
 /*
    mailimap_login()
@@ -450,7 +454,8 @@ int mailimap_authenticate(mailimap * session, const char * auth_type,
 
 LIBETPAN_EXPORT
 int mailimap_lsub(mailimap * session, const char * mb,
-		  const char * list_mb, clist ** result);
+		  const char * list_mb,
+      clist /* struct mailimap_mailbox_list * */ ** result);
 
 /*
    mailimap_list_result_free()
@@ -461,7 +466,8 @@ int mailimap_lsub(mailimap * session, const char * mb,
 */
 
 LIBETPAN_EXPORT
-void mailimap_list_result_free(clist * list);
+void mailimap_list_result_free(
+    clist /* struct mailimap_mailbox_list * */ * list);
 
 /*
    mailimap_rename()
@@ -500,7 +506,8 @@ int mailimap_rename(mailimap * session,
 LIBETPAN_EXPORT
 int
 mailimap_search(mailimap * session, const char * charset,
-    struct mailimap_search_key * key, clist ** result);
+    struct mailimap_search_key * key,
+    clist /* uint32_t * */ ** result);
 
 /*
    mailimap_uid_search()
@@ -523,7 +530,8 @@ mailimap_search(mailimap * session, const char * charset,
 LIBETPAN_EXPORT
 int
 mailimap_uid_search(mailimap * session, const char * charset,
-    struct mailimap_search_key * key, clist ** result);
+    struct mailimap_search_key * key,
+    clist /* uint32_t * */ ** result);
 
 /*
  mailimap_search_literalplus()
@@ -544,7 +552,8 @@ mailimap_uid_search(mailimap * session, const char * charset,
 */
 
 LIBETPAN_EXPORT int mailimap_search_literalplus(mailimap * session, const char * charset,
-                                                struct mailimap_search_key * key, clist ** result);
+                                                struct mailimap_search_key * key,
+                                                clist /* uint32_t * */ ** result);
 
 /*
  mailimap_uid_search_literalplus()
@@ -565,7 +574,8 @@ LIBETPAN_EXPORT int mailimap_search_literalplus(mailimap * session, const char *
 */
 
 LIBETPAN_EXPORT int mailimap_uid_search_literalplus(mailimap * session, const char * charset,
-                                                    struct mailimap_search_key * key, clist ** result);
+                                                    struct mailimap_search_key * key,
+                                                    clist /* uint32_t * */ ** result);
 
 /*
    mailimap_search_result_free()
@@ -577,7 +587,7 @@ LIBETPAN_EXPORT int mailimap_uid_search_literalplus(mailimap * session, const ch
 */
 
 LIBETPAN_EXPORT
-void mailimap_search_result_free(clist * search_result);
+void mailimap_search_result_free(clist /* uint32_t * */ * search_result);
 
 /*
    mailimap_select()

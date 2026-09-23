@@ -249,7 +249,7 @@ int mail_cache_db_del(struct mail_cache_db * cache_db,
 }
 
 int mail_cache_db_clean_up(struct mail_cache_db * cache_db,
-    chash * exist)
+    chash /* void * key bytes -> empty */ * exist)
 {
   int r;
   MDB_env *env;
@@ -337,7 +337,7 @@ int mail_cache_db_get_size(struct mail_cache_db * cache_db,
 }
 
 int mail_cache_db_get_keys(struct mail_cache_db * cache_db,
-    chash * keys)
+    chash /* void * key bytes -> empty */ * keys)
 {
   int r;
   MDB_env *env;

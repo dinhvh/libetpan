@@ -131,7 +131,7 @@ int maildir_get_messages_list(mailsession * session, struct maildir * md,
   unsigned int i;
   struct mailmessage_list * env_list;
   int r;
-  carray * tab;
+  carray /* mailmessage * */ * tab;
   int res;
   
   tab = carray_new(128);

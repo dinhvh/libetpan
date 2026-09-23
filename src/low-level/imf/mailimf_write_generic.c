@@ -75,7 +75,7 @@ static int mailimf_bcc_write_driver(int (* do_write)(void *, const char *, size_
 static int mailimf_message_id_write_driver(int (* do_write)(void *, const char *, size_t), void * data, int * col,
 				    struct mailimf_message_id * message_id);
 static int mailimf_msg_id_list_write_driver(int (* do_write)(void *, const char *, size_t), void * data, int * col,
-				     clist * list);
+				     clist /* char * */ * list);
 static int mailimf_in_reply_to_write_driver(int (* do_write)(void *, const char *, size_t), void * data, int * col,
 				     struct mailimf_in_reply_to *
 				     in_reply_to);
@@ -1134,7 +1134,8 @@ static int mailimf_message_id_write_driver(int (* do_write)(void *, const char *
 }
 
 
-static int mailimf_msg_id_list_write_driver(int (* do_write)(void *, const char *, size_t), void * data, int * col, clist * mid_list)
+static int mailimf_msg_id_list_write_driver(int (* do_write)(void *, const char *, size_t),
+    void * data, int * col, clist /* char * */ * mid_list)
 {
   clistiter * cur;
   int r;

@@ -210,10 +210,10 @@ struct folder_ref_info {
   struct mailfolder * folder;
   
   /* msg => msg_ref_info */
-  chash * msg_hash;
+  chash /* mailmessage * -> struct msg_ref_info * */ * msg_hash;
   
   /* uid => msg */
-  chash * uid_hash;
+  chash /* char * uid -> mailmessage * */ * uid_hash;
   
   int lost_session;
 };
@@ -434,7 +434,7 @@ static int folder_update_msg_list(struct folder_ref_info * ref_info,
   int res;
   struct mailmessage_list * new_env_list;
   unsigned int i;
-  carray * lost_msg_tab;
+  carray /* mailmessage * */ * lost_msg_tab;
   struct mailmessage_list * lost_msg_list;
   unsigned int free_start_index;
   chashiter * iter;
@@ -613,7 +613,7 @@ struct storage_ref_info {
   struct mailstorage * storage;
   
   /* folder => folder_ref_info */
-  chash * folder_ref_info;
+  chash /* struct mailfolder * -> struct folder_ref_info * */ * folder_ref_info;
 };
 
 static struct storage_ref_info *
@@ -1027,7 +1027,7 @@ struct mailengine {
 #endif
 #endif  
   /* storage => storage_ref_info */
-  chash * storage_hash;
+  chash /* struct mailstorage * -> struct storage_ref_info * */ * storage_hash;
 };
 
 static struct storage_ref_info *
@@ -1485,4 +1485,3 @@ void libetpan_engine_debug(struct mailengine * engine, FILE * f)
 
   fprintf(f, "mail engine debug -- end\n");
 }
-

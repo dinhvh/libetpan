@@ -49,7 +49,7 @@ static int * copy_int(int value)
 
 static struct mailimap_set * make_set_item(uint32_t first, uint32_t last)
 {
-  clist * list = clist_new();
+  clist /* struct mailimap_set_item * */ * list = clist_new();
   struct mailimap_set_item * item = mailimap_set_item_new(first, last);
 
   assert(list != NULL);
@@ -60,7 +60,7 @@ static struct mailimap_set * make_set_item(uint32_t first, uint32_t last)
 
 static struct mailimap_set * make_two_item_set(void)
 {
-  clist * list = clist_new();
+  clist /* struct mailimap_set_item * */ * list = clist_new();
 
   assert(list != NULL);
   assert(clist_append(list, mailimap_set_item_new(1, 1)) == 0);
@@ -70,7 +70,7 @@ static struct mailimap_set * make_two_item_set(void)
 
 static struct mailimap_flag_list * make_all_flag_list(void)
 {
-  clist * list = clist_new();
+  clist /* struct mailimap_flag * */ * list = clist_new();
 
   assert(list != NULL);
   assert(clist_append(list, mailimap_flag_new(MAILIMAP_FLAG_ANSWERED,
@@ -101,7 +101,7 @@ static struct mailimap_status_att_list * make_full_status_att_list(void)
     MAILIMAP_STATUS_ATT_HIGHESTMODSEQ,
     MAILIMAP_STATUS_ATT_SIZE
   };
-  clist * list = clist_new();
+  clist /* int * */ * list = clist_new();
   size_t i;
 
   assert(list != NULL);
@@ -142,7 +142,7 @@ static struct mailimap_section * make_header_section(void)
 
 static struct mailimap_section * make_part_mime_section(void)
 {
-  clist * ids = clist_new();
+  clist /* int * */ * ids = clist_new();
   struct mailimap_section_part * part;
   struct mailimap_section_text * text;
   struct mailimap_section_spec * spec;
@@ -211,7 +211,7 @@ static int send_uid_copy_open_range(mailstream * stream, void * context)
 
 static int send_fetch_sections(mailstream * stream, void * context)
 {
-  clist * list = clist_new();
+  clist /* struct mailimap_fetch_att * */ * list = clist_new();
   struct mailimap_set * set = make_two_item_set();
   struct mailimap_fetch_type * fetch_type;
   int r;
@@ -248,7 +248,7 @@ static int send_fetch_static_attrs(mailstream * stream, void * context)
     MAILIMAP_FETCH_ATT_BODYSTRUCTURE,
     MAILIMAP_FETCH_ATT_UID
   };
-  clist * list = clist_new();
+  clist /* struct mailimap_fetch_att * */ * list = clist_new();
   struct mailimap_set * set = make_set_item(1, 1);
   struct mailimap_fetch_type * fetch_type;
   size_t i;
@@ -315,7 +315,7 @@ static int send_search_strings(mailstream * stream, void * context)
 
 static int send_search_dates_and_sizes(mailstream * stream, void * context)
 {
-  clist * list = clist_new();
+  clist /* struct mailimap_search_key * */ * list = clist_new();
   struct mailimap_search_key * key;
   int r;
 
@@ -352,7 +352,7 @@ static int send_search_boolean_and_sets(mailstream * stream, void * context)
   struct mailimap_search_key * or_key;
   struct mailimap_search_key * not_key;
   struct mailimap_search_key * uid_key;
-  clist * list = clist_new();
+  clist /* struct mailimap_search_key * */ * list = clist_new();
   struct mailimap_search_key * multiple;
   int r;
 
@@ -394,7 +394,7 @@ static int send_search_boolean_and_sets(mailstream * stream, void * context)
 
 static int send_search_all_string_keys(mailstream * stream, void * context)
 {
-  clist * list = clist_new();
+  clist /* struct mailimap_search_key * */ * list = clist_new();
   struct mailimap_search_key * multiple;
   int r;
 
@@ -439,7 +439,7 @@ static int send_search_all_string_keys(mailstream * stream, void * context)
 
 static int send_search_keyword_header_dates(mailstream * stream, void * context)
 {
-  clist * list = clist_new();
+  clist /* struct mailimap_search_key * */ * list = clist_new();
   struct mailimap_search_key * multiple;
   int r;
 
@@ -509,7 +509,7 @@ static int send_search_all_flag_keys(mailstream * stream, void * context)
     MAILIMAP_SEARCH_KEY_DRAFT,
     MAILIMAP_SEARCH_KEY_UNDRAFT
   };
-  clist * list = clist_new();
+  clist /* struct mailimap_search_key * */ * list = clist_new();
   struct mailimap_search_key * multiple;
   size_t i;
   int r;

@@ -54,7 +54,8 @@
 #include "mailprivacy_tools.h"
 #include "mime_message_driver.h"
 
-carray * mailprivacy_get_protocols(struct mailprivacy * privacy)
+carray /* struct mailprivacy_protocol * */ *
+mailprivacy_get_protocols(struct mailprivacy * privacy)
 {
   return privacy->protocols;
 }

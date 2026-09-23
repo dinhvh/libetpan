@@ -131,7 +131,8 @@ LIBETPAN_EXPORT
 void mailprivacy_debug(struct mailprivacy * privacy, FILE * f);
 
 LIBETPAN_EXPORT
-carray * mailprivacy_get_protocols(struct mailprivacy * privacy);
+carray /* struct mailprivacy_protocol * */ *
+mailprivacy_get_protocols(struct mailprivacy * privacy);
 
 LIBETPAN_EXPORT
 int mailprivacy_is_encrypted(struct mailprivacy * privacy,

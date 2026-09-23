@@ -25,12 +25,12 @@ struct mailjmap_mailbox {
   int unread_emails;
   int total_threads;
   int unread_threads;
-  chash * my_rights; /* char * -> int boolean */
+  chash /* char * -> int boolean */ * my_rights;
 };
 
 struct mailjmap_thread {
   char * id;
-  clist * email_ids; /* char * */
+  clist /* char * */ * email_ids;
 };
 
 struct mailjmap_email_header {
@@ -52,12 +52,12 @@ struct mailjmap_email_body_part {
   char * disposition;
   char * cid;
   char * language;
-  clist * languages; /* char * */
+  clist /* char * */ * languages;
   char * location;
   int size;
   int has_size;
-  clist * headers; /* struct mailjmap_email_header * */
-  clist * sub_parts; /* struct mailjmap_email_body_part * */
+  clist /* struct mailjmap_email_header * */ * headers;
+  clist /* struct mailjmap_email_body_part * */ * sub_parts;
 };
 
 struct mailjmap_email_body_value {
@@ -70,30 +70,30 @@ struct mailjmap_email {
   char * id;
   char * blob_id;
   char * thread_id;
-  chash * mailbox_ids; /* char * -> int boolean */
-  chash * keywords; /* char * -> int boolean */
+  chash /* char * -> int boolean */ * mailbox_ids;
+  chash /* char * -> int boolean */ * keywords;
   int size;
   char * received_at;
   char * message_id;
   char * in_reply_to;
-  clist * message_ids; /* char * */
-  clist * in_reply_to_list; /* char * */
-  clist * references; /* char * */
-  clist * sender; /* struct mailjmap_email_address * */
-  clist * from; /* struct mailjmap_email_address * */
-  clist * to; /* struct mailjmap_email_address * */
-  clist * cc; /* struct mailjmap_email_address * */
-  clist * bcc; /* struct mailjmap_email_address * */
-  clist * reply_to; /* struct mailjmap_email_address * */
+  clist /* char * */ * message_ids;
+  clist /* char * */ * in_reply_to_list;
+  clist /* char * */ * references;
+  clist /* struct mailjmap_email_address * */ * sender;
+  clist /* struct mailjmap_email_address * */ * from;
+  clist /* struct mailjmap_email_address * */ * to;
+  clist /* struct mailjmap_email_address * */ * cc;
+  clist /* struct mailjmap_email_address * */ * bcc;
+  clist /* struct mailjmap_email_address * */ * reply_to;
   char * subject;
   char * sent_at;
   char * preview;
-  clist * headers; /* struct mailjmap_email_header * */
+  clist /* struct mailjmap_email_header * */ * headers;
   struct mailjmap_email_body_part * body_structure;
-  clist * text_body; /* struct mailjmap_email_body_part * */
-  clist * html_body; /* struct mailjmap_email_body_part * */
-  clist * attachments; /* struct mailjmap_email_body_part * */
-  clist * body_values; /* struct mailjmap_email_body_value * */
+  clist /* struct mailjmap_email_body_part * */ * text_body;
+  clist /* struct mailjmap_email_body_part * */ * html_body;
+  clist /* struct mailjmap_email_body_part * */ * attachments;
+  clist /* struct mailjmap_email_body_value * */ * body_values;
 };
 
 struct mailjmap_identity {
@@ -109,29 +109,29 @@ struct mailjmap_identity {
 struct mailjmap_mailbox_get_result {
   char * account_id;
   char * state;
-  clist * list; /* struct mailjmap_mailbox * */
-  clist * not_found; /* char * */
+  clist /* struct mailjmap_mailbox * */ * list;
+  clist /* char * */ * not_found;
 };
 
 struct mailjmap_thread_get_result {
   char * account_id;
   char * state;
-  clist * list; /* struct mailjmap_thread * */
-  clist * not_found; /* char * */
+  clist /* struct mailjmap_thread * */ * list;
+  clist /* char * */ * not_found;
 };
 
 struct mailjmap_email_get_result {
   char * account_id;
   char * state;
-  clist * list; /* struct mailjmap_email * */
-  clist * not_found; /* char * */
+  clist /* struct mailjmap_email * */ * list;
+  clist /* char * */ * not_found;
 };
 
 struct mailjmap_identity_get_result {
   char * account_id;
   char * state;
-  clist * list; /* struct mailjmap_identity * */
-  clist * not_found; /* char * */
+  clist /* struct mailjmap_identity * */ * list;
+  clist /* char * */ * not_found;
 };
 
 struct mailjmap_changes_result {
@@ -139,9 +139,9 @@ struct mailjmap_changes_result {
   char * old_state;
   char * new_state;
   int has_more_changes;
-  clist * created; /* char * */
-  clist * updated; /* char * */
-  clist * destroyed; /* char * */
+  clist /* char * */ * created;
+  clist /* char * */ * updated;
+  clist /* char * */ * destroyed;
 };
 
 struct mailjmap_query_result {
@@ -151,7 +151,7 @@ struct mailjmap_query_result {
   int position;
   int total;
   int has_total;
-  clist * ids; /* char * */
+  clist /* char * */ * ids;
 };
 
 struct mailjmap_query_change {
@@ -165,8 +165,8 @@ struct mailjmap_query_changes_result {
   char * new_query_state;
   int total;
   int has_total;
-  clist * removed; /* char * */
-  clist * added; /* struct mailjmap_query_change * */
+  clist /* char * */ * removed;
+  clist /* struct mailjmap_query_change * */ * added;
 };
 
 struct mailjmap_email_query_sort_comparator {
@@ -179,7 +179,7 @@ struct mailjmap_email_query_sort_comparator {
 struct mailjmap_email_query_filter {
   int is_operator;
   char * filter_operator;
-  clist * conditions; /* struct mailjmap_email_query_filter * */
+  clist /* struct mailjmap_email_query_filter * */ * conditions;
   char * in_mailbox;
   char * before;
   char * after;
@@ -213,8 +213,8 @@ struct mailjmap_import_result {
   char * account_id;
   char * old_state;
   char * new_state;
-  clist * created; /* struct mailjmap_import_created * */
-  clist * not_created; /* struct mailjmap_import_not_created * */
+  clist /* struct mailjmap_import_created * */ * created;
+  clist /* struct mailjmap_import_not_created * */ * not_created;
 };
 
 struct mailjmap_email_parse_item {
@@ -224,8 +224,8 @@ struct mailjmap_email_parse_item {
 
 struct mailjmap_email_parse_result {
   char * account_id;
-  clist * parsed; /* struct mailjmap_email_parse_item * */
-  clist * not_parsable; /* char * */
+  clist /* struct mailjmap_email_parse_item * */ * parsed;
+  clist /* char * */ * not_parsable;
 };
 
 struct mailjmap_search_snippet {
@@ -236,8 +236,8 @@ struct mailjmap_search_snippet {
 
 struct mailjmap_search_snippet_get_result {
   char * account_id;
-  clist * list; /* struct mailjmap_search_snippet * */
-  clist * not_found; /* char * */
+  clist /* struct mailjmap_search_snippet * */ * list;
+  clist /* char * */ * not_found;
 };
 
 struct mailjmap_mailbox_set_item {
@@ -258,18 +258,18 @@ struct mailjmap_mailbox_set_item {
 struct mailjmap_email_set_item {
   char * id;
   int has_mailbox_ids;
-  clist * mailbox_ids; /* char * */
+  clist /* char * */ * mailbox_ids;
   int has_keywords;
-  clist * keywords; /* char * */
+  clist /* char * */ * keywords;
 };
 
 struct mailjmap_email_copy_item {
   char * creation_id;
   char * id;
   int has_mailbox_ids;
-  clist * mailbox_ids; /* char * */
+  clist /* char * */ * mailbox_ids;
   int has_keywords;
-  clist * keywords; /* char * */
+  clist /* char * */ * keywords;
   char * received_at;
 };
 
@@ -280,7 +280,7 @@ struct mailjmap_email_submission_set_item {
   char * send_at;
   char * undo_status;
   struct mailjmap_email_address * envelope_mail_from;
-  clist * envelope_rcpt_to; /* struct mailjmap_email_address * */
+  clist /* struct mailjmap_email_address * */ * envelope_rcpt_to;
 };
 
 struct mailjmap_email_submission_delivery_status {
@@ -299,10 +299,9 @@ struct mailjmap_set_created {
   char * send_at;
   char * undo_status;
   struct mailjmap_email_address * envelope_mail_from;
-  clist * envelope_rcpt_to; /* struct mailjmap_email_address * */
-  clist * delivery_status;
-    /* struct mailjmap_email_submission_delivery_status * */
-  chash * dsn_blob_ids; /* char * -> char * */
+  clist /* struct mailjmap_email_address * */ * envelope_rcpt_to;
+  clist /* struct mailjmap_email_submission_delivery_status * */ * delivery_status;
+  chash /* char * -> char * */ * dsn_blob_ids;
 };
 
 struct mailjmap_set_error {
@@ -315,12 +314,12 @@ struct mailjmap_set_result {
   char * account_id;
   char * old_state;
   char * new_state;
-  clist * created; /* struct mailjmap_set_created * */
-  clist * updated; /* char * */
-  clist * destroyed; /* char * */
-  clist * not_created; /* struct mailjmap_set_error * */
-  clist * not_updated; /* struct mailjmap_set_error * */
-  clist * not_destroyed; /* struct mailjmap_set_error * */
+  clist /* struct mailjmap_set_created * */ * created;
+  clist /* char * */ * updated;
+  clist /* char * */ * destroyed;
+  clist /* struct mailjmap_set_error * */ * not_created;
+  clist /* struct mailjmap_set_error * */ * not_updated;
+  clist /* struct mailjmap_set_error * */ * not_destroyed;
 };
 
 LIBETPAN_EXPORT
@@ -661,8 +660,8 @@ void mailjmap_set_result_free(struct mailjmap_set_result * result);
 LIBETPAN_EXPORT
 int mailjmap_mailbox_get(mailjmap * session,
     const char * account_id,
-    clist * ids,
-    clist * properties,
+    clist /* char * */ * ids,
+    clist /* char * */ * properties,
     struct mailjmap_mailbox_get_result ** result);
 
 LIBETPAN_EXPORT
@@ -682,15 +681,15 @@ LIBETPAN_EXPORT
 int mailjmap_mailbox_set(mailjmap * session,
     const char * account_id,
     const char * if_in_state,
-    clist * create,
-    clist * update,
-    clist * destroy,
+    clist /* struct mailjmap_mailbox_set_item * */ * create,
+    clist /* struct mailjmap_mailbox_set_item * */ * update,
+    clist /* char * */ * destroy,
     struct mailjmap_set_result ** result);
 
 LIBETPAN_EXPORT
 int mailjmap_thread_get(mailjmap * session,
     const char * account_id,
-    clist * ids,
+    clist /* char * */ * ids,
     struct mailjmap_thread_get_result ** result);
 
 LIBETPAN_EXPORT
@@ -730,7 +729,7 @@ LIBETPAN_EXPORT
 int mailjmap_email_query_with_sort_options(mailjmap * session,
     const char * account_id,
     const char * text,
-    clist * sort,
+    clist /* struct mailjmap_email_query_sort_comparator * */ * sort,
     int position,
     const char * anchor,
     int anchor_offset,
@@ -743,7 +742,7 @@ LIBETPAN_EXPORT
 int mailjmap_email_query_with_filter_options(mailjmap * session,
     const char * account_id,
     struct mailjmap_email_query_filter * filter,
-    clist * sort,
+    clist /* struct mailjmap_email_query_sort_comparator * */ * sort,
     int position,
     const char * anchor,
     int anchor_offset,
@@ -781,7 +780,7 @@ int mailjmap_email_query_changes_with_filter_options(mailjmap * session,
     const char * account_id,
     const char * since_query_state,
     struct mailjmap_email_query_filter * filter,
-    clist * sort,
+    clist /* struct mailjmap_email_query_sort_comparator * */ * sort,
     int max_changes,
     const char * up_to_id,
     int calculate_total,
@@ -797,17 +796,17 @@ int mailjmap_email_changes(mailjmap * session,
 LIBETPAN_EXPORT
 int mailjmap_email_get(mailjmap * session,
     const char * account_id,
-    clist * ids,
-    clist * properties,
+    clist /* char * */ * ids,
+    clist /* char * */ * properties,
     struct mailjmap_email_get_result ** result);
 
 LIBETPAN_EXPORT
 int mailjmap_email_set(mailjmap * session,
     const char * account_id,
     const char * if_in_state,
-    clist * create,
-    clist * update,
-    clist * destroy,
+    clist /* struct mailjmap_email_set_item * */ * create,
+    clist /* struct mailjmap_email_set_item * */ * update,
+    clist /* char * */ * destroy,
     struct mailjmap_set_result ** result);
 
 LIBETPAN_EXPORT
@@ -815,7 +814,7 @@ int mailjmap_email_copy(mailjmap * session,
     const char * account_id,
     const char * from_account_id,
     const char * if_from_in_state,
-    clist * create,
+    clist /* struct mailjmap_email_copy_item * */ * create,
     int on_success_destroy_original,
     struct mailjmap_set_result ** result);
 
@@ -824,53 +823,53 @@ int mailjmap_email_import(mailjmap * session,
     const char * account_id,
     const char * creation_id,
     const char * blob_id,
-    clist * mailbox_ids,
-    clist * keywords,
+    clist /* char * */ * mailbox_ids,
+    clist /* char * */ * keywords,
     const char * received_at,
     struct mailjmap_import_result ** result);
 
 LIBETPAN_EXPORT
 int mailjmap_email_parse(mailjmap * session,
     const char * account_id,
-    clist * blob_ids,
-    clist * properties,
-    clist * body_properties,
+    clist /* char * */ * blob_ids,
+    clist /* char * */ * properties,
+    clist /* char * */ * body_properties,
     struct mailjmap_email_parse_result ** result);
 
 LIBETPAN_EXPORT
 int mailjmap_search_snippet_get(mailjmap * session,
     const char * account_id,
-    clist * email_ids,
+    clist /* char * */ * email_ids,
     struct mailjmap_search_snippet_get_result ** result);
 
 LIBETPAN_EXPORT
 int mailjmap_search_snippet_get_with_text_filter(mailjmap * session,
     const char * account_id,
-    clist * email_ids,
+    clist /* char * */ * email_ids,
     const char * text,
     struct mailjmap_search_snippet_get_result ** result);
 
 LIBETPAN_EXPORT
 int mailjmap_search_snippet_get_with_filter(mailjmap * session,
     const char * account_id,
-    clist * email_ids,
+    clist /* char * */ * email_ids,
     struct mailjmap_email_query_filter * filter,
     struct mailjmap_search_snippet_get_result ** result);
 
 LIBETPAN_EXPORT
 int mailjmap_identity_get(mailjmap * session,
     const char * account_id,
-    clist * ids,
-    clist * properties,
+    clist /* char * */ * ids,
+    clist /* char * */ * properties,
     struct mailjmap_identity_get_result ** result);
 
 LIBETPAN_EXPORT
 int mailjmap_email_submission_set(mailjmap * session,
     const char * account_id,
     const char * if_in_state,
-    clist * create,
-    clist * update,
-    clist * destroy,
+    clist /* struct mailjmap_email_submission_set_item * */ * create,
+    clist /* struct mailjmap_email_submission_set_item * */ * update,
+    clist /* char * */ * destroy,
     struct mailjmap_set_result ** result);
 
 #ifdef __cplusplus

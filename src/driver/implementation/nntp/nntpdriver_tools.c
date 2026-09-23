@@ -484,7 +484,7 @@ int nntp_get_messages_list(mailsession * nntp_session,
 			   mailmessage_driver * driver,
 			   struct mailmessage_list ** result)
 {
-  carray * tab;
+  carray /* mailmessage * */ * tab;
   struct mailmessage_list * env_list;
   uint32_t i;
   int res;

@@ -64,7 +64,7 @@ int mailimap_quota_getquotaroot(mailimap * session,
   int r;
   int error_code;
   struct mailimap_quota_quotaroot_data * quotaroot_data = NULL;
-  clist * quota_list = NULL;
+  clist /* struct mailimap_quota_quota_data * */ * quota_list = NULL;
 
   if ((session->imap_state != MAILIMAP_STATE_AUTHENTICATED) && (session->imap_state != MAILIMAP_STATE_SELECTED))
     return MAILIMAP_ERROR_BAD_STATE;
@@ -182,4 +182,3 @@ int mailimap_has_quota(mailimap * session)
 {
   return mailimap_has_extension(session, "QUOTA");
 }
-

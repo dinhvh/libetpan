@@ -401,13 +401,14 @@ void mailstream_set_logger(mailstream * s, void (* logger)(mailstream * s, int l
 }
 
 LIBETPAN_EXPORT
-carray * mailstream_get_certificate_chain(mailstream * s)
+carray /* MMAPString * */ * mailstream_get_certificate_chain(mailstream * s)
 {
   return mailstream_low_get_certificate_chain(s->low);
 }
 
 LIBETPAN_EXPORT
-void mailstream_certificate_chain_free(carray * certificate_chain)
+void mailstream_certificate_chain_free(
+    carray /* MMAPString * */ * certificate_chain)
 {
   unsigned int i;
   

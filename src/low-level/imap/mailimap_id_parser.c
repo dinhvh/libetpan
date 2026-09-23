@@ -148,7 +148,7 @@ static int mailimap_id_params_list_parse(mailstream * fd,
   struct mailimap_id_params_list ** result)
 {
   struct mailimap_id_params_list * params_list;
-  clist * items;
+  clist /* struct mailimap_id_params_item * */ * items;
   size_t cur_token;
   int r;
   

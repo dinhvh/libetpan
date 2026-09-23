@@ -136,7 +136,8 @@ static ssize_t mailstream_low_cfstream_write(mailstream_low * s,
 static void mailstream_low_cfstream_free(mailstream_low * s);
 static int mailstream_low_cfstream_get_fd(mailstream_low * s);
 static void mailstream_low_cfstream_cancel(mailstream_low * s);
-static carray * mailstream_low_cfstream_get_certificate_chain(mailstream_low * s);
+static carray /* MMAPString * */ *
+mailstream_low_cfstream_get_certificate_chain(mailstream_low * s);
 
 static int mailstream_low_cfstream_setup_idle(mailstream_low * s);
 static int mailstream_low_cfstream_unsetup_idle(mailstream_low * s);
@@ -1227,7 +1228,8 @@ static int mailstream_low_cfstream_interrupt_idle(mailstream_low * s)
 #endif
 }
 
-static void mailstream_low_cfstream_certificate_chain_free(carray * result)
+static void mailstream_low_cfstream_certificate_chain_free(
+    carray /* MMAPString * */ * result)
 {
   unsigned int i;
 
@@ -1239,12 +1241,13 @@ static void mailstream_low_cfstream_certificate_chain_free(carray * result)
   carray_free(result);
 }
 
-static carray * mailstream_low_cfstream_get_certificate_chain(mailstream_low * s)
+static carray /* MMAPString * */ *
+mailstream_low_cfstream_get_certificate_chain(mailstream_low * s)
 {
 #if HAVE_CFNETWORK
   struct mailstream_cfstream_data * cfstream_data;
   unsigned int i;
-  carray * result;
+  carray /* MMAPString * */ * result;
   CFArrayRef certs;
   CFIndex count;
   

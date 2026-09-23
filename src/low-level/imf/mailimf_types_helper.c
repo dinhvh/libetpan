@@ -51,7 +51,7 @@
 struct mailimf_mailbox_list *
 mailimf_mailbox_list_new_empty(void)
 {
-  clist * list;
+  clist /* struct mailimf_mailbox * */ * list;
   struct mailimf_mailbox_list * mb_list;
 
   list = clist_new();
@@ -138,7 +138,7 @@ int mailimf_mailbox_list_add_mb(struct mailimf_mailbox_list * mailbox_list,
 struct mailimf_address_list *
 mailimf_address_list_new_empty(void)
 {
-  clist * list;
+  clist /* struct mailimf_address * */ * list;
   struct mailimf_address_list * addr_list;
 
   list = clist_new();
@@ -234,7 +234,7 @@ int mailimf_address_list_add_mb(struct mailimf_address_list * address_list,
 struct mailimf_resent_fields_list *
 mailimf_resent_fields_list_new_empty(void)
 {
-  clist * list;
+  clist /* struct mailimf_resent_fields * */ * list;
   struct mailimf_resent_fields_list * rf_list;
 
   list = clist_new();
@@ -668,7 +668,7 @@ mailimf_resent_fields_new_with_data(struct mailimf_mailbox_list * from,
 struct mailimf_fields *
 mailimf_fields_new_empty(void)
 {
-  clist * list;
+  clist /* struct mailimf_field * */ * list;
   struct mailimf_fields * fields_list;
 
   list = clist_new();
@@ -751,8 +751,8 @@ int mailimf_fields_add_data(struct mailimf_fields * fields,
 			    struct mailimf_address_list * cc,
 			    struct mailimf_address_list * bcc,
 			    char * msg_id,
-			    clist * in_reply_to,
-			    clist * references,
+			    clist /* char * */ * in_reply_to,
+			    clist /* char * */ * references,
 			    char * subject)
 {
   struct mailimf_orig_date * imf_date;
@@ -1188,8 +1188,8 @@ mailimf_fields_new_with_data_all(struct mailimf_date_time * date,
 				 struct mailimf_address_list * cc,
 				 struct mailimf_address_list * bcc,
 				 char * message_id,
-				 clist * in_reply_to,
-				 clist * references,
+				 clist /* char * */ * in_reply_to,
+				 clist /* char * */ * references,
 				 char * subject)
 {
   struct mailimf_fields * fields;
@@ -1229,8 +1229,8 @@ mailimf_fields_new_with_data(struct mailimf_mailbox_list * from,
 			     struct mailimf_address_list * to,
 			     struct mailimf_address_list * cc,
 			     struct mailimf_address_list * bcc,
-			     clist * in_reply_to,
-			     clist * references,
+			     clist /* char * */ * in_reply_to,
+			     clist /* char * */ * references,
 			     char * subject)
 {
   struct mailimf_date_time * date;

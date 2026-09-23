@@ -61,7 +61,7 @@
   the list of extension is kept as a simple clist.
 */
 
-static clist * mailimap_extension_list = NULL;
+static clist /* struct mailimap_extension_api * */ * mailimap_extension_list = NULL;
 
 static struct mailimap_extension_api * internal_extension_list[] = {
   &mailimap_extension_annotatemore,
@@ -194,7 +194,7 @@ int mailimap_has_extension(mailimap * session, const char * extension_name)
 {
   if (session->imap_connection_info != NULL) {
     if (session->imap_connection_info->imap_capability != NULL) {
-      clist * list;
+      clist /* struct mailimap_capability * */ * list;
       clistiter * cur;
       
       list = session->imap_connection_info->imap_capability->cap_list;
@@ -219,7 +219,7 @@ int mailimap_has_authentication(mailimap * session, const char * authentication_
 {
   if (session->imap_connection_info != NULL) {
     if (session->imap_connection_info->imap_capability != NULL) {
-      clist * list;
+      clist /* struct mailimap_capability * */ * list;
       clistiter * cur;
       
       list = session->imap_connection_info->imap_capability->cap_list;

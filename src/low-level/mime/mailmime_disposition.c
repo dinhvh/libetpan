@@ -90,7 +90,7 @@ int mailmime_disposition_parse(const char * message, size_t length,
   size_t final_token;
   size_t cur_token;
   struct mailmime_disposition_type * dsp_type;
-  clist * list;
+  clist /* struct mailmime_disposition_parm * */ * list;
   struct mailmime_disposition * dsp;
   int r;
   int res;

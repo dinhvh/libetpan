@@ -515,7 +515,7 @@ static int build_discovery_url(const char * domain_or_email, char ** result)
   return MAILJMAP_NO_ERROR;
 }
 
-static int string_list_append(clist * list, const char * value)
+static int string_list_append(clist /* char * */ * list, const char * value)
 {
   char * copy;
 
@@ -535,8 +535,8 @@ static int string_list_append(clist * list, const char * value)
 }
 
 struct parse_capability_context {
-  clist * names;
-  clist * details;
+  clist /* char * */ * names;
+  clist /* struct mailjmap_session_capability * */ * details;
 };
 
 static int append_capability_detail(const char * key,

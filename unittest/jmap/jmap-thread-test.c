@@ -222,7 +222,7 @@ static struct mailjmap_http_transport * fake_transport_new(
   return transport;
 }
 
-static void string_list_free(clist * list)
+static void string_list_free(clist /* char * */ * list)
 {
   clistiter * cur;
 
@@ -234,7 +234,7 @@ static void string_list_free(clist * list)
   clist_free(list);
 }
 
-static int string_list_append(clist * list, const char * value)
+static int string_list_append(clist /* char * */ * list, const char * value)
 {
   char * copy;
 
@@ -257,7 +257,7 @@ static int test_thread_get_and_changes(void)
   struct mailjmap_thread_get_result * get_result;
   struct mailjmap_changes_result * changes_result;
   struct mailjmap_thread * thread;
-  clist * ids;
+  clist /* char * */ * ids;
   char * email_id_1;
   char * email_id_2;
   char * not_found;

@@ -175,9 +175,9 @@ int generic_cache_read(char * filename, char ** result, size_t * result_len)
 }
 
 static int flags_extension_read(MMAPString * mmapstr, size_t * indx,
-				clist ** result)
+				clist /* char * */ ** result)
 {
-  clist * list;
+  clist /* char * */ * list;
   int r;
   uint32_t count;
   uint32_t i;
@@ -226,7 +226,7 @@ static int flags_extension_read(MMAPString * mmapstr, size_t * indx,
 static int generic_flags_read(MMAPString * mmapstr, size_t * indx,
 			      struct mail_flags ** result)
 {
-  clist * ext;
+  clist /* char * */ * ext;
   int r;
   struct mail_flags * flags;
   uint32_t value;
@@ -263,7 +263,7 @@ static int generic_flags_read(MMAPString * mmapstr, size_t * indx,
 }
 
 static int flags_extension_write(MMAPString * mmapstr, size_t * indx,
-				 clist * ext)
+				 clist /* char * */ * ext)
 {
   int r;
   clistiter * cur;
@@ -308,7 +308,7 @@ static int generic_flags_write(MMAPString * mmapstr, size_t * indx,
 
 static struct mail_flags * mail_flags_dup(struct mail_flags * flags)
 {
-  clist * list;
+  clist /* char * */ * list;
   struct mail_flags * new_flags;
   int r;
   clistiter * cur;
@@ -754,5 +754,3 @@ int generic_cache_delete(struct mail_cache_db * cache_db,
  err:
   return res;
 }
-
-

@@ -59,7 +59,8 @@ void mailjmap_method_response_free(
   free(response);
 }
 
-static void method_response_list_free(clist * list)
+static void method_response_list_free(
+    clist /* struct mailjmap_method_response * */ * list)
 {
   clistiter * cur;
 

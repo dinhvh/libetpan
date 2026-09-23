@@ -223,7 +223,7 @@ static int get_flags(mailmessage * msg_info,
   struct maildir_msg * md_msg;
   int r;
   uint32_t driver_flags;
-  clist * ext;
+  clist /* char * */ * ext;
   
   if (msg_info->msg_flags != NULL) {
     * result = msg_info->msg_flags;

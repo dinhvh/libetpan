@@ -81,7 +81,7 @@ struct mailpop3
   MMAPString * pop3_stream_buffer;        /* buffer for lines reading */
   MMAPString * pop3_response_buffer;      /* buffer for responses */
 
-  carray * pop3_msg_tab;               /* list of pop3_msg_info structures */
+  carray /* struct mailpop3_msg_info * */ * pop3_msg_tab;
   int pop3_state;                        /* state */
 
   unsigned int pop3_deleted_count;
@@ -115,7 +115,7 @@ struct mailpop3_msg_info
 
 struct mailpop3_capa {
   char * cap_name;
-  clist * cap_param; /* (char *) */
+  clist /* char * */ * cap_param;
 };
 
 

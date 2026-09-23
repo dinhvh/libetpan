@@ -151,7 +151,7 @@ int main(int argc, char ** argv)
   r = mailmessage_encrypt(privacy, msg, "smime", "signed");
   if (r != MAIL_NO_ERROR) {
     {
-      clist * id_list;
+	      clist /* char * */ * id_list;
       clistiter * iter;
       
       id_list = mailprivacy_smime_encryption_id_list(privacy, msg);

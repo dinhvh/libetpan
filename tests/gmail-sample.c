@@ -78,7 +78,7 @@ static int parse_args(int argc, char ** argv, struct gmail_sample_args * args)
   return (args->oauth_token != NULL) && (* args->oauth_token != '\0');
 }
 
-static unsigned int list_count(clist * list)
+static unsigned int list_count(clist /* void * */ * list)
 {
   clistiter * cur;
   unsigned int count;

@@ -45,7 +45,7 @@ extern "C" {
 
 int
 mailmbox_append_message_list(struct mailmbox_folder * folder,
-			     carray * append_tab);
+			     carray /* struct mailmbox_append_info * */ * append_tab);
 
 int
 mailmbox_append_message(struct mailmbox_folder * folder,
@@ -67,7 +67,7 @@ void mailmbox_fetch_result_free(char * msg);
 
 int mailmbox_copy_msg_list(struct mailmbox_folder * dest_folder,
 			   struct mailmbox_folder * src_folder,
-			   carray * tab);
+			   carray /* uint32_t * */ * tab);
 
 int mailmbox_copy_msg(struct mailmbox_folder * dest_folder,
 		      struct mailmbox_folder * src_folder,
@@ -133,7 +133,7 @@ int mailmbox_fetch_msg_headers_no_lock(struct mailmbox_folder * folder,
 
 int
 mailmbox_append_message_list_no_lock(struct mailmbox_folder * folder,
-				     carray * append_tab);
+				     carray /* struct mailmbox_append_info * */ * append_tab);
 
 int mailmbox_expunge_no_lock(struct mailmbox_folder * folder);
 

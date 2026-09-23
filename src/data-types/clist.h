@@ -64,27 +64,27 @@ typedef clistcell clistiter;
 
 /* Allocate a new pointer list */
 LIBETPAN_EXPORT
-clist *      clist_new(void);
+clist /* void * */ *      clist_new(void);
 
 /* Destroys a list. Data pointed by data pointers is NOT freed. */
 LIBETPAN_EXPORT
-void        clist_free(clist *);
+void        clist_free(clist /* void * */ *);
 
 /* Some of the following routines can be implemented as macros to
    be faster. If you don't want it, define NO_MACROS */
 #ifdef NO_MACROS
 
 /* Returns TRUE if list is empty */
-int         clist_isempty(clist *);
+int         clist_isempty(clist /* void * */ *);
 
 /* Returns the number of elements in the list */
-int         clist_count(clist *);
+int         clist_count(clist /* void * */ *);
 
 /* Returns an iterator to the first element of the list */
-clistiter *   clist_begin(clist *);
+clistiter *   clist_begin(clist /* void * */ *);
 
 /* Returns an iterator to the last element of the list */
-clistiter *   clist_end(clist *);
+clistiter *   clist_end(clist /* void * */ *);
 
 /* Returns an iterator to the next element of the list */
 clistiter *   clist_next(clistiter *);
@@ -96,10 +96,10 @@ clistiter *   clist_previous(clistiter *);
 void*       clist_content(clistiter *);
 
 /* Inserts this data pointer at the beginning of the list */
-int         clist_prepend(clist *, void *);
+int         clist_prepend(clist /* void * */ *, void *);
 
 /* Inserts this data pointer at the end of the list */
-int         clist_append(clist *, void *);
+int         clist_append(clist /* void * */ *, void *);
 #else
 #define     clist_isempty(lst)             (((lst)->first==(lst)->last) && ((lst)->last==NULL))
 #define     clist_count(lst)               ((lst)->count)
@@ -114,30 +114,30 @@ int         clist_append(clist *, void *);
 
 /* Inserts this data pointer before the element pointed by the iterator */
 LIBETPAN_EXPORT
-int         clist_insert_before(clist *, clistiter *, void *);
+int         clist_insert_before(clist /* void * */ *, clistiter *, void *);
 
 /* Inserts this data pointer after the element pointed by the iterator */
 LIBETPAN_EXPORT
-int         clist_insert_after(clist *, clistiter *, void *);
+int         clist_insert_after(clist /* void * */ *, clistiter *, void *);
 
 /* Deletes the element pointed by the iterator.
    Returns an iterator to the next element. */
 LIBETPAN_EXPORT
-clistiter *   clist_delete(clist *, clistiter *);
+clistiter *   clist_delete(clist /* void * */ *, clistiter *);
 
 typedef void (* clist_func)(void *, void *);
 
 LIBETPAN_EXPORT
-void clist_foreach(clist * lst, clist_func func, void * data);
+void clist_foreach(clist /* void * */ * lst, clist_func func, void * data);
 
 LIBETPAN_EXPORT
-void clist_concat(clist * dest, clist * src);
+void clist_concat(clist /* void * */ * dest, clist /* void * */ * src);
 
 LIBETPAN_EXPORT
-void * clist_nth_data(clist * lst, int indx);
+void * clist_nth_data(clist /* void * */ * lst, int indx);
 
 LIBETPAN_EXPORT
-clistiter * clist_nth(clist * lst, int indx);
+clistiter * clist_nth(clist /* void * */ * lst, int indx);
 
 #ifdef __cplusplus
 }

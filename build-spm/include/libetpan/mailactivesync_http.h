@@ -25,7 +25,7 @@ struct mailactivesync_http_header {
 struct mailactivesync_http_request {
   char * method;
   char * url;
-  clist * headers; /* struct mailactivesync_http_header * */
+  clist /* struct mailactivesync_http_header * */ * headers;
   unsigned char * body;
   size_t body_len;
   time_t timeout;
@@ -33,7 +33,7 @@ struct mailactivesync_http_request {
 
 struct mailactivesync_http_response {
   int status_code;
-  clist * headers; /* struct mailactivesync_http_header * */
+  clist /* struct mailactivesync_http_header * */ * headers;
   unsigned char * body;
   size_t body_len;
 };

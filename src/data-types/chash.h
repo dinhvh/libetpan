@@ -86,15 +86,15 @@ typedef struct chashcell chashiter;
     CHASH_COPYALL   : Both keys and values are dupped in the hash.
  */
 LIBETPAN_EXPORT
-chash * chash_new(unsigned int size, int flags);
+chash /* chashdatum key/value */ * chash_new(unsigned int size, int flags);
 
 /* Frees a hash */
 LIBETPAN_EXPORT
-void chash_free(chash * hash);
+void chash_free(chash /* chashdatum key/value */ * hash);
 
 /* Removes all elements from a hash */
 LIBETPAN_EXPORT
-void chash_clear(chash * hash);
+void chash_clear(chash /* chashdatum key/value */ * hash);
 
 /* Adds an entry in the hash table.
    Length can be 0 if key/value are strings.
@@ -102,7 +102,7 @@ void chash_clear(chash * hash);
    is returned. Otherwise, the data pointer will be NULL and the length
    field be set to TRUE or FALSe to indicate success or failure. */
 LIBETPAN_EXPORT
-int chash_set(chash * hash,
+int chash_set(chash /* chashdatum key/value */ * hash,
 	      chashdatum * key,
 	      chashdatum * value,
 	      chashdatum * oldvalue);
@@ -110,39 +110,39 @@ int chash_set(chash * hash,
 /* Retrieves the data associated to the key if it is found in the hash table.
    The data pointer and the length will be NULL if not found*/
 LIBETPAN_EXPORT
-int chash_get(chash * hash,
+int chash_get(chash /* chashdatum key/value */ * hash,
 	      chashdatum * key, chashdatum * result);
 
 /* Removes the entry associated to this key if it is found in the hash table,
    and returns its contents if not dupped (otherwise, pointer will be NULL
    and len TRUE). If entry is not found both pointer and len will be NULL. */
 LIBETPAN_EXPORT
-int chash_delete(chash * hash,
+int chash_delete(chash /* chashdatum key/value */ * hash,
 		 chashdatum * key,
 		 chashdatum * oldvalue);
 
 /* Resizes the hash table to the passed size. */
 LIBETPAN_EXPORT
-int chash_resize(chash * hash, unsigned int size);
+int chash_resize(chash /* chashdatum key/value */ * hash, unsigned int size);
 
 /* Returns an iterator to the first non-empty entry of the hash table */
 LIBETPAN_EXPORT
-chashiter * chash_begin(chash * hash);
+chashiter * chash_begin(chash /* chashdatum key/value */ * hash);
 
 /* Returns the next non-empty entry of the hash table */
 LIBETPAN_EXPORT
-chashiter * chash_next(chash * hash, chashiter * iter);
+chashiter * chash_next(chash /* chashdatum key/value */ * hash, chashiter * iter);
 
 /* Some of the following routines can be implemented as macros to
    be faster. If you don't want it, define NO_MACROS */
 #ifdef NO_MACROS
 /* Returns the size of the hash table */
 LIBETPAN_EXPORT
-unsigned int          chash_size(chash * hash);
+unsigned int          chash_size(chash /* chashdatum key/value */ * hash);
 
 /* Returns the number of entries in the hash table */
 LIBETPAN_EXPORT
-unsigned int          chash_count(chash * hash);
+unsigned int          chash_count(chash /* chashdatum key/value */ * hash);
 
 /* Returns the key part of the entry pointed by the iterator */
 LIBETPAN_EXPORT
@@ -162,12 +162,12 @@ void chash_value(chashiter * iter, chashdatum * result);
 #endif
 #endif
 
-static INLINE unsigned int chash_size(chash * hash)
+static INLINE unsigned int chash_size(chash /* chashdatum key/value */ * hash)
 {
   return hash->size;
 }
 
-static INLINE unsigned int chash_count(chash * hash)
+static INLINE unsigned int chash_count(chash /* chashdatum key/value */ * hash)
 {
   return hash->count;
 }

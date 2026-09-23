@@ -25,7 +25,8 @@ static void mailgmail_free_string(void * value, void * data)
   free(value);
 }
 
-static int mailgmail_clist_add_string(clist * list, const char * value)
+static int mailgmail_clist_add_string(clist /* char * */ * list,
+    const char * value)
 {
   char * copy;
 

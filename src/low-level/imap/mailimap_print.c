@@ -137,7 +137,8 @@ static void mailimap_body_fld_dsp_print(struct mailimap_body_fld_dsp * fld_dsp)
   printf("}\n");
 }
 
-static void mailimap_body_extension_list_print(clist * ext_list);
+static void mailimap_body_extension_list_print(
+    clist /* struct mailimap_body_extension * */ * ext_list);
 
 static void mailimap_body_extension_print(struct mailimap_body_extension * ext)
 {
@@ -165,7 +166,8 @@ static void mailimap_body_extension_print(struct mailimap_body_extension * ext)
 
 }
 
-static void mailimap_body_extension_list_print(clist * ext_list)
+static void mailimap_body_extension_list_print(
+    clist /* struct mailimap_body_extension * */ * ext_list)
 {
   clistiter * cur;
 
@@ -460,7 +462,8 @@ static void mailimap_address_print(struct mailimap_address * address)
 	 address->ad_mailbox_name, address->ad_host_name);
 }
 
-static void mailimap_envelope_address_list_print(clist * address)
+static void mailimap_envelope_address_list_print(
+    clist /* struct mailimap_address * */ * address)
 {
   clistiter * cur;
 

@@ -246,7 +246,7 @@ int mailimap_char_send(mailstream * fd, char ch)
 }
 
 static int
-mailimap_struct_list_send(mailstream * fd, clist * list,
+mailimap_struct_list_send(mailstream * fd, clist /* void * callback-owned item */ * list,
 			  char symbol,
 			  mailimap_struct_sender * sender)
 {
@@ -281,7 +281,7 @@ mailimap_struct_list_send(mailstream * fd, clist * list,
 				   
 
 int
-mailimap_struct_spaced_list_send(mailstream * fd, clist * list,
+mailimap_struct_spaced_list_send(mailstream * fd, clist /* void * callback-owned item */ * list,
 				 mailimap_struct_sender * sender)
 {
   return mailimap_struct_list_send(fd, list, ' ', sender);
@@ -1178,7 +1178,7 @@ int mailimap_examine_send(mailstream * fd, const char * mb, int condstore)
 */
 
 static int
-mailimap_fetch_att_list_send(mailstream * fd, clist * fetch_att_list);
+mailimap_fetch_att_list_send(mailstream * fd, clist /* struct mailimap_fetch_att * */ * fetch_att_list);
 
 static int
 mailimap_fetch_type_send(mailstream * fd,
@@ -1252,7 +1252,7 @@ mailimap_uid_fetch_send(mailstream * fd,
 /* currently porting */
 
 static int
-mailimap_fetch_att_list_send(mailstream * fd, clist * fetch_att_list)
+mailimap_fetch_att_list_send(mailstream * fd, clist /* struct mailimap_fetch_att * */ * fetch_att_list)
 {
   int r;
   

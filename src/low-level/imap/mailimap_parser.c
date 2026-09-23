@@ -803,7 +803,7 @@ static int mailimap_malformed_fetch_response_skip(mailstream * fd,
 
 static int mailimap_address_list_parse(mailstream * fd, MMAPString * buffer, struct mailimap_parser_context * parser_ctx,
                                        size_t * indx,
-                                       clist ** result,
+                                       clist /* struct mailimap_address * */ ** result,
                                        size_t progr_rate,
                                        progress_function * progr_fun);
 
@@ -973,7 +973,7 @@ static int mailimap_crlf_parse(mailstream * fd, MMAPString * buffer, struct mail
 
 static int
 mailimap_struct_multiple_parse_progress(mailstream * fd, MMAPString * buffer, struct mailimap_parser_context * parser_ctx,
-                                        size_t * indx, clist ** result,
+                                        size_t * indx, clist /* void * callback-owned item */ ** result,
                                         mailimap_struct_parser_progress * parser,
                                         mailimap_struct_destructor * destructor,
                                         size_t progr_rate,
@@ -984,7 +984,7 @@ mailimap_struct_multiple_parse_progress(mailstream * fd, MMAPString * buffer, st
                                         mailimap_msg_att_handler * msg_att_handler,
                                         void * msg_att_context)
 {
-  clist * struct_list;
+  clist /* void * callback-owned item */ * struct_list;
   size_t cur_token;
   void * value;
   int r;
@@ -1049,13 +1049,13 @@ err:
 
 int
 mailimap_struct_multiple_parse(mailstream * fd, MMAPString * buffer, struct mailimap_parser_context * parser_ctx,
-			       size_t * indx, clist ** result,
+				       size_t * indx, clist /* void * callback-owned item */ ** result,
 			       mailimap_struct_parser * parser,
 			       mailimap_struct_destructor * destructor,
 			       size_t progr_rate,
 			       progress_function * progr_fun)
 {
-  clist * struct_list;
+  clist /* void * callback-owned item */ * struct_list;
   size_t cur_token;
   void * value;
   int r;
@@ -1114,7 +1114,7 @@ mailimap_struct_multiple_parse(mailstream * fd, MMAPString * buffer, struct mail
 
 int
 mailimap_struct_list_parse_progress(mailstream * fd, MMAPString * buffer, struct mailimap_parser_context * parser_ctx,
-                                    size_t * indx, clist ** result,
+                                    size_t * indx, clist /* void * callback-owned item */ ** result,
                                     char symbol,
                                     mailimap_struct_parser_progress * parser,
                                     mailimap_struct_destructor * destructor,
@@ -1126,7 +1126,7 @@ mailimap_struct_list_parse_progress(mailstream * fd, MMAPString * buffer, struct
                                     mailimap_msg_att_handler * msg_att_handler,
                                     void * msg_att_context)
 {
-  clist * struct_list;
+  clist /* void * callback-owned item */ * struct_list;
   size_t cur_token;
   void * value;
   size_t final_token;
@@ -1202,14 +1202,14 @@ err:
 
 int
 mailimap_struct_list_parse(mailstream * fd, MMAPString * buffer, struct mailimap_parser_context * parser_ctx,
-			   size_t * indx, clist ** result,
+				   size_t * indx, clist /* void * callback-owned item */ ** result,
 			   char symbol,
 			   mailimap_struct_parser * parser,
 			   mailimap_struct_destructor * destructor,
 			   size_t progr_rate,
 			   progress_function * progr_fun)
 {
-  clist * struct_list;
+  clist /* void * callback-owned item */ * struct_list;
   size_t cur_token;
   void * value;
   size_t final_token;
@@ -1283,7 +1283,7 @@ mailimap_struct_list_parse(mailstream * fd, MMAPString * buffer, struct mailimap
 
 int
 mailimap_struct_spaced_list_parse(mailstream * fd, MMAPString * buffer, struct mailimap_parser_context * parser_ctx,
-				  size_t * indx, clist ** result,
+					  size_t * indx, clist /* void * callback-owned item */ ** result,
 				  mailimap_struct_parser * parser,
 				  mailimap_struct_destructor * destructor,
 				  size_t progr_rate,
@@ -1297,14 +1297,14 @@ mailimap_struct_spaced_list_parse(mailstream * fd, MMAPString * buffer, struct m
 static int
 mailimap_struct_spaced_list_parse_recover(mailstream * fd, MMAPString * buffer,
     struct mailimap_parser_context * parser_ctx,
-    size_t * indx, clist ** result,
+    size_t * indx, clist /* void * callback-owned item */ ** result,
     mailimap_struct_parser * parser,
     mailimap_struct_destructor * destructor,
     mailimap_struct_recover_parser * recover_parser,
     size_t progr_rate,
     progress_function * progr_fun)
 {
-  clist * struct_list;
+  clist /* void * callback-owned item */ * struct_list;
   size_t cur_token;
   void * value;
   int first;
@@ -1403,7 +1403,7 @@ mailimap_struct_spaced_list_parse_recover(mailstream * fd, MMAPString * buffer,
 
 static int
 mailimap_struct_spaced_list_parse_progress(mailstream * fd, MMAPString * buffer, struct mailimap_parser_context * parser_ctx,
-                                           size_t * indx, clist ** result,
+                                           size_t * indx, clist /* void * callback-owned item */ ** result,
                                            mailimap_struct_parser_progress * parser,
                                            mailimap_struct_destructor * destructor,
                                            size_t progr_rate,
@@ -2063,12 +2063,12 @@ static int mailimap_body_parse(mailstream * fd, MMAPString * buffer, struct mail
 static int
 mailimap_body_ext_list_parse(mailstream * fd, MMAPString * buffer, struct mailimap_parser_context * parser_ctx,
 			     size_t * indx,
-			     clist ** result,
+				     clist /* struct mailimap_body_extension * */ ** result,
 			     size_t progr_rate,
 			     progress_function * progr_fun)
 {
   size_t cur_token;
-  clist * list;
+  clist /* struct mailimap_body_extension * */ * list;
   int r;
   int res;
 
@@ -2131,7 +2131,7 @@ mailimap_body_extension_parse(mailstream * fd, MMAPString * buffer, struct maili
   size_t cur_token;
   uint32_t number;
   char * nstring;
-  clist * body_extension_list;
+  clist /* struct mailimap_body_extension * */ * body_extension_list;
   struct mailimap_body_extension * body_extension;
   int type;
   int r;
@@ -2210,7 +2210,7 @@ mailimap_body_extension_parse(mailstream * fd, MMAPString * buffer, struct maili
 static int
 mailimap_body_ext_1part_4_parse(mailstream * fd, MMAPString * buffer, struct mailimap_parser_context * parser_ctx,
 				size_t * indx,
-				clist ** body_ext_list,
+					clist /* struct mailimap_body_extension * */ ** body_ext_list,
 				size_t progr_rate,
 				progress_function * progr_fun)
 {
@@ -2247,7 +2247,7 @@ static int
 mailimap_body_ext_1part_3_parse(mailstream * fd, MMAPString * buffer, struct mailimap_parser_context * parser_ctx,
                                 size_t * indx,
                                 char ** fld_loc,
-                                clist ** body_ext_list,
+                                clist /* struct mailimap_body_extension * */ ** body_ext_list,
                                 size_t progr_rate,
                                 progress_function * progr_fun)
 {
@@ -2287,7 +2287,7 @@ mailimap_body_ext_1part_2_parse(mailstream * fd, MMAPString * buffer, struct mai
 				size_t * indx,
 				struct mailimap_body_fld_lang ** fld_lang,
         char ** fld_loc,
-				clist ** body_ext_list,
+					clist /* struct mailimap_body_extension * */ ** body_ext_list,
 				size_t progr_rate,
 				progress_function * progr_fun)
 {
@@ -2330,7 +2330,7 @@ mailimap_body_ext_1part_1_parse(mailstream * fd, MMAPString * buffer, struct mai
 				struct mailimap_body_fld_dsp ** fld_dsp,
 				struct mailimap_body_fld_lang ** fld_lang,
         char ** fld_loc,
-				clist ** body_ext_list,
+					clist /* struct mailimap_body_extension * */ ** body_ext_list,
 				size_t progr_rate,
 				progress_function * progr_fun)
 {
@@ -2383,7 +2383,7 @@ mailimap_body_ext_1part_parse(mailstream * fd, MMAPString * buffer, struct maili
   struct mailimap_body_fld_dsp * fld_dsp;
   struct mailimap_body_fld_lang * fld_lang;
   char * fld_loc;
-  clist * body_ext_list;
+  clist /* struct mailimap_body_extension * */ * body_ext_list;
   int r;
   int res;
 
@@ -2465,7 +2465,7 @@ mailimap_body_ext_mpart_parse(mailstream * fd, MMAPString * buffer, struct maili
   struct mailimap_body_fld_lang * fld_lang;
   char * fld_loc;
   struct mailimap_body_fld_param * fld_param;
-  clist * body_ext_list;
+  clist /* struct mailimap_body_extension * */ * body_ext_list;
 
   struct mailimap_body_ext_mpart * ext_mpart;
   int r;
@@ -2938,12 +2938,12 @@ static int mailimap_body_fld_id_parse(mailstream * fd, MMAPString * buffer, stru
 
 static int
 mailimap_body_fld_lang_list_parse(mailstream * fd, MMAPString * buffer, struct mailimap_parser_context * parser_ctx,
-				  size_t * indx, clist ** result,
+					  size_t * indx, clist /* char * */ ** result,
 				  size_t progr_rate,
 				  progress_function * progr_fun)
 {
   size_t cur_token;
-  clist * list;
+  clist /* char * */ * list;
   int r;
   int res;
 
@@ -3014,7 +3014,7 @@ mailimap_body_fld_lang_parse(mailstream * fd, MMAPString * buffer, struct mailim
 			     progress_function * progr_fun)
 {
   char * value;
-  clist * list;
+  clist /* char * */ * list;
   struct mailimap_body_fld_lang * fld_lang;
   int type;
   int r;
@@ -3344,7 +3344,7 @@ mailimap_body_fld_param_parse(mailstream * fd,
 			      progress_function * progr_fun)
 {
   size_t cur_token;
-  clist * param_list;
+  clist /* struct mailimap_single_body_fld_param * */ * param_list;
   struct mailimap_body_fld_param * fld_param;
   int r;
   int res;
@@ -3655,7 +3655,7 @@ mailimap_body_type_mpart_parse(mailstream * fd,
 			       progress_function * progr_fun)
 {
   struct mailimap_body_type_mpart * body_type_mpart;
-  clist * body_list;
+  clist /* struct mailimap_body * */ * body_list;
   size_t cur_token;
   size_t final_token;
   char * media_subtype;
@@ -4101,12 +4101,12 @@ mailimap_capability_parse(mailstream * fd, MMAPString * buffer, struct mailimap_
 int mailimap_capability_list_parse(mailstream * fd,
 					  MMAPString * buffer, struct mailimap_parser_context * parser_ctx,
 					  size_t * indx,
-					  clist ** result,
+						  clist /* struct mailimap_capability * */ ** result,
 					  size_t progr_rate,
 					  progress_function * progr_fun)
 {
   size_t cur_token;
-  clist * list;
+  clist /* struct mailimap_capability * */ * list;
   int r;
   
   cur_token = * indx;
@@ -4138,7 +4138,7 @@ mailimap_capability_data_parse(mailstream * fd, MMAPString * buffer, struct mail
 			       progress_function * progr_fun)
 {
   size_t cur_token;
-  clist * cap_list;
+  clist /* struct mailimap_capability * */ * cap_list;
   struct mailimap_capability_data * cap_data;
   int r;
   int res;
@@ -5115,7 +5115,7 @@ static int mailimap_envelope_parse_workaround_qq_mail(mailstream * fd, MMAPStrin
   }
 
   if (from == NULL) {
-    clist * list;
+    clist /* struct mailimap_address * */ * list;
     struct mailimap_address * addr;
 
     addr = mailimap_address_new("", NULL, "", "");
@@ -5145,7 +5145,7 @@ static int mailimap_envelope_parse_workaround_qq_mail(mailstream * fd, MMAPStrin
   }
 
   while (1) {
-    clist * list;
+    clist /* struct mailimap_address * */ * list;
 
     r = mailimap_space_parse(fd, buffer, &cur_token);
     if (r == MAILIMAP_ERROR_PARSE) {
@@ -5248,12 +5248,12 @@ err:
 
 static int mailimap_address_list_parse(mailstream * fd, MMAPString * buffer, struct mailimap_parser_context * parser_ctx,
 				       size_t * indx,
-				       clist ** result,
+				       clist /* struct mailimap_address * */ ** result,
 				       size_t progr_rate,
 				       progress_function * progr_fun)
 {
   size_t cur_token;
-  clist * address_list;
+  clist /* struct mailimap_address * */ * address_list;
   int r;
   int res;
   
@@ -5325,7 +5325,7 @@ mailimap_env_bcc_parse(mailstream * fd, MMAPString * buffer, struct mailimap_par
 		       size_t progr_rate,
 		       progress_function * progr_fun)
 {
-  clist * list;
+  clist /* struct mailimap_address * */ * list;
   size_t cur_token;
   struct mailimap_env_bcc * env_bcc;
   int r;
@@ -5369,7 +5369,7 @@ mailimap_env_cc_parse(mailstream * fd, MMAPString * buffer, struct mailimap_pars
 		      size_t progr_rate,
 		      progress_function * progr_fun)
 {
-  clist * list;
+  clist /* struct mailimap_address * */ * list;
   size_t cur_token;
   struct mailimap_env_cc * env_cc;
   int r;
@@ -5426,7 +5426,7 @@ mailimap_env_from_parse(mailstream * fd, MMAPString * buffer, struct mailimap_pa
 			size_t progr_rate,
 			progress_function * progr_fun)
 {
-  clist * list;
+  clist /* struct mailimap_address * */ * list;
   size_t cur_token;
   struct mailimap_env_from * env_from;
   int r;
@@ -5629,7 +5629,7 @@ mailimap_env_reply_to_parse(mailstream * fd, MMAPString * buffer, struct mailima
 			    size_t progr_rate,
 			    progress_function * progr_fun)
 {
-  clist * list;
+  clist /* struct mailimap_address * */ * list;
   size_t cur_token;
   struct mailimap_env_reply_to * env_reply_to;
   int r;
@@ -5674,7 +5674,7 @@ mailimap_env_sender_parse(mailstream * fd, MMAPString * buffer, struct mailimap_
 			  size_t progr_rate,
 			  progress_function * progr_fun)
 {
-  clist * list;
+  clist /* struct mailimap_address * */ * list;
   size_t cur_token;
   struct mailimap_env_sender * env_sender;
   int r;
@@ -5733,7 +5733,7 @@ static int mailimap_env_to_parse(mailstream * fd, MMAPString * buffer, struct ma
 				 size_t progr_rate,
 				 progress_function * progr_fun)
 {
-  clist * list;
+  clist /* struct mailimap_address * */ * list;
   size_t cur_token;
   struct mailimap_env_to * env_to;
   int r;
@@ -6040,7 +6040,7 @@ static int mailimap_flag_list_parse(mailstream * fd, MMAPString * buffer, struct
 				    progress_function * progr_fun)
 {
   size_t cur_token;
-  clist * list;
+  clist /* struct mailimap_flag * */ * list;
   struct mailimap_flag_list * flag_list;
   int r;
   int res;
@@ -6258,7 +6258,7 @@ mailimap_header_list_parse(mailstream * fd, MMAPString * buffer, struct mailimap
 {
   size_t cur_token;
   struct mailimap_header_list * header_list;
-  clist * list;
+  clist /* char * */ * list;
   int r;
   int res;
 
@@ -6665,7 +6665,7 @@ mailimap_mailbox_gmail_parse(mailstream * fd, MMAPString * buffer, struct mailim
   size_t cur_token;
   char * name;
   int r;
-  clist * astring_list;
+  clist /* char * */ * astring_list;
   size_t parsed_length;
   clistiter * cur;
   
@@ -6832,13 +6832,13 @@ mailimap_mailbox_data_lsub_parse(mailstream * fd, MMAPString * buffer, struct ma
 static int
 mailimap_mailbox_data_search_parse(mailstream * fd, MMAPString * buffer, struct mailimap_parser_context * parser_ctx,
 				   size_t * indx,
-				   clist ** result,
+				   clist /* uint32_t * */ ** result,
 				   size_t progr_rate,
 				   progress_function * progr_fun)
 {
   size_t cur_token;
   size_t final_token;
-  clist * number_list;
+  clist /* uint32_t * */ * number_list;
   int r;
   
   cur_token = * indx;
@@ -6956,7 +6956,7 @@ mailimap_mailbox_data_status_parse(mailstream * fd, MMAPString * buffer, struct 
 {
   size_t cur_token;
   char * mb;
-  clist * status_info_list;
+  clist /* struct mailimap_status_info * */ * status_info_list;
   struct mailimap_mailbox_data_status * data_status;
   int r;
   int res;
@@ -7123,7 +7123,7 @@ mailimap_mailbox_data_parse(mailstream * fd, MMAPString * buffer, struct mailima
   struct mailimap_flag_list * data_flags;
   struct mailimap_mailbox_list * data_list;
   struct mailimap_mailbox_list * data_lsub;
-  clist * data_search; 
+  clist /* uint32_t * */ * data_search;
   struct mailimap_mailbox_data_status * data_status;
   uint32_t data_exists;
   uint32_t data_recent;
@@ -7386,8 +7386,8 @@ mailimap_mbx_list_flags_parse(mailstream * fd, MMAPString * buffer, struct maili
 {
   struct mailimap_mbx_list_flags * mbx_list_flag;
   size_t cur_token;
-  clist * oflags;
-  clist * oflags_2;
+  clist /* struct mailimap_mbx_list_oflag * */ * oflags;
+  clist /* struct mailimap_mbx_list_oflag * */ * oflags_2;
   int sflag;
   int type;
   int r;
@@ -8138,7 +8138,7 @@ mailimap_msg_att_parse_progress(mailstream * fd, MMAPString * buffer, struct mai
                                 void * msg_att_context)
 {
   size_t cur_token;
-  clist * list;
+  clist /* struct mailimap_msg_att_item * */ * list;
   struct mailimap_msg_att * msg_att;
   int r;
   int res;
@@ -8217,7 +8217,7 @@ mailimap_msg_att_dynamic_parse(mailstream * fd, MMAPString * buffer, struct mail
 			       size_t progr_rate,
 			       progress_function * progr_fun)
 {
-  clist * list;
+  clist /* struct mailimap_flag_fetch * */ * list;
   struct mailimap_msg_att_dynamic * msg_att_dyn;
   size_t cur_token;
   int r;
@@ -9498,7 +9498,7 @@ mailimap_response_parse_progress(mailstream * fd, MMAPString * buffer, struct ma
                                  void * msg_att_context)
 {
   size_t cur_token;
-  clist * cont_req_or_resp_data_list;
+  clist /* struct mailimap_cont_req_or_resp_data * */ * cont_req_or_resp_data_list;
   struct mailimap_response * resp;
   struct mailimap_response_done * resp_done;
   int r;
@@ -10315,12 +10315,12 @@ static int
 mailimap_resp_text_code_badcharset_1_parse(mailstream * fd,
 					   MMAPString * buffer, struct mailimap_parser_context * parser_ctx,
 					   size_t * indx,
-					   clist ** result,
+						   clist /* char * */ ** result,
 					   size_t progr_rate,
 					   progress_function * progr_fun)
 {
   size_t cur_token;
-  clist * charset;
+  clist /* char * */ * charset;
   int r;
   int res;
 
@@ -10374,12 +10374,12 @@ mailimap_resp_text_code_badcharset_1_parse(mailstream * fd,
 static int
 mailimap_resp_text_code_badcharset_parse(mailstream * fd, MMAPString * buffer, struct mailimap_parser_context * parser_ctx,
 					 size_t * indx,
-					 clist ** result,
+						 clist /* char * */ ** result,
 					 size_t progr_rate,
 					 progress_function * progr_fun)
 {
   size_t cur_token;
-  clist * charset;
+  clist /* char * */ * charset;
   int r;
 
   cur_token = * indx;
@@ -10411,12 +10411,12 @@ static int
 mailimap_resp_text_code_permanentflags_parse(mailstream * fd,
 					     MMAPString * buffer, struct mailimap_parser_context * parser_ctx,
 					     size_t * indx,
-					     clist ** result,
+						     clist /* struct mailimap_flag_perm * */ ** result,
 					     size_t progr_rate,
 					     progress_function * progr_fun)
 {
   size_t cur_token;
-  clist * flaglist;
+  clist /* struct mailimap_flag_perm * */ * flaglist;
   int r;
   int res;
 
@@ -10680,8 +10680,8 @@ mailimap_resp_text_code_parse(mailstream * fd, MMAPString * buffer, struct maili
 {
   size_t cur_token;
   struct mailimap_resp_text_code * resp_text_code;
-  clist * badcharset;
-  clist * permanentflags;
+  clist /* char * */ * badcharset;
+  clist /* struct mailimap_flag_perm * */ * permanentflags;
   struct mailimap_capability_data * cap_data;
   struct mailimap_extension_data * ext_data;
   int type;
@@ -10955,7 +10955,7 @@ mailimap_section_part_parse(mailstream * fd, MMAPString * buffer, struct mailima
 {
   struct mailimap_section_part * section_part;
   size_t cur_token;
-  clist * section_id;
+  clist /* uint32_t * */ * section_id;
   int r;
   int res;
   
@@ -11686,7 +11686,7 @@ int mailimap_set_parse(mailstream * fd,
 {
   size_t cur_token;
   struct mailimap_set * set;
-  clist * item_list;
+  clist /* struct mailimap_set_item * */ * item_list;
   int r;
   
   cur_token = * indx;

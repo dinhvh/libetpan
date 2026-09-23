@@ -23,8 +23,8 @@ struct mailjmap_method_call {
 };
 
 struct mailjmap_request {
-  clist * capabilities; /* char * */
-  clist * method_calls; /* struct mailjmap_method_call * */
+  clist /* char * */ * capabilities;
+  clist /* struct mailjmap_method_call * */ * method_calls;
 };
 
 static char * dup_string(const char * value)
@@ -35,7 +35,7 @@ static char * dup_string(const char * value)
   return strdup(value);
 }
 
-static void string_list_free(clist * list)
+static void string_list_free(clist /* char * */ * list)
 {
   clistiter * cur;
 
@@ -47,7 +47,7 @@ static void string_list_free(clist * list)
   clist_free(list);
 }
 
-static int string_list_contains(clist * list, const char * value)
+static int string_list_contains(clist /* char * */ * list, const char * value)
 {
   clistiter * cur;
 
@@ -76,7 +76,8 @@ static void method_call_free(struct mailjmap_method_call * call)
   free(call);
 }
 
-static void method_call_list_free(clist * list)
+static void method_call_list_free(
+    clist /* struct mailjmap_method_call * */ * list)
 {
   clistiter * cur;
 

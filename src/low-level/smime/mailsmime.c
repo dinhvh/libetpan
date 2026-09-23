@@ -77,8 +77,8 @@ struct mailsmime_key_entry {
 
 struct mailsmime {
   enum mailsmime_backend backend;
-  clist * certs;
-  clist * keys;
+  clist /* struct mailsmime_cert_entry * */ * certs;
+  clist /* struct mailsmime_key_entry * */ * keys;
   mailsmime_passphrase_callback passphrase_callback;
   void * passphrase_context;
 #ifdef USE_SMIME_OPENSSL
@@ -119,16 +119,16 @@ struct mailsmime_certificate {
 struct mailsmime_result {
   int status;
   char * error;
-  clist * signers;
+  clist /* struct mailsmime_certificate * */ * signers;
   struct mailmime * signed_mime;
 };
 
 struct mailsmime_mime_owner {
   struct mailmime * mime;
-  clist * buffers;
+  clist /* char * */ * buffers;
 };
 
-static clist * mailsmime_mime_owners = NULL;
+static clist /* struct mailsmime_mime_owner * */ * mailsmime_mime_owners = NULL;
 
 static int str_case_equal(const char * a, const char * b)
 {

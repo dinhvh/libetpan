@@ -49,7 +49,7 @@
 struct mailimap_sort_key *
 mailimap_sort_key_new(int sortk_type,
                       int is_reverse,
-                      clist * sortk_multiple) {
+                      clist /* struct mailimap_sort_key * */ * sortk_multiple) {
   struct mailimap_sort_key * key;
   
   key = malloc(sizeof(* key));
@@ -114,7 +114,7 @@ mailimap_sort_key_new_to(int is_reverse) {
 }
 
 struct mailimap_sort_key *
-mailimap_sort_key_new_multiple(clist * keys) {
+mailimap_sort_key_new_multiple(clist /* struct mailimap_sort_key * */ * keys) {
   return mailimap_sort_key_new(MAILIMAP_SORT_KEY_MULTIPLE, false, keys);
 }
 
@@ -122,7 +122,7 @@ mailimap_sort_key_new_multiple(clist * keys) {
 struct mailimap_sort_key *
 mailimap_sort_key_new_multiple_empty(void)
 {
-  clist * list;
+  clist /* struct mailimap_sort_key * */ * list;
   
   list = clist_new();
   if (list == NULL)
@@ -143,5 +143,4 @@ mailimap_sort_key_multiple_add(struct mailimap_sort_key * keys,
   
   return MAILIMAP_NO_ERROR;
 }
-
 

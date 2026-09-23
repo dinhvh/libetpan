@@ -104,13 +104,13 @@ mailimap_quota_quota_resource_parse(mailstream * fd, MMAPString * buffer, struct
 
 static int
 mailimap_quota_quota_list_nonempty_parse(mailstream * fd, MMAPString * buffer, struct mailimap_parser_context * parser_ctx,
-    size_t * indx, clist ** result,
+    size_t * indx, clist /* struct mailimap_quota_quota_resource * */ ** result,
     size_t progr_rate, progress_function * progr_fun)
 {
   size_t cur_token;
   int r;
   int res;
-  clist * quota_resource_list;
+  clist /* struct mailimap_quota_quota_resource * */ * quota_resource_list;
 
   cur_token = * indx;
 
@@ -152,12 +152,12 @@ mailimap_quota_quota_list_nonempty_parse(mailstream * fd, MMAPString * buffer, s
 
 static int
 mailimap_quota_quota_list_empty_parse(mailstream * fd, MMAPString * buffer, struct mailimap_parser_context * parser_ctx,
-    size_t * indx, clist ** result,
+    size_t * indx, clist /* struct mailimap_quota_quota_resource * */ ** result,
     size_t progr_rate, progress_function * progr_fun)
 {
   size_t cur_token;
   int r;
-  clist * quota_resource_list;
+  clist /* struct mailimap_quota_quota_resource * */ * quota_resource_list;
 
   cur_token = * indx;
 
@@ -184,7 +184,7 @@ mailimap_quota_quota_list_empty_parse(mailstream * fd, MMAPString * buffer, stru
 
 static int
 mailimap_quota_quota_list_parse(mailstream * fd, MMAPString * buffer, struct mailimap_parser_context * parser_ctx,
-    size_t * indx, clist ** result,
+    size_t * indx, clist /* struct mailimap_quota_quota_resource * */ ** result,
     size_t progr_rate, progress_function * progr_fun)
 {
   int r;
@@ -206,7 +206,7 @@ mailimap_quota_quota_response_parse(mailstream * fd, MMAPString * buffer, struct
 {
   size_t cur_token;
   char * quotaroot;
-  clist * quota_list;
+  clist /* struct mailimap_quota_quota_resource * */ * quota_list;
   struct mailimap_quota_quota_data * quota_data;
   int r;
   int res;
@@ -275,7 +275,7 @@ mailimap_quota_quotaroot_response_parse(mailstream * fd, MMAPString * buffer, st
   size_t cur_token;
   char * mailbox;
   char * quotaroot;
-  clist * quotaroot_list;
+  clist /* char * */ * quotaroot_list;
   struct mailimap_quota_quotaroot_data * quotaroot_data;
   int r;
   int res;
@@ -425,4 +425,3 @@ int mailimap_quota_parse(int calling_parser, mailstream * fd,
 
   return MAILIMAP_NO_ERROR;
 }
-

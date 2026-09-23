@@ -58,32 +58,40 @@ LIBETPAN_EXPORT
 int mailimap_fetch_changedsince(mailimap * session,
 	struct mailimap_set * set,
 	struct mailimap_fetch_type * fetch_type, uint64_t mod_sequence_value,
-	clist ** result);
+	clist /* uint32_t * */ ** result);
 
 LIBETPAN_EXPORT
 int mailimap_uid_fetch_changedsince(mailimap * session,
 	struct mailimap_set * set,
 	struct mailimap_fetch_type * fetch_type, uint64_t mod_sequence_value,
-	clist ** result);
+	clist /* uint32_t * */ ** result);
 
 LIBETPAN_EXPORT
 struct mailimap_fetch_att * mailimap_fetch_att_new_modseq(void);
 
 LIBETPAN_EXPORT
 int mailimap_search_modseq(mailimap * session, const char * charset,
-	struct mailimap_search_key * key, clist ** result, uint64_t * p_mod_sequence_value);
+	struct mailimap_search_key * key,
+  clist /* uint32_t * */ ** result,
+  uint64_t * p_mod_sequence_value);
 
 LIBETPAN_EXPORT
 int mailimap_uid_search_modseq(mailimap * session, const char * charset,
-	struct mailimap_search_key * key, clist ** result, uint64_t * p_mod_sequence_value);
+	struct mailimap_search_key * key,
+  clist /* uint32_t * */ ** result,
+  uint64_t * p_mod_sequence_value);
 
 LIBETPAN_EXPORT
 int mailimap_search_literalplus_modseq(mailimap * session, const char * charset,
-                                       struct mailimap_search_key * key, clist ** result, uint64_t * p_mod_sequence_value);
+                                       struct mailimap_search_key * key,
+                                       clist /* uint32_t * */ ** result,
+                                       uint64_t * p_mod_sequence_value);
   
 LIBETPAN_EXPORT
 int mailimap_uid_search_literalplus_modseq(mailimap * session, const char * charset,
-                                           struct mailimap_search_key * key, clist ** result, uint64_t * p_mod_sequence_value);
+                                           struct mailimap_search_key * key,
+                                           clist /* uint32_t * */ ** result,
+                                           uint64_t * p_mod_sequence_value);
 
 LIBETPAN_EXPORT
 int mailimap_select_condstore(mailimap * session, const char * mb, uint64_t * p_mod_sequence_value);

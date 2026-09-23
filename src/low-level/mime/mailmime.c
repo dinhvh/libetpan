@@ -205,7 +205,7 @@ int mailmime_content_parse(const char * message, size_t length,
   size_t cur_token;
   struct mailmime_type * type;
   char * subtype;
-  clist * parameters_list;
+  clist /* struct mailmime_parameter * */ * parameters_list;
   struct mailmime_content * content;
   int r;
   int res;
@@ -877,7 +877,7 @@ mailmime_unparsed_fields_parse(struct mailimf_unparsed_fields *
 {
   clistiter * cur;
   struct mailmime_fields * mime_fields;
-  clist * list;
+  clist /* struct mailmime_field * */ * list;
   int r;
   int res;
 
@@ -940,7 +940,7 @@ mailmime_fields_parse(struct mailimf_fields *
 {
   clistiter * cur;
   struct mailmime_fields * mime_fields;
-  clist * list;
+  clist /* struct mailmime_field * */ * list;
   int r;
   int res;
 
@@ -1434,7 +1434,7 @@ int mailmime_language_parse(const char * message, size_t length,
   size_t cur_token;
   int r;
   int res;
-  clist * list;
+  clist /* char * */ * list;
   struct mailmime_language * language;
 
   cur_token = * indx;

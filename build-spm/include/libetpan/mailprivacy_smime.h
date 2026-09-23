@@ -90,7 +90,8 @@ void mailprivacy_smime_set_private_keys_dir(struct mailprivacy * privacy,
 
 
 LIBETPAN_EXPORT
-clist * mailprivacy_smime_encryption_id_list(struct mailprivacy * privacy,
+clist /* char * */ *
+mailprivacy_smime_encryption_id_list(struct mailprivacy * privacy,
     mailmessage * msg);
 
 LIBETPAN_EXPORT

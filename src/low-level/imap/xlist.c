@@ -89,14 +89,14 @@ static int mailimap_xlist_send(mailstream * fd,
 
 LIBETPAN_EXPORT
 int mailimap_xlist(mailimap * session, const char * mb,
-                   const char * list_mb, clist ** result)
+                   const char * list_mb, clist /* struct mailimap_mailbox_list * */ ** result)
 {
   struct mailimap_response * response;
   int r;
   int error_code;
   clistiter * cur;
   int res;
-  clist * result_list;
+  clist /* struct mailimap_mailbox_list * */ * result_list;
   
   if ((session->imap_state != MAILIMAP_STATE_AUTHENTICATED) &&
       (session->imap_state != MAILIMAP_STATE_SELECTED))

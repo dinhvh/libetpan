@@ -37,7 +37,7 @@
 LIBETPAN_EXPORT
 struct mailimap_namespace_response_extension *
 mailimap_namespace_response_extension_new(char * name,
-                                          clist * values)
+                                          clist /* char * */ * values)
 {
   struct mailimap_namespace_response_extension * ext;
   
@@ -69,7 +69,7 @@ void mailimap_namespace_response_extension_free(struct mailimap_namespace_respon
 
 LIBETPAN_EXPORT
 struct mailimap_namespace_info * mailimap_namespace_info_new(char * prefix, char delimiter,
-                                                             clist * extensions)
+                                                             clist /* struct mailimap_namespace_response_extension * */ * extensions)
 {
   struct mailimap_namespace_info * info;
   
@@ -103,7 +103,8 @@ void mailimap_namespace_info_free(struct mailimap_namespace_info * info)
 }
 
 LIBETPAN_EXPORT
-struct mailimap_namespace_item * mailimap_namespace_item_new(clist * data_list)
+struct mailimap_namespace_item *
+mailimap_namespace_item_new(clist /* struct mailimap_namespace_info * */ * data_list)
 {
   struct mailimap_namespace_item * item;
   

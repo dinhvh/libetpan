@@ -338,7 +338,7 @@ static void check_for_uid_cache(mailsession * session)
 #if 0
   struct imap_session_state_data * imap_data;
 #endif
-  clist * list;
+  clist /* uint32_t * */ * list;
   clistiter * cur;
   struct imap_cached_session_state_data * data;
   unsigned int i;
@@ -870,8 +870,8 @@ static int boostrap_cache(mailsession * session)
   int r;
   int res;
   chashiter * iter;
-  chash * keys;
-  chash * keys_uid;
+  chash /* char * cache key -> empty */ * keys;
+  chash /* char * uid cache key -> empty */ * keys_uid;
   
   data = get_cached_data(session);
   
@@ -1001,7 +1001,7 @@ static int imapdriver_cached_get_messages_list(mailsession * session,
   unsigned i;
   int r;
   int res;
-  carray * tab;
+  carray /* mailmessage * */ * tab;
 
   data = get_cached_data(session);
   imap = get_imap_session(session);
@@ -1129,9 +1129,9 @@ static int get_flags_list(mailsession * session,
   struct mailimap_fetch_att * fetch_att;
   struct mailimap_fetch_type * fetch_type;
   int res;
-  clist * fetch_result;
+  clist /* struct mailimap_msg_att * */ * fetch_result;
   int r;
-  clist * msg_list;
+  clist /* uint32_t * */ * msg_list;
 #if 0
   struct imap_session_state_data * data;
 #endif

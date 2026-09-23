@@ -240,7 +240,7 @@ int mailimap_select_qresync(mailimap * session, const char * mb,
   struct mailimap_set * known_uids,
   struct mailimap_set * seq_match_data_sequences,
   struct mailimap_set * seq_match_data_uids,
-  clist ** fetch_result, struct mailimap_qresync_vanished ** p_vanished,
+  clist /* struct mailimap_msg_att * */ ** fetch_result, struct mailimap_qresync_vanished ** p_vanished,
   uint64_t * p_mod_sequence_value)
 {
   struct mailimap_response * response;
@@ -316,7 +316,7 @@ int mailimap_select_qresync(mailimap * session, const char * mb,
 int mailimap_fetch_qresync(mailimap * session,
                            struct mailimap_set * set,
                            struct mailimap_fetch_type * fetch_type, uint64_t mod_sequence_value,
-                           clist ** fetch_result, struct mailimap_qresync_vanished ** p_vanished)
+                           clist /* struct mailimap_msg_att * */ ** fetch_result, struct mailimap_qresync_vanished ** p_vanished)
 {
   return mailimap_fetch_qresync_vanished(session, set, fetch_type, mod_sequence_value, 1,
                                          fetch_result, p_vanished);
@@ -368,7 +368,7 @@ static int send_fetch_param(mailstream * fd, uint64_t mod_sequence_value, int va
 int mailimap_fetch_qresync_vanished(mailimap * session,
   struct mailimap_set * set,
   struct mailimap_fetch_type * fetch_type, uint64_t mod_sequence_value, int vanished,
-  clist ** fetch_result, struct mailimap_qresync_vanished ** p_vanished)
+  clist /* struct mailimap_msg_att * */ ** fetch_result, struct mailimap_qresync_vanished ** p_vanished)
 {
   struct mailimap_response * response;
   int r;
@@ -436,7 +436,7 @@ int mailimap_fetch_qresync_vanished(mailimap * session,
 int mailimap_uid_fetch_qresync(mailimap * session,
                                struct mailimap_set * set,
                                struct mailimap_fetch_type * fetch_type, uint64_t mod_sequence_value,
-                               clist ** fetch_result, struct mailimap_qresync_vanished ** p_vanished)
+                               clist /* struct mailimap_msg_att * */ ** fetch_result, struct mailimap_qresync_vanished ** p_vanished)
 {
   return mailimap_uid_fetch_qresync_vanished(session, set, fetch_type, mod_sequence_value, 1,
                                              fetch_result, p_vanished);
@@ -445,7 +445,7 @@ int mailimap_uid_fetch_qresync(mailimap * session,
 int mailimap_uid_fetch_qresync_vanished(mailimap * session,
   struct mailimap_set * set,
   struct mailimap_fetch_type * fetch_type, uint64_t mod_sequence_value, int vanished,
-  clist ** fetch_result, struct mailimap_qresync_vanished ** p_vanished)
+  clist /* struct mailimap_msg_att * */ ** fetch_result, struct mailimap_qresync_vanished ** p_vanished)
 {
   struct mailimap_response * response;
   int r;

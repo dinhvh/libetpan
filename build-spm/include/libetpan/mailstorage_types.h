@@ -121,7 +121,7 @@ struct mailstorage {
   void * sto_data;
   mailsession * sto_session;
   mailstorage_driver * sto_driver;
-  clist * sto_shared_folders; /* list of (struct mailfolder *) */
+  clist /* struct mailfolder * */ * sto_shared_folders;
   
   void * sto_user_data;
 };
@@ -169,7 +169,7 @@ struct mailfolder {
 
   struct mailfolder * fld_parent;
   unsigned int fld_sibling_index;
-  carray * fld_children; /* array of (struct mailfolder *) */
+  carray /* struct mailfolder * */ * fld_children;
 
   void * fld_user_data;
 };

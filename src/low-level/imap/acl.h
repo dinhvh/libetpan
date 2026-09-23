@@ -111,7 +111,7 @@ int mailimap_acl_deleteacl(mailimap * session,
 LIBETPAN_EXPORT
 int mailimap_acl_getacl(mailimap * session,
     const char * mailbox,
-    clist ** result);
+    clist /* struct mailimap_acl_acl_data * */ ** result);
 
 /*
   mailimap_acl_listrights()

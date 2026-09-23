@@ -51,7 +51,8 @@ extern struct mailimap_extension_api mailimap_extension_xlist;
 
 LIBETPAN_EXPORT
 int mailimap_xlist(mailimap * session, const char * mb,
-                   const char * list_mb, clist ** result);
+                   const char * list_mb,
+                   clist /* struct mailimap_mailbox_list * */ ** result);
 
 LIBETPAN_EXPORT
 int mailimap_has_xlist(mailimap * session);

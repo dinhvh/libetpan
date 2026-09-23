@@ -337,7 +337,7 @@ int maildriver_generic_search_messages(mailsession * session, char * charset,
     struct mail_search_result ** result)
 {
   int header;
-  clist * list;
+  clist /* uint32_t * */ * list;
   struct mail_search_result * search_result;
   int r;
   struct mailmessage_list * env_list;
@@ -464,9 +464,9 @@ int maildriver_generic_search_messages(mailsession * session, char * charset,
 
 int
 maildriver_env_list_to_msg_list(struct mailmessage_list * env_list,
-    clist ** result)
+    clist /* uint32_t * */ ** result)
 {
-  clist * msg_list;
+  clist /* uint32_t * */ * msg_list;
   int r;
   int res;
   unsigned int i;
@@ -517,9 +517,9 @@ maildriver_env_list_to_msg_list(struct mailmessage_list * env_list,
 
 int
 maildriver_env_list_to_msg_list_no_flags(struct mailmessage_list * env_list,
-    clist ** result)
+    clist /* uint32_t * */ ** result)
 {
-  clist * msg_list;
+  clist /* uint32_t * */ * msg_list;
   int r;
   int res;
   unsigned int i;
@@ -637,7 +637,7 @@ int maildriver_cache_clean_up(struct mail_cache_db * cache_db_env,
     struct mail_cache_db * cache_db_flags,
     struct mailmessage_list * env_list)
 {
-  chash * hash_exist;
+  chash /* char * -> empty */ * hash_exist;
   int res;
   int r;
   char keyname[PATH_MAX];
@@ -717,7 +717,7 @@ int maildriver_message_cache_clean_up(char * cache_dir,
     struct mailmessage_list * env_list,
     void (* get_uid_from_filename)(char *))
 {
-  chash * hash_exist;
+  chash /* char * -> empty */ * hash_exist;
   DIR * d;
   char cached_filename[PATH_MAX];
   struct dirent * ent;

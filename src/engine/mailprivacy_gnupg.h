@@ -46,7 +46,8 @@ LIBETPAN_EXPORT
 void mailprivacy_gnupg_done(struct mailprivacy * privacy);
 
 LIBETPAN_EXPORT
-clist * mailprivacy_gnupg_encryption_id_list(struct mailprivacy * privacy,
+clist /* char * */ *
+mailprivacy_gnupg_encryption_id_list(struct mailprivacy * privacy,
     mailmessage * msg);
 
 LIBETPAN_EXPORT

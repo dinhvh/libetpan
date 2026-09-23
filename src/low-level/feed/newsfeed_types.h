@@ -70,7 +70,7 @@ struct newsfeed {
   char * feed_author;
   char * feed_generator;
   time_t feed_date;
-  carray * feed_item_list;
+  carray /* struct newsfeed_item * */ * feed_item_list;
   int feed_response_code;
   
   unsigned int feed_timeout;

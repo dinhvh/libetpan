@@ -502,7 +502,7 @@ static void command_string_list_free(clist /* char * */ * list)
 static int command_string_list_clone(clist /* char * */ * source,
     clist /* char * */ ** result)
 {
-  clist * clone;
+  clist /* char * */ * clone;
   clistiter * cur;
 
   if ((source == NULL) || (result == NULL))
@@ -537,7 +537,7 @@ static int command_string_list_clone(clist /* char * */ * source,
 static int session_cache_advertised_commands(mailactivesync * session,
     struct mailactivesync_options * options)
 {
-  clist * commands;
+  clist /* char * */ * commands;
   int r;
 
   if ((session == NULL) || (options == NULL) || (options->commands == NULL))
@@ -2175,7 +2175,7 @@ static int parse_attachments(struct mailactivesync_wbxml_node * node,
     clist /* struct mailactivesync_attachment * */ ** result)
 {
   struct mailactivesync_wbxml_node * attachments_node;
-  clist * attachments;
+  clist /* struct mailactivesync_attachment * */ * attachments;
   clistiter * cur;
 
   if ((node == NULL) || (result == NULL))
@@ -2310,7 +2310,7 @@ static int parse_body_part(struct mailactivesync_wbxml_node * node,
 static int parse_body_parts(struct mailactivesync_wbxml_node * parent,
     clist /* struct mailactivesync_body_part * */ ** result)
 {
-  clist * body_parts;
+  clist /* struct mailactivesync_body_part * */ * body_parts;
   clistiter * cur;
 
   if ((parent == NULL) || (result == NULL))
@@ -3115,7 +3115,7 @@ static int build_sync_request(mailactivesync * session,
     struct mailactivesync_sync_request * request,
     struct mailactivesync_wbxml_node ** result)
 {
-  clist * requests;
+  clist /* struct mailactivesync_sync_request * */ * requests;
   int r;
 
   if ((request == NULL) || (result == NULL))
@@ -4247,7 +4247,7 @@ int mailactivesync_command_get_item_estimate(mailactivesync * session,
     struct mailactivesync_get_item_estimate_result ** result)
 {
   struct mailactivesync_get_item_estimate_collection_request request;
-  clist * requests;
+  clist /* struct mailactivesync_get_item_estimate_collection_request * */ * requests;
   int r;
 
   if ((session == NULL) || (collection_id == NULL) || (sync_key == NULL) ||
@@ -5683,7 +5683,7 @@ int mailactivesync_command_item_operations_fetch(mailactivesync * session,
   struct mailactivesync_item_operations_fetch_request request_item;
   struct mailactivesync_item_operations_fetch_result * multi_result;
   struct mailactivesync_item * item;
-  clist * requests;
+  clist /* struct mailactivesync_item_operations_fetch_request * */ * requests;
   clistiter * first;
   int r;
 
@@ -5743,7 +5743,7 @@ int mailactivesync_command_item_operations_fetch_body_part(
   struct mailactivesync_item_operations_fetch_request request_item;
   struct mailactivesync_item_operations_fetch_result * multi_result;
   struct mailactivesync_item * item;
-  clist * requests;
+  clist /* struct mailactivesync_item_operations_fetch_request * */ * requests;
   clistiter * first;
   int r;
 

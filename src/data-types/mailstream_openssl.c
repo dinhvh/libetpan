@@ -286,7 +286,8 @@ static void mailstream_low_ssl_free(mailstream_low * s);
 static int mailstream_low_ssl_get_fd(mailstream_low * s);
 static void mailstream_low_ssl_cancel(mailstream_low * s);
 static struct mailstream_cancel * mailstream_low_ssl_get_cancel(mailstream_low * s);
-static carray * mailstream_openssl_low_ssl_get_certificate_chain(mailstream_low * s);
+static carray /* MMAPString * */ *
+mailstream_openssl_low_ssl_get_certificate_chain(mailstream_low * s);
 
 static void mailstream_ssl_server_name_callback(struct mailstream_ssl_context * ssl_context, void * data)
 {
@@ -1110,7 +1111,8 @@ static struct mailstream_cancel * mailstream_low_ssl_get_cancel(mailstream_low *
   return data->cancel;
 }
 
-static void mailstream_low_ssl_certificate_chain_free(carray * result)
+static void mailstream_low_ssl_certificate_chain_free(
+    carray /* MMAPString * */ * result)
 {
   unsigned int i;
 
@@ -1122,10 +1124,11 @@ static void mailstream_low_ssl_certificate_chain_free(carray * result)
   carray_free(result);
 }
 
-carray * mailstream_openssl_low_ssl_get_certificate_chain(mailstream_low * s)
+carray /* MMAPString * */ *
+mailstream_openssl_low_ssl_get_certificate_chain(mailstream_low * s)
 {
   struct mailstream_ssl_data * ssl_data;
-  carray * result;
+  carray /* MMAPString * */ * result;
   int skpos;
   STACK_OF(X509) * skx;
   

@@ -222,10 +222,12 @@ imap_body_type_text_to_content_type(char * subtype,
 				    struct mailmime_content ** result);
 
 
-int imap_list_to_list(clist * imap_list, struct mail_list ** result)
+int imap_list_to_list(
+    clist /* struct mailimap_mailbox_list * */ * imap_list,
+    struct mail_list ** result)
 {
   clistiter * cur;
-  clist * list;
+  clist /* char * */ * list;
   struct mail_list * resp;
   int r;
   int res;
@@ -279,7 +281,7 @@ imap_section_to_imap_section(struct mailmime_section * section, int type,
 {
   struct mailimap_section_part * section_part;
   struct mailimap_section * imap_section;
-  clist * list;
+  clist /* uint32_t * */ * list;
   clistiter * cur;
   int r;
   int res;
@@ -494,7 +496,7 @@ imap_disposition_to_mime_disposition(struct mailimap_body_fld_dsp * imap_dsp,
   int r;
   struct mailmime_disposition_type * dsp_type;
   struct mailmime_disposition * dsp;
-  clist * parameters;
+  clist /* struct mailmime_disposition_parm * */ * parameters;
   int res;
 
   cur_token = 0;
@@ -683,7 +685,7 @@ static int
 imap_language_to_mime_language(struct mailimap_body_fld_lang * imap_lang,
 			       struct mailmime_language ** result)
 {
-  clist * list;
+  clist /* char * */ * list;
   clistiter * cur;
   int res;
   char * single;
@@ -762,7 +764,7 @@ imap_body_fields_to_mime_fields(struct mailimap_body_fields * body_fields,
 {
   struct mailmime_field * mime_field;
   struct mailmime_fields * mime_fields;
-  clist * list;
+  clist /* struct mailmime_field * */ * list;
   char * id;
   struct mailmime_mechanism * encoding;
   char * description;
@@ -1124,7 +1126,7 @@ imap_body_parameter_to_content(struct mailimap_body_fld_param *
 			       struct mailmime_type * mime_type,
 			       struct mailmime_content ** result)
 {
-  clist * parameters;
+  clist /* struct mailmime_parameter * */ * parameters;
   char * new_subtype;
   struct mailmime_content * content;
   int r;
@@ -1404,7 +1406,7 @@ imap_body_type_mpart_to_body(struct mailimap_body_type_mpart *
   struct mailmime_content * content_type;
   struct mailmime * body;
   clistiter * cur;
-  clist * list;
+  clist /* struct mailmime * */ * list;
   int r;
   int res;
   uint32_t mime_size;
@@ -1644,11 +1646,12 @@ int imap_address_to_address(struct mailimap_address * imap_addr,
 }
 
 int
-imap_mailbox_list_to_mailbox_list(clist * imap_mailbox_list,
+imap_mailbox_list_to_mailbox_list(
+    clist /* struct mailimap_address * */ * imap_mailbox_list,
 				  struct mailimf_mailbox_list ** result)
 {
   clistiter * cur;
-  clist * list;
+  clist /* struct mailimf_mailbox * */ * list;
   struct mailimf_mailbox_list * mb_list;
   int r;
 
@@ -1703,11 +1706,12 @@ imap_mailbox_list_to_mailbox_list(clist * imap_mailbox_list,
   can continue
 */
 
-static int imap_mailbox_list_to_group(clist * imap_mb_list, clistiter ** iter,
+static int imap_mailbox_list_to_group(
+                                      clist /* struct mailimap_address * */ * imap_mb_list, clistiter ** iter,
 				      struct mailimf_group ** result)
 {
   clistiter * imap_mailbox_listiter;
-  clist * list;
+  clist /* struct mailimf_mailbox * */ * list;
   struct mailimf_group * group;
   struct mailimap_address * imap_addr;
   char * group_name;
@@ -1788,11 +1792,12 @@ static int imap_mailbox_list_to_group(clist * imap_mb_list, clistiter ** iter,
 }
 
 int
-imap_mailbox_list_to_address_list(clist * imap_mailbox_list,
+imap_mailbox_list_to_address_list(
+    clist /* struct mailimap_address * */ * imap_mailbox_list,
 				  struct mailimf_address_list ** result)
 {
   clistiter * cur;
-  clist * list;
+  clist /* struct mailimf_address * */ * list;
   struct mailimf_address_list * addr_list;
   int r;
   int res;
@@ -1871,7 +1876,7 @@ int imap_add_envelope_fetch_att(struct mailimap_fetch_type * fetch_type)
   int res;
   int r;
   char * header;
-  clist * hdrlist;
+  clist /* char * */ * hdrlist;
   struct mailimap_header_list * imap_hdrlist;
   struct mailimap_section * section;
 
@@ -1955,7 +1960,7 @@ int imap_env_to_fields(struct mailimap_envelope * env,
 		       char * ref_str, size_t ref_size,
 		       struct mailimf_fields ** result)
 {
-  clist * list;
+  clist /* struct mailimf_field * */ * list;
   struct mailimf_field * field;
   int r;
   struct mailimf_fields * fields;
@@ -2281,7 +2286,7 @@ int imap_env_to_fields(struct mailimap_envelope * env,
   if (env->env_in_reply_to != NULL) {
     struct mailimf_in_reply_to * in_reply_to;
     size_t cur_token;
-    clist * msg_id_list;
+    clist /* char * */ * msg_id_list;
       
     cur_token = 0;
     r = mailimf_msg_id_list_parse(env->env_in_reply_to,
@@ -2508,13 +2513,14 @@ int imap_get_msg_att_info(struct mailimap_msg_att * msg_att,
 }
 
 int
-imap_fetch_result_to_envelop_list(clist * fetch_result,
+imap_fetch_result_to_envelop_list(
+    clist /* struct mailimap_msg_att * */ * fetch_result,
 				  struct mailmessage_list * env_list)
 {
   clistiter * cur;
   int r;
   unsigned int i;
-  chash * msg_hash;
+  chash /* uint32_t * uid -> mailmessage * */ * msg_hash;
   int res;
   
   msg_hash = chash_new(CHASH_DEFAULTSIZE, CHASH_COPYKEY);
@@ -2639,7 +2645,7 @@ int mail_search_to_imap_search(struct mail_search_key * key,
   struct mailimap_search_key * or1;
   struct mailimap_search_key * or2;
   size_t smaller;
-  clist * multiple;
+  clist /* struct mailimap_search_key * */ * multiple;
   int type;
   clistiter * cur;
   int r;
@@ -2944,7 +2950,7 @@ int mail_search_to_imap_search(struct mail_search_key * key,
 #endif
 
 
-int imap_msg_list_to_imap_set(clist * msg_list,
+int imap_msg_list_to_imap_set(clist /* mailmessage * */ * msg_list,
     struct mailimap_set ** result)
 {
   struct mailimap_set * imap_set;
@@ -3036,14 +3042,14 @@ int imap_msg_list_to_imap_set(clist * msg_list,
 
 static int
 imap_uid_list_to_env_list(mailsession * session, mailmessage_driver * driver,
-    clist * fetch_result,
+    clist /* struct mailimap_msg_att * */ * fetch_result,
     struct mailmessage_list ** result)
 {
   clistiter * cur;
   struct mailmessage_list * env_list;
   int r;
   int res;
-  carray * tab;
+  carray /* mailmessage * */ * tab;
   unsigned int i;
   mailmessage * msg;
 
@@ -3141,7 +3147,7 @@ int imap_flags_to_flags(struct mailimap_msg_att_dynamic * att_dyn,
     struct mail_flags ** result)
 {
   struct mail_flags * flags;
-  clist * flag_list;
+  clist /* struct mailimap_flag * */ * flag_list;
   clistiter * cur;
 
   flags = mail_flags_new_empty();
@@ -3401,7 +3407,8 @@ static int flags_to_imap_flags(struct mail_flags * flags,
 
 
 static int
-imap_fetch_result_to_flags(clist * fetch_result, uint32_t indx,
+imap_fetch_result_to_flags(
+    clist /* struct mailimap_msg_att * */ * fetch_result, uint32_t indx,
 			   struct mail_flags ** result)
 {
   clistiter * cur;
@@ -3467,7 +3474,7 @@ int imap_fetch_flags(mailimap * imap,
   struct mailimap_set * set;
   int r;
   int res;
-  clist * fetch_result;
+  clist /* struct mailimap_msg_att * */ * fetch_result;
   struct mail_flags * flags;
 
   fetch_type = mailimap_fetch_type_new_fetch_att_list_empty();
@@ -3591,7 +3598,7 @@ int imap_get_messages_list(mailimap * imap,
   struct mailimap_fetch_att * fetch_att;
   struct mailimap_fetch_type * fetch_type;
   struct mailimap_set * set;
-  clist * fetch_result;
+  clist /* struct mailimap_msg_att * */ * fetch_result;
   int res;
 
   set = mailimap_set_new_interval(first_index, 0);

@@ -47,7 +47,7 @@ typedef int (* mailhttp_body_sink)(const void * data, size_t length,
 struct mailhttp_request {
   char * method;
   char * url;
-  clist * headers; /* struct mailhttp_header * */
+  clist /* struct mailhttp_header * */ * headers;
   unsigned char * body;
   size_t body_len;
   time_t timeout;
@@ -59,7 +59,7 @@ struct mailhttp_request {
 
 struct mailhttp_response {
   int status_code;
-  clist * headers; /* struct mailhttp_header * */
+  clist /* struct mailhttp_header * */ * headers;
   unsigned char * body;
   size_t body_len;
   char * final_url;

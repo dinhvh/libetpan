@@ -546,7 +546,7 @@ static int append_message_flags(mailsession * session,
 static int uid_clean_up(struct mail_cache_db * uid_db,
     struct mailmessage_list * env_list)
 {
-  chash * hash_exist;
+  chash /* char * uid -> empty */ * hash_exist;
   int res;
   int r;
   unsigned int i;

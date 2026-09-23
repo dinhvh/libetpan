@@ -270,8 +270,8 @@ int mailimf_fields_add_data(struct mailimf_fields * fields,
 			    struct mailimf_address_list * cc,
 			    struct mailimf_address_list * bcc,
 			    char * msg_id,
-			    clist * in_reply_to,
-			    clist * references,
+			    clist /* char * */ * in_reply_to,
+			    clist /* char * */ * references,
 			    char * subject);
 
 /*
@@ -302,8 +302,8 @@ mailimf_fields_new_with_data_all(struct mailimf_date_time * date,
 				 struct mailimf_address_list * cc,
 				 struct mailimf_address_list * bcc,
 				 char * message_id,
-				 clist * in_reply_to,
-				 clist * references,
+				 clist /* char * */ * in_reply_to,
+				 clist /* char * */ * references,
 				 char * subject);
 
 /*
@@ -332,8 +332,8 @@ mailimf_fields_new_with_data(struct mailimf_mailbox_list * from,
 			     struct mailimf_address_list * to,
 			     struct mailimf_address_list * cc,
 			     struct mailimf_address_list * bcc,
-			     clist * in_reply_to,
-			     clist * references,
+			     clist /* char * */ * in_reply_to,
+			     clist /* char * */ * references,
 			     char * subject);
 
 /*

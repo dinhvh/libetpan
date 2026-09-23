@@ -25,7 +25,7 @@ static void free_string_item(void * value, void * data)
   free(value);
 }
 
-static void string_list_free(clist * list)
+static void string_list_free(clist /* char * */ * list)
 {
   if (list == NULL)
     return;
@@ -73,7 +73,8 @@ static void free_capability_item(void * value, void * data)
   mailjmap_session_capability_free(value);
 }
 
-static void capability_list_free(clist * list)
+static void capability_list_free(
+    clist /* struct mailjmap_session_capability * */ * list)
 {
   if (list == NULL)
     return;

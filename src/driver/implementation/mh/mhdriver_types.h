@@ -54,7 +54,7 @@ struct mh_session_state_data {
 
   struct mailmh_folder * mh_cur_folder;
 
-  clist * mh_subscribed_list;
+  clist /* char * */ * mh_subscribed_list;
 };
 
 enum {

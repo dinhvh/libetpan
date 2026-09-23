@@ -47,10 +47,10 @@
 
 #include "clist.h"
 
-clist * clist_new(void) {
-  clist * lst;
+clist /* void * */ * clist_new(void) {
+  clist /* void * */ * lst;
   
-  lst = (clist *) malloc(sizeof(clist));
+  lst = (clist /* void * */ *) malloc(sizeof(clist));
   if (!lst) return NULL;
   
   lst->first = lst->last = NULL;
@@ -59,7 +59,7 @@ clist * clist_new(void) {
   return lst;
 }
 
-void clist_free(clist * lst) {
+void clist_free(clist /* void * */ * lst) {
   clistcell * l1, * l2;
 
   l1 = lst->first;
@@ -73,15 +73,15 @@ void clist_free(clist * lst) {
 }
 
 #ifdef NO_MACROS
-int clist_isempty(clist * lst) {
+int clist_isempty(clist /* void * */ * lst) {
   return ((lst->first==lst->last) && (lst->last==NULL));
 }
 
-clistiter * clist_begin(clist * lst) {
+clistiter * clist_begin(clist /* void * */ * lst) {
   return lst->first;
 }
 
-clistiter * clist_end(clist * lst) {
+clistiter * clist_end(clist /* void * */ * lst) {
   return lst->last;
 }
 
@@ -106,20 +106,20 @@ void * clist_content(clistiter * iter) {
     return NULL;
 }
 
-int clist_count(clist * lst) {
+int clist_count(clist /* void * */ * lst) {
   return lst->count;
 }
 
-int clist_prepend(clist * lst, void * data) {
+int clist_prepend(clist /* void * */ * lst, void * data) {
   return clist_insert_before(lst, lst->first, data);
 }
 
-int clist_append(clist * lst, void * data) {
+int clist_append(clist /* void * */ * lst, void * data) {
   return clist_insert_after(lst, lst->last, data);
 }
 #endif
 
-int clist_insert_before(clist * lst, clistiter * iter, void * data) {
+int clist_insert_before(clist /* void * */ * lst, clistiter * iter, void * data) {
   clistcell * c;
 
   c = (clistcell *) malloc(sizeof(clistcell));
@@ -153,7 +153,7 @@ int clist_insert_before(clist * lst, clistiter * iter, void * data) {
   return 0;
 }
 
-int clist_insert_after(clist * lst, clistiter * iter, void * data) {
+int clist_insert_after(clist /* void * */ * lst, clistiter * iter, void * data) {
   clistcell * c;
 
   c = (clistcell *) malloc(sizeof(clistcell));
@@ -187,7 +187,7 @@ int clist_insert_after(clist * lst, clistiter * iter, void * data) {
   return 0;
 }
 
-clistiter * clist_delete(clist * lst, clistiter * iter) {
+clistiter * clist_delete(clist /* void * */ * lst, clistiter * iter) {
   clistiter * ret;
   
   if (!iter) return NULL;
@@ -213,7 +213,7 @@ clistiter * clist_delete(clist * lst, clistiter * iter) {
 
 
 
-void clist_foreach(clist * lst, clist_func func, void * data)
+void clist_foreach(clist /* void * */ * lst, clist_func func, void * data)
 {
   clistiter * cur;
 
@@ -221,7 +221,7 @@ void clist_foreach(clist * lst, clist_func func, void * data)
     func(cur->data, data);
 }
 
-void clist_concat(clist * dest, clist * src)
+void clist_concat(clist /* void * */ * dest, clist /* void * */ * src)
 {
   if (src->first == NULL) {
     /* do nothing */
@@ -240,7 +240,7 @@ void clist_concat(clist * dest, clist * src)
   src->last = src->first = NULL;
 }
 
-static inline clistiter * internal_clist_nth(clist * lst, int indx)
+static inline clistiter * internal_clist_nth(clist /* void * */ * lst, int indx)
 {
   clistiter * cur;
 
@@ -256,7 +256,7 @@ static inline clistiter * internal_clist_nth(clist * lst, int indx)
   return cur;
 }
 
-void * clist_nth_data(clist * lst, int indx)
+void * clist_nth_data(clist /* void * */ * lst, int indx)
 {
   clistiter * cur;
 
@@ -267,7 +267,7 @@ void * clist_nth_data(clist * lst, int indx)
   return cur->data;
 }
 
-clistiter * clist_nth(clist * lst, int indx)
+clistiter * clist_nth(clist /* void * */ * lst, int indx)
 {
   return internal_clist_nth(lst, indx);
 }

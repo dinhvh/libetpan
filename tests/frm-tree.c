@@ -15,7 +15,7 @@ display_sub_tree(MMAPString * prefix,
     struct mailmessage_tree * msg_tree,
     int level, int has_next, unsigned int * pcount)
 {
-  carray * list;
+  carray /* struct mailmessage_tree * */ * list;
   uint32_t cur;
   
   if (msg_tree->node_msg != NULL) {
@@ -230,4 +230,3 @@ int main(int argc, char ** argv)
     free(flags_directory);
   return -1;
 }
-

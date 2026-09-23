@@ -496,7 +496,7 @@ static int get_envelopes_list(mailsession * session,
     struct maildir_msg * md_msg;
     mailmessage * msg;
     uint32_t driver_flags;
-    clist * ext;
+    clist /* char * */ * ext;
     chashdatum key;
     chashdatum value;
     

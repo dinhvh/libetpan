@@ -35,7 +35,8 @@
 #include "mailimap_types.h"
 
 LIBETPAN_EXPORT
-struct mailimap_id_params_list * mailimap_id_params_list_new(clist * items)
+struct mailimap_id_params_list *
+mailimap_id_params_list_new(clist /* struct mailimap_id_param * */ * items)
 {
   struct mailimap_id_params_list * list;
   
@@ -82,7 +83,7 @@ void mailimap_id_param_free(struct mailimap_id_param * param)
 LIBETPAN_EXPORT
 struct mailimap_id_params_list * mailimap_id_params_list_new_empty(void)
 {
-  clist * items;
+  clist /* struct mailimap_id_param * */ * items;
   struct mailimap_id_params_list * list;
   
   items = clist_new();
@@ -116,4 +117,3 @@ int mailimap_id_params_list_add_name_value(struct mailimap_id_params_list * list
   
   return 0;
 }
-

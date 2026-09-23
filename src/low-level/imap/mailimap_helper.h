@@ -54,7 +54,7 @@ int mailimap_fetch_rfc822_header(mailimap * session,
 LIBETPAN_EXPORT
 int mailimap_fetch_envelope(mailimap * session,
 			    uint32_t first, uint32_t last,
-			    clist ** result);
+			    clist /* struct mailimap_msg_att * */ ** result);
 
 LIBETPAN_EXPORT
 int mailimap_append_simple(mailimap * session, const char * mailbox,

@@ -81,12 +81,12 @@ LIBETPAN_EXPORT
 int
 mailimap_sort(mailimap * session, const char * charset,
               struct mailimap_sort_key * key, struct mailimap_search_key * searchkey,
-              clist ** result)
+              clist /* uint32_t * */ ** result)
 {
   struct mailimap_response * response;
   int r;
   int error_code;
-  clist * sort_result = NULL;
+  clist /* uint32_t * */ * sort_result = NULL;
   clistiter * cur = NULL;
   
   if (session->imap_state != MAILIMAP_STATE_SELECTED)
@@ -159,13 +159,13 @@ LIBETPAN_EXPORT
 int
 mailimap_uid_sort(mailimap * session, const char * charset,
                   struct mailimap_sort_key * key, struct mailimap_search_key * searchkey,
-                  clist ** result)
+                  clist /* uint32_t * */ ** result)
 {
   struct mailimap_response * response;
   int r;
   int error_code;
   clistiter * cur = NULL;
-  clist * sort_result = NULL;
+  clist /* uint32_t * */ * sort_result = NULL;
   
   if (session->imap_state != MAILIMAP_STATE_SELECTED)
     return MAILIMAP_ERROR_BAD_STATE;
@@ -234,7 +234,7 @@ mailimap_uid_sort(mailimap * session, const char * charset,
 }
 
 LIBETPAN_EXPORT
-void mailimap_sort_result_free(clist * search_result)
+void mailimap_sort_result_free(clist /* uint32_t * */ * search_result)
 {
   clist_foreach(search_result, (clist_func) free, NULL);
   clist_free(search_result);
@@ -353,12 +353,12 @@ int mailimap_sort_key_send(mailstream * fd,
 static int
 mailimap_number_list_data_sort_parse(mailstream * fd, MMAPString * buffer, struct mailimap_parser_context * parser_ctx,
                                      size_t * indx,
-                                     clist ** result,
+                                     clist /* uint32_t * */ ** result,
                                      size_t progr_rate,
                                      progress_function * progr_fun)
 {
   size_t cur_token;
-  clist * number_list;
+  clist /* uint32_t * */ * number_list;
   int r;
   size_t final_token;
   
@@ -398,7 +398,7 @@ mailimap_sort_extension_parse(int calling_parser, mailstream * fd,
                               size_t progr_rate, progress_function * progr_fun)
 {
   int r;
-  clist * number_list = NULL;
+  clist /* uint32_t * */ * number_list = NULL;
   struct mailimap_extension_data * ext_data;
   void * data = NULL;
   size_t cur_token;
@@ -443,7 +443,7 @@ static void
 mailimap_sort_extension_data_free(struct mailimap_extension_data * ext_data)
 {
   if (ext_data->ext_data != NULL) {
-    mailimap_mailbox_data_search_free((clist *) ext_data->ext_data);
+    mailimap_mailbox_data_search_free((clist /* struct mailimap_mailbox_data_search * */ *) ext_data->ext_data);
   }
   free(ext_data);
 }

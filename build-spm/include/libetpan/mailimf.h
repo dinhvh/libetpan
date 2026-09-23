@@ -332,7 +332,8 @@ int mailimf_msg_id_parse(const char * message, size_t length,
 
 LIBETPAN_EXPORT
 int mailimf_msg_id_list_parse(const char * message, size_t length,
-			      size_t * indx, clist ** result);
+			      size_t * indx,
+            clist /* struct mailimf_field * */ ** result);
 
 LIBETPAN_EXPORT
 int mailimf_word_parse(const char * message, size_t length,

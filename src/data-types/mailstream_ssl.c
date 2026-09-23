@@ -584,7 +584,8 @@ void mailstream_ssl_uninit_lock(void)
   }
 }
 
-carray * mailstream_low_ssl_get_certificate_chain(mailstream_low * stream)
+carray /* MMAPString * */ *
+mailstream_low_ssl_get_certificate_chain(mailstream_low * stream)
 {
   return mailstream_low_get_certificate_chain(stream);
 }

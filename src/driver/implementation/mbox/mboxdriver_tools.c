@@ -296,7 +296,7 @@ int mbox_get_locked_messages_list(struct mailmbox_folder * folder,
   unsigned int i;
   int r;
   int res;
-  carray * tab;
+  carray /* mailmessage * */ * tab;
 
   tab = carray_new(128);
   if (tab == NULL) {

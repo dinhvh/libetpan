@@ -86,8 +86,8 @@ struct maildir {
   uint32_t mdir_counter;
   time_t mdir_mtime_new;
   time_t mdir_mtime_cur;
-  carray * mdir_msg_list;
-  chash * mdir_msg_hash;
+  carray /* struct maildir_msg_info * */ * mdir_msg_list;
+  chash /* char * -> struct maildir_msg_info * */ * mdir_msg_hash;
 };
 
 #endif

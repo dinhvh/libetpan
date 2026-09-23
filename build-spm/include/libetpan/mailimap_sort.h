@@ -65,7 +65,7 @@ extern "C" {
   int
   mailimap_sort(mailimap * session, const char * charset,
                 struct mailimap_sort_key * key, struct mailimap_search_key * searchkey,
-                clist ** result);
+                clist /* uint32_t * */ ** result);
   
   /*
    mailimap_uid_sort()
@@ -90,10 +90,10 @@ extern "C" {
   int
   mailimap_uid_sort(mailimap * session, const char * charset,
                     struct mailimap_sort_key * key, struct mailimap_search_key * searchkey,
-                    clist ** result);
+                    clist /* uint32_t * */ ** result);
 
   LIBETPAN_EXPORT
-  void mailimap_sort_result_free(clist * search_result);
+  void mailimap_sort_result_free(clist /* uint32_t * */ * search_result);
   
   LIBETPAN_EXPORT
   int mailimap_has_sort(mailimap * session);

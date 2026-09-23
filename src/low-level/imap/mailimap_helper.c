@@ -47,7 +47,7 @@ int mailimap_fetch_rfc822(mailimap * session,
 			  uint32_t msgid, char ** result)
 {
   int r;
-  clist * fetch_list;
+  clist /* struct mailimap_msg_att * */ * fetch_list;
   struct mailimap_fetch_att * fetch_att;
   struct mailimap_fetch_type * fetch_type;
   struct mailimap_set * set;
@@ -108,7 +108,7 @@ int mailimap_fetch_rfc822_header(mailimap * session,
 {
   int r;
   int res;
-  clist * fetch_list;
+  clist /* struct mailimap_msg_att * */ * fetch_list;
   struct mailimap_fetch_att * fetch_att;
   struct mailimap_fetch_type * fetch_type;
   struct mailimap_set * set;
@@ -165,10 +165,10 @@ err:
 LIBETPAN_EXPORT
 int mailimap_fetch_envelope(mailimap * session,
     uint32_t first, uint32_t last,
-    clist ** result)
+    clist /* struct mailimap_msg_att * */ ** result)
 {
   int r;
-  clist * fetch_list;
+  clist /* struct mailimap_msg_att * */ * fetch_list;
   struct mailimap_fetch_att * fetch_att;
   struct mailimap_fetch_type * fetch_type;
   struct mailimap_set * set;
@@ -206,4 +206,3 @@ int mailimap_login_simple(mailimap * session,
   else
     return MAILIMAP_NO_ERROR;
 }
-

@@ -67,7 +67,7 @@ struct mailmime_composite_type {
 struct mailmime_content {
   struct mailmime_type * ct_type;
   char * ct_subtype;
-  clist * ct_parameters; /* elements are (struct mailmime_parameter *) */
+  clist /* struct mailmime_parameter * */ * ct_parameters;
 };
 
 
@@ -129,7 +129,7 @@ struct mailmime_mechanism {
 
 
 struct mailmime_fields {
-  clist * fld_list; /* list of (struct mailmime_field *) */
+  clist /* struct mailmime_field * */ * fld_list;
 };
 
 
@@ -166,7 +166,7 @@ LIBETPAN_EXPORT
 struct mailmime_content *
 mailmime_content_new(struct mailmime_type * ct_type,
 		     char * ct_subtype,
-		     clist * ct_parameters);
+		     clist /* struct mailmime_parameter * */ * ct_parameters);
 
 LIBETPAN_EXPORT
 void mailmime_content_free(struct mailmime_content * content);
@@ -228,11 +228,12 @@ void mailmime_value_free(char * value);
 
 
 struct mailmime_language {
-  clist * lg_list; /* atom (char *) */
+  clist /* char * */ * lg_list;
 };
 
 LIBETPAN_EXPORT
-struct mailmime_language * mailmime_language_new(clist * lg_list);
+struct mailmime_language *
+mailmime_language_new(clist /* char * */ * lg_list);
 
 LIBETPAN_EXPORT
 void mailmime_language_free(struct mailmime_language * lang);
@@ -258,19 +259,20 @@ LIBETPAN_EXPORT
 void mailmime_field_free(struct mailmime_field * field);
 
 LIBETPAN_EXPORT
-struct mailmime_fields * mailmime_fields_new(clist * fld_list);
+struct mailmime_fields *
+mailmime_fields_new(clist /* struct mailmime_field * */ * fld_list);
 
 LIBETPAN_EXPORT
 void mailmime_fields_free(struct mailmime_fields * fields);
 
 
 struct mailmime_multipart_body {
-  clist * bd_list;
+  clist /* struct mailmime * */ * bd_list;
 };
 
 LIBETPAN_EXPORT
 struct mailmime_multipart_body *
-mailmime_multipart_body_new(clist * bd_list);
+mailmime_multipart_body_new(clist /* struct mailmime * */ * bd_list);
 
 LIBETPAN_EXPORT
 void mailmime_multipart_body_free(struct mailmime_multipart_body * mp_body);
@@ -332,7 +334,7 @@ struct mailmime {
     struct {
       struct mailmime_data * mm_preamble;
       struct mailmime_data * mm_epilogue;
-      clist * mm_mp_list;
+      clist /* struct mailmime * */ * mm_mp_list;
     } mm_multipart;
     
     /* message */
@@ -352,7 +354,7 @@ struct mailmime * mailmime_new(int mm_type,
     struct mailmime_data * mm_body,
     struct mailmime_data * mm_preamble,
     struct mailmime_data * mm_epilogue,
-    clist * mm_mp_list,
+    clist /* struct mailmime * */ * mm_mp_list,
     struct mailimf_fields * mm_fields,
     struct mailmime * mm_msg_mime);
 
@@ -380,7 +382,7 @@ void mailmime_encoded_text_free(char * text);
 
 struct mailmime_disposition {
   struct mailmime_disposition_type * dsp_type;
-  clist * dsp_parms; /* struct mailmime_disposition_parm */
+  clist /* struct mailmime_disposition_parm * */ * dsp_parms;
 };
 
 
@@ -421,7 +423,7 @@ struct mailmime_disposition_parm {
 LIBETPAN_EXPORT
 struct mailmime_disposition *
 mailmime_disposition_new(struct mailmime_disposition_type * dsp_type,
-			 clist * dsp_parms);
+			 clist /* struct mailmime_disposition_parm * */ * dsp_parms);
 
 LIBETPAN_EXPORT
 void mailmime_disposition_free(struct mailmime_disposition * dsp);
@@ -463,11 +465,12 @@ LIBETPAN_EXPORT
 void mailmime_quoted_date_time_free(char * date);
 
 struct mailmime_section {
-  clist * sec_list; /* list of (uint32 *) */
+  clist /* uint32_t * */ * sec_list;
 };
 
 LIBETPAN_EXPORT
-struct mailmime_section * mailmime_section_new(clist * list);
+struct mailmime_section *
+mailmime_section_new(clist /* uint32_t * */ * list);
 
 LIBETPAN_EXPORT
 void mailmime_section_free(struct mailmime_section * section);
@@ -500,4 +503,3 @@ struct mailmime_single_fields {
 #endif
 
 #endif
-

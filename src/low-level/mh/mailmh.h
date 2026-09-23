@@ -77,11 +77,11 @@ struct mailmh_folder {
   struct mailmh_folder * fl_parent;
   uint32_t fl_max_index;
 
-  carray * fl_msgs_tab;
-  chash * fl_msgs_hash;
+  carray /* struct mailmh_msg_info * */ * fl_msgs_tab;
+  chash /* uint32_t -> struct mailmh_msg_info * */ * fl_msgs_hash;
 
-  carray * fl_subfolders_tab;
-  chash * fl_subfolders_hash;
+  carray /* struct mailmh_folder * */ * fl_subfolders_tab;
+  chash /* char * -> struct mailmh_folder * */ * fl_subfolders_hash;
 };
 
 struct mailmh * mailmh_new(const char * foldername);

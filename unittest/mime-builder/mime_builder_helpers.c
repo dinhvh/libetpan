@@ -51,7 +51,7 @@ struct mailmime * mime_builder_new_part(int type, const char * content_type,
 {
   struct mailmime_content * content;
   struct mailmime * mime;
-  clist * list = NULL;
+  clist /* struct mailmime * */ * list = NULL;
 
   content = mailmime_content_new_with_str(content_type);
   assert(content != NULL);

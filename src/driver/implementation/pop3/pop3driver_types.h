@@ -84,8 +84,8 @@ struct pop3_cached_session_state_data {
   mailsession * pop3_ancestor;
   char pop3_cache_directory[PATH_MAX];
   char pop3_flags_directory[PATH_MAX];
-  chash * pop3_flags_hash;
-  carray * pop3_flags_array;
+  chash /* char * -> unsigned int */ * pop3_flags_hash;
+  carray /* mailmessage * */ * pop3_flags_array;
   struct mail_flags_store * pop3_flags_store;
 };
 

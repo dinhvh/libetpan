@@ -44,10 +44,10 @@
 
 struct mailprivacy {
   char * tmp_dir;               /* working tmp directory */
-  chash * msg_ref;              /* mailmessage => present or not */
-  chash * mmapstr;              /* mmapstring => present or not present */
-  chash * mime_ref;             /* mime => present or not */
-  carray * protocols;
+  chash /* mailmessage * -> present */ * msg_ref;
+  chash /* MMAPString * -> present */ * mmapstr;
+  chash /* mailmime * -> present */ * mime_ref;
+  carray /* struct mailprivacy_protocol * */ * protocols;
   int make_alternative;
   /* if make_alternative is 0, replaces the part with decrypted 
      part, if 1, adds a multipart/alternative and put the decrypted 

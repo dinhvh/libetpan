@@ -24,7 +24,7 @@ struct mailjmap_http_header {
 struct mailjmap_http_request {
   char * method;
   char * url;
-  clist * headers; /* struct mailjmap_http_header * */
+  clist /* struct mailjmap_http_header * */ * headers;
   unsigned char * body;
   size_t body_len;
   char * content_type;
@@ -34,7 +34,7 @@ struct mailjmap_http_request {
 
 struct mailjmap_http_response {
   int status_code;
-  clist * headers; /* struct mailjmap_http_header * */
+  clist /* struct mailjmap_http_header * */ * headers;
   unsigned char * body;
   size_t body_len;
   char * final_url;

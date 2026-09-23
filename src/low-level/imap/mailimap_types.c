@@ -230,7 +230,7 @@ LIBETPAN_EXPORT
 struct mailimap_body_extension *
 mailimap_body_extension_new(int ext_type, char * ext_nstring,
 			    uint32_t ext_number,
-    clist * ext_body_extension_list)
+    clist /* struct mailimap_body_extension * */ * ext_body_extension_list)
 {
   struct mailimap_body_extension * body_extension;
 
@@ -255,7 +255,8 @@ mailimap_body_extension_new(int ext_type, char * ext_nstring,
 }
 
 static void
-mailimap_body_ext_list_free(clist * body_ext_list);
+mailimap_body_ext_list_free(
+    clist /* struct mailimap_body_extension * */ * body_ext_list);
 
 LIBETPAN_EXPORT
 void mailimap_body_extension_free(struct mailimap_body_extension * be)
@@ -274,7 +275,8 @@ void mailimap_body_extension_free(struct mailimap_body_extension * be)
 
 
 static void
-mailimap_body_ext_list_free(clist * body_ext_list)
+mailimap_body_ext_list_free(
+    clist /* struct mailimap_body_extension * */ * body_ext_list)
 {
   clist_foreach(body_ext_list, (clist_func) mailimap_body_extension_free,
 		NULL);
@@ -288,7 +290,7 @@ mailimap_body_ext_1part_new(char * bd_md5,
 			    struct mailimap_body_fld_dsp * bd_disposition,
 			    struct mailimap_body_fld_lang * bd_language,
           char * bd_loc,
-			    clist * bd_extension_list)
+			    clist /* struct mailimap_body_extension * */ * bd_extension_list)
 {
   struct mailimap_body_ext_1part * body_ext_1part;
   
@@ -327,7 +329,8 @@ mailimap_body_ext_mpart_new(struct mailimap_body_fld_param * bd_parameter,
                             struct mailimap_body_fld_dsp * bd_disposition,
                             struct mailimap_body_fld_lang * bd_language,
                             char * bd_loc,
-                            clist * bd_extension_list)
+                            clist /* struct mailimap_body_extension * */ *
+                              bd_extension_list)
 {
   struct mailimap_body_ext_mpart * body_ext_mpart;
 
@@ -474,7 +477,8 @@ void mailimap_body_fld_id_free(char * body_fld_id)
 
 LIBETPAN_EXPORT
 struct mailimap_body_fld_lang *
-mailimap_body_fld_lang_new(int lg_type, char * lg_single, clist * lg_list)
+mailimap_body_fld_lang_new(int lg_type, char * lg_single,
+    clist /* char * */ * lg_list)
 {
   struct mailimap_body_fld_lang * fld_lang;
 
@@ -554,7 +558,8 @@ mailimap_single_body_fld_param_free(struct mailimap_single_body_fld_param * p)
 
 LIBETPAN_EXPORT
 struct mailimap_body_fld_param *
-mailimap_body_fld_param_new(clist * pa_list)
+mailimap_body_fld_param_new(
+    clist /* struct mailimap_single_body_fld_param * */ * pa_list)
 {
   struct mailimap_body_fld_param * fld_param;
 
@@ -660,7 +665,8 @@ void mailimap_body_type_basic_free(struct mailimap_body_type_basic *
 
 LIBETPAN_EXPORT
 struct mailimap_body_type_mpart *
-mailimap_body_type_mpart_new(clist * bd_list, char * bd_media_subtype,
+mailimap_body_type_mpart_new(clist /* struct mailimap_body * */ * bd_list,
+    char * bd_media_subtype,
 			     struct mailimap_body_ext_mpart * bd_ext_mpart)
 {
   struct mailimap_body_type_mpart * body_type_mpart;
@@ -793,7 +799,8 @@ void mailimap_capability_free(struct mailimap_capability * c)
 
 LIBETPAN_EXPORT
 struct mailimap_capability_data *
-mailimap_capability_data_new(clist * cap_list)
+mailimap_capability_data_new(
+    clist /* struct mailimap_capability * */ * cap_list)
 {
   struct mailimap_capability_data * cap_data;
 
@@ -948,7 +955,8 @@ void mailimap_envelope_free(struct mailimap_envelope * env)
 }
 
 
-static void mailimap_address_list_free(clist * addr_list)
+static void
+mailimap_address_list_free(clist /* struct mailimap_address * */ * addr_list)
 {
   if (addr_list != NULL) {
     clist_foreach(addr_list, (clist_func) mailimap_address_free, NULL);
@@ -958,7 +966,8 @@ static void mailimap_address_list_free(clist * addr_list)
 
 
 LIBETPAN_EXPORT
-struct mailimap_env_bcc * mailimap_env_bcc_new(clist * bcc_list)
+struct mailimap_env_bcc *
+mailimap_env_bcc_new(clist /* struct mailimap_address * */ * bcc_list)
 {
   struct mailimap_env_bcc * env_bcc;
 
@@ -979,7 +988,8 @@ void mailimap_env_bcc_free(struct mailimap_env_bcc * env_bcc)
 
 
 LIBETPAN_EXPORT
-struct mailimap_env_cc * mailimap_env_cc_new(clist * cc_list)
+struct mailimap_env_cc *
+mailimap_env_cc_new(clist /* struct mailimap_address * */ * cc_list)
 {
   struct mailimap_env_cc * env_cc;
 
@@ -1007,7 +1017,8 @@ void mailimap_env_date_free(char * date)
 
 
 LIBETPAN_EXPORT
-struct mailimap_env_from * mailimap_env_from_new(clist * frm_list)
+struct mailimap_env_from *
+mailimap_env_from_new(clist /* struct mailimap_address * */ * frm_list)
 {
   struct mailimap_env_from * env_from;
 
@@ -1038,7 +1049,8 @@ void mailimap_env_message_id_free(char * message_id)
 }
 
 LIBETPAN_EXPORT
-struct mailimap_env_reply_to * mailimap_env_reply_to_new(clist * rt_list)
+struct mailimap_env_reply_to *
+mailimap_env_reply_to_new(clist /* struct mailimap_address * */ * rt_list)
 {
   struct mailimap_env_reply_to * env_reply_to;
 
@@ -1059,7 +1071,8 @@ mailimap_env_reply_to_free(struct mailimap_env_reply_to * env_reply_to)
 }
 
 LIBETPAN_EXPORT
-struct mailimap_env_sender * mailimap_env_sender_new(clist * snd_list)
+struct mailimap_env_sender *
+mailimap_env_sender_new(clist /* struct mailimap_address * */ * snd_list)
 {
   struct mailimap_env_sender * env_sender;
 
@@ -1084,7 +1097,8 @@ void mailimap_env_subject_free(char * subject)
 }
 
 LIBETPAN_EXPORT
-struct mailimap_env_to * mailimap_env_to_new(clist * to_list)
+struct mailimap_env_to *
+mailimap_env_to_new(clist /* struct mailimap_address * */ * to_list)
 {
   struct mailimap_env_to * env_to;
 
@@ -1188,7 +1202,7 @@ void mailimap_flag_keyword_free(char * flag_keyword)
 
 LIBETPAN_EXPORT
 struct mailimap_flag_list *
-mailimap_flag_list_new(clist * fl_list)
+mailimap_flag_list_new(clist /* struct mailimap_flag * */ * fl_list)
 {
   struct mailimap_flag_list * flag_list;
 
@@ -1292,7 +1306,7 @@ mailimap_header_fld_name_free(char * header_fld_name)
 
 LIBETPAN_EXPORT
 struct mailimap_header_list *
-mailimap_header_list_new(clist * hdr_list)
+mailimap_header_list_new(clist /* char * */ * hdr_list)
 {
   struct mailimap_header_list * header_list;
 
@@ -1365,7 +1379,7 @@ void mailimap_status_info_free(struct mailimap_status_info * info)
 LIBETPAN_EXPORT
 struct mailimap_mailbox_data_status *
 mailimap_mailbox_data_status_new(char * st_mailbox,
-    clist * st_info_list)
+    clist /* struct mailimap_status_info * */ * st_info_list)
 {
   struct mailimap_mailbox_data_status * mb_data_status;
 
@@ -1380,7 +1394,7 @@ mailimap_mailbox_data_status_new(char * st_mailbox,
 
 LIBETPAN_EXPORT
 void
-mailimap_mailbox_data_search_free(clist * data_search)
+mailimap_mailbox_data_search_free(clist /* uint32_t * */ * data_search)
 {
   clist_foreach(data_search, (clist_func) mailimap_number_alloc_free, NULL);
   clist_free(data_search);
@@ -1428,7 +1442,7 @@ struct mailimap_mailbox_data *
 mailimap_mailbox_data_new(int mbd_type, struct mailimap_flag_list * mbd_flags,
     struct mailimap_mailbox_list * mbd_list,
     struct mailimap_mailbox_list * mbd_lsub,
-    clist * mbd_search,
+    clist /* uint32_t * */ * mbd_search,
     struct mailimap_mailbox_data_status * mbd_status,
     uint32_t mbd_exists,
     uint32_t mbd_recent,
@@ -1510,7 +1524,8 @@ mailimap_mailbox_data_free(struct mailimap_mailbox_data * mb_data)
 
 LIBETPAN_EXPORT
 struct mailimap_mbx_list_flags *
-mailimap_mbx_list_flags_new(int mbf_type, clist * mbf_oflags,
+mailimap_mbx_list_flags_new(int mbf_type,
+    clist /* struct mailimap_mbx_list_oflag * */ * mbf_oflags,
 			    int mbf_sflag)
 {
   struct mailimap_mbx_list_flags * mbx_list_flags;
@@ -1721,7 +1736,7 @@ mailimap_msg_att_item_free(struct mailimap_msg_att_item * item)
 
 LIBETPAN_EXPORT
 struct mailimap_msg_att *
-mailimap_msg_att_new(clist * att_list)
+mailimap_msg_att_new(clist /* struct mailimap_msg_att_item * */ * att_list)
 {
   struct mailimap_msg_att * msg_att;
 
@@ -1748,7 +1763,8 @@ void mailimap_msg_att_free(struct mailimap_msg_att * msg_att)
 
 LIBETPAN_EXPORT
 struct mailimap_msg_att_dynamic *
-mailimap_msg_att_dynamic_new(clist * att_list)
+mailimap_msg_att_dynamic_new(
+    clist /* struct mailimap_flag_fetch * */ * att_list)
 {
   struct mailimap_msg_att_dynamic * msg_att_dyn;
 
@@ -2029,7 +2045,9 @@ mailimap_cont_req_or_resp_data_free(struct mailimap_cont_req_or_resp_data *
 
 LIBETPAN_EXPORT
 struct mailimap_response *
-mailimap_response_new(clist * rsp_cont_req_or_resp_data_list,
+mailimap_response_new(
+    clist /* struct mailimap_cont_req_or_resp_data * */ *
+      rsp_cont_req_or_resp_data_list,
     struct mailimap_response_done * rsp_resp_done)
 {
   struct mailimap_response * resp;
@@ -2335,9 +2353,9 @@ void mailimap_resp_text_free(struct mailimap_resp_text * resp_text)
 
 LIBETPAN_EXPORT
 struct mailimap_resp_text_code *
-mailimap_resp_text_code_new(int rc_type, clist * rc_badcharset,
+mailimap_resp_text_code_new(int rc_type, clist /* char * */ * rc_badcharset,
     struct mailimap_capability_data * rc_cap_data,
-    clist * rc_perm_flags,
+    clist /* struct mailimap_flag_perm * */ * rc_perm_flags,
     uint32_t rc_uidnext, uint32_t rc_uidvalidity,
     uint32_t rc_first_unseen, char * rc_atom, char * rc_atom_value,
     struct mailimap_extension_data * rc_ext_data)
@@ -2473,7 +2491,7 @@ mailimap_section_msgtext_free(struct mailimap_section_msgtext * msgtext)
 
 LIBETPAN_EXPORT
 struct mailimap_section_part *
-mailimap_section_part_new(clist * sec_id)
+mailimap_section_part_new(clist /* uint32_t * */ * sec_id)
 {
   struct mailimap_section_part * section_part;
 
@@ -2661,7 +2679,8 @@ void mailimap_set_item_free(struct mailimap_set_item * set_item)
 }
 
 LIBETPAN_EXPORT
-struct mailimap_set * mailimap_set_new(clist * set_list)
+struct mailimap_set *
+mailimap_set_new(clist /* struct mailimap_set_item * */ * set_list)
 {
   struct mailimap_set * set;
 
@@ -2745,7 +2764,7 @@ LIBETPAN_EXPORT
 struct mailimap_fetch_type *
 mailimap_fetch_type_new(int ft_type,
     struct mailimap_fetch_att * ft_fetch_att,
-    clist * ft_fetch_att_list)
+    clist /* struct mailimap_fetch_att * */ * ft_fetch_att_list)
 {
   struct mailimap_fetch_type * fetch_type;
 
@@ -2827,7 +2846,8 @@ mailimap_search_key_new(int sk_type,
     struct mailimap_date * sk_senton,
     struct mailimap_date * sk_sentsince,
     uint32_t sk_smaller, struct mailimap_set * sk_uid,
-    struct mailimap_set * sk_set, clist * sk_multiple)
+    struct mailimap_set * sk_set,
+    clist /* struct mailimap_search_key * */ * sk_multiple)
 {
   struct mailimap_search_key * key;
 
@@ -3050,7 +3070,7 @@ void mailimap_search_key_free(struct mailimap_search_key * key)
 
 LIBETPAN_EXPORT
 struct mailimap_status_att_list *
-mailimap_status_att_list_new(clist * att_list)
+mailimap_status_att_list_new(clist /* int * */ * att_list)
 {
   struct mailimap_status_att_list * status_att_list;
 

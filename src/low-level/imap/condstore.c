@@ -280,7 +280,7 @@ int mailimap_uid_store_unchangedsince(mailimap * session,
 int mailimap_fetch_changedsince(mailimap * session,
 	struct mailimap_set * set,
 	struct mailimap_fetch_type * fetch_type, uint64_t mod_sequence_value,
-	clist ** result)
+		clist /* struct mailimap_msg_att * */ ** result)
 {
   return mailimap_fetch_qresync_vanished(session, set, fetch_type, mod_sequence_value, 0,
                                          result, NULL);
@@ -289,7 +289,7 @@ int mailimap_fetch_changedsince(mailimap * session,
 int mailimap_uid_fetch_changedsince(mailimap * session,
 	struct mailimap_set * set,
 	struct mailimap_fetch_type * fetch_type, uint64_t mod_sequence_value,
-	clist ** result)
+		clist /* struct mailimap_msg_att * */ ** result)
 {
   return mailimap_uid_fetch_qresync_vanished(session, set, fetch_type, mod_sequence_value, 0,
                                              result, NULL);
@@ -334,7 +334,7 @@ struct mailimap_search_key * mailimap_search_key_new_modseq(struct mailimap_flag
 static int search_modseq(mailimap * session, const char * charset,
                          struct mailimap_search_key * key,
                          int uid_enabled, int literalplus_enabled,
-                         clist ** result, uint64_t * p_mod_sequence_value)
+	                         clist /* uint32_t * */ ** result, uint64_t * p_mod_sequence_value)
 {
   struct mailimap_response * response;
   int r;
@@ -432,27 +432,27 @@ static int search_modseq(mailimap * session, const char * charset,
 }
 
 int mailimap_search_modseq(mailimap * session, const char * charset,
-	struct mailimap_search_key * key, clist ** result, uint64_t * p_mod_sequence_value)
+	struct mailimap_search_key * key, clist /* uint32_t * */ ** result, uint64_t * p_mod_sequence_value)
 {
   return search_modseq(session, charset, key, 0, 0, result, p_mod_sequence_value);
 }
 
 int mailimap_uid_search_modseq(mailimap * session, const char * charset,
-	struct mailimap_search_key * key, clist ** result, uint64_t * p_mod_sequence_value)
+	struct mailimap_search_key * key, clist /* uint32_t * */ ** result, uint64_t * p_mod_sequence_value)
 {
   return search_modseq(session, charset, key, 1, 0, result, p_mod_sequence_value);
 }
 
 LIBETPAN_EXPORT
 int mailimap_search_literalplus_modseq(mailimap * session, const char * charset,
-                                       struct mailimap_search_key * key, clist ** result, uint64_t * p_mod_sequence_value)
+                                       struct mailimap_search_key * key, clist /* uint32_t * */ ** result, uint64_t * p_mod_sequence_value)
 {
   return search_modseq(session, charset, key, 0, 1, result, p_mod_sequence_value);
 }
 
 LIBETPAN_EXPORT
 int mailimap_uid_search_literalplus_modseq(mailimap * session, const char * charset,
-                                           struct mailimap_search_key * key, clist ** result, uint64_t * p_mod_sequence_value)
+                                           struct mailimap_search_key * key, clist /* uint32_t * */ ** result, uint64_t * p_mod_sequence_value)
 {
   return search_modseq(session, charset, key, 1, 1, result, p_mod_sequence_value);
 }
@@ -761,7 +761,7 @@ static int search_data_parse(mailstream * fd,
   MMAPString * buffer, struct mailimap_parser_context * parser_ctx, size_t * indx, struct mailimap_condstore_search ** result)
 {
   int r;
-  clist * number_list;
+  clist /* uint32_t * */ * number_list;
   struct mailimap_condstore_search * search_data;
   size_t cur_token;
   int res;
