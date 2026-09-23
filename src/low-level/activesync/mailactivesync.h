@@ -185,26 +185,26 @@ int mailactivesync_validate_cert(mailactivesync * session,
     struct mailactivesync_validate_cert_result ** result);
 
 LIBETPAN_EXPORT
-int mailactivesync_mark_read(mailactivesync * session,
+int mailactivesync_mark_messages_read(mailactivesync * session,
     const char * collection_id,
     const char * sync_key,
-    const char * server_id,
+    clist * server_ids,
     int read,
     struct mailactivesync_sync_result ** result);
 
 LIBETPAN_EXPORT
-int mailactivesync_set_flagged(mailactivesync * session,
+int mailactivesync_set_messages_flagged(mailactivesync * session,
     const char * collection_id,
     const char * sync_key,
-    const char * server_id,
+    clist * server_ids,
     int flagged,
     struct mailactivesync_sync_result ** result);
 
 LIBETPAN_EXPORT
-int mailactivesync_delete_message(mailactivesync * session,
+int mailactivesync_delete_messages(mailactivesync * session,
     const char * collection_id,
     const char * sync_key,
-    const char * server_id,
+    clist * server_ids,
     int deletes_as_moves,
     struct mailactivesync_sync_result ** result);
 

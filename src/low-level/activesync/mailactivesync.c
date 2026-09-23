@@ -821,6 +821,37 @@ static int sync_result_command_status(
       type, NULL, server_id);
 }
 
+static int sync_result_commands_status(
+    struct mailactivesync_sync_result * result,
+    int type,
+    clist * server_ids)
+{
+  clistiter * cur;
+  int r;
+
+  if ((server_ids == NULL) || (clist_count(server_ids) == 0))
+    return MAILACTIVESYNC_ERROR_BAD_STATE;
+
+  if ((result == NULL) || (result->command_responses == NULL) ||
+      (clist_count(result->command_responses) == 0))
+    return MAILACTIVESYNC_NO_ERROR;
+
+  for (cur = clist_begin(server_ids); cur != NULL; cur = clist_next(cur)) {
+    const char * server_id;
+
+    server_id = clist_content(cur);
+    if (server_id == NULL)
+      return MAILACTIVESYNC_ERROR_BAD_STATE;
+
+    r = mailactivesync_sync_result_command_response_status_to_error(result,
+        type, NULL, server_id);
+    if (r != MAILACTIVESYNC_NO_ERROR)
+      return r;
+  }
+
+  return MAILACTIVESYNC_NO_ERROR;
+}
+
 static int run_single_sync_command(mailactivesync * session,
     const char * collection_id,
     const char * sync_key,
@@ -876,6 +907,71 @@ static int run_single_sync_command(mailactivesync * session,
   mailactivesync_sync_request_free(request);
   free(server_id);
   return r;
+}
+
+static int run_sync_commands(mailactivesync * session,
+    const char * collection_id,
+    const char * sync_key,
+    int command_type,
+    clist * server_ids,
+    clist * commands,
+    int deletes_as_moves_set,
+    int deletes_as_moves,
+    struct mailactivesync_sync_result ** result)
+{
+  struct mailactivesync_sync_request * request;
+  clistiter * cur;
+  int r;
+
+  if ((collection_id == NULL) || (sync_key == NULL) || (server_ids == NULL) ||
+      (clist_count(server_ids) == 0) || (commands == NULL) ||
+      (clist_count(commands) == 0) || (result == NULL))
+    return MAILACTIVESYNC_ERROR_BAD_STATE;
+
+  * result = NULL;
+  request = mailactivesync_sync_request_new(collection_id, sync_key);
+  if (request == NULL)
+    return MAILACTIVESYNC_ERROR_MEMORY;
+
+  r = mailactivesync_sync_request_set_collection_class(request, "Email");
+  if (r != MAILACTIVESYNC_NO_ERROR)
+    goto cleanup;
+  if (deletes_as_moves_set) {
+    r = mailactivesync_sync_request_set_deletes_as_moves(request,
+        deletes_as_moves);
+    if (r != MAILACTIVESYNC_NO_ERROR)
+      goto cleanup;
+  }
+
+  for (cur = clist_begin(commands); cur != NULL; cur = clist_next(cur)) {
+    struct mailactivesync_sync_command * command;
+
+    command = clist_content(cur);
+    r = mailactivesync_sync_request_add_command(request, command);
+    if (r != MAILACTIVESYNC_NO_ERROR)
+      goto cleanup;
+    cur->data = NULL;
+  }
+
+  r = mailactivesync_sync(session, request, result);
+  if (r == MAILACTIVESYNC_NO_ERROR)
+    r = sync_result_commands_status(* result, command_type, server_ids);
+
+ cleanup:
+  mailactivesync_sync_request_free(request);
+  return r;
+}
+
+static void free_sync_command_list(clist * commands)
+{
+  clistiter * cur;
+
+  if (commands == NULL)
+    return;
+
+  for (cur = clist_begin(commands); cur != NULL; cur = clist_next(cur))
+    mailactivesync_sync_command_free(clist_content(cur));
+  clist_free(commands);
 }
 
 static int add_child_text_checked(struct mailactivesync_wbxml_node * parent,
@@ -1164,119 +1260,204 @@ static int draft_add_application_data(
   return r;
 }
 
-int mailactivesync_mark_read(mailactivesync * session,
+int mailactivesync_mark_messages_read(mailactivesync * session,
     const char * collection_id,
     const char * sync_key,
-    const char * server_id,
+    clist * server_ids,
     int read,
     struct mailactivesync_sync_result ** result)
 {
+  clist * commands;
+  clistiter * cur;
   struct mailactivesync_sync_command * command;
   int r;
 
-  if ((collection_id == NULL) || (sync_key == NULL) || (server_id == NULL) ||
-      (result == NULL))
+  if ((collection_id == NULL) || (sync_key == NULL) || (server_ids == NULL) ||
+      (clist_count(server_ids) == 0) || (result == NULL))
     return MAILACTIVESYNC_ERROR_BAD_STATE;
 
   r = require_ready(session);
   if (r != MAILACTIVESYNC_NO_ERROR)
     return r;
 
-  command = mailactivesync_sync_command_change_new(server_id);
-  if (command == NULL)
+  commands = clist_new();
+  if (commands == NULL)
     return MAILACTIVESYNC_ERROR_MEMORY;
 
-  r = mailactivesync_sync_command_add_application_data_text(command,
-      MAILACTIVESYNC_CP_EMAIL, MAILACTIVESYNC_EMAIL_READ, read ? "1" : "0");
-  if (r != MAILACTIVESYNC_NO_ERROR) {
-    mailactivesync_sync_command_free(command);
-    return r;
+  for (cur = clist_begin(server_ids); cur != NULL; cur = clist_next(cur)) {
+    const char * server_id;
+
+    server_id = clist_content(cur);
+    if (server_id == NULL) {
+      r = MAILACTIVESYNC_ERROR_BAD_STATE;
+      goto cleanup;
+    }
+
+    command = mailactivesync_sync_command_change_new(server_id);
+    if (command == NULL) {
+      r = MAILACTIVESYNC_ERROR_MEMORY;
+      goto cleanup;
+    }
+
+    r = mailactivesync_sync_command_add_application_data_text(command,
+        MAILACTIVESYNC_CP_EMAIL, MAILACTIVESYNC_EMAIL_READ,
+        read ? "1" : "0");
+    if (r != MAILACTIVESYNC_NO_ERROR) {
+      mailactivesync_sync_command_free(command);
+      goto cleanup;
+    }
+    if (clist_append(commands, command) < 0) {
+      mailactivesync_sync_command_free(command);
+      r = MAILACTIVESYNC_ERROR_MEMORY;
+      goto cleanup;
+    }
   }
 
-  return run_single_sync_command(session, collection_id, sync_key, command,
-      0, 0, result);
+  r = run_sync_commands(session, collection_id, sync_key,
+      MAILACTIVESYNC_SYNC_COMMAND_CHANGE, server_ids, commands, 0, 0, result);
+
+ cleanup:
+  free_sync_command_list(commands);
+  return r;
 }
 
-int mailactivesync_set_flagged(mailactivesync * session,
+int mailactivesync_set_messages_flagged(mailactivesync * session,
     const char * collection_id,
     const char * sync_key,
-    const char * server_id,
+    clist * server_ids,
     int flagged,
     struct mailactivesync_sync_result ** result)
 {
+  clist * commands;
+  clistiter * cur;
   struct mailactivesync_sync_command * command;
   struct mailactivesync_wbxml_node * flag_node;
   int r;
 
-  if ((collection_id == NULL) || (sync_key == NULL) || (server_id == NULL) ||
-      (result == NULL))
+  if ((collection_id == NULL) || (sync_key == NULL) || (server_ids == NULL) ||
+      (clist_count(server_ids) == 0) || (result == NULL))
     return MAILACTIVESYNC_ERROR_BAD_STATE;
 
   r = require_ready(session);
   if (r != MAILACTIVESYNC_NO_ERROR)
     return r;
 
-  command = mailactivesync_sync_command_change_new(server_id);
-  if (command == NULL)
+  commands = clist_new();
+  if (commands == NULL)
     return MAILACTIVESYNC_ERROR_MEMORY;
 
-  flag_node = mailactivesync_wbxml_node_new(MAILACTIVESYNC_CP_EMAIL,
-      MAILACTIVESYNC_EMAIL_FLAG);
-  if (flag_node == NULL) {
-    mailactivesync_sync_command_free(command);
-    return MAILACTIVESYNC_ERROR_MEMORY;
-  }
+  for (cur = clist_begin(server_ids); cur != NULL; cur = clist_next(cur)) {
+    const char * server_id;
 
-  r = add_child_text_checked(flag_node, MAILACTIVESYNC_CP_EMAIL,
-      MAILACTIVESYNC_EMAIL_STATUS, flagged ? "2" : "0");
-  if (r != MAILACTIVESYNC_NO_ERROR)
-    goto cleanup_flag;
-  if (flagged) {
+    server_id = clist_content(cur);
+    if (server_id == NULL) {
+      r = MAILACTIVESYNC_ERROR_BAD_STATE;
+      goto cleanup;
+    }
+
+    command = mailactivesync_sync_command_change_new(server_id);
+    if (command == NULL) {
+      r = MAILACTIVESYNC_ERROR_MEMORY;
+      goto cleanup;
+    }
+
+    flag_node = mailactivesync_wbxml_node_new(MAILACTIVESYNC_CP_EMAIL,
+        MAILACTIVESYNC_EMAIL_FLAG);
+    if (flag_node == NULL) {
+      mailactivesync_sync_command_free(command);
+      r = MAILACTIVESYNC_ERROR_MEMORY;
+      goto cleanup;
+    }
+
     r = add_child_text_checked(flag_node, MAILACTIVESYNC_CP_EMAIL,
-        MAILACTIVESYNC_EMAIL_FLAG_TYPE, "Flag for follow up");
+        MAILACTIVESYNC_EMAIL_STATUS, flagged ? "2" : "0");
     if (r != MAILACTIVESYNC_NO_ERROR)
       goto cleanup_flag;
+    if (flagged) {
+      r = add_child_text_checked(flag_node, MAILACTIVESYNC_CP_EMAIL,
+          MAILACTIVESYNC_EMAIL_FLAG_TYPE, "Flag for follow up");
+      if (r != MAILACTIVESYNC_NO_ERROR)
+        goto cleanup_flag;
+    }
+
+    r = mailactivesync_sync_command_add_application_data_node(command,
+        flag_node);
+    if (r != MAILACTIVESYNC_NO_ERROR)
+      goto cleanup_flag;
+    flag_node = NULL;
+
+    if (clist_append(commands, command) < 0) {
+      mailactivesync_sync_command_free(command);
+      r = MAILACTIVESYNC_ERROR_MEMORY;
+      goto cleanup;
+    }
   }
 
-  r = mailactivesync_sync_command_add_application_data_node(command,
-      flag_node);
-  if (r != MAILACTIVESYNC_NO_ERROR)
-    goto cleanup_flag;
-  flag_node = NULL;
-
-  return run_single_sync_command(session, collection_id, sync_key, command,
-      0, 0, result);
+  r = run_sync_commands(session, collection_id, sync_key,
+      MAILACTIVESYNC_SYNC_COMMAND_CHANGE, server_ids, commands, 0, 0, result);
+  goto cleanup;
 
  cleanup_flag:
   mailactivesync_wbxml_node_free(flag_node);
   mailactivesync_sync_command_free(command);
+ cleanup:
+  free_sync_command_list(commands);
   return r;
 }
 
-int mailactivesync_delete_message(mailactivesync * session,
+int mailactivesync_delete_messages(mailactivesync * session,
     const char * collection_id,
     const char * sync_key,
-    const char * server_id,
+    clist * server_ids,
     int deletes_as_moves,
     struct mailactivesync_sync_result ** result)
 {
+  clist * commands;
+  clistiter * cur;
   struct mailactivesync_sync_command * command;
   int r;
 
-  if ((collection_id == NULL) || (sync_key == NULL) || (server_id == NULL) ||
-      (result == NULL))
+  if ((collection_id == NULL) || (sync_key == NULL) || (server_ids == NULL) ||
+      (clist_count(server_ids) == 0) || (result == NULL))
     return MAILACTIVESYNC_ERROR_BAD_STATE;
 
   r = require_ready(session);
   if (r != MAILACTIVESYNC_NO_ERROR)
     return r;
 
-  command = mailactivesync_sync_command_delete_new(server_id);
-  if (command == NULL)
+  commands = clist_new();
+  if (commands == NULL)
     return MAILACTIVESYNC_ERROR_MEMORY;
 
-  return run_single_sync_command(session, collection_id, sync_key, command,
-      1, deletes_as_moves, result);
+  for (cur = clist_begin(server_ids); cur != NULL; cur = clist_next(cur)) {
+    const char * server_id;
+
+    server_id = clist_content(cur);
+    if (server_id == NULL) {
+      r = MAILACTIVESYNC_ERROR_BAD_STATE;
+      goto cleanup;
+    }
+
+    command = mailactivesync_sync_command_delete_new(server_id);
+    if (command == NULL) {
+      r = MAILACTIVESYNC_ERROR_MEMORY;
+      goto cleanup;
+    }
+
+    if (clist_append(commands, command) < 0) {
+      mailactivesync_sync_command_free(command);
+      r = MAILACTIVESYNC_ERROR_MEMORY;
+      goto cleanup;
+    }
+  }
+
+  r = run_sync_commands(session, collection_id, sync_key,
+      MAILACTIVESYNC_SYNC_COMMAND_DELETE, server_ids, commands, 1,
+      deletes_as_moves, result);
+
+ cleanup:
+  free_sync_command_list(commands);
+  return r;
 }
 
 int mailactivesync_add_draft(mailactivesync * session,

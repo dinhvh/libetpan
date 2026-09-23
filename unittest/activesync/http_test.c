@@ -7149,8 +7149,10 @@ static int test_sync_mail_mutation_helpers(void)
   struct mailactivesync_wbxml_node * request_collection;
   struct mailactivesync_wbxml_node * request_commands;
   struct mailactivesync_wbxml_node * request_command;
+  struct mailactivesync_wbxml_node * request_command_2;
   struct mailactivesync_wbxml_node * request_app_data;
   struct mailactivesync_wbxml_node * flag_node;
+  clist * server_ids;
   int r;
 
   session = NULL;
@@ -7158,10 +7160,19 @@ static int test_sync_mail_mutation_helpers(void)
   result = NULL;
   root = NULL;
   request_document = NULL;
+  server_ids = NULL;
 
   if (!check(setup_oauth_session(&session, &context) ==
       MAILACTIVESYNC_NO_ERROR, "setup OAuth session failed"))
     return 0;
+
+  server_ids = clist_new();
+  if (!check(server_ids != NULL, "server id list allocation failed"))
+    goto err;
+  if (!check((clist_append(server_ids, "server-1") == 0) &&
+      (clist_append(server_ids, "server-2") == 0),
+      "server id list append failed"))
+    goto err;
 
   root = sync_success_response_new("222");
   if (!check(root != NULL, "helper Sync response allocation failed"))
@@ -7172,7 +7183,7 @@ static int test_sync_mail_mutation_helpers(void)
   mailactivesync_wbxml_node_free(root);
   root = NULL;
 
-  r = mailactivesync_mark_read(session, "5", "111", "server-1", 1, &result);
+  r = mailactivesync_mark_messages_read(session, "5", "111", server_ids, 1, &result);
   if (!check(r == MAILACTIVESYNC_NO_ERROR, "mark read helper failed"))
     goto err;
   if (!check(mailactivesync_wbxml_decode(context->last_request->body,
@@ -7185,12 +7196,19 @@ static int test_sync_mail_mutation_helpers(void)
   request_commands = test_node_child(request_collection,
       MAILACTIVESYNC_CP_AIRSYNC, MAILACTIVESYNC_AIRSYNC_COMMANDS);
   request_command = clist_content(clist_begin(request_commands->children));
+  request_command_2 = clist_content(clist_next(
+      clist_begin(request_commands->children)));
   request_app_data = test_node_child(request_command,
       MAILACTIVESYNC_CP_AIRSYNC, MAILACTIVESYNC_AIRSYNC_APPLICATION_DATA);
-  if (!check((request_command->token == MAILACTIVESYNC_AIRSYNC_CHANGE) &&
+  if (!check((clist_count(request_commands->children) == 2) &&
+      (request_command->token == MAILACTIVESYNC_AIRSYNC_CHANGE) &&
       str_equal(test_node_child_text(request_command,
           MAILACTIVESYNC_CP_AIRSYNC, MAILACTIVESYNC_AIRSYNC_SERVER_ID),
           "server-1") &&
+      (request_command_2->token == MAILACTIVESYNC_AIRSYNC_CHANGE) &&
+      str_equal(test_node_child_text(request_command_2,
+          MAILACTIVESYNC_CP_AIRSYNC, MAILACTIVESYNC_AIRSYNC_SERVER_ID),
+          "server-2") &&
       str_equal(test_node_child_text(request_app_data,
           MAILACTIVESYNC_CP_EMAIL, MAILACTIVESYNC_EMAIL_READ), "1"),
       "mark read helper request mismatch"))
@@ -7200,7 +7218,7 @@ static int test_sync_mail_mutation_helpers(void)
   mailactivesync_sync_result_free(result);
   result = NULL;
 
-  r = mailactivesync_set_flagged(session, "5", "222", "server-1", 1,
+  r = mailactivesync_set_messages_flagged(session, "5", "222", server_ids, 1,
       &result);
   if (!check(r == MAILACTIVESYNC_NO_ERROR, "set flagged helper failed"))
     goto err;
@@ -7214,11 +7232,18 @@ static int test_sync_mail_mutation_helpers(void)
   request_commands = test_node_child(request_collection,
       MAILACTIVESYNC_CP_AIRSYNC, MAILACTIVESYNC_AIRSYNC_COMMANDS);
   request_command = clist_content(clist_begin(request_commands->children));
+  request_command_2 = clist_content(clist_next(
+      clist_begin(request_commands->children)));
   request_app_data = test_node_child(request_command,
       MAILACTIVESYNC_CP_AIRSYNC, MAILACTIVESYNC_AIRSYNC_APPLICATION_DATA);
   flag_node = test_node_child(request_app_data, MAILACTIVESYNC_CP_EMAIL,
       MAILACTIVESYNC_EMAIL_FLAG);
-  if (!check((request_command->token == MAILACTIVESYNC_AIRSYNC_CHANGE) &&
+  if (!check((clist_count(request_commands->children) == 2) &&
+      (request_command->token == MAILACTIVESYNC_AIRSYNC_CHANGE) &&
+      (request_command_2->token == MAILACTIVESYNC_AIRSYNC_CHANGE) &&
+      str_equal(test_node_child_text(request_command_2,
+          MAILACTIVESYNC_CP_AIRSYNC, MAILACTIVESYNC_AIRSYNC_SERVER_ID),
+          "server-2") &&
       str_equal(test_node_child_text(flag_node, MAILACTIVESYNC_CP_EMAIL,
           MAILACTIVESYNC_EMAIL_STATUS), "2") &&
       str_equal(test_node_child_text(flag_node, MAILACTIVESYNC_CP_EMAIL,
@@ -7230,7 +7255,7 @@ static int test_sync_mail_mutation_helpers(void)
   mailactivesync_sync_result_free(result);
   result = NULL;
 
-  r = mailactivesync_delete_message(session, "5", "222", "server-1", 0,
+  r = mailactivesync_delete_messages(session, "5", "222", server_ids, 0,
       &result);
   if (!check(r == MAILACTIVESYNC_NO_ERROR, "delete helper failed"))
     goto err;
@@ -7244,22 +7269,31 @@ static int test_sync_mail_mutation_helpers(void)
   request_commands = test_node_child(request_collection,
       MAILACTIVESYNC_CP_AIRSYNC, MAILACTIVESYNC_AIRSYNC_COMMANDS);
   request_command = clist_content(clist_begin(request_commands->children));
-  if (!check((request_command->token == MAILACTIVESYNC_AIRSYNC_DELETE) &&
+  request_command_2 = clist_content(clist_next(
+      clist_begin(request_commands->children)));
+  if (!check((clist_count(request_commands->children) == 2) &&
+      (request_command->token == MAILACTIVESYNC_AIRSYNC_DELETE) &&
+      (request_command_2->token == MAILACTIVESYNC_AIRSYNC_DELETE) &&
       str_equal(test_node_child_text(request_collection,
           MAILACTIVESYNC_CP_AIRSYNC,
           MAILACTIVESYNC_AIRSYNC_DELETES_AS_MOVES), "0") &&
       str_equal(test_node_child_text(request_command,
           MAILACTIVESYNC_CP_AIRSYNC, MAILACTIVESYNC_AIRSYNC_SERVER_ID),
-          "server-1"),
+          "server-1") &&
+      str_equal(test_node_child_text(request_command_2,
+          MAILACTIVESYNC_CP_AIRSYNC, MAILACTIVESYNC_AIRSYNC_SERVER_ID),
+          "server-2"),
       "delete helper request mismatch"))
     goto err;
 
   mailactivesync_wbxml_document_free(request_document);
   mailactivesync_sync_result_free(result);
+  clist_free(server_ids);
   mailactivesync_free(session);
   return 1;
 
  err:
+  clist_free(server_ids);
   mailactivesync_wbxml_document_free(request_document);
   mailactivesync_wbxml_node_free(root);
   mailactivesync_sync_result_free(result);

@@ -79,6 +79,24 @@ static int set_string(char ** target, const char * value)
   return 0;
 }
 
+static clist * single_server_id_list(const char * server_id)
+{
+  clist * server_ids;
+
+  if (server_id == NULL)
+    return NULL;
+
+  server_ids = clist_new();
+  if (server_ids == NULL)
+    return NULL;
+  if (clist_append(server_ids, (void *) server_id) < 0) {
+    clist_free(server_ids);
+    return NULL;
+  }
+
+  return server_ids;
+}
+
 static void sample_sleep_seconds(unsigned int seconds)
 {
 #ifndef _WIN32
@@ -2212,12 +2230,14 @@ static int run_draft_self_test(mailactivesync * as,
   char body[256];
   char updated_body[256];
   char * server_id;
+  clist * server_ids;
   time_t now;
   int deleted;
   int r;
 
   result = NULL;
   server_id = NULL;
+  server_ids = NULL;
   deleted = 0;
   if ((state->drafts_id == NULL) || (state->drafts_sync_key == NULL))
     return MAILACTIVESYNC_ERROR_BAD_STATE;
@@ -2269,6 +2289,11 @@ static int run_draft_self_test(mailactivesync * as,
     r = MAILACTIVESYNC_ERROR_MEMORY;
     goto cleanup;
   }
+  server_ids = single_server_id_list(server_id);
+  if (server_ids == NULL) {
+    r = MAILACTIVESYNC_ERROR_MEMORY;
+    goto cleanup;
+  }
   r = update_drafts_sync_key_from_result(state, result);
   if (r != MAILACTIVESYNC_NO_ERROR)
     goto cleanup;
@@ -2308,10 +2333,10 @@ static int run_draft_self_test(mailactivesync * as,
     goto cleanup;
 
   debug_step(args->debug, "requesting draft Delete self-test");
-  r = mailactivesync_delete_message(as, state->drafts_id,
-      state->drafts_sync_key, server_id, 0, &result);
+  r = mailactivesync_delete_messages(as, state->drafts_id,
+      state->drafts_sync_key, server_ids, 0, &result);
   if (r != MAILACTIVESYNC_NO_ERROR) {
-    debug_error(args->debug, "mailactivesync_delete_message draft", r);
+    debug_error(args->debug, "mailactivesync_delete_messages draft", r);
     debug_auth_retry_hint(as, r);
     goto cleanup;
   }
@@ -2330,6 +2355,7 @@ static int run_draft_self_test(mailactivesync * as,
  cleanup:
   if (!deleted && (server_id != NULL))
     delete_generated_draft_best_effort(as, args, state, server_id);
+  clist_free(server_ids);
   free(server_id);
   mailactivesync_sync_result_free(result);
   return r;
@@ -2340,6 +2366,7 @@ static int delete_generated_draft_best_effort(mailactivesync * as,
     const char * server_id)
 {
   struct mailactivesync_sync_result * result;
+  clist * server_ids;
   int r;
 
   if ((server_id == NULL) || (state->drafts_id == NULL) ||
@@ -2347,14 +2374,18 @@ static int delete_generated_draft_best_effort(mailactivesync * as,
     return MAILACTIVESYNC_ERROR_BAD_STATE;
 
   result = NULL;
-  r = mailactivesync_delete_message(as, state->drafts_id,
-      state->drafts_sync_key, server_id, 0, &result);
+  server_ids = single_server_id_list(server_id);
+  if (server_ids == NULL)
+    return MAILACTIVESYNC_ERROR_MEMORY;
+  r = mailactivesync_delete_messages(as, state->drafts_id,
+      state->drafts_sync_key, server_ids, 0, &result);
   if (r == MAILACTIVESYNC_NO_ERROR) {
     update_drafts_sync_key_from_result(state, result);
     printf("Cleaned up generated draft server_id=%s\n", server_id);
   }
   else
     debug_error(args->debug, "generated draft cleanup", r);
+  clist_free(server_ids);
   mailactivesync_sync_result_free(result);
   return r;
 }
@@ -2369,12 +2400,14 @@ static int run_mutation_self_test(mailactivesync * as,
   char subject[160];
   char body[256];
   char * server_id;
+  clist * server_ids;
   time_t now;
   int deleted;
   int r;
 
   result = NULL;
   server_id = NULL;
+  server_ids = NULL;
   deleted = 0;
   if ((state->drafts_id == NULL) || (state->drafts_sync_key == NULL))
     return MAILACTIVESYNC_ERROR_BAD_STATE;
@@ -2420,6 +2453,11 @@ static int run_mutation_self_test(mailactivesync * as,
     r = MAILACTIVESYNC_ERROR_MEMORY;
     goto cleanup;
   }
+  server_ids = single_server_id_list(server_id);
+  if (server_ids == NULL) {
+    r = MAILACTIVESYNC_ERROR_MEMORY;
+    goto cleanup;
+  }
   r = update_drafts_sync_key_from_result(state, result);
   if (r != MAILACTIVESYNC_NO_ERROR)
     goto cleanup;
@@ -2429,10 +2467,10 @@ static int run_mutation_self_test(mailactivesync * as,
   result = NULL;
 
   debug_step(args->debug, "marking generated draft unread");
-  r = mailactivesync_mark_read(as, state->drafts_id, state->drafts_sync_key,
-      server_id, 0, &result);
+  r = mailactivesync_mark_messages_read(as, state->drafts_id, state->drafts_sync_key,
+      server_ids, 0, &result);
   if (r != MAILACTIVESYNC_NO_ERROR) {
-    debug_error(args->debug, "mailactivesync_mark_read unread", r);
+    debug_error(args->debug, "mailactivesync_mark_messages_read unread", r);
     debug_auth_retry_hint(as, r);
     goto cleanup;
   }
@@ -2450,10 +2488,10 @@ static int run_mutation_self_test(mailactivesync * as,
   result = NULL;
 
   debug_step(args->debug, "marking generated draft read");
-  r = mailactivesync_mark_read(as, state->drafts_id, state->drafts_sync_key,
-      server_id, 1, &result);
+  r = mailactivesync_mark_messages_read(as, state->drafts_id, state->drafts_sync_key,
+      server_ids, 1, &result);
   if (r != MAILACTIVESYNC_NO_ERROR) {
-    debug_error(args->debug, "mailactivesync_mark_read read", r);
+    debug_error(args->debug, "mailactivesync_mark_messages_read read", r);
     debug_auth_retry_hint(as, r);
     goto cleanup;
   }
@@ -2471,10 +2509,10 @@ static int run_mutation_self_test(mailactivesync * as,
   result = NULL;
 
   debug_step(args->debug, "flagging generated draft");
-  r = mailactivesync_set_flagged(as, state->drafts_id,
-      state->drafts_sync_key, server_id, 1, &result);
+  r = mailactivesync_set_messages_flagged(as, state->drafts_id,
+      state->drafts_sync_key, server_ids, 1, &result);
   if (r != MAILACTIVESYNC_NO_ERROR) {
-    debug_error(args->debug, "mailactivesync_set_flagged flag", r);
+    debug_error(args->debug, "mailactivesync_set_messages_flagged flag", r);
     debug_auth_retry_hint(as, r);
     goto cleanup;
   }
@@ -2492,10 +2530,10 @@ static int run_mutation_self_test(mailactivesync * as,
   result = NULL;
 
   debug_step(args->debug, "unflagging generated draft");
-  r = mailactivesync_set_flagged(as, state->drafts_id,
-      state->drafts_sync_key, server_id, 0, &result);
+  r = mailactivesync_set_messages_flagged(as, state->drafts_id,
+      state->drafts_sync_key, server_ids, 0, &result);
   if (r != MAILACTIVESYNC_NO_ERROR) {
-    debug_error(args->debug, "mailactivesync_set_flagged unflag", r);
+    debug_error(args->debug, "mailactivesync_set_messages_flagged unflag", r);
     debug_auth_retry_hint(as, r);
     goto cleanup;
   }
@@ -2513,10 +2551,10 @@ static int run_mutation_self_test(mailactivesync * as,
   result = NULL;
 
   debug_step(args->debug, "deleting generated draft after mutation self-test");
-  r = mailactivesync_delete_message(as, state->drafts_id,
-      state->drafts_sync_key, server_id, 0, &result);
+  r = mailactivesync_delete_messages(as, state->drafts_id,
+      state->drafts_sync_key, server_ids, 0, &result);
   if (r != MAILACTIVESYNC_NO_ERROR) {
-    debug_error(args->debug, "mailactivesync_delete_message mutation", r);
+    debug_error(args->debug, "mailactivesync_delete_messages mutation", r);
     debug_auth_retry_hint(as, r);
     goto cleanup;
   }
@@ -2535,6 +2573,7 @@ static int run_mutation_self_test(mailactivesync * as,
  cleanup:
   if (!deleted && (server_id != NULL))
     delete_generated_draft_best_effort(as, args, state, server_id);
+  clist_free(server_ids);
   free(server_id);
   mailactivesync_sync_result_free(result);
   return r;
