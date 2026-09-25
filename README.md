@@ -1,67 +1,70 @@
 ## LibEtPan
 
-The purpose of this mail library is to provide a portable, efficient framework for different kinds of mail access: IMAP, SMTP, POP and NNTP.
-
-It provides an API for C language.
+LibEtPan is a portable C mail library for accessing, parsing, and composing email and news messages.
 
 ## Features
 
-- IMAP
-- SMTP
-- POP
-- NNTP
-- RFC822/MIME message builder
-- RFC822/MIME message parser
-- Maildir
-- mbox
-- MH
+- Mail protocols and services: IMAP, SMTP, POP3, NNTP, JMAP, ActiveSync, RSS/Atom feeds, and Gmail helpers
+- Message and content handling: RFC 822/IMF, MIME, and message composition
+- Local mailbox storage: Maildir, mbox, MH, and cache database support
+- Security and authentication: TLS, SASL, OpenPGP, and S/MIME
+- Platform support for Linux, macOS, iOS, Android, and Windows
 
 ## Build instructions
 
-### Unix
+The primary maintained build paths are `configure` and `make` on Linux and macOS, and Xcode on macOS and iOS.
+Android and Windows build files are also included.
 
-You need to install autoconf, automake and libtool.
-They can be installed using [brew](http://brew.sh/).
+### Linux
 
-    $ ./autogen.sh
-    $ make
+Install Autoconf, Automake, and Libtool, then build:
 
-You can use flag --with-poll for using poll() instead of select() for checking connection status
+```sh
+./autogen.sh
+./configure
+make
+```
 
-### How to link with it
+### macOS with configure and make
 
-    $ gcc -c -o sample.o sample.c `pkg-config libetpan --cflags`
-    $ gcc -o sample sample.o `pkg-config libetpan --libs`
+Install Autoconf, Automake, and Libtool, then build:
 
-### Mac / iOS
+```sh
+./autogen.sh
+./configure
+make
+```
 
-- Install Xcode and CMake. Autoconf, Automake, and Libtool are optional; when
-  present, the bootstrap refreshes the checked-in autotools output.
-- Configure libEtPan, initialize the dependency submodules, and build their XCFrameworks:
+### macOS and iOS with Xcode
 
-      $ ./build-mac/bootstrap.sh
+Install Xcode and CMake, then prepare the workspace and dependencies:
 
-- Open `build-mac/libetpan.xcworkspace`
-- Choose the correct target "static libetpan" for Mac or "libetpan ios" for iOS.
-- To build all supported slices, choose the "libetpan xcframework" target. The result is written to `build-mac/build/LibEtPan.xcframework`.
-- Build
+```sh
+cd build-mac
+./bootstrap.sh
+open libetpan.xcworkspace
+```
 
-### Setup a Mac project
+### Android
 
-- Add `libetpan.xcodeproj` as sub-project
-- Link with libetpan.a
-- Link with `build-mac/dependencies/build/JsonC.xcframework` and `build-mac/dependencies/build/CyrusSASL.xcframework`
+Install Android NDK r23 or newer, set `ANDROID_NDK`, and build from `build-android`:
 
-### Setup an iOS project
+```sh
+export ANDROID_NDK=$HOME/Library/Android/sdk/ndk/27.1.12297006
+cd build-android
+./build.sh
+```
 
-- Add `libetpan.xcodeproj` as sub-project
-- Link with libetpan-ios.a
-- Link with `build-mac/dependencies/build/JsonC.xcframework` and `build-mac/dependencies/build/CyrusSASL.xcframework`
+See `build-android/README.md` for dependency details, supported ABIs, and the sample app.
 
-### Build on Windows
+### Windows
 
-- See README and Visual Studio Solution in build-windows folder
+Open `build-windows/libetpan.sln` in Visual Studio and build the solution.
+
+See `build-windows/README.md` for supported Visual Studio versions and required third-party binaries.
 
 ## More information
+
+See [DEPENDENCIES.md](DEPENDENCIES.md) for required and optional dependencies by platform.
 
 See http://etpan.org/libetpan.html for more information and examples.
