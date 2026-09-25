@@ -29,6 +29,10 @@
  * SUCH DAMAGE.
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include "mailstream_cfstream.h"
 
 #if HAVE_CFNETWORK
