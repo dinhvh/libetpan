@@ -25,7 +25,6 @@ let package = Package(
                 "build-windows",
                 "doc",
                 "tests",
-                "travis",
                 "unittest",
             ],
             sources: [
