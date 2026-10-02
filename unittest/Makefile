@@ -21,7 +21,7 @@ CPPFLAGS += \
 
 CFLAGS += -Wall -Wextra -Werror -g
 LIBETPAN_TEST_DEPENDENCY ?= libetpan
-LIBETPAN_TEST_LDLIBS ?= $(TOP)/src/.libs/libetpan.a
+LIBETPAN_TEST_LDLIBS ?= $(if $(wildcard $(TOP)/src/.libs/libetpan.a),$(TOP)/src/.libs/libetpan.a,$(TOP)/src/.libs/libetpan.so -Wl,-rpath,$(abspath $(TOP)/src/.libs))
 LDLIBS += $(LIBETPAN_TEST_LDLIBS) -lz -lcurl -lsasl2 -lpthread
 LDLIBS += $(shell pkg-config --libs icu-uc 2>/dev/null)
 ifeq ($(shell uname -s),Darwin)
@@ -153,8 +153,10 @@ IMAP_UTF7_TEST_SRCS = \
 	imap-utf7/imap_utf7_tests.c
 DATA_TYPES_TEST_SRCS = \
 	data-types/main.c \
+	data-types/data_types_test.c \
 	data-types/base64_test.c \
 	data-types/carray_test.c \
+	data-types/mailstream_test.c \
 	data-types/md5_test.c \
 	$(TOP)/src/data-types/base64.c \
 	$(TOP)/src/data-types/carray.c \
@@ -218,9 +220,11 @@ PLAINTEXT_RENDERING_TEST_DEPS = $(PLAINTEXT_RENDERING_TEST_SRCS) \
 IMAP_UTF7_TEST_DEPS = $(IMAP_UTF7_TEST_SRCS) imap-utf7/*.h common/test_case.h
 DATA_TYPES_TEST_DEPS = $(DATA_TYPES_TEST_SRCS) \
 	data-types/data_types_tests.h common/test_case.h \
-        $(TOP)/src/data-types/base64.h \
-        $(TOP)/src/data-types/carray.h \
-        $(TOP)/src/data-types/md5.h \
+	        $(TOP)/src/data-types/base64.h \
+	        $(TOP)/src/data-types/carray.h \
+	        $(TOP)/src/data-types/mailstream.h \
+	        $(TOP)/src/data-types/mailstream_low.h \
+	        $(TOP)/src/data-types/md5.h \
         $(TOP)/src/data-types/md5global.h \
         $(TOP)/src/data-types/hmac-md5.h
 CHARCONV_TEST_DEPS = $(CHARCONV_TEST_SRCS) \
@@ -342,8 +346,8 @@ $(PLAINTEXT_RENDERING_TEST): $(PLAINTEXT_RENDERING_TEST_DEPS) $(LIBETPAN_TEST_DE
 $(IMAP_UTF7_TEST): $(IMAP_UTF7_TEST_DEPS) $(LIBETPAN_TEST_DEPENDENCY)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(IMAP_UTF7_TEST_SRCS) $(LDLIBS) -o $@
 
-$(DATA_TYPES_TEST): $(DATA_TYPES_TEST_DEPS)
-	$(CC) $(CPPFLAGS) $(CFLAGS) $(DATA_TYPES_TEST_SRCS) -o $@
+$(DATA_TYPES_TEST): $(DATA_TYPES_TEST_DEPS) $(LIBETPAN_TEST_DEPENDENCY)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(DATA_TYPES_TEST_SRCS) $(LDLIBS) -o $@
 
 $(CHARCONV_TEST): $(CHARCONV_TEST_DEPS) $(LIBETPAN_TEST_DEPENDENCY)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(CHARCONV_TEST_SRCS) $(LDLIBS) -o $@

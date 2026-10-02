@@ -16,9 +16,19 @@ const char * base64_test_name(size_t index);
 int base64_test_run_case(size_t index,
     test_failure_callback failure_callback, void * context);
 
+size_t md5_test_count(void);
+const char * md5_test_name(size_t index);
+int md5_test_run_case(size_t index,
+    test_failure_callback failure_callback, void * context);
+
 size_t carray_test_count(void);
 const char * carray_test_name(size_t index);
 int carray_test_run_case(size_t index,
+    test_failure_callback failure_callback, void * context);
+
+size_t mailstream_test_count(void);
+const char * mailstream_test_name(size_t index);
+int mailstream_test_run_case(size_t index,
     test_failure_callback failure_callback, void * context);
 
 #endif

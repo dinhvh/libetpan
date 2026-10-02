@@ -52,6 +52,7 @@
 #include <sys/stat.h>
 
 #define DEFAULT_NETWORK_TIMEOUT 300
+#define MAILSTREAM_MAX_ZERO_WRITES 16
 
 struct timeval mailstream_network_delay =
 {  DEFAULT_NETWORK_TIMEOUT, 0 };
@@ -110,13 +111,30 @@ static ssize_t write_direct(mailstream * s, const void * buf, size_t count)
   size_t left;
   const char * cur_buf;
   ssize_t written;
+  unsigned int zero_writes;
   
   cur_buf = buf;
   left = count;
+  zero_writes = 0;
   while (left > 0) {
     written = mailstream_low_write(s->low, cur_buf, left);
 
-    if (written <= 0) {
+    if (written < 0) {
+      if (count == left)
+	return -1;
+      else
+	return count - left;
+    }
+    if (written == 0) {
+      if (++ zero_writes >= MAILSTREAM_MAX_ZERO_WRITES) {
+        if (count == left)
+	  return -1;
+        else
+	  return count - left;
+      }
+      continue;
+    }
+    if ((size_t) written > left) {
       if (count == left)
 	return -1;
       else
@@ -125,6 +143,7 @@ static ssize_t write_direct(mailstream * s, const void * buf, size_t count)
 
     cur_buf += written;
     left -= written;
+    zero_writes = 0;
   }
   
   return count;
@@ -156,19 +175,29 @@ int mailstream_flush(mailstream * s)
   char * cur_buf;
   size_t left;
   ssize_t written;
+  unsigned int zero_writes;
 
   if (s == NULL)
     return -1;
 
   cur_buf = s->write_buffer;
   left = s->write_buffer_len;
+  zero_writes = 0;
   while (left > 0) {
     written = mailstream_low_write(s->low, cur_buf, left);
 
-    if (written <= 0)
+    if (written < 0)
+      goto move_buffer;
+    if (written == 0) {
+      if (++ zero_writes >= MAILSTREAM_MAX_ZERO_WRITES)
+        goto move_buffer;
+      continue;
+    }
+    if ((size_t) written > left)
       goto move_buffer;
     cur_buf += written;
     left -=  written;
+    zero_writes = 0;
   }
 
   s->write_buffer_len = 0;

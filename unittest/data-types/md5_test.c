@@ -212,66 +212,32 @@ static const struct data_types_case cases[] = {
   { "HMAC-MD5 streaming", check_hmac_md5_streaming },
 };
 
-size_t data_types_test_count(void)
+size_t md5_test_count(void)
 {
-  return sizeof(cases) / sizeof(cases[0]) + base64_test_count() +
-      carray_test_count();
+  return sizeof(cases) / sizeof(cases[0]);
 }
 
-const char * data_types_test_name(size_t index)
+const char * md5_test_name(size_t index)
 {
-  size_t md5_count;
-  size_t base64_count;
-
-  md5_count = sizeof(cases) / sizeof(cases[0]);
-  if (index < md5_count)
-    return cases[index].name;
-  index -= md5_count;
-
-  base64_count = base64_test_count();
-  if (index < base64_count)
-    return base64_test_name(index);
-  return carray_test_name(index - base64_count);
+  if (index >= md5_test_count())
+    return NULL;
+  return cases[index].name;
 }
 
-int data_types_test_run_case(size_t index,
+int md5_test_run_case(size_t index,
     test_failure_callback failure_callback, void * context)
 {
-  size_t md5_count;
-  size_t base64_count;
-
-  md5_count = sizeof(cases) / sizeof(cases[0]);
-  if (index >= data_types_test_count()) {
+  if (index >= md5_test_count()) {
     if (failure_callback != NULL)
-      failure_callback(__FILE__, __LINE__, "index < data_types_test_count()",
+      failure_callback(__FILE__, __LINE__, "index < md5_test_count()",
           "test case index is out of range", context);
     return -1;
   }
 
-  if (index >= md5_count)
-    index -= md5_count;
-  else {
-    active_failure_callback = failure_callback;
-    active_failure_context = context;
-    if (setjmp(test_abort) != 0)
-      return -1;
-    cases[index].run();
-    return 0;
-  }
-
-  base64_count = base64_test_count();
-  if (index < base64_count)
-    return base64_test_run_case(index, failure_callback, context);
-  return carray_test_run_case(index - base64_count, failure_callback, context);
-}
-
-int data_types_test_run(void)
-{
-  size_t index;
-
-  for (index = 0; index < data_types_test_count(); index++) {
-    if (data_types_test_run_case(index, NULL, NULL) != 0)
-      return -1;
-  }
+  active_failure_callback = failure_callback;
+  active_failure_context = context;
+  if (setjmp(test_abort) != 0)
+    return -1;
+  cases[index].run();
   return 0;
 }
