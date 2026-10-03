@@ -7,6 +7,8 @@ version=3.5.8
 package_name=openssl-android
 export MIN_SDK_VERSION=23
 current_dir="$(cd "$(dirname "$0")" && pwd)"
+repo_root="$(cd "$current_dir/../../.." && pwd)"
+submodule_dir="$repo_root/build-mac/dependencies/submodules/openssl"
 output_dir="$current_dir/../build/$package_name"
 cd "$current_dir"
 
@@ -36,16 +38,20 @@ fi
 
 export HOST_TAG="$(detect_host_tag)"
 
-if test ! -f packages/openssl-$version.tar.gz; then
-  mkdir -p packages
-  cd packages
-  curl -fL -O https://www.openssl.org/source/openssl-$version.tar.gz
-  cd ..
-fi
-if ! tar tzf packages/openssl-$version.tar.gz >/dev/null 2>&1; then
-  rm -f packages/openssl-$version.tar.gz
-  echo "Downloaded OpenSSL archive is invalid; retry the script to download it again." >&2
-  exit 1
+source_name=openssl-source
+if test ! -f "$submodule_dir/Configure" ; then
+  source_name=openssl-$version
+  if test ! -f packages/openssl-$version.tar.gz; then
+    mkdir -p packages
+    cd packages
+    curl -fL -O https://www.openssl.org/source/openssl-$version.tar.gz
+    cd ..
+  fi
+  if ! tar tzf packages/openssl-$version.tar.gz >/dev/null 2>&1; then
+    rm -f packages/openssl-$version.tar.gz
+    echo "Downloaded OpenSSL archive is invalid; retry the script to download it again." >&2
+    exit 1
+  fi
 fi
 
 rm -rf "./src" "$output_dir"
@@ -53,8 +59,18 @@ mkdir -p "$(dirname "$output_dir")"
 mkdir -p "./src"
 cd "./src"
 
-tar xzf "../packages/openssl-$version.tar.gz"
-
+if test -f "$submodule_dir/Configure" ; then
+  mkdir -p "$source_name"
+  (
+    cd "$submodule_dir"
+    tar --exclude=.git -cf - .
+  ) | (
+    cd "$source_name"
+    tar -xf -
+  )
+else
+  tar xzf "../packages/openssl-$version.tar.gz"
+fi
 
 export TOOLCHAIN=$ANDROID_NDK/toolchains/llvm/prebuilt/$HOST_TAG
 
@@ -66,21 +82,27 @@ PATH=$TOOLCHAIN/bin:$PATH
 # (<triple>-ar, <triple>-ranlib); provide the legacy names as symlinks to the
 # llvm tools for every target triple we build below.
 for triple in aarch64-linux-android arm-linux-androideabi i686-linux-android x86_64-linux-android ; do
-  ln -sfn "$TOOLCHAIN/bin/llvm-ar" "$TOOLCHAIN/bin/$triple-ar"
-  ln -sfn "$TOOLCHAIN/bin/llvm-ranlib" "$TOOLCHAIN/bin/$triple-ranlib"
+  if test ! -e "$TOOLCHAIN/bin/$triple-ar" ; then
+    ln -s "$TOOLCHAIN/bin/llvm-ar" "$TOOLCHAIN/bin/$triple-ar"
+  fi
+  if test ! -e "$TOOLCHAIN/bin/$triple-ranlib" ; then
+    ln -s "$TOOLCHAIN/bin/llvm-ranlib" "$TOOLCHAIN/bin/$triple-ranlib"
+  fi
 done
 
 mkdir -p build/openssl
-cd "./openssl-$version"
+cd "./$source_name"
 
 # arm64
 export TARGET_HOST=aarch64-linux-android
 export ANDROID_ARCH=arm64-v8a
 
 # openssl does not handle api suffix well
-ln -sfn $TOOLCHAIN/bin/$TARGET_HOST$MIN_SDK_VERSION-clang $TOOLCHAIN/bin/$TARGET_HOST-clang
+if test ! -e "$TOOLCHAIN/bin/$TARGET_HOST-clang" ; then
+  ln -s "$TOOLCHAIN/bin/$TARGET_HOST$MIN_SDK_VERSION-clang" "$TOOLCHAIN/bin/$TARGET_HOST-clang"
+fi
 
-./Configure android-arm64 no-shared no-tests \
+./Configure android-arm64 no-shared no-tests no-asm \
  -D__ANDROID_API__=$MIN_SDK_VERSION \
  --prefix=$PWD/build/$ANDROID_ARCH
 
@@ -95,9 +117,11 @@ export TARGET_HOST=arm-linux-androideabi
 export ANDROID_ARCH=armeabi-v7a
 
 # for 32-bit ARM, the compiler is prefixed with armv7a-linux-androideabi, but the binutils tools are prefixed with arm-linux-androideabi
-ln -sfn $TOOLCHAIN/bin/armv7a-linux-androideabi$MIN_SDK_VERSION-clang $TOOLCHAIN/bin/$TARGET_HOST-clang
+if test ! -e "$TOOLCHAIN/bin/$TARGET_HOST-clang" ; then
+  ln -s "$TOOLCHAIN/bin/armv7a-linux-androideabi$MIN_SDK_VERSION-clang" "$TOOLCHAIN/bin/$TARGET_HOST-clang"
+fi
 
-./Configure android-arm no-shared no-tests \
+./Configure android-arm no-shared no-tests no-asm \
  -D__ANDROID_API__=$MIN_SDK_VERSION \
  --prefix=$PWD/build/$ANDROID_ARCH
 
@@ -119,9 +143,11 @@ cp -R $PWD/build/$ANDROID_ARCH ../build/openssl/
 export TARGET_HOST=i686-linux-android
 export ANDROID_ARCH=x86
 
-ln -sfn $TOOLCHAIN/bin/$TARGET_HOST$MIN_SDK_VERSION-clang $TOOLCHAIN/bin/$TARGET_HOST-clang
+if test ! -e "$TOOLCHAIN/bin/$TARGET_HOST-clang" ; then
+  ln -s "$TOOLCHAIN/bin/$TARGET_HOST$MIN_SDK_VERSION-clang" "$TOOLCHAIN/bin/$TARGET_HOST-clang"
+fi
 
-./Configure android-x86 no-shared no-tests \
+./Configure android-x86 no-shared no-tests no-asm \
  -D__ANDROID_API__=$MIN_SDK_VERSION \
  --prefix=$PWD/build/$ANDROID_ARCH
 
@@ -142,9 +168,11 @@ cp -R $PWD/build/$ANDROID_ARCH ../build/openssl/
 export TARGET_HOST=x86_64-linux-android
 export ANDROID_ARCH=x86_64
 
-ln -sfn $TOOLCHAIN/bin/$TARGET_HOST$MIN_SDK_VERSION-clang $TOOLCHAIN/bin/$TARGET_HOST-clang
+if test ! -e "$TOOLCHAIN/bin/$TARGET_HOST-clang" ; then
+  ln -s "$TOOLCHAIN/bin/$TARGET_HOST$MIN_SDK_VERSION-clang" "$TOOLCHAIN/bin/$TARGET_HOST-clang"
+fi
 
-./Configure android-x86_64 no-shared no-tests \
+./Configure android-x86_64 no-shared no-tests no-asm \
  -D__ANDROID_API__=$MIN_SDK_VERSION \
  --prefix=$PWD/build/$ANDROID_ARCH
 

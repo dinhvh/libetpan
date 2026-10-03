@@ -5,6 +5,8 @@ set -euo pipefail
 version=1.15
 package_name=iconv-android
 current_dir="$(cd "$(dirname "$0")" && pwd)"
+repo_root="$(cd "$current_dir/../../.." && pwd)"
+submodule_dir="$repo_root/build-mac/dependencies/submodules/libiconv"
 output_dir="$current_dir/../build/$package_name"
 cd "$current_dir"
 
@@ -21,7 +23,7 @@ function build {
 }
 
 if test ! -d "$output_dir"; then
-  if test ! -f $current_dir/build-android/libiconv-$version.tar.gz; then
+  if test ! -f "$submodule_dir/configure" && test ! -f $current_dir/build-android/libiconv-$version.tar.gz; then
     cd "$current_dir/build-android"
     curl -O http://ftp.gnu.org/gnu/libiconv/libiconv-$version.tar.gz
     cd ..
@@ -30,8 +32,19 @@ if test ! -d "$output_dir"; then
   #rm -rf "$current_dir/build-android/libiconv"
   if test ! -d $current_dir/build-android/libiconv; then
     cd "$current_dir/build-android"
-  	tar xzf "$current_dir/build-android/libiconv-$version.tar.gz"
-  	mv -v "$current_dir/build-android/libiconv-$version" "$current_dir/build-android/libiconv"
+    if test -f "$submodule_dir/configure" ; then
+      mkdir -p "$current_dir/build-android/libiconv"
+      (
+        cd "$submodule_dir"
+        tar --exclude=.git -cf - .
+      ) | (
+        cd "$current_dir/build-android/libiconv"
+        tar -xf -
+      )
+    else
+      tar xzf "$current_dir/build-android/libiconv-$version.tar.gz"
+      mv -v "$current_dir/build-android/libiconv-$version" "$current_dir/build-android/libiconv"
+    fi
 
   	cd "$current_dir/build-android/libiconv"
   	./configure

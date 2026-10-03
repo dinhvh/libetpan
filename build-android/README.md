@@ -10,8 +10,8 @@ libraries, and contains a small Kotlin/Compose demo app that consumes them.
   `ERROR: Unknown host CPU architecture: arm64`. `build.sh` detects this and
   stops early with a message. Tested with **NDK 27.1.12297006, 26.3.11579264**.
 - Android SDK (for the demo app) and a JDK 17+ (for Gradle).
-- Network access on the first run — the dependency sources (OpenSSL, Cyrus SASL,
-  libiconv) are downloaded automatically.
+- Populated dependency submodules under `build-mac/dependencies/submodules/`.
+  `build-android/dependencies/bootstrap.sh` initializes them automatically.
 
 Point `ANDROID_NDK` at a suitable NDK, e.g.:
 
@@ -31,9 +31,13 @@ cd build-android
 (min API level android-23):
 
 1. **OpenSSL** (3.5.8) → `dependencies/build/openssl-android/`
-2. **Cyrus SASL** (2.1.28) → `dependencies/build/cyrus-sasl-android/`
-3. **libiconv** (1.15) → `dependencies/build/iconv-android/`
-4. **libetpan** → `build/libetpan-android/`
+2. **JSON-C** → `dependencies/build/json-c-android/`
+3. **libcurl** → `dependencies/build/curl-android/`
+4. **Cyrus SASL** (2.1.28) → `dependencies/build/cyrus-sasl-android/`
+5. **libiconv** (1.15) → `dependencies/build/iconv-android/`
+6. **libxml2** → `dependencies/build/libxml2-android/`
+7. **RNP** → `dependencies/build/rnp-android/`
+8. **libetpan** → `build/libetpan-android/`
 
 Each dependency is only rebuilt if its output directory is missing, so re-runs
 are fast. To force a dependency rebuild, delete its directory first.
@@ -52,21 +56,13 @@ libetpan-android/
   libs/x86_64/libetpan.a
 ```
 
-`libetpan.a` is **not** self-contained: linking it also requires
-`libssl.a`, `libcrypto.a` (OpenSSL), `libsasl2.a` (Cyrus SASL), `libjson-c.a`,
-and `libiconv.a`, plus the NDK system libs `z` and `log`. Link order matters
-(consumers before providers):
+`libetpan.a` is **not** self-contained: linking it also requires `librnp.a`,
+`libcurl.a`, `libxml2.a`, `libjson-c.a`, `libsasl2.a`, `libssl.a`,
+`libcrypto.a`, and `libiconv.a`, plus the NDK system libs `z` and `log`. Link
+order matters (consumers before providers):
 
 ```
-etpan  json-c  sasl2  ssl  crypto  iconv  z  log
-```
-
-Build JSON-C for Android separately and set `JSON_C_PATH` to a prefix
-containing `include/json-c/json.h` before running `build.sh`:
-
-```sh
-export JSON_C_PATH=/path/to/json-c-android-prefix
-./build.sh
+etpan  rnp  curl  xml2  json-c  sasl2  ssl  crypto  iconv  z  log
 ```
 
 > Note: `build/libetpan-android/` currently contains only the exported
@@ -102,7 +98,7 @@ cd build-android/example
 directories produced by `build.sh`; it must be re-run if you rebuild the native
 libraries.
 The Gradle build uses CMake (`app/src/main/cpp/CMakeLists.txt`) to link the JNI
-shared library `libetpanjni.so` against the five static libs.
+shared library `libetpanjni.so` against the staged static libs.
 
 Set the SDK location via `local.properties` (`sdk.dir=...`) or the
 `ANDROID_HOME` environment variable. If Gradle complains about the JDK, run it

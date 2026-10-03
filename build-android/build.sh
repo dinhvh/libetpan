@@ -9,6 +9,10 @@ output_dir="$current_dir/build/$package_name"
 openssl_path="$current_dir/dependencies/build/openssl-android"
 cyrus_sasl_path="$current_dir/dependencies/build/cyrus-sasl-android"
 iconv_path="$current_dir/dependencies/build/iconv-android"
+json_c_path="${JSON_C_PATH:-$current_dir/dependencies/build/json-c-android}"
+curl_path="$current_dir/dependencies/build/curl-android"
+libxml2_path="$current_dir/dependencies/build/libxml2-android"
+rnp_path="$current_dir/dependencies/build/rnp-android"
 
 
 if test "x$ANDROID_NDK" = x ; then
@@ -40,6 +44,18 @@ if test ! -d "$openssl_path" ; then
   ./build.sh
 fi
 
+if test "$json_c_path" = "$current_dir/dependencies/build/json-c-android" && test ! -d "$json_c_path" ; then
+  echo Building JSON-C first
+  cd "$current_dir/dependencies/json-c"
+  ./build.sh
+fi
+
+if test ! -d "$curl_path" ; then
+  echo Building curl first
+  cd "$current_dir/dependencies/curl"
+  ./build.sh
+fi
+
 if test ! -d "$cyrus_sasl_path" ; then
   echo Building Cyrus SASL first
   cd "$current_dir/dependencies/cyrus-sasl"
@@ -52,6 +68,18 @@ if test ! -d "$iconv_path" ; then
   ./build.sh
 fi
 
+if test ! -d "$libxml2_path" ; then
+  echo Building libxml2 first
+  cd "$current_dir/dependencies/libxml2"
+  ./build.sh
+fi
+
+if test ! -d "$rnp_path" ; then
+  echo Building RNP first
+  cd "$current_dir/dependencies/rnp"
+  ./build.sh
+fi
+
 build() {
   rm -rf "$current_dir/obj"
 
@@ -60,7 +88,10 @@ build() {
     OPENSSL_PATH="$openssl_path" \
     CYRUS_SASL_PATH="$cyrus_sasl_path" \
     ICONV_PATH="$iconv_path" \
-    JSON_C_PATH="$JSON_C_PATH"
+    JSON_C_PATH="$json_c_path" \
+    CURL_PATH="$curl_path" \
+    LIBXML2_PATH="$libxml2_path" \
+    RNP_PATH="$rnp_path"
 
   mkdir -p "$output_dir/libs/$TARGET_ARCH_ABI"
   cp "$current_dir/obj/local/$TARGET_ARCH_ABI/libetpan.a" "$output_dir/libs/$TARGET_ARCH_ABI"

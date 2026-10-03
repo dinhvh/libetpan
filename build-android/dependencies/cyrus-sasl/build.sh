@@ -19,18 +19,26 @@ ARCHIVE_NAME=$ARCHIVE.tar.gz
 ARCHIVE_PATCH=$ARCHIVE.patch
 current_dir="$(cd "$(dirname "$0")" && pwd)"
 cd "$current_dir"
+repo_root="$(cd "$current_dir/../../.." && pwd)"
+submodule_dir="$repo_root/build-mac/dependencies/submodules/cyrus-sasl"
 package_dir="$current_dir/../../../build-mac/dependencies/packages"
 output_dir="$current_dir/../build/$package_name"
 openssl_root="$current_dir/../build/openssl-android"
 
-if [ ! -e "$package_dir/$ARCHIVE_NAME" ]; then
+use_submodule=false
+if [ -f "$submodule_dir/configure.ac" ] &&
+    [ -f "$submodule_dir/plugins/anonymous_init.c" ]; then
+  use_submodule=true
+fi
+
+if ! "$use_submodule" && [ ! -e "$package_dir/$ARCHIVE_NAME" ]; then
   echo "Downloading $ARCHIVE_NAME"
   mkdir -p "$package_dir"
   curl -L -o "$package_dir/$ARCHIVE_NAME" \
     "https://github.com/cyrusimap/cyrus-sasl/releases/download/$ARCHIVE/$ARCHIVE_NAME"
 fi
 
-if [ ! -e "$package_dir/$ARCHIVE_NAME" ]; then
+if ! "$use_submodule" && [ ! -e "$package_dir/$ARCHIVE_NAME" ]; then
   echo "Missing archive $ARCHIVE"
   exit 1
 fi
@@ -52,10 +60,26 @@ function build {
   
   mkdir -p "$current_dir/src"
   cd "$current_dir/src"
-  tar xzf "$package_dir/$ARCHIVE_NAME"
-  if [ $? != 0 ]; then
-    echo "Unable to decompress $ARCHIVE_NAME"
-    exit 1
+  if "$use_submodule"; then
+    mkdir -p "$ARCHIVE"
+    (
+      cd "$submodule_dir"
+      tar --exclude=.git -cf - .
+    ) | (
+      cd "$ARCHIVE"
+      tar -xf -
+    )
+  else
+    tar xzf "$package_dir/$ARCHIVE_NAME"
+    if [ $? != 0 ]; then
+      echo "Unable to decompress $ARCHIVE_NAME"
+      exit 1
+    fi
+  fi
+  if test ! -f "$current_dir/src/$ARCHIVE/include/md5global.h" &&
+      test -f "$current_dir/src/$ARCHIVE/win32/include/md5global.h" ; then
+    cp "$current_dir/src/$ARCHIVE/win32/include/md5global.h" \
+      "$current_dir/src/$ARCHIVE/include/md5global.h"
   fi
 
   if test ! -f "$output_dir/include/sasl/sasl.h" ; then

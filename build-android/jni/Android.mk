@@ -18,6 +18,18 @@ ifeq ($(JSON_C_PATH),)
 $(error JSON_C_PATH must be set)
 endif
 
+ifeq ($(CURL_PATH),)
+$(error CURL_PATH must be set)
+endif
+
+ifeq ($(LIBXML2_PATH),)
+$(error LIBXML2_PATH must be set)
+endif
+
+ifeq ($(RNP_PATH),)
+$(error RNP_PATH must be set)
+endif
+
 src_files = \
 ./src/data-types/base64.c \
 ./src/data-types/carray.c \
@@ -150,30 +162,55 @@ src_files += \
 ./src/low-level/jmap/mailjmap_response.c \
 ./src/low-level/jmap/mailjmap_types.c
 
+src_files += \
+./src/low-level/feed/date.c \
+./src/low-level/feed/newsfeed.c \
+./src/low-level/feed/newsfeed_item.c \
+./src/low-level/feed/newsfeed_item_enclosure.c \
+./src/low-level/feed/newsfeed_private.c \
+./src/low-level/feed/parser.c \
+./src/low-level/feed/parser_atom03.c \
+./src/low-level/feed/parser_atom10.c \
+./src/low-level/feed/parser_rdf.c \
+./src/low-level/feed/parser_rss20.c \
+./src/driver/implementation/feed/feeddriver.c \
+./src/driver/implementation/feed/feeddriver_message.c \
+./src/driver/implementation/feed/feedstorage.c
+
+src_files += \
+./src/low-level/pgp/mailpgp.c \
+./src/low-level/pgp/mailpgp_rnp.c
+
 NDK_TOOLCHAIN_VERSION := clang
 LOCAL_MODULE := etpan
 LOCAL_SRC_FILES := $(addprefix ../../, $(src_files))
-LOCAL_CFLAGS += -DHAVE_CONFIG_H=1 -DHAVE_ICONV=1
+LOCAL_CFLAGS += -DHAVE_CONFIG_H=1 -DHAVE_ICONV=1 -DHAVE_JSON=1 -DHAVE_CURL=1 -DHAVE_FEED=1 -DUSE_PGP_RNP=1
 c_includes = \
 src \
 src/data-types \
 src/low-level \
+src/low-level/feed \
 src/low-level/gmail \
 src/low-level/jmap \
 src/low-level/imap \
 src/low-level/imf \
 src/low-level/mime \
 src/low-level/nntp \
+src/low-level/pgp \
 src/low-level/pop3 \
 src/low-level/smtp \
 src/main \
 src/driver/implementation/data-message \
+src/driver/implementation/feed \
 src/driver/interface
 
 LOCAL_C_INCLUDES = $(addprefix ../../, $(c_includes)) \
   libetpan-android/include \
   $(OPENSSL_PATH)/include $(CYRUS_SASL_PATH)/include $(ICONV_PATH)/include	  libetpan-android/include/libetpan \
   $(JSON_C_PATH)/include \
+  $(CURL_PATH)/include \
+  $(LIBXML2_PATH)/include/libxml2 \
+  $(RNP_PATH)/include \
   $(OPENSSL_PATH)/include \
   $(LOCAL_PATH)/../include $(LOCAL_PATH)/../include/libetpan
 

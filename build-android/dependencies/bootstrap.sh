@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+script_dir="$(cd "$(dirname "$0")" && pwd)"
+repository_root="$(cd "$script_dir/../.." && pwd)"
+submodules_dir="build-mac/dependencies/submodules"
+logfile="$(mktemp "${TMPDIR:-/tmp}/libetpan-android-dependencies-bootstrap.XXXXXX")"
+
+trap 'rm -f "$logfile"' EXIT
+
+fail() {
+  echo "ERROR: $*" >&2
+  exit 1
+}
+
+run_step() {
+  local description="$1"
+  shift
+
+  echo "$description"
+  if "$@" >"$logfile" 2>&1; then
+    return
+  fi
+
+  cat "$logfile" >&2
+  return 1
+}
+
+require_source() {
+  local marker="$1"
+  local name="$2"
+
+  [[ -e "$repository_root/$marker" ]] ||
+    fail "$name sources are missing at $marker. Run this script again after submodules are available."
+}
+
+[[ -n "${ANDROID_NDK:-}" ]] || fail "ANDROID_NDK must be set before running this script."
+command -v git >/dev/null 2>&1 || fail "Required command not found: git"
+
+run_step "Initializing dependency submodules" \
+  git -C "$repository_root" submodule update --init --recursive -- "$submodules_dir"
+
+require_source "build-mac/dependencies/submodules/openssl/Configure" "OpenSSL"
+require_source "build-mac/dependencies/submodules/cyrus-sasl/configure.ac" "Cyrus SASL"
+require_source "build-mac/dependencies/submodules/json-c/CMakeLists.txt" "JSON-C"
+require_source "build-mac/dependencies/submodules/curl/CMakeLists.txt" "curl"
+require_source "build-mac/dependencies/submodules/libxml2/CMakeLists.txt" "libxml2"
+require_source "build-mac/dependencies/submodules/libiconv/configure.ac" "libiconv"
+require_source "build-mac/dependencies/submodules/rnp/CMakeLists.txt" "RNP"
+
+run_step "Building Android OpenSSL" "$script_dir/openssl/build.sh"
+run_step "Building Android JSON-C" "$script_dir/json-c/build.sh"
+run_step "Building Android curl" "$script_dir/curl/build.sh"
+run_step "Building Android Cyrus SASL" "$script_dir/cyrus-sasl/build.sh"
+run_step "Building Android libiconv" "$script_dir/iconv/build.sh"
+run_step "Building Android libxml2" "$script_dir/libxml2/build.sh"
+run_step "Building Android RNP" "$script_dir/rnp/build.sh"
+
+echo "Android dependencies are ready in $script_dir/build"
