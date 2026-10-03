@@ -21,7 +21,11 @@ CPPFLAGS += \
 
 CFLAGS += -Wall -Wextra -Werror -g
 LIBETPAN_TEST_DEPENDENCY ?= libetpan
-LIBETPAN_TEST_LDLIBS ?= $(if $(wildcard $(TOP)/src/.libs/libetpan.a),$(TOP)/src/.libs/libetpan.a,$(TOP)/src/.libs/libetpan.so -Wl,-rpath,$(abspath $(TOP)/src/.libs))
+LIBETPAN_SHARED_EXT = so
+ifeq ($(shell uname -s),Darwin)
+LIBETPAN_SHARED_EXT = dylib
+endif
+LIBETPAN_TEST_LDLIBS ?= $(if $(wildcard $(TOP)/src/.libs/libetpan.a),$(TOP)/src/.libs/libetpan.a,$(TOP)/src/.libs/libetpan.$(LIBETPAN_SHARED_EXT) -Wl,-rpath,$(abspath $(TOP)/src/.libs))
 LDLIBS += $(LIBETPAN_TEST_LDLIBS) -lz -lcurl -lsasl2 -lpthread
 LDLIBS += $(shell pkg-config --libs icu-uc 2>/dev/null)
 ifeq ($(shell uname -s),Darwin)
