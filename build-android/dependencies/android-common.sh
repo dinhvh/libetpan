@@ -139,9 +139,8 @@ android_copy_library() {
 
 android_dependency_output_dir() {
   local package_name="$1"
-  local build_version="$2"
 
-  echo "$android_dependencies_dir/build/$package_name-$build_version"
+  echo "$android_dependencies_dir/build/$package_name"
 }
 
 android_require_dependency_output() {

@@ -2,13 +2,12 @@
 
 set -euo pipefail
 
-build_version=3
 # OpenSSL 3.5 is the current LTS line and is required by recent curl.
 version=3.5.8
 package_name=openssl-android
 export MIN_SDK_VERSION=23
 current_dir="$(cd "$(dirname "$0")" && pwd)"
-output_dir="$current_dir/../build/$package_name-$build_version"
+output_dir="$current_dir/../build/$package_name"
 cd "$current_dir"
 
 detect_host_tag() {

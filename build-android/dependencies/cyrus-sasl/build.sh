@@ -7,9 +7,7 @@ set -euo pipefail
 # to compile against the OpenSSL 1.1.1 we build below. This matches the version
 # already used by the iOS build.
 version=2.1.28
-build_version=4
 ARCHIVE=cyrus-sasl-$version
-openssl_build_version=3
 package_name=cyrus-sasl-android
 
 if test "x$ANDROID_NDK" = x ; then
@@ -22,8 +20,8 @@ ARCHIVE_PATCH=$ARCHIVE.patch
 current_dir="$(cd "$(dirname "$0")" && pwd)"
 cd "$current_dir"
 package_dir="$current_dir/../../../build-mac/dependencies/packages"
-output_dir="$current_dir/../build/$package_name-$build_version"
-openssl_root="$current_dir/../build/openssl-android-$openssl_build_version"
+output_dir="$current_dir/../build/$package_name"
+openssl_root="$current_dir/../build/openssl-android"
 
 if [ ! -e "$package_dir/$ARCHIVE_NAME" ]; then
   echo "Downloading $ARCHIVE_NAME"

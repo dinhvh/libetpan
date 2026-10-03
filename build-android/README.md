@@ -30,10 +30,10 @@ cd build-android
 `build.sh` builds, for the ABIs **arm64-v8a, armeabi-v7a, x86, x86_64**
 (min API level android-23):
 
-1. **OpenSSL** (3.5.8) → `dependencies/build/openssl-android-3/`
-2. **Cyrus SASL** (2.1.28) → `dependencies/build/cyrus-sasl-android-4/`
-3. **libiconv** (1.15) → `dependencies/build/iconv-android-1/`
-4. **libetpan** → `build/libetpan-android-7/`
+1. **OpenSSL** (3.5.8) → `dependencies/build/openssl-android/`
+2. **Cyrus SASL** (2.1.28) → `dependencies/build/cyrus-sasl-android/`
+3. **libiconv** (1.15) → `dependencies/build/iconv-android/`
+4. **libetpan** → `build/libetpan-android/`
 
 Each dependency is only rebuilt if its output directory is missing, so re-runs
 are fast. To force a dependency rebuild, delete its directory first.
@@ -41,10 +41,10 @@ are fast. To force a dependency rebuild, delete its directory first.
 ### Output layout
 
 Each output directory contains `libs/<abi>/*.a` and headers, e.g.
-`build/libetpan-android-7/`:
+`build/libetpan-android/`:
 
 ```
-libetpan-android-7/
+libetpan-android/
   include/libetpan/libetpan-config.h
   libs/arm64-v8a/libetpan.a
   libs/armeabi-v7a/libetpan.a
@@ -69,7 +69,7 @@ export JSON_C_PATH=/path/to/json-c-android-prefix
 ./build.sh
 ```
 
-> Note: `build/libetpan-android-7/` currently contains only the exported
+> Note: `build/libetpan-android/` currently contains only the exported
 > libetpan headers copied by the Android build. The demo app's
 > `prepare-libs.sh` sources those headers from `build-android/include/libetpan/`.
 

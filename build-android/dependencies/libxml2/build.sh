@@ -6,11 +6,10 @@ script_dir="$(cd "$(dirname "$0")" && pwd)"
 # shellcheck source=../android-common.sh
 source "$script_dir/../android-common.sh"
 
-build_version=1
 package_name=libxml2-android
 source_dir="$android_repo_root/build-mac/dependencies/submodules/libxml2"
 build_root="$android_dependencies_dir/build/libxml2"
-output_dir="$(android_dependency_output_dir "$package_name" "$build_version")"
+output_dir="$(android_dependency_output_dir "$package_name")"
 
 android_require_ndk
 android_require_command cmake

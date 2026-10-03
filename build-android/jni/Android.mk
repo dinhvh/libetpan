@@ -171,8 +171,8 @@ src/driver/implementation/data-message \
 src/driver/interface
 
 LOCAL_C_INCLUDES = $(addprefix ../../, $(c_includes)) \
-  libetpan-android-7/include \
-  $(OPENSSL_PATH)/include $(CYRUS_SASL_PATH)/include $(ICONV_PATH)/include	  libetpan-android-7/include/libetpan \
+  libetpan-android/include \
+  $(OPENSSL_PATH)/include $(CYRUS_SASL_PATH)/include $(ICONV_PATH)/include	  libetpan-android/include/libetpan \
   $(JSON_C_PATH)/include \
   $(OPENSSL_PATH)/include \
   $(LOCAL_PATH)/../include $(LOCAL_PATH)/../include/libetpan

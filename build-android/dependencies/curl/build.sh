@@ -6,13 +6,11 @@ script_dir="$(cd "$(dirname "$0")" && pwd)"
 # shellcheck source=../android-common.sh
 source "$script_dir/../android-common.sh"
 
-build_version=1
-openssl_build_version=3
 package_name=curl-android
 source_dir="$android_repo_root/build-mac/dependencies/submodules/curl"
 build_root="$android_dependencies_dir/build/curl"
-output_dir="$(android_dependency_output_dir "$package_name" "$build_version")"
-openssl_root="$(android_dependency_output_dir openssl-android "$openssl_build_version")"
+output_dir="$(android_dependency_output_dir "$package_name")"
+openssl_root="$(android_dependency_output_dir openssl-android)"
 
 android_require_ndk
 android_require_command cmake

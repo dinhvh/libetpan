@@ -2,17 +2,13 @@
 
 set -e
 
-build_version=7
-openssl_build_version=3
-cyrus_sasl_build_version=4
-iconv_build_version=1
 package_name=libetpan-android
 
 current_dir=$(cd "$(dirname "$0")" && pwd)
-output_dir="$current_dir/build/$package_name-$build_version"
-openssl_path="$current_dir/dependencies/build/openssl-android-$openssl_build_version"
-cyrus_sasl_path="$current_dir/dependencies/build/cyrus-sasl-android-$cyrus_sasl_build_version"
-iconv_path="$current_dir/dependencies/build/iconv-android-$iconv_build_version"
+output_dir="$current_dir/build/$package_name"
+openssl_path="$current_dir/dependencies/build/openssl-android"
+cyrus_sasl_path="$current_dir/dependencies/build/cyrus-sasl-android"
+iconv_path="$current_dir/dependencies/build/iconv-android"
 
 
 if test "x$ANDROID_NDK" = x ; then

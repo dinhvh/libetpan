@@ -3,10 +3,9 @@
 set -euo pipefail
 
 version=1.15
-build_version=1
 package_name=iconv-android
 current_dir="$(cd "$(dirname "$0")" && pwd)"
-output_dir="$current_dir/../build/$package_name-$build_version"
+output_dir="$current_dir/../build/$package_name"
 cd "$current_dir"
 
 if test "x$ANDROID_NDK" = x ; then

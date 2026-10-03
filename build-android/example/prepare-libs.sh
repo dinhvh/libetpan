@@ -9,10 +9,10 @@ here="$(cd "$(dirname "$0")" && pwd)"
 build_android="$(cd "$here/.." && pwd)"
 dest="$here/app/src/main/cpp/prebuilt"
 
-etpan_dir="$build_android/build/libetpan-android-7"
-ssl_dir="$build_android/dependencies/build/openssl-android-3"
-sasl_dir="$build_android/dependencies/build/cyrus-sasl-android-4"
-iconv_dir="$build_android/dependencies/build/iconv-android-1"
+etpan_dir="$build_android/build/libetpan-android"
+ssl_dir="$build_android/dependencies/build/openssl-android"
+sasl_dir="$build_android/dependencies/build/cyrus-sasl-android"
+iconv_dir="$build_android/dependencies/build/iconv-android"
 
 for artifact_dir in "$etpan_dir" "$ssl_dir" "$sasl_dir" "$iconv_dir" ; do
   if [ ! -d "$artifact_dir" ]; then
