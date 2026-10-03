@@ -18,7 +18,6 @@ openssl_zip="$script_dir/../openssl/openssl-android-$openssl_build_version.zip"
 android_require_ndk
 android_require_command cmake
 android_require_command unzip
-android_require_command zip
 android_source_required "$source_dir" CMakeLists.txt "curl"
 
 if [[ ! -f "$openssl_zip" ]]; then

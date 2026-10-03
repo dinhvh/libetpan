@@ -15,7 +15,6 @@ zip_name="$package_name-$build_version.zip"
 
 android_require_ndk
 android_require_command cmake
-android_require_command zip
 android_source_required "$source_dir" CMakeLists.txt "libxml2"
 
 rm -rf "$build_root" "$package_dir"

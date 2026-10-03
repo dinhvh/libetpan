@@ -2,6 +2,7 @@ dependencies/cyrus-sasl/cyrus-sasl-android-*.zip
 dependencies/cyrus-sasl/build-android/obj
 dependencies/curl/build
 dependencies/curl/curl-android-*.zip
+dependencies/iconv/iconv-android-*.zip
 dependencies/json-c/build
 dependencies/json-c/json-c-android-*.zip
 dependencies/libxml2/build

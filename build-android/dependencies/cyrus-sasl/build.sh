@@ -1,4 +1,6 @@
-#!/bin/sh
+#!/usr/bin/env bash
+
+set -euo pipefail
 
 # 2.1.28 (vs the old 2.1.26) ships upstream support for the OpenSSL 1.1.x
 # opaque HMAC_CTX/EVP_MD_CTX/EVP_CIPHER_CTX API. 2.1.26 predates it and fails
@@ -10,6 +12,29 @@ ARCHIVE=cyrus-sasl-$version
 openssl_build_version=3
 package_name=cyrus-sasl-android
 
+create_zip() {
+  local zip_path="$1"
+  local entry_name="$2"
+
+  rm -f "$zip_path"
+  if command -v zip >/dev/null 2>&1; then
+    zip -qry "$zip_path" "$entry_name"
+  else
+    python3 - "$zip_path" "$entry_name" <<'PY'
+import os
+import sys
+import zipfile
+
+zip_path, entry_name = sys.argv[1], sys.argv[2]
+with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as archive:
+    for root, _, files in os.walk(entry_name):
+        for name in files:
+            path = os.path.join(root, name)
+            archive.write(path, path)
+PY
+  fi
+}
+
 if test "x$ANDROID_NDK" = x ; then
   echo should set ANDROID_NDK before running this script.
   exit 1
@@ -17,7 +42,8 @@ fi
 
 ARCHIVE_NAME=$ARCHIVE.tar.gz
 ARCHIVE_PATCH=$ARCHIVE.patch
-current_dir="`pwd`"
+current_dir="$(cd "$(dirname "$0")" && pwd)"
+cd "$current_dir"
 package_dir="$current_dir/../../../build-mac/dependencies/packages"
 
 if [ ! -e "$package_dir/$ARCHIVE_NAME" ]; then
@@ -81,5 +107,5 @@ for arch in $archs ; do
 done
 
 cd "$current_dir"
-zip -qry "$package_name-$build_version.zip" "$package_name-$build_version"
+create_zip "$package_name-$build_version.zip" "$package_name-$build_version"
 rm -rf "$package_name-$build_version"

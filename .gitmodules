@@ -13,3 +13,12 @@
 [submodule "build-mac/dependencies/submodules/tidy-html5"]
 	path = build-mac/dependencies/submodules/tidy-html5
 	url = https://github.com/htacg/tidy-html5.git
+[submodule "build-mac/dependencies/submodules/curl"]
+	path = build-mac/dependencies/submodules/curl
+	url = https://github.com/curl/curl.git
+[submodule "build-mac/dependencies/submodules/libxml2"]
+	path = build-mac/dependencies/submodules/libxml2
+	url = https://gitlab.gnome.org/GNOME/libxml2.git
+[submodule "build-mac/dependencies/submodules/libiconv"]
+	path = build-mac/dependencies/submodules/libiconv
+	url = https://git.savannah.gnu.org/git/libiconv.git

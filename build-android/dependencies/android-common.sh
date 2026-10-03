@@ -16,6 +16,34 @@ android_require_command() {
   command -v "$1" >/dev/null 2>&1 || android_fail "Required command not found: $1"
 }
 
+android_create_zip() {
+  local zip_path="$1"
+  local entry_name="$2"
+
+  rm -f "$zip_path"
+  if command -v zip >/dev/null 2>&1; then
+    zip -qry "$zip_path" "$entry_name"
+  elif command -v python3 >/dev/null 2>&1; then
+    python3 - "$zip_path" "$entry_name" <<'PY'
+import os
+import sys
+import zipfile
+
+zip_path, entry_name = sys.argv[1], sys.argv[2]
+with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as archive:
+    if os.path.isdir(entry_name):
+        for root, _, files in os.walk(entry_name):
+            for name in files:
+                path = os.path.join(root, name)
+                archive.write(path, path)
+    else:
+        archive.write(entry_name, entry_name)
+PY
+  else
+    android_fail "Required command not found: zip or python3"
+  fi
+}
+
 android_require_ndk() {
   if [[ -z "${ANDROID_NDK:-}" ]]; then
     android_fail "ANDROID_NDK must be set before running this script."
@@ -144,8 +172,7 @@ android_zip_package() {
 
   (
     cd "$script_dir"
-    rm -f "$zip_name"
-    zip -qry "$zip_name" "$(basename "$package_dir")"
+    android_create_zip "$zip_name" "$(basename "$package_dir")"
   )
 }
 
