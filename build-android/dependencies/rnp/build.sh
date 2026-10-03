@@ -11,31 +11,31 @@ openssl_build_version=3
 json_c_build_version=1
 package_name=rnp-android
 source_dir="$android_repo_root/build-mac/dependencies/submodules/rnp"
-build_root="$script_dir/build"
+build_root="$android_dependencies_dir/build/rnp"
 build_source_dir="$build_root/source"
-package_dir="$script_dir/$package_name-$build_version"
-zip_name="$package_name-$build_version.zip"
-openssl_zip="$script_dir/../openssl/openssl-android-$openssl_build_version.zip"
-json_c_zip="$script_dir/../json-c/json-c-android-$json_c_build_version.zip"
+output_dir="$(android_dependency_output_dir "$package_name" "$build_version")"
+openssl_root="$(android_dependency_output_dir openssl-android "$openssl_build_version")"
+json_c_root="$(android_dependency_output_dir json-c-android "$json_c_build_version")"
 
 android_require_ndk
 android_require_command cmake
 android_require_command tar
-android_require_command unzip
 android_source_required "$source_dir" CMakeLists.txt "RNP"
 android_source_required "$source_dir" src/libsexpp/CMakeLists.txt "RNP libsexpp"
 
-if [[ ! -f "$openssl_zip" ]]; then
+if [[ ! -d "$openssl_root" ]]; then
   echo "Building OpenSSL first"
   (cd "$script_dir/../openssl" && ./build.sh)
 fi
-if [[ ! -f "$json_c_zip" ]]; then
+if [[ ! -d "$json_c_root" ]]; then
   echo "Building JSON-C first"
   (cd "$script_dir/../json-c" && ./build.sh)
 fi
+android_require_dependency_output "$openssl_root" "OpenSSL"
+android_require_dependency_output "$json_c_root" "JSON-C"
 
-rm -rf "$build_root" "$package_dir"
-mkdir -p "$build_root/third-party" "$build_source_dir"
+rm -rf "$build_root" "$output_dir"
+mkdir -p "$build_source_dir"
 (
   cd "$source_dir"
   tar --exclude=.git -cf - .
@@ -74,11 +74,6 @@ if(ANDROID_PLATFORM)\
   set(MKF ${MKF} "-DANDROID_PLATFORM=${ANDROID_PLATFORM}")\
 endif(ANDROID_PLATFORM)\
 ' "$build_source_dir/cmake/Modules/FindOpenSSLFeatures.cmake"
-unzip -qo "$openssl_zip" -d "$build_root/third-party"
-unzip -qo "$json_c_zip" -d "$build_root/third-party"
-openssl_root="$build_root/third-party/openssl-android-$openssl_build_version"
-json_c_root="$build_root/third-party/json-c-android-$json_c_build_version"
-
 for abi in $(android_abis); do
   echo "Building RNP for $abi"
   variant_root="$build_root/$abi"
@@ -123,14 +118,13 @@ for abi in $(android_abis); do
     "$build_dir/src/lib/librnp.a" \
     "$build_dir/src/libsexpp/libsexpp.a"
 
-  mkdir -p "$package_dir/include/rnp"
-  cp "$build_source_dir/include/rnp/rnp.h" "$package_dir/include/rnp/"
-  cp "$build_source_dir/include/rnp/rnp_err.h" "$package_dir/include/rnp/"
-  cp "$build_dir/src/lib/rnp/rnp_export.h" "$package_dir/include/rnp/"
-  cp "$build_dir/src/lib/version.h" "$package_dir/include/rnp/rnp_ver.h"
-  android_copy_library "$package_dir" "$abi" "$combined" librnp.a
+  mkdir -p "$output_dir/include/rnp"
+  cp "$build_source_dir/include/rnp/rnp.h" "$output_dir/include/rnp/"
+  cp "$build_source_dir/include/rnp/rnp_err.h" "$output_dir/include/rnp/"
+  cp "$build_dir/src/lib/rnp/rnp_export.h" "$output_dir/include/rnp/"
+  cp "$build_dir/src/lib/version.h" "$output_dir/include/rnp/rnp_ver.h"
+  android_copy_library "$output_dir" "$abi" "$combined" librnp.a
 done
 
-android_zip_package "$script_dir" "$package_dir" "$zip_name"
-rm -rf "$build_root" "$package_dir"
-echo "Created $script_dir/$zip_name"
+rm -rf "$build_root"
+echo "Created $output_dir"

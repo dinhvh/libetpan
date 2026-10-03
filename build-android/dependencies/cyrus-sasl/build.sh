@@ -12,29 +12,6 @@ ARCHIVE=cyrus-sasl-$version
 openssl_build_version=3
 package_name=cyrus-sasl-android
 
-create_zip() {
-  local zip_path="$1"
-  local entry_name="$2"
-
-  rm -f "$zip_path"
-  if command -v zip >/dev/null 2>&1; then
-    zip -qry "$zip_path" "$entry_name"
-  else
-    python3 - "$zip_path" "$entry_name" <<'PY'
-import os
-import sys
-import zipfile
-
-zip_path, entry_name = sys.argv[1], sys.argv[2]
-with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as archive:
-    for root, _, files in os.walk(entry_name):
-        for name in files:
-            path = os.path.join(root, name)
-            archive.write(path, path)
-PY
-  fi
-}
-
 if test "x$ANDROID_NDK" = x ; then
   echo should set ANDROID_NDK before running this script.
   exit 1
@@ -45,6 +22,8 @@ ARCHIVE_PATCH=$ARCHIVE.patch
 current_dir="$(cd "$(dirname "$0")" && pwd)"
 cd "$current_dir"
 package_dir="$current_dir/../../../build-mac/dependencies/packages"
+output_dir="$current_dir/../build/$package_name-$build_version"
+openssl_root="$current_dir/../build/openssl-android-$openssl_build_version"
 
 if [ ! -e "$package_dir/$ARCHIVE_NAME" ]; then
   echo "Downloading $ARCHIVE_NAME"
@@ -58,11 +37,17 @@ if [ ! -e "$package_dir/$ARCHIVE_NAME" ]; then
   exit 1
 fi
 
-if test ! -f "$current_dir/../openssl/openssl-android-$openssl_build_version.zip" ; then
+if test ! -d "$openssl_root" ; then
   echo Building OpenSSL first
   cd "$current_dir/../openssl"
   ./build.sh
 fi
+if test ! -d "$openssl_root/include" ; then
+  echo "Missing OpenSSL build at $openssl_root"
+  exit 1
+fi
+
+rm -rf "$output_dir"
 
 function build {
   rm -rf "$current_dir/src"
@@ -75,26 +60,23 @@ function build {
     exit 1
   fi
 
-  if test ! -f "$current_dir/$package_name-$build_version/include/sasl/sasl.h" ; then
-    mkdir -p "$current_dir/$package_name-$build_version"
-    mkdir -p "$current_dir/$package_name-$build_version/include/sasl"
+  if test ! -f "$output_dir/include/sasl/sasl.h" ; then
+    mkdir -p "$output_dir"
+    mkdir -p "$output_dir/include/sasl"
     # 2.1.28 no longer ships md5.h / md5global.h under include/; libetpan only
     # needs sasl.h and saslutil.h, so copy the headers that actually exist.
     public_headers="hmac-md5.h sasl.h saslplug.h saslutil.h prop.h"
     cd "$current_dir/src/$ARCHIVE/include"
-    cp -R $public_headers "$current_dir/$package_name-$build_version/include/sasl"
+    cp -R $public_headers "$output_dir/include/sasl"
   fi
-
-  cd "$current_dir/src"
-  unzip -q "$current_dir/../openssl/openssl-android-$openssl_build_version.zip"
 
   cp -R "$current_dir/build-android" "$current_dir/src/$ARCHIVE"
   cd "$current_dir/src/$ARCHIVE/build-android/jni"
-  $ANDROID_NDK/ndk-build TARGET_PLATFORM=$ANDROID_PLATFORM TARGET_ARCH_ABI=$TARGET_ARCH_ABI \
-    OPENSSL_PATH="$current_dir/src/openssl-android-$openssl_build_version"
+  $ANDROID_NDK/ndk-build APP_PLATFORM=$ANDROID_PLATFORM TARGET_ARCH_ABI=$TARGET_ARCH_ABI \
+    OPENSSL_PATH="$openssl_root"
 
-  mkdir -p "$current_dir/$package_name-$build_version/libs/$TARGET_ARCH_ABI"
-  cp "$current_dir/src/$ARCHIVE/build-android/obj/local/$TARGET_ARCH_ABI/libsasl2.a" "$current_dir/$package_name-$build_version/libs/$TARGET_ARCH_ABI"
+  mkdir -p "$output_dir/libs/$TARGET_ARCH_ABI"
+  cp "$current_dir/src/$ARCHIVE/build-android/obj/local/$TARGET_ARCH_ABI/libsasl2.a" "$output_dir/libs/$TARGET_ARCH_ABI"
   rm -rf "$current_dir/src"
 }
 
@@ -107,5 +89,4 @@ for arch in $archs ; do
 done
 
 cd "$current_dir"
-create_zip "$package_name-$build_version.zip" "$package_name-$build_version"
-rm -rf "$package_name-$build_version"
+echo "Created $output_dir"

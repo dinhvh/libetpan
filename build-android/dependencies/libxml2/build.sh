@@ -9,15 +9,14 @@ source "$script_dir/../android-common.sh"
 build_version=1
 package_name=libxml2-android
 source_dir="$android_repo_root/build-mac/dependencies/submodules/libxml2"
-build_root="$script_dir/build"
-package_dir="$script_dir/$package_name-$build_version"
-zip_name="$package_name-$build_version.zip"
+build_root="$android_dependencies_dir/build/libxml2"
+output_dir="$(android_dependency_output_dir "$package_name" "$build_version")"
 
 android_require_ndk
 android_require_command cmake
 android_source_required "$source_dir" CMakeLists.txt "libxml2"
 
-rm -rf "$build_root" "$package_dir"
+rm -rf "$build_root" "$output_dir"
 mkdir -p "$build_root"
 
 for abi in $(android_abis); do
@@ -37,12 +36,11 @@ for abi in $(android_abis); do
   cmake --build "$build_dir" --parallel "$(android_jobs)"
   cmake --install "$build_dir"
 
-  android_copy_headers_once "$package_dir" "$prefix/include"
+  android_copy_headers_once "$output_dir" "$prefix/include"
   xml2_library="$(android_find_static_library "$prefix" libxml2.a)" ||
     android_fail "libxml2 did not install libxml2.a for $abi"
-  android_copy_library "$package_dir" "$abi" "$xml2_library" libxml2.a
+  android_copy_library "$output_dir" "$abi" "$xml2_library" libxml2.a
 done
 
-android_zip_package "$script_dir" "$package_dir" "$zip_name"
-rm -rf "$build_root" "$package_dir"
-echo "Created $script_dir/$zip_name"
+rm -rf "$build_root"
+echo "Created $output_dir"

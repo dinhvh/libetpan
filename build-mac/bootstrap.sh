@@ -75,6 +75,10 @@ if "$no_cache" || [[ ! -f "$archive" ]]; then
   {
     find . \
       -path './build-mac/dependencies/submodules' -prune -o \
+      -path './build-android/build' -prune -o \
+      -path './build-android/obj' -prune -o \
+      -path './build-android/dependencies/build' -prune -o \
+      -path './build-android/dependencies/*/build-android' -prune -o \
       -name '*.in' -print0
     printf '%s\0' configure install-sh config.sub missing config.guess
   } | tar --null -T - -czf "$archive"

@@ -8,33 +8,8 @@ version=3.5.8
 package_name=openssl-android
 export MIN_SDK_VERSION=23
 current_dir="$(cd "$(dirname "$0")" && pwd)"
+output_dir="$current_dir/../build/$package_name-$build_version"
 cd "$current_dir"
-
-create_zip() {
-  local zip_path="$1"
-  local entry_name="$2"
-
-  rm -f "$zip_path"
-  if command -v zip >/dev/null 2>&1; then
-    zip -qry "$zip_path" "$entry_name"
-  elif command -v python3 >/dev/null 2>&1; then
-    python3 - "$zip_path" "$entry_name" <<'PY'
-import os
-import sys
-import zipfile
-
-zip_path, entry_name = sys.argv[1], sys.argv[2]
-with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as archive:
-    for root, _, files in os.walk(entry_name):
-        for name in files:
-            path = os.path.join(root, name)
-            archive.write(path, path)
-PY
-  else
-    echo "Required command not found: zip or python3" >&2
-    exit 1
-  fi
-}
 
 detect_host_tag() {
   case "$(uname -s)" in
@@ -74,7 +49,8 @@ if ! tar tzf packages/openssl-$version.tar.gz >/dev/null 2>&1; then
   exit 1
 fi
 
-rm -rf "./src"
+rm -rf "./src" "$output_dir"
+mkdir -p "$(dirname "$output_dir")"
 mkdir -p "./src"
 cd "./src"
 
@@ -127,12 +103,12 @@ ln -sfn $TOOLCHAIN/bin/armv7a-linux-androideabi$MIN_SDK_VERSION-clang $TOOLCHAIN
  --prefix=$PWD/build/$ANDROID_ARCH
 
 export arch_dir_name="arm64-v8a"
-mkdir -p "./../$package_name-$build_version"
-mkdir -p "./../$package_name-$build_version/libs"
-mkdir -p "./../$package_name-$build_version/libs/$arch_dir_name"
-cp -r "./../build/openssl/arm64-v8a/include" "./../$package_name-$build_version"
-cp "./../build/openssl/arm64-v8a/lib/libssl.a" "./../$package_name-$build_version/libs/$arch_dir_name"
-cp "./../build/openssl/arm64-v8a/lib/libcrypto.a" "./../$package_name-$build_version/libs/$arch_dir_name"
+mkdir -p "$output_dir"
+mkdir -p "$output_dir/libs"
+mkdir -p "$output_dir/libs/$arch_dir_name"
+cp -r "./../build/openssl/arm64-v8a/include" "$output_dir"
+cp "./../build/openssl/arm64-v8a/lib/libssl.a" "$output_dir/libs/$arch_dir_name"
+cp "./../build/openssl/arm64-v8a/lib/libcrypto.a" "$output_dir/libs/$arch_dir_name"
 
 make -j5 build_libs
 make install_dev
@@ -151,11 +127,11 @@ ln -sfn $TOOLCHAIN/bin/$TARGET_HOST$MIN_SDK_VERSION-clang $TOOLCHAIN/bin/$TARGET
  --prefix=$PWD/build/$ANDROID_ARCH
 
 export arch_dir_name="armeabi-v7a"
-mkdir -p "./../$package_name-$build_version"
-mkdir -p "./../$package_name-$build_version/libs"
-mkdir -p "./../$package_name-$build_version/libs/$arch_dir_name"
-cp "./../build/openssl/$arch_dir_name/lib/libssl.a" "./../$package_name-$build_version/libs/$arch_dir_name"
-cp "./../build/openssl/$arch_dir_name/lib/libcrypto.a" "./../$package_name-$build_version/libs/$arch_dir_name"
+mkdir -p "$output_dir"
+mkdir -p "$output_dir/libs"
+mkdir -p "$output_dir/libs/$arch_dir_name"
+cp "./../build/openssl/$arch_dir_name/lib/libssl.a" "$output_dir/libs/$arch_dir_name"
+cp "./../build/openssl/$arch_dir_name/lib/libcrypto.a" "$output_dir/libs/$arch_dir_name"
 
 make -j5 build_libs
 make install_dev
@@ -174,11 +150,11 @@ ln -sfn $TOOLCHAIN/bin/$TARGET_HOST$MIN_SDK_VERSION-clang $TOOLCHAIN/bin/$TARGET
  --prefix=$PWD/build/$ANDROID_ARCH
 
 export arch_dir_name="x86"
-mkdir -p "./../$package_name-$build_version"
-mkdir -p "./../$package_name-$build_version/libs"
-mkdir -p "./../$package_name-$build_version/libs/$arch_dir_name"
-cp "./../build/openssl/$arch_dir_name/lib/libssl.a" "./../$package_name-$build_version/libs/$arch_dir_name"
-cp "./../build/openssl/$arch_dir_name/lib/libcrypto.a" "./../$package_name-$build_version/libs/$arch_dir_name"
+mkdir -p "$output_dir"
+mkdir -p "$output_dir/libs"
+mkdir -p "$output_dir/libs/$arch_dir_name"
+cp "./../build/openssl/$arch_dir_name/lib/libssl.a" "$output_dir/libs/$arch_dir_name"
+cp "./../build/openssl/$arch_dir_name/lib/libcrypto.a" "$output_dir/libs/$arch_dir_name"
 
 make -j5 build_libs
 make install_dev
@@ -187,14 +163,12 @@ mkdir -p ../build/openssl/$ANDROID_ARCH
 cp -R $PWD/build/$ANDROID_ARCH ../build/openssl/
 
 export arch_dir_name="x86_64"
-mkdir -p "./../$package_name-$build_version"
-mkdir -p "./../$package_name-$build_version/libs"
-mkdir -p "./../$package_name-$build_version/libs/$arch_dir_name"
-cp "./../build/openssl/$arch_dir_name/lib/libssl.a" "./../$package_name-$build_version/libs/$arch_dir_name"
-cp "./../build/openssl/$arch_dir_name/lib/libcrypto.a" "./../$package_name-$build_version/libs/$arch_dir_name"
+mkdir -p "$output_dir"
+mkdir -p "$output_dir/libs"
+mkdir -p "$output_dir/libs/$arch_dir_name"
+cp "./../build/openssl/$arch_dir_name/lib/libssl.a" "$output_dir/libs/$arch_dir_name"
+cp "./../build/openssl/$arch_dir_name/lib/libcrypto.a" "$output_dir/libs/$arch_dir_name"
 
-cd ".."
-create_zip "$package_name-$build_version.zip" "$package_name-$build_version"
-cd ".."
-cp "./src/$package_name-$build_version.zip" "$current_dir"
+cd "$current_dir"
 rm -rf "./src"
+echo "Created $output_dir"

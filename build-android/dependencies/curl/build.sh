@@ -10,25 +10,22 @@ build_version=1
 openssl_build_version=3
 package_name=curl-android
 source_dir="$android_repo_root/build-mac/dependencies/submodules/curl"
-build_root="$script_dir/build"
-package_dir="$script_dir/$package_name-$build_version"
-zip_name="$package_name-$build_version.zip"
-openssl_zip="$script_dir/../openssl/openssl-android-$openssl_build_version.zip"
+build_root="$android_dependencies_dir/build/curl"
+output_dir="$(android_dependency_output_dir "$package_name" "$build_version")"
+openssl_root="$(android_dependency_output_dir openssl-android "$openssl_build_version")"
 
 android_require_ndk
 android_require_command cmake
-android_require_command unzip
 android_source_required "$source_dir" CMakeLists.txt "curl"
 
-if [[ ! -f "$openssl_zip" ]]; then
+if [[ ! -d "$openssl_root" ]]; then
   echo "Building OpenSSL first"
   (cd "$script_dir/../openssl" && ./build.sh)
 fi
+android_require_dependency_output "$openssl_root" "OpenSSL"
 
-rm -rf "$build_root" "$package_dir"
-mkdir -p "$build_root/third-party"
-unzip -qo "$openssl_zip" -d "$build_root/third-party"
-openssl_root="$build_root/third-party/openssl-android-$openssl_build_version"
+rm -rf "$build_root" "$output_dir"
+mkdir -p "$build_root"
 
 for abi in $(android_abis); do
   echo "Building curl for $abi"
@@ -69,12 +66,11 @@ for abi in $(android_abis); do
   cmake --build "$build_dir" --parallel "$(android_jobs)"
   cmake --install "$build_dir"
 
-  android_copy_headers_once "$package_dir" "$prefix/include"
+  android_copy_headers_once "$output_dir" "$prefix/include"
   curl_library="$(android_find_static_library "$prefix" libcurl.a)" ||
     android_fail "curl did not install libcurl.a for $abi"
-  android_copy_library "$package_dir" "$abi" "$curl_library" libcurl.a
+  android_copy_library "$output_dir" "$abi" "$curl_library" libcurl.a
 done
 
-android_zip_package "$script_dir" "$package_dir" "$zip_name"
-rm -rf "$build_root" "$package_dir"
-echo "Created $script_dir/$zip_name"
+rm -rf "$build_root"
+echo "Created $output_dir"

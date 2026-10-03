@@ -16,34 +16,6 @@ android_require_command() {
   command -v "$1" >/dev/null 2>&1 || android_fail "Required command not found: $1"
 }
 
-android_create_zip() {
-  local zip_path="$1"
-  local entry_name="$2"
-
-  rm -f "$zip_path"
-  if command -v zip >/dev/null 2>&1; then
-    zip -qry "$zip_path" "$entry_name"
-  elif command -v python3 >/dev/null 2>&1; then
-    python3 - "$zip_path" "$entry_name" <<'PY'
-import os
-import sys
-import zipfile
-
-zip_path, entry_name = sys.argv[1], sys.argv[2]
-with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as archive:
-    if os.path.isdir(entry_name):
-        for root, _, files in os.walk(entry_name):
-            for name in files:
-                path = os.path.join(root, name)
-                archive.write(path, path)
-    else:
-        archive.write(entry_name, entry_name)
-PY
-  else
-    android_fail "Required command not found: zip or python3"
-  fi
-}
-
 android_require_ndk() {
   if [[ -z "${ANDROID_NDK:-}" ]]; then
     android_fail "ANDROID_NDK must be set before running this script."
@@ -165,15 +137,18 @@ android_copy_library() {
   cp "$source_library" "$package_dir/libs/$abi/$output_name"
 }
 
-android_zip_package() {
-  local script_dir="$1"
-  local package_dir="$2"
-  local zip_name="$3"
+android_dependency_output_dir() {
+  local package_name="$1"
+  local build_version="$2"
 
-  (
-    cd "$script_dir"
-    android_create_zip "$zip_name" "$(basename "$package_dir")"
-  )
+  echo "$android_dependencies_dir/build/$package_name-$build_version"
+}
+
+android_require_dependency_output() {
+  local output_dir="$1"
+  local hint="$2"
+
+  [[ -d "$output_dir/include" ]] || android_fail "$hint headers are missing at $output_dir. Run its Android dependency build script first."
 }
 
 android_combine_static_libraries() {

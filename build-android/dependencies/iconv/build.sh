@@ -6,33 +6,8 @@ version=1.15
 build_version=1
 package_name=iconv-android
 current_dir="$(cd "$(dirname "$0")" && pwd)"
+output_dir="$current_dir/../build/$package_name-$build_version"
 cd "$current_dir"
-
-create_zip() {
-  local zip_path="$1"
-  local entry_name="$2"
-
-  rm -f "$zip_path"
-  if command -v zip >/dev/null 2>&1; then
-    zip -qry "$zip_path" "$entry_name"
-  elif command -v python3 >/dev/null 2>&1; then
-    python3 - "$zip_path" "$entry_name" <<'PY'
-import os
-import sys
-import zipfile
-
-zip_path, entry_name = sys.argv[1], sys.argv[2]
-with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as archive:
-    for root, _, files in os.walk(entry_name):
-        for name in files:
-            path = os.path.join(root, name)
-            archive.write(path, path)
-PY
-  else
-    echo "Required command not found: zip or python3" >&2
-    exit 1
-  fi
-}
 
 if test "x$ANDROID_NDK" = x ; then
   echo should set ANDROID_NDK before running this script.
@@ -42,11 +17,11 @@ fi
 function build {
   cd "$current_dir/build-android" 
   $ANDROID_NDK/ndk-build APP_PLATFORM=$ANDROID_PLATFORM TARGET_ARCH_ABI=$TARGET_ARCH_ABI
-  mkdir -p "$current_dir/$package_name-$build_version/libs/$TARGET_ARCH_ABI"
-  cp "$current_dir/build-android/obj/local/$TARGET_ARCH_ABI/libiconv.a" "$current_dir/$package_name-$build_version/libs/$TARGET_ARCH_ABI"
+  mkdir -p "$output_dir/libs/$TARGET_ARCH_ABI"
+  cp "$current_dir/build-android/obj/local/$TARGET_ARCH_ABI/libiconv.a" "$output_dir/libs/$TARGET_ARCH_ABI"
 }
 
-if test ! -f $current_dir/$package_name-$build_version.zip; then
+if test ! -d "$output_dir"; then
   if test ! -f $current_dir/build-android/libiconv-$version.tar.gz; then
     cd "$current_dir/build-android"
     curl -O http://ftp.gnu.org/gnu/libiconv/libiconv-$version.tar.gz
@@ -70,10 +45,10 @@ if test ! -f $current_dir/$package_name-$build_version.zip; then
   fi  
 
   rm -rf "$current_dir/build-android/obj"
-  mkdir -p "$current_dir/$package_name-$build_version/libs"
-  cp -r "$current_dir/build-android/libiconv/include" "$current_dir/$package_name-$build_version"
+  mkdir -p "$output_dir/libs"
+  cp -r "$current_dir/build-android/libiconv/include" "$output_dir"
 
-  mkdir -p "$current_dir/$package_name-$build_version"
+  mkdir -p "$output_dir"
 
   # Start building.
   ANDROID_PLATFORM=android-23
@@ -84,6 +59,5 @@ if test ! -f $current_dir/$package_name-$build_version.zip; then
   done
 
   cd "$current_dir"
-  create_zip "$package_name-$build_version.zip" "$package_name-$build_version"
-  rm -rf "$package_name-$build_version"
+  echo "Created $output_dir"
 fi 

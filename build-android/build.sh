@@ -1,12 +1,18 @@
 #!/bin/sh -x
 
+set -e
+
 build_version=7
 openssl_build_version=3
 cyrus_sasl_build_version=4
 iconv_build_version=1
 package_name=libetpan-android
 
-current_dir="`pwd`"
+current_dir=$(cd "$(dirname "$0")" && pwd)
+output_dir="$current_dir/build/$package_name-$build_version"
+openssl_path="$current_dir/dependencies/build/openssl-android-$openssl_build_version"
+cyrus_sasl_path="$current_dir/dependencies/build/cyrus-sasl-android-$cyrus_sasl_build_version"
+iconv_path="$current_dir/dependencies/build/iconv-android-$iconv_build_version"
 
 
 if test "x$ANDROID_NDK" = x ; then
@@ -32,19 +38,19 @@ if test "`uname -s`" = "Darwin" && test "`uname -m`" = "arm64" ; then
   fi
 fi
 
-if test ! -f "$current_dir/dependencies/openssl/openssl-android-$openssl_build_version.zip" ; then
+if test ! -d "$openssl_path" ; then
   echo Building OpenSSL first
   cd "$current_dir/dependencies/openssl"
   ./build.sh
 fi
 
-if test ! -f "$current_dir/dependencies/cyrus-sasl/cyrus-sasl-android-$cyrus_sasl_build_version.zip" ; then
+if test ! -d "$cyrus_sasl_path" ; then
   echo Building Cyrus SASL first
   cd "$current_dir/dependencies/cyrus-sasl"
   ./build.sh
 fi
 
-if test ! -f "$current_dir/dependencies/iconv/iconv-android-$iconv_build_version.zip" ; then
+if test ! -d "$iconv_path" ; then
   echo Building ICONV first
   cd "$current_dir/dependencies/iconv"
   ./build.sh
@@ -54,22 +60,16 @@ build() {
   rm -rf "$current_dir/obj"
 
   cd "$current_dir/jni"
-  $ANDROID_NDK/ndk-build TARGET_PLATFORM=$ANDROID_PLATFORM TARGET_ARCH_ABI=$TARGET_ARCH_ABI \
-    OPENSSL_PATH="$current_dir/third-party/openssl-android-$openssl_build_version" \
-    CYRUS_SASL_PATH="$current_dir/third-party/cyrus-sasl-android-$cyrus_sasl_build_version" \
-    ICONV_PATH="$current_dir/third-party/iconv-android-$iconv_build_version" \
+  $ANDROID_NDK/ndk-build APP_PLATFORM=$ANDROID_PLATFORM TARGET_ARCH_ABI=$TARGET_ARCH_ABI \
+    OPENSSL_PATH="$openssl_path" \
+    CYRUS_SASL_PATH="$cyrus_sasl_path" \
+    ICONV_PATH="$iconv_path" \
     JSON_C_PATH="$JSON_C_PATH"
 
-  mkdir -p "$current_dir/$package_name-$build_version/libs/$TARGET_ARCH_ABI"
-  cp "$current_dir/obj/local/$TARGET_ARCH_ABI/libetpan.a" "$current_dir/$package_name-$build_version/libs/$TARGET_ARCH_ABI"
+  mkdir -p "$output_dir/libs/$TARGET_ARCH_ABI"
+  cp "$current_dir/obj/local/$TARGET_ARCH_ABI/libetpan.a" "$output_dir/libs/$TARGET_ARCH_ABI"
   rm -rf "$current_dir/obj"
 }
-
-mkdir -p "$current_dir/third-party"
-cd "$current_dir/third-party"
-unzip -qo "$current_dir/dependencies/openssl/openssl-android-$openssl_build_version.zip"
-unzip -qo "$current_dir/dependencies/cyrus-sasl/cyrus-sasl-android-$cyrus_sasl_build_version.zip"
-unzip -qo "$current_dir/dependencies/iconv/iconv-android-$iconv_build_version.zip"
 
 cd "$current_dir/.."
 tar xzf "$current_dir/../build-mac/autogen-result.tar.gz"
@@ -85,9 +85,10 @@ python3 "$current_dir/../tools/public_headers.py" \
   --source-root "$current_dir/.." \
   --build-root "$current_dir/.." \
   export-android --destination "$current_dir/include/libetpan"
-mkdir -p "$current_dir/$package_name-$build_version/include"
+rm -rf "$output_dir"
+mkdir -p "$output_dir/include"
 cp -r "$current_dir/include/libetpan" \
-  "$current_dir/$package_name-$build_version/include"
+  "$output_dir/include"
 
 # Start building.
 ANDROID_PLATFORM=android-23
@@ -97,7 +98,5 @@ for arch in $archs ; do
   build
 done
 
-rm -rf "$current_dir/third-party"
 cd "$current_dir"
-zip -qry "$package_name-$build_version.zip" "$package_name-$build_version"
-rm -rf "$package_name-$build_version"
+echo "Created $output_dir"

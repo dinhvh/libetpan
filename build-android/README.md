@@ -30,17 +30,18 @@ cd build-android
 `build.sh` builds, for the ABIs **arm64-v8a, armeabi-v7a, x86, x86_64**
 (min API level android-23):
 
-1. **OpenSSL** (1.1.1w) → `dependencies/openssl/openssl-android-3.zip`
-2. **Cyrus SASL** (2.1.28) → `dependencies/cyrus-sasl/cyrus-sasl-android-4.zip`
-3. **libiconv** (1.15) → `dependencies/iconv/iconv-android-1.zip`
-4. **libetpan** → `libetpan-android-7.zip`
+1. **OpenSSL** (3.5.8) → `dependencies/build/openssl-android-3/`
+2. **Cyrus SASL** (2.1.28) → `dependencies/build/cyrus-sasl-android-4/`
+3. **libiconv** (1.15) → `dependencies/build/iconv-android-1/`
+4. **libetpan** → `build/libetpan-android-7/`
 
-Each dependency is only rebuilt if its `*.zip` is missing, so re-runs are fast.
-To force a dependency rebuild, delete its zip first.
+Each dependency is only rebuilt if its output directory is missing, so re-runs
+are fast. To force a dependency rebuild, delete its directory first.
 
 ### Output layout
 
-Each zip contains `libs/<abi>/*.a` and headers, e.g. `libetpan-android-7.zip`:
+Each output directory contains `libs/<abi>/*.a` and headers, e.g.
+`build/libetpan-android-7/`:
 
 ```
 libetpan-android-7/
@@ -68,10 +69,9 @@ export JSON_C_PATH=/path/to/json-c-android-prefix
 ./build.sh
 ```
 
-> Note: `libetpan-android-7.zip` currently ships only `libetpan-config.h`. The
-> full public API headers (`mailimap.h`, `mailsmtp.h`, …) are written to
-> `build-android/include/libetpan/` during the build; the demo app's
-> `prepare-libs.sh` sources them from there.
+> Note: `build/libetpan-android-7/` currently contains only the exported
+> libetpan headers copied by the Android build. The demo app's
+> `prepare-libs.sh` sources those headers from `build-android/include/libetpan/`.
 
 ## Demo app
 
@@ -98,8 +98,9 @@ cd build-android/example
 ./gradlew installDebug      # or: ./gradlew assembleDebug
 ```
 
-`prepare-libs.sh` copies the per-ABI static libs and headers out of the zips
-produced by `build.sh`; it must be re-run if you rebuild the native libraries.
+`prepare-libs.sh` copies the per-ABI static libs and headers out of the
+directories produced by `build.sh`; it must be re-run if you rebuild the native
+libraries.
 The Gradle build uses CMake (`app/src/main/cpp/CMakeLists.txt`) to link the JNI
 shared library `libetpanjni.so` against the five static libs.
 

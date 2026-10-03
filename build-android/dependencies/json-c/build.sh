@@ -9,15 +9,14 @@ source "$script_dir/../android-common.sh"
 build_version=1
 package_name=json-c-android
 source_dir="$android_repo_root/build-mac/dependencies/submodules/json-c"
-build_root="$script_dir/build"
-package_dir="$script_dir/$package_name-$build_version"
-zip_name="$package_name-$build_version.zip"
+build_root="$android_dependencies_dir/build/json-c"
+output_dir="$(android_dependency_output_dir "$package_name" "$build_version")"
 
 android_require_ndk
 android_require_command cmake
 android_source_required "$source_dir" CMakeLists.txt "JSON-C"
 
-rm -rf "$build_root" "$package_dir"
+rm -rf "$build_root" "$output_dir"
 mkdir -p "$build_root"
 
 for abi in $(android_abis); do
@@ -35,12 +34,11 @@ for abi in $(android_abis); do
   cmake --build "$build_dir" --target json-c --parallel "$(android_jobs)"
   cmake --install "$build_dir"
 
-  android_copy_headers_once "$package_dir" "$prefix/include"
+  android_copy_headers_once "$output_dir" "$prefix/include"
   json_c_library="$(android_find_static_library "$prefix" libjson-c.a)" ||
     android_fail "JSON-C did not install libjson-c.a for $abi"
-  android_copy_library "$package_dir" "$abi" "$json_c_library" libjson-c.a
+  android_copy_library "$output_dir" "$abi" "$json_c_library" libjson-c.a
 done
 
-android_zip_package "$script_dir" "$package_dir" "$zip_name"
-rm -rf "$build_root" "$package_dir"
-echo "Created $script_dir/$zip_name"
+rm -rf "$build_root"
+echo "Created $output_dir"
