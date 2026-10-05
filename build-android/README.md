@@ -40,7 +40,11 @@ cd build-android
 8. **libetpan** → `build/libetpan-android/`
 
 Each dependency is only rebuilt if its output directory is missing, so re-runs
-are fast. To force a dependency rebuild, delete its directory first.
+are fast. To force all dependency rebuilds, run:
+
+```sh
+./dependencies/bootstrap.sh --force
+```
 
 ### Output layout
 

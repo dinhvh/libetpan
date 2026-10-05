@@ -38,47 +38,7 @@ if test "`uname -s`" = "Darwin" && test "`uname -m`" = "arm64" ; then
   fi
 fi
 
-if test ! -d "$openssl_path" ; then
-  echo Building OpenSSL first
-  cd "$current_dir/dependencies/openssl"
-  ./build.sh
-fi
-
-if test "$json_c_path" = "$current_dir/dependencies/build/json-c-android" && test ! -d "$json_c_path" ; then
-  echo Building JSON-C first
-  cd "$current_dir/dependencies/json-c"
-  ./build.sh
-fi
-
-if test ! -d "$curl_path" ; then
-  echo Building curl first
-  cd "$current_dir/dependencies/curl"
-  ./build.sh
-fi
-
-if test ! -d "$cyrus_sasl_path" ; then
-  echo Building Cyrus SASL first
-  cd "$current_dir/dependencies/cyrus-sasl"
-  ./build.sh
-fi
-
-if test ! -d "$iconv_path" ; then
-  echo Building ICONV first
-  cd "$current_dir/dependencies/iconv"
-  ./build.sh
-fi
-
-if test ! -d "$libxml2_path" ; then
-  echo Building libxml2 first
-  cd "$current_dir/dependencies/libxml2"
-  ./build.sh
-fi
-
-if test ! -d "$rnp_path" ; then
-  echo Building RNP first
-  cd "$current_dir/dependencies/rnp"
-  ./build.sh
-fi
+"$current_dir/dependencies/bootstrap.sh"
 
 build() {
   rm -rf "$current_dir/obj"
