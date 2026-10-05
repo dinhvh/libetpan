@@ -104,6 +104,16 @@ libraries.
 The Gradle build uses CMake (`app/src/main/cpp/CMakeLists.txt`) to link the JNI
 shared library `libetpanjni.so` against the staged static libs.
 
+## Link smoke test
+
+After building the native libraries, run the Android link smoke test from the
+repository root to verify that the dependency-backed low-level features link for
+all supported ABIs:
+
+```sh
+ANDROID_NDK=/path/to/android-ndk tests/android-link-smoke-test.sh
+```
+
 Set the SDK location via `local.properties` (`sdk.dir=...`) or the
 `ANDROID_HOME` environment variable. If Gradle complains about the JDK, run it
 with `JAVA_HOME` pointing at a JDK 17.

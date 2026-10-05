@@ -34,6 +34,8 @@ EXTRA_DIST = README activesync-ms-device-oauth.py activesync-live-sync-test.sh \
 	jmap-live-smoke-test.sh \
 	smime-openssl-fixture-test.sh \
 	mailpgp-gnupg-fixture-test.sh \
+	android-link-smoke-test.c \
+	android-link-smoke-test.sh \
 	fuzz/README.md \
 	fuzz/fuzz_imap_response.c \
 	fuzz/fuzz_jmap_response.c \
