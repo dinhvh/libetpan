@@ -7,7 +7,7 @@ script_dir="$(cd "$(dirname "$0")" && pwd)"
 source "$script_dir/../android-common.sh"
 
 package_name=libxml2-android
-source_dir="$android_repo_root/build-mac/dependencies/submodules/libxml2"
+source_dir="$android_submodules_dir/libxml2"
 build_root="$android_dependencies_dir/build/libxml2"
 output_dir="$(android_dependency_output_dir "$package_name")"
 

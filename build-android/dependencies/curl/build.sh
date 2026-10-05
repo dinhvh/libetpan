@@ -7,7 +7,7 @@ script_dir="$(cd "$(dirname "$0")" && pwd)"
 source "$script_dir/../android-common.sh"
 
 package_name=curl-android
-source_dir="$android_repo_root/build-mac/dependencies/submodules/curl"
+source_dir="$android_submodules_dir/curl"
 build_root="$android_dependencies_dir/build/curl"
 output_dir="$(android_dependency_output_dir "$package_name")"
 openssl_root="$(android_dependency_output_dir openssl-android)"

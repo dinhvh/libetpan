@@ -3,7 +3,8 @@
 set -euo pipefail
 
 script_dir="$(cd "$(dirname "$0")" && pwd)"
-source_dir="$script_dir/submodules/rnp"
+repository_root="$(cd "$script_dir/../.." && pwd)"
+source_dir="$repository_root/dependencies/submodules/rnp"
 build_root="${BUILD_DIR:-$script_dir/build/rnp}"
 output="${OUTPUT:-$script_dir/build/RNP.xcframework}"
 openssl_root="${OPENSSL_BUILD_DIR:-$script_dir/build/openssl}"

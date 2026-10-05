@@ -8,7 +8,7 @@ package_name=openssl-android
 export MIN_SDK_VERSION=23
 current_dir="$(cd "$(dirname "$0")" && pwd)"
 repo_root="$(cd "$current_dir/../../.." && pwd)"
-submodule_dir="$repo_root/build-mac/dependencies/submodules/openssl"
+submodule_dir="$repo_root/dependencies/submodules/openssl"
 output_dir="$current_dir/../build/$package_name"
 cd "$current_dir"
 

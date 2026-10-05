@@ -3,7 +3,8 @@
 set -euo pipefail
 
 script_dir="$(cd "$(dirname "$0")" && pwd)"
-source_dir="$script_dir/submodules/openssl"
+repository_root="$(cd "$script_dir/../.." && pwd)"
+source_dir="$repository_root/dependencies/submodules/openssl"
 build_root="${BUILD_DIR:-$script_dir/build/openssl}"
 crypto_output="${CRYPTO_OUTPUT:-$script_dir/build/OpenSSL-Crypto.xcframework}"
 ssl_output="${SSL_OUTPUT:-$script_dir/build/OpenSSL-SSL.xcframework}"

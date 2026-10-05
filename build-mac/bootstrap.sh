@@ -74,7 +74,7 @@ if "$no_cache" || [[ ! -f "$archive" ]]; then
   echo "Creating build-mac/autogen-result.tar.gz"
   {
     find . \
-      -path './build-mac/dependencies/submodules' -prune -o \
+      -path './dependencies/submodules' -prune -o \
       -path './build-android/build' -prune -o \
       -path './build-android/obj' -prune -o \
       -path './build-android/dependencies/build' -prune -o \

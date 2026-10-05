@@ -4,6 +4,7 @@ android_common_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 android_dependencies_dir="$android_common_dir"
 android_build_android_dir="$(cd "$android_dependencies_dir/.." && pwd)"
 android_repo_root="$(cd "$android_build_android_dir/.." && pwd)"
+android_submodules_dir="$android_repo_root/dependencies/submodules"
 
 android_default_abis="arm64-v8a armeabi-v7a x86 x86_64"
 

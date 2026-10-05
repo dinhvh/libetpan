@@ -1,24 +1,24 @@
-[submodule "build-mac/dependencies/submodules/cyrus-sasl"]
-	path = build-mac/dependencies/submodules/cyrus-sasl
+[submodule "dependencies/submodules/cyrus-sasl"]
+	path = dependencies/submodules/cyrus-sasl
 	url = https://github.com/cyrusimap/cyrus-sasl.git
-[submodule "build-mac/dependencies/submodules/openssl"]
-	path = build-mac/dependencies/submodules/openssl
+[submodule "dependencies/submodules/openssl"]
+	path = dependencies/submodules/openssl
 	url = https://github.com/openssl/openssl.git
-[submodule "build-mac/dependencies/submodules/rnp"]
-	path = build-mac/dependencies/submodules/rnp
+[submodule "dependencies/submodules/rnp"]
+	path = dependencies/submodules/rnp
 	url = https://github.com/rnpgp/rnp.git
-[submodule "build-mac/dependencies/submodules/json-c"]
-	path = build-mac/dependencies/submodules/json-c
+[submodule "dependencies/submodules/json-c"]
+	path = dependencies/submodules/json-c
 	url = https://github.com/json-c/json-c.git
-[submodule "build-mac/dependencies/submodules/tidy-html5"]
-	path = build-mac/dependencies/submodules/tidy-html5
+[submodule "dependencies/submodules/tidy-html5"]
+	path = dependencies/submodules/tidy-html5
 	url = https://github.com/htacg/tidy-html5.git
-[submodule "build-mac/dependencies/submodules/curl"]
-	path = build-mac/dependencies/submodules/curl
+[submodule "dependencies/submodules/curl"]
+	path = dependencies/submodules/curl
 	url = https://github.com/curl/curl.git
-[submodule "build-mac/dependencies/submodules/libxml2"]
-	path = build-mac/dependencies/submodules/libxml2
+[submodule "dependencies/submodules/libxml2"]
+	path = dependencies/submodules/libxml2
 	url = https://gitlab.gnome.org/GNOME/libxml2.git
-[submodule "build-mac/dependencies/submodules/libiconv"]
-	path = build-mac/dependencies/submodules/libiconv
+[submodule "dependencies/submodules/libiconv"]
+	path = dependencies/submodules/libiconv
 	url = https://git.savannah.gnu.org/git/libiconv.git

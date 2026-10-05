@@ -20,7 +20,7 @@ ARCHIVE_PATCH=$ARCHIVE.patch
 current_dir="$(cd "$(dirname "$0")" && pwd)"
 cd "$current_dir"
 repo_root="$(cd "$current_dir/../../.." && pwd)"
-submodule_dir="$repo_root/build-mac/dependencies/submodules/cyrus-sasl"
+submodule_dir="$repo_root/dependencies/submodules/cyrus-sasl"
 package_dir="$current_dir/../../../build-mac/dependencies/packages"
 output_dir="$current_dir/../build/$package_name"
 openssl_root="$current_dir/../build/openssl-android"

@@ -7,7 +7,7 @@ script_dir="$(cd "$(dirname "$0")" && pwd)"
 source "$script_dir/../android-common.sh"
 
 package_name=rnp-android
-source_dir="$android_repo_root/build-mac/dependencies/submodules/rnp"
+source_dir="$android_submodules_dir/rnp"
 build_root="$android_dependencies_dir/build/rnp"
 build_source_dir="$build_root/source"
 output_dir="$(android_dependency_output_dir "$package_name")"

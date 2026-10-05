@@ -10,7 +10,7 @@ libraries, and contains a small Kotlin/Compose demo app that consumes them.
   `ERROR: Unknown host CPU architecture: arm64`. `build.sh` detects this and
   stops early with a message. Tested with **NDK 27.1.12297006, 26.3.11579264**.
 - Android SDK (for the demo app) and a JDK 17+ (for Gradle).
-- Populated dependency submodules under `build-mac/dependencies/submodules/`.
+- Populated dependency submodules under `dependencies/submodules/`.
   `build-android/dependencies/bootstrap.sh` initializes them automatically.
 
 Point `ANDROID_NDK` at a suitable NDK, e.g.:

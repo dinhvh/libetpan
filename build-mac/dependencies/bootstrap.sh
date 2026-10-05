@@ -4,7 +4,7 @@ set -euo pipefail
 
 script_dir="$(cd "$(dirname "$0")" && pwd)"
 repository_root="$(cd "$script_dir/../.." && pwd)"
-submodules_dir="build-mac/dependencies/submodules"
+submodules_dir="dependencies/submodules"
 logfile="$(mktemp "${TMPDIR:-/tmp}/libetpan-dependencies-bootstrap.XXXXXX")"
 
 trap 'rm -f "$logfile"' EXIT

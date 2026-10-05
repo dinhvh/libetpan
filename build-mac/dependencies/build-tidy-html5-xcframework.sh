@@ -3,7 +3,8 @@
 set -euo pipefail
 
 script_dir="$(cd "$(dirname "$0")" && pwd)"
-source_dir="$script_dir/submodules/tidy-html5"
+repository_root="$(cd "$script_dir/../.." && pwd)"
+source_dir="$repository_root/dependencies/submodules/tidy-html5"
 build_root="${BUILD_DIR:-$script_dir/build/tidy-html5}"
 output="${OUTPUT:-$script_dir/build/Tidy.xcframework}"
 macos_deployment_target="${MACOSX_DEPLOYMENT_TARGET:-10.13}"

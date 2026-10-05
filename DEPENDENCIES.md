@@ -113,7 +113,7 @@ brew install cmake autoconf automake libtool
 `build-mac/bootstrap.sh` initializes the submodules automatically. To do it manually, run:
 
 ```sh
-git submodule update --init --recursive -- build-mac/dependencies/submodules
+git submodule update --init --recursive -- dependencies/submodules
 ```
 
 ## Android

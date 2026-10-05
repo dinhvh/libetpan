@@ -6,7 +6,7 @@ version=1.15
 package_name=iconv-android
 current_dir="$(cd "$(dirname "$0")" && pwd)"
 repo_root="$(cd "$current_dir/../../.." && pwd)"
-submodule_dir="$repo_root/build-mac/dependencies/submodules/libiconv"
+submodule_dir="$repo_root/dependencies/submodules/libiconv"
 output_dir="$current_dir/../build/$package_name"
 cd "$current_dir"
 
