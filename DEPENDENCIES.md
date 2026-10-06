@@ -84,6 +84,20 @@ brew install \
 
 If `./configure` does not find a Homebrew library automatically, pass the relevant prefix, for example `./configure --with-openssl=$(brew --prefix openssl@3)`.
 
+## iOS with configure and make
+
+Install Xcode, CMake, Autoconf, Automake, Libtool, and pkg-config:
+
+```sh
+brew install cmake autoconf automake libtool pkg-config
+NOCONFIGURE=1 ./autogen.sh
+build-mac/dependencies/bootstrap.sh
+bash build-mac/build-unix-ios.sh
+```
+
+Dependencies are built from submodules: OpenSSL, Cyrus SASL, JSON-C, and RNP.
+Apple SDK libraries provide iconv, libxml2, zlib, and NSURLSession.
+
 ## macOS and iOS with Xcode
 
 - Required: Xcode and Apple SDK.

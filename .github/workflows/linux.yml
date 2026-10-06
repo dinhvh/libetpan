@@ -1,0 +1,41 @@
+name: Linux unit tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  linux:
+    runs-on: ubuntu-26.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            autoconf \
+            automake \
+            libtool \
+            pkg-config \
+            m4 \
+            libsasl2-dev \
+            libjson-c-dev \
+            libxml2-dev \
+            zlib1g-dev \
+            libssl-dev \
+            librnp-dev \
+            libtidy-dev \
+            libcurl4-openssl-dev \
+            libicu-dev \
+            libgnutls28-dev \
+            build-essential
+
+      - name: Configure
+        run: ./autogen.sh --enable-static --enable-debug
+
+      - name: Build
+        run: make
+
+      - name: Run unit tests
+        run: make check

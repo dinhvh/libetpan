@@ -1,11 +1,11 @@
-name: Unit tests
+name: Apple Xcode iOS
 
 on:
   push:
   pull_request:
 
 jobs:
-  macos:
+  ios:
     runs-on: macos-26
     steps:
       - uses: actions/checkout@v4
@@ -17,17 +17,18 @@ jobs:
         id: dependency-key
         run: |
           dependency_tree="$(git rev-parse HEAD:build-mac/dependencies)"
+          submodule_tree="$(git rev-parse HEAD:dependencies/submodules)"
           xcode_version="$(xcodebuild -version | shasum -a 256 | cut -d ' ' -f 1)"
-          echo "value=${dependency_tree}-${xcode_version}" >> "$GITHUB_OUTPUT"
+          echo "value=${dependency_tree}-${submodule_tree}-${xcode_version}" >> "$GITHUB_OUTPUT"
 
-      - name: Restore macOS dependencies
+      - name: Restore Apple dependencies
         id: dependency-cache
         uses: actions/cache@v5
         with:
           path: |
             build-mac/dependencies/build/*.xcframework
             build-mac/dependencies/build/openssl/macos-universal
-          key: macos-26-${{ runner.arch }}-libetpan-dependencies-${{ steps.dependency-key.outputs.value }}
+          key: macos-26-${{ runner.arch }}-libetpan-dependencies-${{ steps.dependency-key.outputs.value }}-${{ hashFiles('.gitmodules') }}
 
       - name: Prepare
         run: |
@@ -37,13 +38,13 @@ jobs:
           fi
           build-mac/bootstrap.sh "${arguments[@]}"
 
-      - name: Run XCTest
+      - name: Build iOS device library
         run: |
-          xcodebuild test \
+          xcodebuild build \
             -workspace build-mac/libetpan.xcworkspace \
-            -scheme libetpan-unit-tests \
-            -destination 'platform=macOS' \
-            -derivedDataPath "$GITHUB_WORKSPACE/.build/xcode" \
+            -scheme 'libetpan ios' \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath "$GITHUB_WORKSPACE/.build/xcode-ios-device" \
             CODE_SIGNING_ALLOWED=NO
 
       - name: Run iOS OpenSSL S/MIME XCTest
@@ -54,39 +55,3 @@ jobs:
             -destination 'platform=iOS Simulator,name=iPhone 17,OS=latest' \
             -derivedDataPath "$GITHUB_WORKSPACE/.build/xcode-ios" \
             CODE_SIGNING_ALLOWED=NO
-
-  linux:
-    runs-on: ubuntu-26.04
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            autoconf \
-            automake \
-            libtool \
-            pkg-config \
-            m4 \
-            libsasl2-dev \
-            libjson-c-dev \
-            libxml2-dev \
-            zlib1g-dev \
-            libssl-dev \
-            librnp-dev \
-            libtidy-dev \
-            libcurl4-openssl-dev \
-            libicu-dev \
-            libgnutls28-dev \
-            build-essential \
-            libjson-c-dev \
-
-      - name: Configure
-        run: ./autogen.sh --enable-static --enable-debug
-
-      - name: Build
-        run: make
-
-      - name: Run unit tests
-        run: make check

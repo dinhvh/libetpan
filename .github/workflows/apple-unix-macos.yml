@@ -1,0 +1,61 @@
+name: Apple Unix macOS
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  macos:
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          brew install autoconf automake libtool pkg-config \
+            openssl@3 gnutls cyrus-sasl libiconv icu4c berkeley-db lmdb \
+            libxml2 json-c curl zlib rnp tidy-html5
+
+      - name: Configure
+        run: |
+          cppflags=""
+          ldflags=""
+          pkg_config_path=""
+          for formula in openssl@3 gnutls cyrus-sasl libiconv icu4c berkeley-db lmdb libxml2 json-c curl zlib rnp tidy-html5; do
+            prefix="$(brew --prefix "$formula")"
+            cppflags="$cppflags -I$prefix/include"
+            ldflags="$ldflags -L$prefix/lib"
+            pkg_config_path="${pkg_config_path:+$pkg_config_path:}$prefix/lib/pkgconfig"
+          done
+          # Homebrew RNP does not ship the pkg-config metadata configure needs.
+          mkdir -p .build/pkgconfig
+          rnp_prefix="$(brew --prefix rnp)"
+          printf '%s\n' \
+            'Name: librnp' 'Description: Homebrew RNP' 'Version: 0.0' \
+            "Cflags: -I$rnp_prefix/include" \
+            "Libs: -L$rnp_prefix/lib -lrnp -lsexpp $(pkg-config --libs-only-L --libs-only-l botan-3 json-c) -lbz2 -lz -lc++" \
+            > .build/pkgconfig/librnp.pc
+          pkg_config_path="$(pwd)/.build/pkgconfig:$pkg_config_path"
+          echo "CPPFLAGS=$cppflags" >> "$GITHUB_ENV"
+          echo "LDFLAGS=$ldflags" >> "$GITHUB_ENV"
+          echo "PKG_CONFIG_PATH=$pkg_config_path" >> "$GITHUB_ENV"
+          CPPFLAGS="$cppflags" LDFLAGS="$ldflags" PKG_CONFIG_PATH="$pkg_config_path" \
+            ./autogen.sh --prefix="$(pwd)/.build/install" --enable-debug --disable-static \
+              --with-smime=openssl \
+              --with-openssl="$(brew --prefix openssl@3)" \
+              --with-sasl="$(brew --prefix cyrus-sasl)" \
+              --with-curl="$(brew --prefix curl)" \
+              --with-icu=yes --with-rnp=yes --with-json=yes --with-feed=yes
+
+      - name: Build
+        run: |
+          make -j"$(sysctl -n hw.ncpu)"
+          make install
+
+      - name: Run Unix unit tests
+        run: |
+          export PATH="$(brew --prefix openssl@3)/bin:$PATH"
+          make check XCODEBUILD=libetpan-xctest-disabled \
+            LIBETPAN_TEST_LDLIBS="$(pwd)/.build/install/lib/libetpan.dylib $LDFLAGS" \
+            RNP_LDLIBS="$(pkg-config --libs librnp)" \
+            CFLAGS="-Wall -Wextra -Werror -g $CPPFLAGS"
