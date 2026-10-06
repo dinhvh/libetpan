@@ -80,7 +80,7 @@ if "$no_cache" || [[ ! -f "$archive" ]]; then
       -path './build-android/dependencies/build' -prune -o \
       -path './build-android/dependencies/*/build-android' -prune -o \
       -name '*.in' -print0
-    printf '%s\0' configure install-sh config.sub missing config.guess
+    printf '%s\0' configure install-sh config.sub missing config.guess ltmain.sh compile
   } | tar --null -T - -czf "$archive"
 else
   if "$autogen_available"; then
