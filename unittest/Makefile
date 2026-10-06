@@ -232,6 +232,7 @@ DATA_TYPES_TEST_DEPS = $(DATA_TYPES_TEST_SRCS) \
         $(TOP)/src/data-types/md5global.h \
         $(TOP)/src/data-types/hmac-md5.h
 CHARCONV_TEST_DEPS = $(CHARCONV_TEST_SRCS) \
+	$(TOP)/config.h \
 	$(TOP)/src/data-types/charconv.h
 ACTIVESYNC_WBXML_TEST_DEPS = $(ACTIVESYNC_WBXML_TEST_SRCS) \
 	activesync/*.h common/test_case.h

@@ -6,5 +6,7 @@ libdir=@libdir@
 Name: libetpan
 Description: Libetpan C library.
 Version: @VERSION@
+Requires.private: @ICU_PKGCONFIG@
 Libs: -L${libdir} -letpan@LIBSUFFIX@ @SSLLIBS@ @GNUTLSLIB@ @LIBICONV@ @DBLIB@ @LIBS@ @SASLLIBS@
+Libs.private: @ICULIB@
 Cflags: -I${includedir}

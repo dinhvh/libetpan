@@ -670,12 +670,18 @@ static int apple_charconv(const char * tocode, const char * fromcode,
 #ifdef HAVE_ICU
 static int icu_should_try_charset(const char * fromcode)
 {
+#ifndef HAVE_ICONV
+  /* ICU is the general conversion backend when iconv is disabled. */
+  (void) fromcode;
+  return 1;
+#else
   return strcasecmp(fromcode, "iso-2022-jp") == 0 ||
       strcasecmp(fromcode, "iso-2022-jp-2") == 0 ||
       strcasecmp(fromcode, "shift_jis") == 0 ||
       strcasecmp(fromcode, "shift-jis") == 0 ||
       strcasecmp(fromcode, "euc-jp") == 0 ||
       strcasecmp(fromcode, "eucjp") == 0;
+#endif
 }
 
 static int icu_charconv(const char * tocode, const char * fromcode,
@@ -721,6 +727,9 @@ static const char * get_valid_charset(const char * fromcode)
   }
   else if (strcasecmp(fromcode, "ks_c_5601-1987") == 0) {
     fromcode = "euckr";
+  }
+  else if (strcasecmp(fromcode, "koi8_r") == 0) {
+    fromcode = "koi8-r";
   }
   else if (strcasecmp(fromcode, "iso-2022-jp") == 0) {
     fromcode = "iso-2022-jp-2";
@@ -775,7 +784,7 @@ int charconv(const char * tocode, const char * fromcode,
 		}
 		if (res != MAIL_CHARCONV_ERROR_UNKNOWN_CHARSET)
 			return res;
-		/* else, let's try with iconv, if available */
+		/* Try the built-in backends for an unsupported charset. */
 	}
 
 #ifdef HAVE_COREFOUNDATION_CHARCONV
@@ -942,9 +951,10 @@ int charconv_buffer(const char * tocode, const char * fromcode,
             else {
                 mmap_string_free(mmapstr);
             }
-			return res;
+			if (res != MAIL_CHARCONV_ERROR_UNKNOWN_CHARSET)
+				return res;
 		}
-		/* else, let's try with iconv, if available */
+		/* Try the built-in backends for an unsupported charset. */
 	}
 
 #ifdef HAVE_COREFOUNDATION_CHARCONV

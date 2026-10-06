@@ -362,7 +362,9 @@ dnl iconv
 LIBICONV=""
 
 AC_ARG_ENABLE(iconv, [AS_HELP_STRING([--disable-iconv], [make a version not using iconv])],
-		enable_iconv=no, enable_iconv=yes)
+		[enable_iconv=$enableval], [enable_iconv=yes])
+AS_CASE([$enable_iconv], [yes|no], [],
+        [AC_MSG_ERROR([--enable-iconv accepts only yes or no])])
 if test "x$enable_iconv" = xyes; then
    dnl get prototype
    AC_CHECK_HEADER(iconv.h, [ICONV_HEADER=1], [ICONV_HEADER=0])
@@ -477,8 +479,9 @@ AC_SUBST(CFNETWORKLIB)
 dnl ICU
 ICULIB=""
 ICUCPPFLAGS=""
+ICU_PKGCONFIG=""
 
-AC_ARG_WITH(icu, [AS_HELP_STRING([--with-icu], [use ICU for charset conversion before iconv (default=auto)])],
+AC_ARG_WITH(icu, [AS_HELP_STRING([--with-icu], [use ICU for Japanese charsets, or all charsets with --disable-iconv (default=auto)])],
             [], [with_icu=auto])
 if test "x$with_icu" != "xno"; then
   PKG_CHECK_MODULES([ICU], [icu-uc],
@@ -503,6 +506,7 @@ if test "x$with_icu" != "xno"; then
         return U_FAILURE(err);]])],
       [AC_DEFINE(HAVE_ICU, 1, [Define if you have ICU charset conversion.])
        ICUCPPFLAGS="$ICU_CFLAGS"
+       ICU_PKGCONFIG="icu-uc"
        ICULIB="$ICU_LIBS"],
       [AC_MSG_ERROR([ICU libraries are missing])])
     CPPFLAGS="$SAVED_CPPFLAGS"
@@ -511,6 +515,8 @@ if test "x$with_icu" != "xno"; then
 fi
 AC_SUBST(ICUCPPFLAGS)
 AC_SUBST(ICULIB)
+AC_SUBST(ICU_PKGCONFIG)
+AC_MSG_NOTICE([charset conversion: iconv=${ICONV_LINKED:-disabled}, ICU=$with_icu])
 
 dnl Berkeley DB
 

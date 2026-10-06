@@ -25,6 +25,23 @@ Install Autoconf, Automake, and Libtool, then build:
 make
 ```
 
+On glibc Linux, iconv is provided by libc; a separate GNU libiconv library is
+normally unnecessary. To use ICU for all charset conversion and omit iconv,
+install ICU development headers, libraries, and converter data, then build:
+
+```sh
+./configure --with-icu=yes --disable-iconv
+make
+make -C unittest check
+```
+
+Run `make clean` before rebuilding an existing checkout with different backend
+options. ICU-only conversion uses ICU's charset aliases and substitution rules;
+malformed input can produce replacement characters rather than the iconv
+wrapper's `?`. Missing converters return an unknown-charset error. The default
+build continues to use iconv, with ICU preferred for selected Japanese encodings
+when available. Use `--with-icu=no` for an iconv-only build.
+
 ### macOS with configure and make
 
 Install Autoconf, Automake, and Libtool, then build:
