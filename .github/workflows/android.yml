@@ -25,7 +25,8 @@ jobs:
 
       - name: Install Android NDK
         run: |
-          sdkmanager --install "ndk;$NDK_VERSION"
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" \
+            --sdk_root="$ANDROID_HOME" --install "ndk;$NDK_VERSION"
           echo "ANDROID_NDK=$ANDROID_HOME/ndk/$NDK_VERSION" >> "$GITHUB_ENV"
 
       - name: Compute dependency cache key
