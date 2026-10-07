@@ -277,6 +277,11 @@
 		C6ED6D1717A1884E00A4A14C /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6ED6D0817A1883000A4A14C /* CoreServices.framework */; };
 		C6ED6D1817A1884F00A4A14C /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6ED6D0817A1883000A4A14C /* CoreServices.framework */; };
 		E10000000000000000000001 /* Tidy.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = E10000000000000000000002 /* Tidy.xcframework */; };
+		E70000000000000000000001 /* CharconvTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E70000000000000000000011 /* CharconvTests.m */; };
+		E70000000000000000000002 /* charset_cases_test.c in Sources */ = {isa = PBXBuildFile; fileRef = E70000000000000000000012 /* charset_cases_test.c */; };
+		E70000000000000000000003 /* charset_singlebyte_cases.c in Sources */ = {isa = PBXBuildFile; fileRef = E70000000000000000000013 /* charset_singlebyte_cases.c */; };
+		E70000000000000000000004 /* charset_multibyte_cases.c in Sources */ = {isa = PBXBuildFile; fileRef = E70000000000000000000014 /* charset_multibyte_cases.c */; };
+		E70000000000000000000005 /* iconv-glibc-charsets.txt in Resources */ = {isa = PBXBuildFile; fileRef = E70000000000000000000015 /* iconv-glibc-charsets.txt */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -693,6 +698,11 @@
 		F20000000000000000000001 /* xcconfig/tests-project.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "xcconfig/tests-project.xcconfig"; sourceTree = "<group>"; };
 		F20000000000000000000002 /* xcconfig/tests-samples.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "xcconfig/tests-samples.xcconfig"; sourceTree = "<group>"; };
 		F20000000000000000000003 /* xcconfig/tests-unit.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "xcconfig/tests-unit.xcconfig"; sourceTree = "<group>"; };
+		E70000000000000000000011 /* CharconvTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = CharconvTests.m; path = "../unittest/xctest/CharconvTests.m"; sourceTree = SOURCE_ROOT; };
+		E70000000000000000000012 /* charset_cases_test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = charset_cases_test.c; path = "../unittest/charconv/charset_cases_test.c"; sourceTree = SOURCE_ROOT; };
+		E70000000000000000000013 /* charset_singlebyte_cases.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = charset_singlebyte_cases.c; path = "../unittest/charconv/charset_singlebyte_cases.c"; sourceTree = SOURCE_ROOT; };
+		E70000000000000000000014 /* charset_multibyte_cases.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = charset_multibyte_cases.c; path = "../unittest/charconv/charset_multibyte_cases.c"; sourceTree = SOURCE_ROOT; };
+		E70000000000000000000015 /* iconv-glibc-charsets.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = iconv-glibc-charsets.txt; path = "../unittest/charconv/data/iconv-glibc-charsets.txt"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1208,6 +1218,11 @@
 				A60000000000000000000011 /* IMAPResponseDataTests.m */,
 				A10000000000000000000011 /* IMAPResponseDoneTests.m */,
 				A20000000000000000000011 /* IMAPUTF7Tests.m */,
+				E70000000000000000000011 /* CharconvTests.m */,
+				E70000000000000000000012 /* charset_cases_test.c */,
+				E70000000000000000000013 /* charset_singlebyte_cases.c */,
+				E70000000000000000000014 /* charset_multibyte_cases.c */,
+				E70000000000000000000015 /* iconv-glibc-charsets.txt */,
 				A70000000000000000000011 /* IMAPUnsupportedResponseTests.m */,
 				A30000000000000000000011 /* IMFParserTests.m */,
 				AB0000000000000000000011 /* MIMEBuilderTests.m */,
@@ -1689,6 +1704,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A10000000000000000000004 /* response-done in Resources */,
+				E70000000000000000000005 /* iconv-glibc-charsets.txt in Resources */,
 				A30000000000000000000003 /* imf-data in Resources */,
 				A60000000000000000000003 /* response-data in Resources */,
 				A70000000000000000000003 /* unsupported in Resources */,
@@ -1936,6 +1952,10 @@
 				A10000000000000000000002 /* response_done_test.c in Sources */,
 				A10000000000000000000003 /* imap_test_utils.c in Sources */,
 				A20000000000000000000001 /* IMAPUTF7Tests.m in Sources */,
+				E70000000000000000000001 /* CharconvTests.m in Sources */,
+				E70000000000000000000002 /* charset_cases_test.c in Sources */,
+				E70000000000000000000003 /* charset_singlebyte_cases.c in Sources */,
+				E70000000000000000000004 /* charset_multibyte_cases.c in Sources */,
 				A20000000000000000000002 /* imap_utf7_tests.c in Sources */,
 				A30000000000000000000001 /* IMFParserTests.m in Sources */,
 				A30000000000000000000002 /* parser_test.c in Sources */,

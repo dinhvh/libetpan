@@ -86,6 +86,7 @@ unittest:
 check-local: unittest
 
 EXTRA_DIST += unittest/Makefile unittest/charconv/main.c \
+	unittest/xctest/CharconvTests.m \
 	unittest/charconv/charset_cases.h unittest/charconv/charset_cases_test.c \
 	unittest/charconv/charset_singlebyte_cases.c \
 	unittest/charconv/charset_multibyte_cases.c \

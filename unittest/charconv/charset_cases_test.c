@@ -8,6 +8,11 @@
 #include <wchar.h>
 #if defined(__APPLE__) && !defined(HAVE_ICU)
 #include "charset_apple_cases.h"
+#ifdef HAVE_ICONV
+#include <iconv.h>
+#include <errno.h>
+#include <dlfcn.h>
+#endif
 #endif
 
 static const struct charset_case * case_at(size_t index)
@@ -16,7 +21,7 @@ static const struct charset_case * case_at(size_t index)
       &charset_multibyte_cases[index - charset_singlebyte_count];
 }
 
-static int inventory_check(size_t total)
+static int inventory_check(size_t total, const char * inventory_path)
 {
   const char * paths[] = { "data/iconv-glibc-charsets.txt",
     "charconv/data/iconv-glibc-charsets.txt",
@@ -28,10 +33,14 @@ static int inventory_check(size_t total)
   int failed = 0;
   if (seen == NULL)
     return 1;
-  for (index = 0; index < sizeof(paths) / sizeof(paths[0]); index++) {
-    file = fopen(paths[index], "r");
-    if (file != NULL)
-      break;
+  if (inventory_path != NULL)
+    file = fopen(inventory_path, "r");
+  else {
+    for (index = 0; index < sizeof(paths) / sizeof(paths[0]); index++) {
+      file = fopen(paths[index], "r");
+      if (file != NULL)
+        break;
+    }
   }
   if (file == NULL) {
     fprintf(stderr, "charset inventory: cannot open recorded inventory\n");
@@ -78,6 +87,54 @@ static int inventory_check(size_t total)
   return failed;
 }
 
+static void print_bytes(const char * label, const char * bytes, size_t length)
+{
+  size_t index, limit = length < 64 ? length : 64;
+  fprintf(stderr, "  %s (%zu bytes):", label, length);
+  for (index = 0; index < limit; index++)
+    fprintf(stderr, " %02x", (unsigned char) bytes[index]);
+  fprintf(stderr, "%s\n", length > limit ? " ..." : "");
+}
+
+#if defined(__APPLE__) && defined(HAVE_ICONV) && !defined(HAVE_ICU)
+/* Diagnostics only: expected results always remain the checked-in fixtures. */
+static void print_iconv_reference(const char * tocode, const char * fromcode,
+    const struct charset_bytes * input)
+{
+  Dl_info provider;
+  iconv_t converter;
+  char * output, * cursor, * source = (char *) input->data;
+  size_t capacity = input->length * 6 + 16, room = capacity;
+  size_t remaining = input->length, converted;
+  int saved_errno;
+  if (dladdr((void *) iconv, &provider))
+    fprintf(stderr, "  SDK iconv provider: %s\n", provider.dli_fname);
+  converter = iconv_open(tocode, fromcode);
+  if (converter == (iconv_t) -1) {
+    fprintf(stderr, "  SDK iconv_open failed: errno=%d\n", errno);
+    return;
+  }
+  output = malloc(capacity);
+  if (output == NULL) {
+    iconv_close(converter);
+    return;
+  }
+  cursor = output;
+  errno = 0;
+#ifdef HAVE_ICONV_PROTO_CONST
+  converted = iconv(converter, (const char **) &source, &remaining, &cursor, &room);
+#else
+  converted = iconv(converter, &source, &remaining, &cursor, &room);
+#endif
+  saved_errno = errno;
+  fprintf(stderr, "  SDK iconv return=%zu errno=%d remaining=%zu\n",
+      converted, saved_errno, remaining);
+  print_bytes("SDK iconv output", output, capacity - room);
+  free(output);
+  iconv_close(converter);
+}
+#endif
+
 static int check_direction(const struct charset_case * test, int encode,
     const struct charset_expectation * expected, const char * backend)
 {
@@ -104,6 +161,11 @@ static int check_direction(const struct charset_case * test, int encode,
       fprintf(stderr, "%s [%s] charconv_buffer %s: differing byte %zu, length %zu expected %zu\n",
           test->name, backend, encode ? "encode" : "decode", offset,
           length, expected->bytes.length);
+      print_bytes("actual", result, length);
+      print_bytes("expected", expected->bytes.data, expected->bytes.length);
+#if defined(__APPLE__) && defined(HAVE_ICONV) && !defined(HAVE_ICU)
+      print_iconv_reference(tocode, fromcode, input);
+#endif
       failed = 1;
     }
   }
@@ -129,12 +191,12 @@ static int check_direction(const struct charset_case * test, int encode,
   return failed;
 }
 
-int charset_cases_test(void)
+int charset_cases_test_with_inventory(const char * inventory_path)
 {
   size_t total = charset_singlebyte_count + charset_multibyte_count;
   size_t index, decoded = 0, encoded = 0, unknown_decode = 0, unknown_encode = 0;
   size_t conversion_errors = 0, limited = 0, failures = 0;
-  if (inventory_check(total))
+  if (inventory_check(total, inventory_path))
     return 1;
   for (index = 0; index < total; index++) {
     const struct charset_case * test = case_at(index);
@@ -187,4 +249,9 @@ int charset_cases_test(void)
   printf("charset inventory: %zu names; decode=%zu encode=%zu; unsupported decode=%zu encode=%zu; conversion-errors=%zu platform-limited=%zu; failures=%zu\n",
       total, decoded, encoded, unknown_decode, unknown_encode, conversion_errors, limited, failures);
   return failures != 0;
+}
+
+int charset_cases_test(void)
+{
+  return charset_cases_test_with_inventory(NULL);
 }

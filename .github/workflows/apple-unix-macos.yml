@@ -54,6 +54,10 @@ jobs:
 
       - name: Run Unix unit tests
         run: |
+          sw_vers
+          xcodebuild -version
+          uname -m
+          otool -L .build/install/lib/libetpan.dylib
           export PATH="$(brew --prefix openssl@3)/bin:$PATH"
           make check XCODEBUILD=libetpan-xctest-disabled \
             LIBETPAN_TEST_LDLIBS="$(pwd)/.build/install/lib/libetpan.dylib $LDFLAGS" \

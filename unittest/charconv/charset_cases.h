@@ -21,4 +21,5 @@ extern const size_t charset_singlebyte_count;
 extern const struct charset_case charset_multibyte_cases[];
 extern const size_t charset_multibyte_count;
 int charset_cases_test(void);
+int charset_cases_test_with_inventory(const char * inventory_path);
 #endif
