@@ -12,3 +12,10 @@ frameworks, including CFNetwork on iOS. iOS uses OpenSSL Crypto directly for
 S/MIME as well. The macOS
 libetpan OpenSSL transport and S/MIME backends remain disabled even though RNP's
 transitive OpenSSL Crypto dependency is linked.
+
+Apple builds use the SDK iconv by default and do not require ICU. To test the
+CoreFoundation conversion backend, configure Unix macOS with --with-icu=no
+--disable-iconv, or run the Unix iOS script with LIBETPAN_DISABLE_ICONV=1.
+For Xcode builds, pass OTHER_CFLAGS='$(inherited) -DLIBETPAN_DISABLE_ICONV=1'.
+Without iconv, small generated VISCII and KOI8-T tables provide conversions to
+and from UTF-8 when CoreFoundation cannot supply those encodings.

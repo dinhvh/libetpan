@@ -1,6 +1,6 @@
 #!/bin/sh
 set -e
-# Populate app/src/main/cpp/prebuilt/ with the libetpan static lib + its three
+# Populate app/src/main/cpp/prebuilt/ with the libetpan static lib + its
 # dependencies (per ABI) and the public headers, sourced from the artifacts
 # produced by build-android/build.sh. Re-runnable; fails loudly if anything is
 # missing.
@@ -12,13 +12,13 @@ dest="$here/app/src/main/cpp/prebuilt"
 etpan_dir="$build_android/build/libetpan-android"
 ssl_dir="$build_android/dependencies/build/openssl-android"
 sasl_dir="$build_android/dependencies/build/cyrus-sasl-android"
-iconv_dir="$build_android/dependencies/build/iconv-android"
+icu_dir="$build_android/dependencies/build/icu-android"
 json_c_dir="$build_android/dependencies/build/json-c-android"
 curl_dir="$build_android/dependencies/build/curl-android"
 libxml2_dir="$build_android/dependencies/build/libxml2-android"
 rnp_dir="$build_android/dependencies/build/rnp-android"
 
-for artifact_dir in "$etpan_dir" "$ssl_dir" "$sasl_dir" "$iconv_dir" "$json_c_dir" "$curl_dir" "$libxml2_dir" "$rnp_dir" ; do
+for artifact_dir in "$etpan_dir" "$ssl_dir" "$sasl_dir" "$icu_dir" "$json_c_dir" "$curl_dir" "$libxml2_dir" "$rnp_dir" ; do
   if [ ! -d "$artifact_dir" ]; then
     echo "ERROR: missing artifact directory: $artifact_dir"
     echo "       run build-android/build.sh (with ANDROID_NDK set to r23+) first."
@@ -35,7 +35,8 @@ for abi in arm64-v8a armeabi-v7a x86 x86_64 ; do
   cp "$ssl_dir/libs/$abi/libssl.a"       "$dest/$abi/libssl.a"
   cp "$ssl_dir/libs/$abi/libcrypto.a"    "$dest/$abi/libcrypto.a"
   cp "$sasl_dir/libs/$abi/libsasl2.a"    "$dest/$abi/libsasl2.a"
-  cp "$iconv_dir/libs/$abi/libiconv.a"   "$dest/$abi/libiconv.a"
+  cp "$icu_dir/libs/$abi/libicuuc.a"    "$dest/$abi/libicuuc.a"
+  cp "$icu_dir/libs/$abi/libicudata.a"  "$dest/$abi/libicudata.a"
   cp "$json_c_dir/libs/$abi/libjson-c.a" "$dest/$abi/libjson-c.a"
   cp "$curl_dir/libs/$abi/libcurl.a"     "$dest/$abi/libcurl.a"
   cp "$libxml2_dir/libs/$abi/libxml2.a"  "$dest/$abi/libxml2.a"

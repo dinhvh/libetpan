@@ -17,30 +17,20 @@ Android and Windows build files are also included.
 
 ### Linux
 
-Install Autoconf, Automake, and Libtool, then build:
+Install Autoconf, Automake, Libtool, and ICU development headers, libraries,
+and converter data (for example, `libicu-dev` on Ubuntu), then build:
 
 ```sh
-./autogen.sh
-./configure
+./autogen.sh --with-icu=yes --disable-iconv
 make
 ```
 
-On glibc Linux, iconv is provided by libc; a separate GNU libiconv library is
-normally unnecessary. To use ICU for all charset conversion and omit iconv,
-install ICU development headers, libraries, and converter data, then build:
+The maintained Linux build and GitHub workflow use ICU for charset conversion;
+GNU libiconv is not required. Run the unit tests with:
 
 ```sh
-./configure --with-icu=yes --disable-iconv
-make
 make -C unittest check
 ```
-
-Run `make clean` before rebuilding an existing checkout with different backend
-options. ICU-only conversion uses ICU's charset aliases and substitution rules;
-malformed input can produce replacement characters rather than the iconv
-wrapper's `?`. Missing converters return an unknown-charset error. The default
-build continues to use iconv, with ICU preferred for selected Japanese encodings
-when available. Use `--with-icu=no` for an iconv-only build.
 
 ### macOS with configure and make
 
@@ -73,6 +63,8 @@ cd build-android
 ```
 
 See `build-android/README.md` for dependency details, supported ABIs, and the sample app.
+The dependency bootstrap builds the pinned ICU submodule and bundles its static
+conversion libraries and data. Android no longer builds or links GNU libiconv.
 
 ### Windows
 

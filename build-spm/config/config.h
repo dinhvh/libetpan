@@ -18,7 +18,9 @@
 #define HAVE_FEED 1
 #define HAVE_GETOPT_LONG 1
 #define HAVE_GETPAGESIZE 1
+#ifndef LIBETPAN_DISABLE_ICONV
 #define HAVE_ICONV 1
+#endif
 #define HAVE_INTTYPES_H 1
 #define HAVE_IPV6 1
 #define HAVE_JSON 1

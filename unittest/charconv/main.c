@@ -5,8 +5,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
 
 #include "charconv.h"
+#ifdef HAVE_PTHREAD_H
+#include <pthread.h>
+#endif
 
 struct conversion_case {
   const char * charset;
@@ -108,6 +112,9 @@ static int test_extension(const char * tocode, const char * fromcode,
 
 static int check_general_conversions(void)
 {
+#if defined(HAVE_ICU) && !defined(HAVE_ICONV)
+  const uint16_t byte_order = 1;
+#endif
   struct byte_case {
     const char * tocode;
     const char * fromcode;
@@ -136,7 +143,7 @@ static int check_general_conversions(void)
     { "windows-1252", "utf-8", "\xe2\x82\xac", 3, "\x80", 1 },
     { "shift_jis", "utf-8", "\xe3\x81\x82", 3, "\x82\xa0", 2 },
     { "iso-2022-jp", "utf-8", "\xe3\x81\x82", 3,
-#if defined(HAVE_ICU) && !defined(HAVE_ICONV)
+#if (defined(HAVE_ICU) || defined(HAVE_COREFOUNDATION_CHARCONV)) && !defined(HAVE_ICONV)
       "\x1b$B$\x22\x1b(B", 8 },
 #else
       "\x1b$B$\x22", 5 },
@@ -169,6 +176,49 @@ static int check_general_conversions(void)
     return 1;
 #endif
 
+  /* The native modified UTF-7 bridge is length-aware and backend-independent. */
+  if (check_bytes("UTF-7-IMAP", "UTF-8", "A\0B&", 4,
+          "A&AAA-B&-", 9) ||
+      check_bytes("UTF-8", "UTF-7-IMAP", "A&AAA-B&-", 9, "A\0B&", 4) ||
+      check_bytes("UTF-7-IMAP", "UTF-8", "\xf0\x9f\x98\x80", 4,
+          "&2D3eAA-", 8) ||
+      check_bytes("UTF-8", "UTF-7-IMAP", "&2D3eAA-", 8,
+          "\xf0\x9f\x98\x80", 4) ||
+      /* Preserve the existing string helper's permissive missing '-' behavior. */
+      check_bytes("UTF-8", "UTF-7-IMAP", "&AGE", 4, "a", 1) ||
+      check_error("UTF-8", "UTF-7-IMAP", "&2AA-", 5,
+          MAIL_CHARCONV_ERROR_CONV) ||
+      check_error("UTF-7-IMAP", "UTF-8", "\xff", 1,
+          MAIL_CHARCONV_ERROR_CONV) ||
+      check_error("UTF-8", "UTF-7-IMAP", "A", (size_t) -1,
+          MAIL_CHARCONV_ERROR_MEMORY))
+    return 1;
+#if defined(HAVE_ICU) && !defined(HAVE_ICONV)
+  /* BOM overhead previously exceeded the six-times-input allocation. */
+  if (check_bytes("UTF-32", "UTF-8", "A", 1,
+          *(const unsigned char *) &byte_order == 1 ?
+          "\xff\xfe\0\0A\0\0\0" : "\0\0\xfe\xff\0\0\0A", 8) ||
+      check_bytes("UCS-4BE", "UTF-8", "A", 1, "\0\0\0A", 4) ||
+      check_error("UCS-2BE", "UTF-8", "\xf0\x9f\x98\x80", 4,
+          MAIL_CHARCONV_ERROR_CONV) ||
+      check_error("UTF-8", "UCS-2BE", "\xd8\x3d\xde\0", 4,
+          MAIL_CHARCONV_ERROR_CONV) ||
+      check_error("UTF-8", "UCS-2LE", "A", 1,
+          MAIL_CHARCONV_ERROR_CONV) ||
+      check_error("UTF-8", "x-libetpan-unknown", "", 0,
+          MAIL_CHARCONV_ERROR_UNKNOWN_CHARSET))
+    return 1;
+#endif
+
+#if defined(HAVE_COREFOUNDATION_CHARCONV) && !defined(HAVE_ICONV)
+  if (check_error("UTF-8", "KOI8-T", "\x88", 1,
+          MAIL_CHARCONV_ERROR_CONV) ||
+      check_error("VISCII", "UTF-8", "\xff", 1,
+          MAIL_CHARCONV_ERROR_CONV) ||
+      check_bytes("KOI8-T", "UTF-8", "\xef\xbf\xbf", 3, "?", 1))
+    return 1;
+#endif
+
   extended_charconv = test_extension;
   extension_result = MAIL_CHARCONV_ERROR_UNKNOWN_CHARSET;
   failed = check_bytes("utf-8", "windows-1252", "\x80", 1,
@@ -184,6 +234,48 @@ static int check_general_conversions(void)
   }
   return failed;
 }
+
+#ifdef HAVE_PTHREAD_H
+static void * check_packaged_concurrently(void * argument)
+{
+  int * failed = argument;
+  size_t index;
+  for (index = 0; index < 32; index++) {
+    char * result = NULL;
+    int status = charconv("UTF-8", "ISO-8859-16", "\xaa", 1, &result);
+    if (status != MAIL_CHARCONV_NO_ERROR ||
+        (status == MAIL_CHARCONV_NO_ERROR && strcmp(result, "\xc8\x98") != 0))
+      *failed = 1;
+    free(result);
+  }
+  return NULL;
+}
+
+static int check_package_threads(void)
+{
+  pthread_t threads[8];
+  int results[8] = { 0 };
+  size_t index, created = 0;
+  int failed = 0;
+  for (index = 0; index < 8; index++) {
+    if (pthread_create(&threads[index], NULL, check_packaged_concurrently,
+        &results[index]) != 0) {
+      failed = 1;
+      break;
+    }
+    created++;
+  }
+  for (index = 0; index < created; index++) {
+    if (pthread_join(threads[index], NULL) != 0 || results[index])
+      failed = 1;
+  }
+  if (failed)
+    fprintf(stderr, "concurrent optional-data conversion failed\n");
+  return failed;
+}
+#endif
+
+int charset_cases_test(void);
 
 int main(void)
 {
@@ -215,6 +307,12 @@ int main(void)
       return 1;
   }
   if (check_general_conversions() != 0)
+    return 1;
+#ifdef HAVE_PTHREAD_H
+  if (check_package_threads() != 0)
+    return 1;
+#endif
+  if (charset_cases_test() != 0)
     return 1;
   puts("charconv_test: ok");
   return 0;

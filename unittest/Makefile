@@ -165,7 +165,10 @@ DATA_TYPES_TEST_SRCS = \
 	$(TOP)/src/data-types/base64.c \
 	$(TOP)/src/data-types/carray.c \
 	$(TOP)/src/data-types/md5.c
-CHARCONV_TEST_SRCS = charconv/main.c
+CHARCONV_TEST_SRCS = charconv/main.c \
+	charconv/charset_cases_test.c \
+	charconv/charset_singlebyte_cases.c \
+	charconv/charset_multibyte_cases.c
 MAILHTTP_TEST_SRCS = http/mailhttp_test.c
 MAILHTTP_TEST_DEPS = $(MAILHTTP_TEST_SRCS) $(TOP)/src/data-types/mailhttp.h
 FEED_HTTP_TEST_SRCS = feed/feed_http_test.c
@@ -232,6 +235,8 @@ DATA_TYPES_TEST_DEPS = $(DATA_TYPES_TEST_SRCS) \
         $(TOP)/src/data-types/md5global.h \
         $(TOP)/src/data-types/hmac-md5.h
 CHARCONV_TEST_DEPS = $(CHARCONV_TEST_SRCS) \
+	charconv/charset_cases.h charconv/charset_case_vectors.h charconv/charset_apple_cases.h \
+	charconv/data/iconv-glibc-charsets.txt \
 	$(TOP)/config.h \
 	$(TOP)/src/data-types/charconv.h
 ACTIVESYNC_WBXML_TEST_DEPS = $(ACTIVESYNC_WBXML_TEST_SRCS) \

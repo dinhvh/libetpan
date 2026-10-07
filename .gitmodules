@@ -19,6 +19,9 @@
 [submodule "dependencies/submodules/libxml2"]
 	path = dependencies/submodules/libxml2
 	url = https://gitlab.gnome.org/GNOME/libxml2.git
-[submodule "dependencies/submodules/libiconv"]
-	path = dependencies/submodules/libiconv
-	url = https://git.savannah.gnu.org/git/libiconv.git
+[submodule "dependencies/submodules/icu"]
+	path = dependencies/submodules/icu
+	url = https://github.com/unicode-org/icu.git
+[submodule "dependencies/submodules/icu-data"]
+	path = dependencies/submodules/icu-data
+	url = https://github.com/unicode-org/icu-data.git

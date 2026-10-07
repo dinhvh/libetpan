@@ -221,4 +221,3 @@ libetpan.pc
 /tests/activesync-state.local.txt
 /tests/gmail-google-oauth.local.json
 /tests/gmail-token.local.json
-

@@ -12,6 +12,8 @@ libraries, and contains a small Kotlin/Compose demo app that consumes them.
 - Android SDK (for the demo app) and a JDK 17+ (for Gradle).
 - Populated dependency submodules under `dependencies/submodules/`.
   `build-android/dependencies/bootstrap.sh` initializes them automatically.
+- Native C/C++ compilers, GNU Make, Python 3, Autoconf, Automake, Libtool, and
+  pkg-config. ICU builds native host tools before cross-compiling its libraries.
 
 Point `ANDROID_NDK` at a suitable NDK, e.g.:
 
@@ -34,17 +36,46 @@ cd build-android
 2. **JSON-C** → `dependencies/build/json-c-android/`
 3. **libcurl** → `dependencies/build/curl-android/`
 4. **Cyrus SASL** (2.1.28) → `dependencies/build/cyrus-sasl-android/`
-5. **libiconv** (1.15) → `dependencies/build/iconv-android/`
+5. **ICU** (78.2) → `dependencies/build/icu-android/`
 6. **libxml2** → `dependencies/build/libxml2-android/`
 7. **RNP** → `dependencies/build/rnp-android/`
 8. **libetpan** → `build/libetpan-android/`
 
 Each dependency is only rebuilt if its output directory is missing, so re-runs
-are fast. To force all dependency rebuilds, run:
+are fast. After changing NDK versions, rebuild the cached dependencies together
+to keep their C++ runtime compatible. To force all dependency rebuilds, run:
 
 ```sh
 ./dependencies/bootstrap.sh --force
 ```
+
+### Building ICU separately
+
+The ICU dependency script builds the pinned ICU submodule for Android:
+
+```sh
+git submodule update --init dependencies/submodules/icu
+ANDROID_NDK=/path/to/android-ndk build-android/dependencies/icu/build.sh
+```
+
+Run this command from the repository root. It defaults to API 23 and all four
+ABIs listed above. Set `ANDROID_PLATFORM`, `ANDROID_ABIS` (space-separated),
+and `JOBS` to override those defaults. Native host compilers are required;
+`HOST_CC` and `HOST_CXX` can override `cc` and `c++`. The script also requires
+GNU Make and Python 3, and builds ICU's host data-generation tools first.
+
+Output is `build-android/dependencies/build/icu-android/include/unicode/` and
+`libs/<abi>/libicuuc.a`, `libicudata.a`, with the upstream license. Both archives
+are static and compiled for inclusion in a JNI shared library. Conversion data
+and supporting Unicode data are embedded; locale, collation, and break-iterator
+data are excluded. Link `icuuc` before `icudata`, using the NDK C++ runtime.
+The extra reviewed converters from `icu-data` remain embedded in libetpan's
+generated charset header.
+
+The script rebuilds its output on each direct invocation. `bootstrap.sh` builds
+and caches ICU automatically. The libetpan Android build and demo use ICU for
+charset conversion, with iconv disabled. No GNU libiconv checkout or download
+is needed.
 
 ### Output layout
 
@@ -62,11 +93,12 @@ libetpan-android/
 
 `libetpan.a` is **not** self-contained: linking it also requires `librnp.a`,
 `libcurl.a`, `libxml2.a`, `libjson-c.a`, `libsasl2.a`, `libssl.a`,
-`libcrypto.a`, and `libiconv.a`, plus the NDK system libs `z` and `log`. Link
+`libcrypto.a`, `libicuuc.a`, and `libicudata.a`, plus the NDK C++ runtime and
+system libs `z` and `log`. Link
 order matters (consumers before providers):
 
 ```
-etpan  rnp  curl  xml2  json-c  sasl2  ssl  crypto  iconv  z  log
+etpan  rnp  curl  xml2  json-c  sasl2  ssl  crypto  icuuc  icudata  z  log
 ```
 
 > Note: `build/libetpan-android/` currently contains only the exported

@@ -6,13 +6,15 @@
  */
 
 #include <stddef.h>
+#include <stdlib.h>
 
 #include <curl/curl.h>
-#include <iconv.h>
+#include <unicode/ucnv.h>
 #include <libxml/parser.h>
 #include <sasl/sasl.h>
 
 #include <libetpan/mailjson.h>
+#include <libetpan/charconv.h>
 #include <libetpan/mailpgp.h>
 #include <libetpan/mailstream_ssl.h>
 
@@ -25,7 +27,9 @@ int android_link_smoke_touch(void)
   struct newsfeed * feed;
   struct mailpgp * pgp;
   mailjson_value * json;
-  iconv_t iconv_context;
+  UConverter * converter;
+  UErrorCode conversion_error = U_ZERO_ERROR;
+  char * converted = NULL;
   int result;
 
   result = 0;
@@ -36,10 +40,12 @@ int android_link_smoke_touch(void)
   result += sasl_client_init(NULL);
   sasl_done();
 
-  iconv_context = iconv_open("UTF-8", "UTF-8");
-  if (iconv_context != (iconv_t) -1) {
-    result += iconv_close(iconv_context);
+  converter = ucnv_open("UTF-8", &conversion_error);
+  if (converter != NULL) {
+    ucnv_close(converter);
   }
+  result += charconv("UTF-8", "ISO-8859-16", "\252", 1, &converted);
+  free(converted);
 
   if (mailjson_new_object(&json) == MAILJSON_NO_ERROR) {
     mailjson_free(json);

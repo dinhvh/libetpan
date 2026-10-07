@@ -62,13 +62,13 @@ require_file "$clangxx"
 etpan_dir="$build_android/build/libetpan-android"
 openssl_dir="$build_android/dependencies/build/openssl-android"
 sasl_dir="$build_android/dependencies/build/cyrus-sasl-android"
-iconv_dir="$build_android/dependencies/build/iconv-android"
+icu_dir="$build_android/dependencies/build/icu-android"
 json_c_dir="$build_android/dependencies/build/json-c-android"
 curl_dir="$build_android/dependencies/build/curl-android"
 libxml2_dir="$build_android/dependencies/build/libxml2-android"
 rnp_dir="$build_android/dependencies/build/rnp-android"
 
-for artifact_dir in "$etpan_dir" "$openssl_dir" "$sasl_dir" "$iconv_dir" \
+for artifact_dir in "$etpan_dir" "$openssl_dir" "$sasl_dir" "$icu_dir" \
     "$json_c_dir" "$curl_dir" "$libxml2_dir" "$rnp_dir"; do
   require_dir "$artifact_dir"
 done
@@ -87,7 +87,8 @@ for abi in $abis; do
   require_file "$sasl_dir/libs/$abi/libsasl2.a"
   require_file "$openssl_dir/libs/$abi/libssl.a"
   require_file "$openssl_dir/libs/$abi/libcrypto.a"
-  require_file "$iconv_dir/libs/$abi/libiconv.a"
+  require_file "$icu_dir/libs/$abi/libicuuc.a"
+  require_file "$icu_dir/libs/$abi/libicudata.a"
   mkdir -p "$(dirname "$output")"
   echo "Linking Android smoke test for $abi"
   "$clangxx" \
@@ -100,7 +101,7 @@ for abi in $abis; do
     -I"$build_android/include" \
     -I"$repo_root/src/low-level/feed" \
     -I"$sasl_dir/include" \
-    -I"$iconv_dir/include" \
+    -I"$icu_dir/include" \
     -I"$json_c_dir/include" \
     -I"$curl_dir/include" \
     -I"$libxml2_dir/include/libxml2" \
@@ -116,7 +117,8 @@ for abi in $abis; do
     "$sasl_dir/libs/$abi/libsasl2.a" \
     "$openssl_dir/libs/$abi/libssl.a" \
     "$openssl_dir/libs/$abi/libcrypto.a" \
-    "$iconv_dir/libs/$abi/libiconv.a" \
+    "$icu_dir/libs/$abi/libicuuc.a" \
+    "$icu_dir/libs/$abi/libicudata.a" \
     -lz \
     -llog \
     -latomic \

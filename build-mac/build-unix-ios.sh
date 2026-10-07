@@ -6,6 +6,12 @@ repository_root="$(cd "$(dirname "$0")/.." && pwd)"
 dependencies="$repository_root/build-mac/dependencies/build"
 output_root="$repository_root/.build/apple-unix-ios"
 deployment_target=15.6
+iconv_option=--enable-iconv
+iconv_library=-liconv
+if [[ "${LIBETPAN_DISABLE_ICONV:-0}" == 1 ]]; then
+  iconv_option=--disable-iconv
+  iconv_library=""
+fi
 
 build_variant() {
   local sdk="$1" arch="$2" slice="$3" target="$4"
@@ -45,13 +51,14 @@ build_variant() {
       --enable-static --disable-shared --disable-db --disable-lockfile \
       --with-openssl=yes --with-smime=openssl --with-sasl=yes \
       --with-curl=no --with-gnutls=no --with-icu=no \
+      "$iconv_option" \
       --with-rnp=yes --with-json=yes --with-jmap=yes --with-feed=yes
     make libetpan-config.h stamp-prepare-target
     make -C src -j"$(sysctl -n hw.ncpu)"
     test -s src/.libs/libetpan.a
     "$compiler" $CFLAGS $LDFLAGS -dynamiclib \
       -Wl,-force_load,src/.libs/libetpan.a -Wl,-undefined,error \
-      -lrnp -ljson-c -lsasl2 -lssl -lcrypto -lc++ -liconv -lxml2 -lz \
+      -lrnp -ljson-c -lsasl2 -lssl -lcrypto -lc++ $iconv_library -lxml2 -lz \
       -framework Foundation -framework CFNetwork -framework Security \
       -framework CoreFoundation -o libetpan-link-smoke.dylib
     xcrun vtool -show-build libetpan-link-smoke.dylib

@@ -86,3 +86,7 @@ noinst_HEADERS = \
 	mailstream_gnutls.h \
 	mailstream_openssl.h \
 	mailstream_ssl_internal.h
+
+EXTRA_DIST = charconv-icu/data.h charconv-icu/aliases.h \
+	charconv-icu/apple-legacy.h \
+	charconv-icu/manifest.json charconv-icu/LICENSE charconv-icu/README.md

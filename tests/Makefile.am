@@ -198,3 +198,6 @@ jmap_blob_test_SOURCES = $(top_srcdir)/unittest/jmap/jmap-blob-test.c
 jmap_session_test_SOURCES = $(top_srcdir)/unittest/jmap/jmap-session-test.c
 
 jmap_sample_SOURCES = jmap-sample.c
+
+EXTRA_DIST += generate-charconv-icu-data.py generate-charconv-charset-fixtures.py \
+	generate-charconv-apple-fixtures.py

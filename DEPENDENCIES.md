@@ -8,7 +8,7 @@ This file lists build tools and optional feature dependencies by platform.
 - Optional: OpenSSL for TLS and OpenSSL-backed S/MIME.
 - Optional: GnuTLS as an alternate TLS backend.
 - Optional: Cyrus SASL for SASL authentication.
-- Optional: iconv, or ICU before iconv, for charset conversion.
+- ICU for charset conversion in the maintained Linux build; no GNU libiconv dependency.
 - Optional: Berkeley DB or LMDB for cache database support.
 - Optional: libxml2 for RSS/Atom feed support.
 - Optional: JSON-C and libcurl for JSON and JMAP support.
@@ -41,8 +41,6 @@ sudo apt install \
   liblockfile-dev
 ```
 
-If a package is unavailable on your Ubuntu release, omit it or install that library from another source; `./configure` will disable the corresponding optional feature unless it was explicitly requested.
-
 ## macOS with configure and make
 
 - Required: Xcode and Apple SDK, `make`, pthreads, Autoconf, Automake, and Libtool.
@@ -57,8 +55,6 @@ If a package is unavailable on your Ubuntu release, omit it or install that libr
 - Optional: RNP for OpenPGP support.
 - Optional: liblockfile for mailbox locking on systems that provide it.
 
-Using Homebrew is preferred for the Unix-style macOS build. Install the build tools with:
-
 ```sh
 xcode-select --install
 brew install autoconf automake libtool pkg-config
@@ -71,7 +67,6 @@ brew install \
   openssl@3 \
   gnutls \
   cyrus-sasl \
-  libiconv \
   icu4c \
   berkeley-db \
   lmdb \
@@ -81,8 +76,6 @@ brew install \
   zlib \
   rnp
 ```
-
-If `./configure` does not find a Homebrew library automatically, pass the relevant prefix, for example `./configure --with-openssl=$(brew --prefix openssl@3)`.
 
 ## iOS with configure and make
 
@@ -134,10 +127,11 @@ git submodule update --init --recursive -- dependencies/submodules
 
 - Required: Android NDK r23 or newer.
 - Required for the sample app: Android SDK, Gradle, and JDK 17 or newer.
-- Required on the first native build: network access to download OpenSSL, Cyrus SASL, and libiconv sources.
+- Required on the first native build: network access to initialize the dependency submodules.
+- Required build tools: native C/C++ compilers, GNU Make, Python 3, Autoconf, Automake, Libtool, and pkg-config.
 - Required: OpenSSL for TLS.
 - Required: Cyrus SASL for SASL authentication.
-- Required: libiconv for charset conversion.
+- Required: ICU for charset conversion, built from the pinned submodule.
 - Required: JSON-C through `JSON_C_PATH` for JSON and JMAP support.
 - Required: Android system `z` and `log` libraries.
 

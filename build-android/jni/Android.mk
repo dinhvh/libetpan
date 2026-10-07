@@ -10,8 +10,8 @@ $(error CYRUS_SASL_PATH must be set)
 endif
 
 
-ifeq ($(ICONV_PATH),)
-$(error ICONV_PATH must be set)
+ifeq ($(ICU_PATH),)
+$(error ICU_PATH must be set)
 endif
 
 ifeq ($(JSON_C_PATH),)
@@ -184,7 +184,7 @@ src_files += \
 NDK_TOOLCHAIN_VERSION := clang
 LOCAL_MODULE := etpan
 LOCAL_SRC_FILES := $(addprefix ../../, $(src_files))
-LOCAL_CFLAGS += -DHAVE_CONFIG_H=1 -DHAVE_ICONV=1 -DHAVE_JSON=1 -DHAVE_CURL=1 -DHAVE_FEED=1 -DUSE_PGP_RNP=1
+LOCAL_CFLAGS += -DHAVE_CONFIG_H=1 -DHAVE_ICU=1 -DU_STATIC_IMPLEMENTATION=1 -DHAVE_JSON=1 -DHAVE_CURL=1 -DHAVE_FEED=1 -DUSE_PGP_RNP=1
 c_includes = \
 src \
 src/data-types \
@@ -206,7 +206,7 @@ src/driver/interface
 
 LOCAL_C_INCLUDES = $(addprefix ../../, $(c_includes)) \
   libetpan-android/include \
-  $(OPENSSL_PATH)/include $(CYRUS_SASL_PATH)/include $(ICONV_PATH)/include	  libetpan-android/include/libetpan \
+  $(OPENSSL_PATH)/include $(CYRUS_SASL_PATH)/include $(ICU_PATH)/include	  libetpan-android/include/libetpan \
   $(JSON_C_PATH)/include \
   $(CURL_PATH)/include \
   $(LIBXML2_PATH)/include/libxml2 \

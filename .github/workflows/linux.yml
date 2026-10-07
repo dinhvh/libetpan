@@ -32,7 +32,7 @@ jobs:
             build-essential
 
       - name: Configure
-        run: ./autogen.sh --enable-static --enable-debug
+        run: ./autogen.sh --enable-static --enable-debug --with-icu=yes --disable-iconv
 
       - name: Build
         run: make

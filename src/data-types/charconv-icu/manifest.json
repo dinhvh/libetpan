@@ -1,0 +1,3478 @@
+{
+  "revision": "bae5ca647fa41703393dbf00240ec1b807a9c353",
+  "icu_generation_version": "78.2",
+  "tables": [
+    {
+      "group": "ASMO_449",
+      "names": [
+        "ARABIC7",
+        "ASMO_449",
+        "CSISO89ASMO449",
+        "ISO-IR-89",
+        "ISO_9036"
+      ],
+      "file": "glibc-ASMO_449-2.1.2.ucm",
+      "upstream_path": "charset/data/ucm/glibc-ASMO_449-2.1.2.ucm"
+    },
+    {
+      "group": "BS_4730",
+      "names": [
+        "BS_4730",
+        "CSISO4UNITEDKINGDOM",
+        "GB",
+        "ISO-IR-4",
+        "ISO646-GB",
+        "UK"
+      ],
+      "file": "glibc-BS_4730-2.3.3.ucm",
+      "upstream_path": "charset/data/ucm/glibc-BS_4730-2.3.3.ucm"
+    },
+    {
+      "group": "CP10007",
+      "names": [
+        "CP10007",
+        "MS-MAC-CYRILLIC",
+        "MSMACCYRILLIC"
+      ],
+      "file": "glibc-CP10007-2.3.3.ucm",
+      "upstream_path": "charset/data/ucm/glibc-CP10007-2.3.3.ucm"
+    },
+    {
+      "group": "CSA_Z243.4-1985-1",
+      "names": [
+        "CA",
+        "CSA7-1",
+        "CSA_Z243.4-1985-1",
+        "CSA_Z243.419851",
+        "CSISO121CANADIAN1",
+        "ISO-IR-121",
+        "ISO646-CA"
+      ],
+      "file": "ibm-1020_P100-2003.ucm",
+      "upstream_path": "charset/data/ucm/ibm-1020_P100-2003.ucm"
+    },
+    {
+      "group": "CSA_Z243.4-1985-2",
+      "names": [
+        "CSA7-2",
+        "CSA_Z243.4-1985-2",
+        "CSA_Z243.419852",
+        "CSISO122CANADIAN2",
+        "ISO-IR-122",
+        "ISO646-CA2"
+      ],
+      "file": "glibc-CSA_Z243.4_1985_2-2.3.3.ucm",
+      "upstream_path": "charset/data/ucm/glibc-CSA_Z243.4_1985_2-2.3.3.ucm"
+    },
+    {
+      "group": "CSN_369103",
+      "names": [
+        "CSISO139CSN369103",
+        "CSN_369103",
+        "ISO-IR-139"
+      ],
+      "file": "glibc-CSN_369103-2.1.2.ucm",
+      "upstream_path": "charset/data/ucm/glibc-CSN_369103-2.1.2.ucm"
+    },
+    {
+      "group": "CWI",
+      "names": [
+        "CP-HU",
+        "CWI-2",
+        "CWI"
+      ],
+      "file": "glibc-CWI-2.1.2.ucm",
+      "upstream_path": "charset/data/ucm/glibc-CWI-2.1.2.ucm"
+    },
+    {
+      "group": "DEC-MCS",
+      "names": [
+        "CSDECMCS",
+        "DEC-MCS",
+        "DEC",
+        "DECMCS"
+      ],
+      "file": "ibm-1100_P100-2003.ucm",
+      "upstream_path": "charset/data/ucm/ibm-1100_P100-2003.ucm"
+    },
+    {
+      "group": "DIN_66003",
+      "names": [
+        "CSISO21GERMAN",
+        "DE",
+        "DIN_66003",
+        "ISO-IR-21",
+        "ISO646-DE"
+      ],
+      "file": "ibm-1011_P100-1995.ucm",
+      "upstream_path": "charset/data/ucm/ibm-1011_P100-1995.ucm"
+    },
+    {
+      "group": "DS_2089",
+      "names": [
+        "CSISO646DANISH",
+        "DK",
+        "DS2089",
+        "DS_2089",
+        "ISO646-DK"
+      ],
+      "file": "ibm-1107_P100-2003.ucm",
+      "upstream_path": "charset/data/ucm/ibm-1107_P100-2003.ucm"
+    },
+    {
+      "group": "EBCDIC-AT-DE",
+      "names": [
+        "CSEBCDICATDE",
+        "EBCDIC-AT-DE",
+        "EBCDICATDE"
+      ],
+      "file": "glibc-EBCDIC_AT_DE-2.1.2.ucm",
+      "upstream_path": "charset/data/ucm/glibc-EBCDIC_AT_DE-2.1.2.ucm"
+    },
+    {
+      "group": "EBCDIC-AT-DE-A",
+      "names": [
+        "CSEBCDICATDEA",
+        "EBCDIC-AT-DE-A",
+        "EBCDICATDEA"
+      ],
+      "file": "ibm-286_P100-2003.ucm",
+      "upstream_path": "charset/data/ucm/ibm-286_P100-2003.ucm"
+    },
+    {
+      "group": "EBCDIC-CA-FR",
+      "names": [
+        "CSEBCDICCAFR",
+        "EBCDIC-CA-FR",
+        "EBCDICCAFR"
+      ],
+      "file": "glibc-EBCDIC_CA_FR-2.1.2.ucm",
+      "upstream_path": "charset/data/ucm/glibc-EBCDIC_CA_FR-2.1.2.ucm"
+    },
+    {
+      "group": "EBCDIC-DK-NO",
+      "names": [
+        "CSEBCDICDKNO",
+        "EBCDIC-DK-NO",
+        "EBCDICDKNO"
+      ],
+      "file": "glibc-EBCDIC_DK_NO-2.1.2.ucm",
+      "upstream_path": "charset/data/ucm/glibc-EBCDIC_DK_NO-2.1.2.ucm"
+    },
+    {
+      "group": "EBCDIC-DK-NO-A",
+      "names": [
+        "CSEBCDICDKNOA",
+        "EBCDIC-DK-NO-A",
+        "EBCDICDKNOA"
+      ],
+      "file": "glibc-EBCDIC_DK_NO_A-2.1.2.ucm",
+      "upstream_path": "charset/data/ucm/glibc-EBCDIC_DK_NO_A-2.1.2.ucm"
+    },
+    {
+      "group": "EBCDIC-ES",
+      "names": [
+        "CSEBCDICES",
+        "EBCDIC-ES",
+        "EBCDICES"
+      ],
+      "file": "glibc-EBCDIC_ES-2.1.2.ucm",
+      "upstream_path": "charset/data/ucm/glibc-EBCDIC_ES-2.1.2.ucm"
+    },
+    {
+      "group": "EBCDIC-ES-A",
+      "names": [
+        "CSEBCDICESA",
+        "EBCDIC-ES-A",
+        "EBCDICESA"
+      ],
+      "file": "glibc-EBCDIC_ES_A-2.1.2.ucm",
+      "upstream_path": "charset/data/ucm/glibc-EBCDIC_ES_A-2.1.2.ucm"
+    },
+    {
+      "group": "EBCDIC-ES-S",
+      "names": [
+        "CSEBCDICESS",
+        "EBCDIC-ES-S",
+        "EBCDICESS"
+      ],
+      "file": "glibc-EBCDIC_ES_S-2.1.2.ucm",
+      "upstream_path": "charset/data/ucm/glibc-EBCDIC_ES_S-2.1.2.ucm"
+    },
+    {
+      "group": "EBCDIC-FI-SE",
+      "names": [
+        "CSEBCDICFISE",
+        "EBCDIC-FI-SE",
+        "EBCDICFISE"
+      ],
+      "file": "glibc-EBCDIC_FI_SE-2.1.2.ucm",
+      "upstream_path": "charset/data/ucm/glibc-EBCDIC_FI_SE-2.1.2.ucm"
+    },
+    {
+      "group": "EBCDIC-FI-SE-A",
+      "names": [
+        "CSEBCDICFISEA",
+        "EBCDIC-FI-SE-A",
+        "EBCDICFISEA"
+      ],
+      "file": "glibc-EBCDIC_FI_SE_A-2.1.2.ucm",
+      "upstream_path": "charset/data/ucm/glibc-EBCDIC_FI_SE_A-2.1.2.ucm"
+    },
+    {
+      "group": "EBCDIC-FR",
+      "names": [
+        "CSEBCDICFR",
+        "EBCDIC-FR",
+        "EBCDICFR"
+      ],
+      "file": "glibc-EBCDIC_FR-2.1.2.ucm",
+      "upstream_path": "charset/data/ucm/glibc-EBCDIC_FR-2.1.2.ucm"
+    },
+    {
+      "group": "EBCDIC-IS-FRISS",
+      "names": [
+        "EBCDIC-IS-FRISS",
+        "EBCDICISFRISS"
+      ],
+      "file": "glibc-EBCDIC_IS_FRISS-2.1.2.ucm",
+      "upstream_path": "charset/data/ucm/glibc-EBCDIC_IS_FRISS-2.1.2.ucm"
+    },
+    {
+      "group": "EBCDIC-IT",
+      "names": [
+        "CSEBCDICIT",
+        "EBCDIC-IT",
+        "EBCDICIT"
+      ],
+      "file": "glibc-EBCDIC_IT-2.1.2.ucm",
+      "upstream_path": "charset/data/ucm/glibc-EBCDIC_IT-2.1.2.ucm"
+    },
+    {
+      "group": "EBCDIC-PT",
+      "names": [
+        "CSEBCDICPT",
+        "EBCDIC-PT",
+        "EBCDICPT"
+      ],
+      "file": "glibc-EBCDIC_PT-2.1.2.ucm",
+      "upstream_path": "charset/data/ucm/glibc-EBCDIC_PT-2.1.2.ucm"
+    },
+    {
+      "group": "EBCDIC-UK",
+      "names": [
+        "CSEBCDICUK",
+        "EBCDIC-UK",
+        "EBCDICUK"
+      ],
+      "file": "glibc-EBCDIC_UK-2.1.2.ucm",
+      "upstream_path": "charset/data/ucm/glibc-EBCDIC_UK-2.1.2.ucm"
+    },
+    {
+      "group": "EBCDIC-US",
+      "names": [
+        "CSEBCDICUS",
+        "EBCDIC-US",
+        "EBCDICUS"
+      ],
+      "file": "glibc-EBCDIC_US-2.1.2.ucm",
+      "upstream_path": "charset/data/ucm/glibc-EBCDIC_US-2.1.2.ucm"
+    },
+    {
+      "group": "ECMA-CYRILLIC",
+      "names": [
+        "CSISO111ECMACYRILLIC",
+        "ECMA-CYRILLIC",
+        "ECMACYRILLIC",
+        "ISO-IR-111"
+      ],
+      "file": "glibc-ECMA_CYRILLIC-2.3.3.ucm",
+      "upstream_path": "charset/data/ucm/glibc-ECMA_CYRILLIC-2.3.3.ucm"
+    },
+    {
+      "group": "ES",
+      "names": [
+        "CSISO17SPANISH",
+        "ES",
+        "ISO-IR-17",
+        "ISO646-ES"
+      ],
+      "file": "glibc-ES-2.3.3.ucm",
+      "upstream_path": "charset/data/ucm/glibc-ES-2.3.3.ucm"
+    },
+    {
+      "group": "ES2",
+      "names": [
+        "CSISO85SPANISH2",
+        "ES2",
+        "ISO-IR-85",
+        "ISO646-ES2"
+      ],
+      "file": "glibc-ES2-2.3.3.ucm",
+      "upstream_path": "charset/data/ucm/glibc-ES2-2.3.3.ucm"
+    },
+    {
+      "group": "GB_1988-80",
+      "names": [
+        "CN",
+        "CSISO58GB1988",
+        "GB_1988-80",
+        "GB_198880",
+        "ISO-IR-57",
+        "ISO646-CN"
+      ],
+      "file": "glibc-GB_1988_80-2.3.3.ucm",
+      "upstream_path": "charset/data/ucm/glibc-GB_1988_80-2.3.3.ucm"
+    },
+    {
+      "group": "GEORGIAN-ACADEMY",
+      "names": [
+        "GEORGIAN-ACADEMY"
+      ],
+      "file": "glibc-GEORGIAN_ACADEMY-2.3.3.ucm",
+      "upstream_path": "charset/data/ucm/glibc-GEORGIAN_ACADEMY-2.3.3.ucm"
+    },
+    {
+      "group": "GEORGIAN-PS",
+      "names": [
+        "GEORGIAN-PS"
+      ],
+      "file": "glibc-GEORGIAN_PS-2.3.3.ucm",
+      "upstream_path": "charset/data/ucm/glibc-GEORGIAN_PS-2.3.3.ucm"
+    },
+    {
+      "group": "GOST_19768-74",
+      "names": [
+        "CSISO153GOST1976874",
+        "GOST_19768-74",
+        "GOST_19768",
+        "GOST_1976874",
+        "ISO-IR-153",
+        "ST_SEV_358-88"
+      ],
+      "file": "glibc-GOST_19768_74-2.1.2.ucm",
+      "upstream_path": "charset/data/ucm/glibc-GOST_19768_74-2.1.2.ucm"
+    },
+    {
+      "group": "GREEK-CCITT",
+      "names": [
+        "CSISO150",
+        "CSISO150GREEKCCITT",
+        "GREEK-CCITT",
+        "GREEKCCITT",
+        "ISO-IR-150"
+      ],
+      "file": "glibc-GREEK_CCITT-2.1.2.ucm",
+      "upstream_path": "charset/data/ucm/glibc-GREEK_CCITT-2.1.2.ucm"
+    },
+    {
+      "group": "GREEK7",
+      "names": [
+        "CSISO88GREEK7",
+        "GREEK7",
+        "ISO-IR-88"
+      ],
+      "file": "glibc-GREEK7-2.1.2.ucm",
+      "upstream_path": "charset/data/ucm/glibc-GREEK7-2.1.2.ucm"
+    },
+    {
+      "group": "GREEK7-OLD",
+      "names": [
+        "CSISO18GREEK7OLD",
+        "GREEK7-OLD",
+        "GREEK7OLD",
+        "ISO-IR-18"
+      ],
+      "file": "glibc-GREEK7_OLD-2.1.2.ucm",
+      "upstream_path": "charset/data/ucm/glibc-GREEK7_OLD-2.1.2.ucm"
+    },
+    {
+      "group": "IBM038",
+      "names": [
+        "CP038",
+        "CSIBM038",
+        "EBCDIC-INT",
+        "IBM038"
+      ],
+      "file": "glibc-IBM038-2.1.2.ucm",
+      "upstream_path": "charset/data/ucm/glibc-IBM038-2.1.2.ucm"
+    },
+    {
+      "group": "IBM1004",
+      "names": [
+        "CP1004",
+        "IBM1004",
+        "OS2LATIN1"
+      ],
+      "file": "glibc-IBM1004-2.1.2.ucm",
+      "upstream_path": "charset/data/ucm/glibc-IBM1004-2.1.2.ucm"
+    },
+    {
+      "group": "IBM1008",
+      "names": [
+        "CP1008",
+        "CSIBM1008",
+        "IBM-1008",
+        "IBM1008"
+      ],
+      "file": "ibm-1008_P100-1995.ucm",
+      "upstream_path": "charset/data/ucm/ibm-1008_P100-1995.ucm"
+    },
+    {
+      "group": "IBM1161",
+      "names": [
+        "CP1161",
+        "CSIBM1161",
+        "IBM-1161",
+        "IBM1161"
+      ],
+      "file": "ibm-1161_P100-1999.ucm",
+      "upstream_path": "charset/data/ucm/ibm-1161_P100-1999.ucm"
+    },
+    {
+      "group": "IBM1163",
+      "names": [
+        "CP1163",
+        "CSIBM1163",
+        "IBM-1163",
+        "IBM1163"
+      ],
+      "file": "ibm-1163_P100-1999.ucm",
+      "upstream_path": "charset/data/ucm/ibm-1163_P100-1999.ucm"
+    },
+    {
+      "group": "IBM1166",
+      "names": [
+        "CP1166",
+        "CSIBM1166",
+        "IBM-1166",
+        "IBM1166"
+      ],
+      "file": "ibm-1166_P100-2002.ucm",
+      "upstream_path": "charset/data/ucm/ibm-1166_P100-2002.ucm"
+    },
+    {
+      "group": "IBM1167",
+      "names": [
+        "CP1167",
+        "CSIBM1167",
+        "IBM-1167",
+        "IBM1167"
+      ],
+      "file": "ibm-1167_P100-2002.ucm",
+      "upstream_path": "charset/data/ucm/ibm-1167_P100-2002.ucm"
+    },
+    {
+      "group": "IBM274",
+      "names": [
+        "CP274",
+        "CSIBM274",
+        "EBCDIC-BE",
+        "IBM274"
+      ],
+      "file": "glibc-IBM274-2.1.2.ucm",
+      "upstream_path": "charset/data/ucm/glibc-IBM274-2.1.2.ucm"
+    },
+    {
+      "group": "IBM275",
+      "names": [
+        "CP275",
+        "CSIBM275",
+        "EBCDIC-BR",
+        "IBM275"
+      ],
+      "file": "glibc-IBM275-2.1.2.ucm",
+      "upstream_path": "charset/data/ucm/glibc-IBM275-2.1.2.ucm"
+    },
+    {
+      "group": "IBM281",
+      "names": [
+        "CP281",
+        "CSIBM281",
+        "EBCDIC-JP-E",
+        "IBM281"
+      ],
+      "file": "glibc-IBM281-2.1.2.ucm",
+      "upstream_path": "charset/data/ucm/glibc-IBM281-2.1.2.ucm"
+    },
+    {
+      "group": "IBM423",
+      "names": [
+        "CP423",
+        "CSIBM423",
+        "EBCDIC-CP-GR",
+        "IBM423"
+      ],
+      "file": "glibc-IBM423-2.1.2.ucm",
+      "upstream_path": "charset/data/ucm/glibc-IBM423-2.1.2.ucm"
+    },
+    {
+      "group": "IBM866NAV",
+      "names": [
+        "866NAV",
+        "CP866NAV",
+        "IBM866NAV"
+      ],
+      "file": "glibc-IBM866NAV-2.3.3.ucm",
+      "upstream_path": "charset/data/ucm/glibc-IBM866NAV-2.3.3.ucm"
+    },
+    {
+      "group": "IBM880",
+      "names": [
+        "CP880",
+        "CSIBM880",
+        "EBCDIC-CYRILLIC",
+        "IBM880",
+        "OSF10020370"
+      ],
+      "file": "glibc-IBM880-2.1.2.ucm",
+      "upstream_path": "charset/data/ucm/glibc-IBM880-2.1.2.ucm"
+    },
+    {
+      "group": "IBM891",
+      "names": [
+        "CP891",
+        "CSIBM891",
+        "IBM891",
+        "OSF1002037B"
+      ],
+      "file": "glibc-IBM891-2.1.2.ucm",
+      "upstream_path": "charset/data/ucm/glibc-IBM891-2.1.2.ucm"
+    },
+    {
+      "group": "IBM903",
+      "names": [
+        "CP903",
+        "CSIBM903",
+        "IBM903",
+        "OSF10020387"
+      ],
+      "file": "glibc-IBM903-2.1.2.ucm",
+      "upstream_path": "charset/data/ucm/glibc-IBM903-2.1.2.ucm"
+    },
+    {
+      "group": "IBM904",
+      "names": [
+        "904",
+        "CP904",
+        "CSIBM904",
+        "IBM904",
+        "OSF10020388"
+      ],
+      "file": "glibc-IBM904-2.1.2.ucm",
+      "upstream_path": "charset/data/ucm/glibc-IBM904-2.1.2.ucm"
+    },
+    {
+      "group": "IBM905",
+      "names": [
+        "CP905",
+        "CSIBM905",
+        "EBCDIC-CP-TR",
+        "IBM905"
+      ],
+      "file": "glibc-IBM905-2.1.2.ucm",
+      "upstream_path": "charset/data/ucm/glibc-IBM905-2.1.2.ucm"
+    },
+    {
+      "group": "IEC_P27-1",
+      "names": [
+        "CSISO143IECP271",
+        "IEC_P27-1",
+        "IEC_P271",
+        "ISO-IR-143"
+      ],
+      "file": "glibc-IEC_P27_1-2.1.2.ucm",
+      "upstream_path": "charset/data/ucm/glibc-IEC_P27_1-2.1.2.ucm"
+    },
+    {
+      "group": "INIS",
+      "names": [
+        "CSISO49INIS",
+        "INIS",
+        "ISO-IR-49"
+      ],
+      "file": "glibc-INIS-2.1.2.ucm",
+      "upstream_path": "charset/data/ucm/glibc-INIS-2.1.2.ucm"
+    },
+    {
+      "group": "INIS-8",
+      "names": [
+        "CSISO50INIS8",
+        "INIS-8",
+        "INIS8",
+        "ISO-IR-50"
+      ],
+      "file": "glibc-INIS_8-2.1.2.ucm",
+      "upstream_path": "charset/data/ucm/glibc-INIS_8-2.1.2.ucm"
+    },
+    {
+      "group": "INIS-CYRILLIC",
+      "names": [
+        "CSISO51INISCYRILLIC",
+        "INIS-CYRILLIC",
+        "INISCYRILLIC",
+        "ISO-IR-51"
+      ],
+      "file": "glibc-INIS_CYRILLIC-2.1.2.ucm",
+      "upstream_path": "charset/data/ucm/glibc-INIS_CYRILLIC-2.1.2.ucm"
+    },
+    {
+      "group": "ISO-8859-16",
+      "names": [
+        "ISO-8859-16",
+        "ISO-IR-226",
+        "ISO8859-16",
+        "ISO885916",
+        "ISO_8859-16",
+        "ISO_8859-16:2001",
+        "L10",
+        "LATIN10"
+      ],
+      "file": "iso-8859_16-2001.ucm",
+      "upstream_path": "charset/data/ucm/iso-8859_16-2001.ucm"
+    },
+    {
+      "group": "ISO-IR-197",
+      "names": [
+        "ISO-IR-197"
+      ],
+      "file": "glibc-ISO_IR_197-2.1.2.ucm",
+      "upstream_path": "charset/data/ucm/glibc-ISO_IR_197-2.1.2.ucm"
+    },
+    {
+      "group": "ISO-IR-209",
+      "names": [
+        "ISO-IR-209"
+      ],
+      "file": "glibc-ISO_IR_209-2.3.3.ucm",
+      "upstream_path": "charset/data/ucm/glibc-ISO_IR_209-2.3.3.ucm"
+    },
+    {
+      "group": "ISO_10367-BOX",
+      "names": [
+        "CSISO10367BOX",
+        "ISO-IR-155",
+        "ISO_10367-BOX",
+        "ISO_10367BOX"
+      ],
+      "file": "glibc-ISO_10367_BOX-2.1.2.ucm",
+      "upstream_path": "charset/data/ucm/glibc-ISO_10367_BOX-2.1.2.ucm"
+    },
+    {
+      "group": "ISO_5427",
+      "names": [
+        "CSISO5427CYRILLIC",
+        "ISO-IR-37",
+        "ISO_5427",
+        "KOI-7"
+      ],
+      "file": "glibc-ISO_5427-2.1.2.ucm",
+      "upstream_path": "charset/data/ucm/glibc-ISO_5427-2.1.2.ucm"
+    },
+    {
+      "group": "ISO_5427-EXT",
+      "names": [
+        "CSISO5427CYRILLIC1981",
+        "ISO-IR-54",
+        "ISO_5427-EXT",
+        "ISO_5427:1981",
+        "ISO_5427EXT"
+      ],
+      "file": "glibc-ISO_5427_EXT-2.1.2.ucm",
+      "upstream_path": "charset/data/ucm/glibc-ISO_5427_EXT-2.1.2.ucm"
+    },
+    {
+      "group": "ISO_5428",
+      "names": [
+        "CSISO5428GREEK",
+        "ISO-IR-55",
+        "ISO_5428",
+        "ISO_5428:1980"
+      ],
+      "file": "glibc-ISO_5428-2.3.3.ucm",
+      "upstream_path": "charset/data/ucm/glibc-ISO_5428-2.3.3.ucm"
+    },
+    {
+      "group": "IT",
+      "names": [
+        "CSISO15ITALIAN",
+        "ISO-IR-15",
+        "ISO646-IT",
+        "IT"
+      ],
+      "file": "ibm-1012_P100-1995.ucm",
+      "upstream_path": "charset/data/ucm/ibm-1012_P100-1995.ucm"
+    },
+    {
+      "group": "JIS_C6220-1969-RO",
+      "names": [
+        "CSISO14JISC6220RO",
+        "ISO-IR-14",
+        "ISO646-JP",
+        "JIS_C6220-1969-RO",
+        "JIS_C62201969RO",
+        "JP"
+      ],
+      "file": "glibc-JIS_C6220_1969_RO-2.3.3.ucm",
+      "upstream_path": "charset/data/ucm/glibc-JIS_C6220_1969_RO-2.3.3.ucm"
+    },
+    {
+      "group": "JIS_C6229-1984-B",
+      "names": [
+        "CSISO92JISC62991984B",
+        "ISO-IR-92",
+        "ISO646-JP-OCR-B",
+        "JIS_C6229-1984-B",
+        "JIS_C62291984B",
+        "JP-OCR-B"
+      ],
+      "file": "glibc-JIS_C6229_1984_B-2.3.3.ucm",
+      "upstream_path": "charset/data/ucm/glibc-JIS_C6229_1984_B-2.3.3.ucm"
+    },
+    {
+      "group": "JUS_I.B1.002",
+      "names": [
+        "CSISO141JUSIB1002",
+        "ISO-IR-141",
+        "ISO646-YU",
+        "JS",
+        "JUS_I.B1.002",
+        "YU"
+      ],
+      "file": "glibc-JUS_I.B1.002-2.3.3.ucm",
+      "upstream_path": "charset/data/ucm/glibc-JUS_I.B1.002-2.3.3.ucm"
+    },
+    {
+      "group": "KOI8-RU",
+      "names": [
+        "KOI8-RU"
+      ],
+      "file": "ibm-1167_P100-2002.ucm",
+      "upstream_path": "charset/data/ucm/ibm-1167_P100-2002.ucm"
+    },
+    {
+      "group": "KOI8-T",
+      "names": [
+        "KOI8-T"
+      ],
+      "file": "glibc-KOI8_T-2.3.3.ucm",
+      "upstream_path": "charset/data/ucm/glibc-KOI8_T-2.3.3.ucm"
+    },
+    {
+      "group": "KSC5636",
+      "names": [
+        "CSKSC5636",
+        "ISO646-KR",
+        "KSC5636"
+      ],
+      "file": "glibc-KSC5636-2.3.3.ucm",
+      "upstream_path": "charset/data/ucm/glibc-KSC5636-2.3.3.ucm"
+    },
+    {
+      "group": "LATIN-GREEK",
+      "names": [
+        "CSISO19LATINGREEK",
+        "ISO-IR-19",
+        "LATIN-GREEK",
+        "LATINGREEK"
+      ],
+      "file": "glibc-LATIN_GREEK-2.1.2.ucm",
+      "upstream_path": "charset/data/ucm/glibc-LATIN_GREEK-2.1.2.ucm"
+    },
+    {
+      "group": "LATIN-GREEK-1",
+      "names": [
+        "CSISO27LATINGREEK1",
+        "ISO-IR-27",
+        "LATIN-GREEK-1",
+        "LATINGREEK1"
+      ],
+      "file": "glibc-LATIN_GREEK_1-2.1.2.ucm",
+      "upstream_path": "charset/data/ucm/glibc-LATIN_GREEK_1-2.1.2.ucm"
+    },
+    {
+      "group": "MAC-IS",
+      "names": [
+        "MAC-IS",
+        "MACIS"
+      ],
+      "file": "glibc-MAC_IS-2.1.2.ucm",
+      "upstream_path": "charset/data/ucm/glibc-MAC_IS-2.1.2.ucm"
+    },
+    {
+      "group": "MAC-SAMI",
+      "names": [
+        "MAC-SAMI"
+      ],
+      "file": "glibc-MAC_SAMI-2.3.3.ucm",
+      "upstream_path": "charset/data/ucm/glibc-MAC_SAMI-2.3.3.ucm"
+    },
+    {
+      "group": "MSZ_7795.3",
+      "names": [
+        "CSISO86HUNGARIAN",
+        "HU",
+        "ISO-IR-86",
+        "ISO646-HU",
+        "MSZ_7795.3"
+      ],
+      "file": "glibc-MSZ_7795.3-2.3.3.ucm",
+      "upstream_path": "charset/data/ucm/glibc-MSZ_7795.3-2.3.3.ucm"
+    },
+    {
+      "group": "NATS-DANO",
+      "names": [
+        "CSNATSDANO",
+        "ISO-IR-9-1",
+        "NATS-DANO",
+        "NATSDANO"
+      ],
+      "file": "glibc-NATS_DANO-2.1.2.ucm",
+      "upstream_path": "charset/data/ucm/glibc-NATS_DANO-2.1.2.ucm"
+    },
+    {
+      "group": "NATS-SEFI",
+      "names": [
+        "CSNATSSEFI",
+        "ISO-IR-8-1",
+        "NATS-SEFI",
+        "NATSSEFI"
+      ],
+      "file": "glibc-NATS_SEFI-2.1.2.ucm",
+      "upstream_path": "charset/data/ucm/glibc-NATS_SEFI-2.1.2.ucm"
+    },
+    {
+      "group": "NC_NC00-10",
+      "names": [
+        "CSISO151CUBA",
+        "CUBA",
+        "ISO-IR-151",
+        "ISO646-CU",
+        "NC_NC0010",
+        "NC_NC00-10",
+        "NC_NC00-10:81"
+      ],
+      "file": "glibc-NC_NC00_10-2.3.3.ucm",
+      "upstream_path": "charset/data/ucm/glibc-NC_NC00_10-2.3.3.ucm"
+    },
+    {
+      "group": "NF_Z_62-010",
+      "names": [
+        "CSISO69FRENCH",
+        "FR",
+        "ISO-IR-69",
+        "ISO646-FR",
+        "NF_Z_62-010",
+        "NF_Z_62010"
+      ],
+      "file": "ibm-1010_P100-1995.ucm",
+      "upstream_path": "charset/data/ucm/ibm-1010_P100-1995.ucm"
+    },
+    {
+      "group": "NF_Z_62-010_1973",
+      "names": [
+        "CSISO25FRENCH",
+        "ISO-IR-25",
+        "ISO646-FR1",
+        "NF_Z_62-010_(1973)",
+        "NF_Z_62-010_1973",
+        "NF_Z_62010_1973"
+      ],
+      "file": "ibm-1104_P100-2003.ucm",
+      "upstream_path": "charset/data/ucm/ibm-1104_P100-2003.ucm"
+    },
+    {
+      "group": "NS_4551-1",
+      "names": [
+        "CSISO60DANISHNORWEGIAN",
+        "CSISO60NORWEGIAN1",
+        "ISO-IR-60",
+        "ISO646-NO",
+        "NO",
+        "NS_4551-1",
+        "NS_45511"
+      ],
+      "file": "glibc-NS_4551_1-2.3.3.ucm",
+      "upstream_path": "charset/data/ucm/glibc-NS_4551_1-2.3.3.ucm"
+    },
+    {
+      "group": "NS_4551-2",
+      "names": [
+        "CSISO61NORWEGIAN2",
+        "ISO-IR-61",
+        "ISO646-NO2",
+        "NO2",
+        "NS_4551-2",
+        "NS_45512"
+      ],
+      "file": "glibc-NS_4551_2-2.3.3.ucm",
+      "upstream_path": "charset/data/ucm/glibc-NS_4551_2-2.3.3.ucm"
+    },
+    {
+      "group": "PT",
+      "names": [
+        "CSISO16PORTUGESE",
+        "ISO-IR-16",
+        "ISO646-PT",
+        "PT"
+      ],
+      "file": "glibc-PT-2.3.3.ucm",
+      "upstream_path": "charset/data/ucm/glibc-PT-2.3.3.ucm"
+    },
+    {
+      "group": "PT154",
+      "names": [
+        "PT154"
+      ],
+      "file": "glibc-PT154-2.3.3.ucm",
+      "upstream_path": "charset/data/ucm/glibc-PT154-2.3.3.ucm"
+    },
+    {
+      "group": "PT2",
+      "names": [
+        "CSISO84PORTUGUESE2",
+        "ISO-IR-84",
+        "ISO646-PT2",
+        "PT2"
+      ],
+      "file": "ibm-1015_P100-1995.ucm",
+      "upstream_path": "charset/data/ucm/ibm-1015_P100-1995.ucm"
+    },
+    {
+      "group": "RK1048",
+      "names": [
+        "RK1048",
+        "STRK1048-2002"
+      ],
+      "file": "glibc-RK1048-2.3.3.ucm",
+      "upstream_path": "charset/data/ucm/glibc-RK1048-2.3.3.ucm"
+    },
+    {
+      "group": "SEN_850200_B",
+      "names": [
+        "CSISO10SWEDISH",
+        "FI",
+        "ISO-IR-10",
+        "ISO646-FI",
+        "ISO646-SE",
+        "SE",
+        "SEN_850200_B",
+        "SS636127"
+      ],
+      "file": "glibc-SEN_850200_B-2.3.3.ucm",
+      "upstream_path": "charset/data/ucm/glibc-SEN_850200_B-2.3.3.ucm"
+    },
+    {
+      "group": "SEN_850200_C",
+      "names": [
+        "CSISO11SWEDISHFORNAMES",
+        "ISO-IR-11",
+        "ISO646-SE2",
+        "SE2",
+        "SEN_850200_C"
+      ],
+      "file": "glibc-SEN_850200_C-2.3.3.ucm",
+      "upstream_path": "charset/data/ucm/glibc-SEN_850200_C-2.3.3.ucm"
+    },
+    {
+      "group": "VISCII",
+      "names": [
+        "VISCII"
+      ],
+      "file": "glibc-VISCII-2.3.3.ucm",
+      "upstream_path": "charset/data/ucm/glibc-VISCII-2.3.3.ucm"
+    },
+    {
+      "group": "WIN-SAMI-2",
+      "names": [
+        "WIN-SAMI-2",
+        "WINSAMI2",
+        "WS2"
+      ],
+      "file": "glibc-WIN_SAMI_2-2.3.3.ucm",
+      "upstream_path": "charset/data/ucm/glibc-WIN_SAMI_2-2.3.3.ucm"
+    }
+  ],
+  "verified_aliases": [
+    {
+      "group": "CP1256",
+      "names": [
+        "MS-ARAB"
+      ],
+      "target": "CP1256",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 256,
+      "verified": true
+    },
+    {
+      "group": "HP-THAI8",
+      "names": [
+        "HP-THAI8",
+        "HPTHAI8"
+      ],
+      "target": "THAI8",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 248,
+      "verified": true
+    },
+    {
+      "group": "IBM037",
+      "names": [
+        "CP282",
+        "CP1070",
+        "OSF10020025"
+      ],
+      "target": "IBM037",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 256,
+      "verified": true
+    },
+    {
+      "group": "IBM1025",
+      "names": [
+        "CSIBM1025"
+      ],
+      "target": "IBM1025",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 256,
+      "verified": true
+    },
+    {
+      "group": "IBM1047",
+      "names": [
+        "OSF10020417"
+      ],
+      "target": "IBM1047",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 256,
+      "verified": true
+    },
+    {
+      "group": "IBM1097",
+      "names": [
+        "CSIBM1097"
+      ],
+      "target": "IBM1097",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 256,
+      "verified": true
+    },
+    {
+      "group": "IBM1112",
+      "names": [
+        "CSIBM1112"
+      ],
+      "target": "IBM1112",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 256,
+      "verified": true
+    },
+    {
+      "group": "IBM1122",
+      "names": [
+        "CSIBM1122"
+      ],
+      "target": "IBM1122",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 256,
+      "verified": true
+    },
+    {
+      "group": "IBM1123",
+      "names": [
+        "CSIBM1123"
+      ],
+      "target": "IBM1123",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 256,
+      "verified": true
+    },
+    {
+      "group": "IBM1124",
+      "names": [
+        "CSIBM1124"
+      ],
+      "target": "IBM1124",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 256,
+      "verified": true
+    },
+    {
+      "group": "IBM1129",
+      "names": [
+        "CP1129",
+        "CSIBM1129"
+      ],
+      "target": "IBM1129",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 256,
+      "verified": true
+    },
+    {
+      "group": "IBM1130",
+      "names": [
+        "CP1130",
+        "CSIBM1130"
+      ],
+      "target": "IBM1130",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 256,
+      "verified": true
+    },
+    {
+      "group": "IBM1133",
+      "names": [
+        "CP1133",
+        "CSIBM1133"
+      ],
+      "target": "IBM1133",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 229,
+      "verified": true
+    },
+    {
+      "group": "IBM1137",
+      "names": [
+        "CP1137",
+        "CSIBM1137"
+      ],
+      "target": "IBM1137",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 254,
+      "verified": true
+    },
+    {
+      "group": "IBM1140",
+      "names": [
+        "CSIBM1140"
+      ],
+      "target": "IBM1140",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 256,
+      "verified": true
+    },
+    {
+      "group": "IBM1141",
+      "names": [
+        "CSIBM1141"
+      ],
+      "target": "IBM1141",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 256,
+      "verified": true
+    },
+    {
+      "group": "IBM1142",
+      "names": [
+        "CSIBM1142"
+      ],
+      "target": "IBM1142",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 256,
+      "verified": true
+    },
+    {
+      "group": "IBM1143",
+      "names": [
+        "CSIBM1143"
+      ],
+      "target": "IBM1143",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 256,
+      "verified": true
+    },
+    {
+      "group": "IBM1144",
+      "names": [
+        "CSIBM1144"
+      ],
+      "target": "IBM1144",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 256,
+      "verified": true
+    },
+    {
+      "group": "IBM1145",
+      "names": [
+        "CSIBM1145"
+      ],
+      "target": "IBM1145",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 256,
+      "verified": true
+    },
+    {
+      "group": "IBM1146",
+      "names": [
+        "CSIBM1146"
+      ],
+      "target": "IBM1146",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 256,
+      "verified": true
+    },
+    {
+      "group": "IBM1147",
+      "names": [
+        "CSIBM1147"
+      ],
+      "target": "IBM1147",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 256,
+      "verified": true
+    },
+    {
+      "group": "IBM1148",
+      "names": [
+        "CSIBM1148"
+      ],
+      "target": "IBM1148",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 256,
+      "verified": true
+    },
+    {
+      "group": "IBM1149",
+      "names": [
+        "CSIBM1149"
+      ],
+      "target": "IBM1149",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 256,
+      "verified": true
+    },
+    {
+      "group": "IBM1153",
+      "names": [
+        "CP1153",
+        "CSIBM1153"
+      ],
+      "target": "IBM1153",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 256,
+      "verified": true
+    },
+    {
+      "group": "IBM1154",
+      "names": [
+        "CP1154",
+        "CSIBM1154"
+      ],
+      "target": "IBM1154",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 256,
+      "verified": true
+    },
+    {
+      "group": "IBM1156",
+      "names": [
+        "CP1156",
+        "CSIBM1156"
+      ],
+      "target": "IBM1156",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 256,
+      "verified": true
+    },
+    {
+      "group": "IBM1157",
+      "names": [
+        "CP1157",
+        "CSIBM1157"
+      ],
+      "target": "IBM1157",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 256,
+      "verified": true
+    },
+    {
+      "group": "IBM1158",
+      "names": [
+        "CP1158",
+        "CSIBM1158"
+      ],
+      "target": "IBM1158",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 256,
+      "verified": true
+    },
+    {
+      "group": "IBM1160",
+      "names": [
+        "CP1160",
+        "CSIBM1160"
+      ],
+      "target": "IBM1160",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 252,
+      "verified": true
+    },
+    {
+      "group": "IBM1162",
+      "names": [
+        "CP1162",
+        "CSIBM11621162"
+      ],
+      "target": "IBM1162",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 248,
+      "verified": true
+    },
+    {
+      "group": "IBM1164",
+      "names": [
+        "CP1164",
+        "CSIBM1164"
+      ],
+      "target": "IBM1164",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 256,
+      "verified": true
+    },
+    {
+      "group": "IBM12712",
+      "names": [
+        "CP12712",
+        "CSIBM12712"
+      ],
+      "target": "IBM12712",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 227,
+      "verified": true
+    },
+    {
+      "group": "IBM1364",
+      "names": [
+        "CP1364",
+        "CSIBM1364"
+      ],
+      "target": "IBM1364",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 131328,
+      "encode_vectors": 65992,
+      "verified": true
+    },
+    {
+      "group": "IBM16804",
+      "names": [
+        "CP16804",
+        "CSIBM16804"
+      ],
+      "target": "IBM16804",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 249,
+      "verified": true
+    },
+    {
+      "group": "IBM273",
+      "names": [
+        "OSF10020111"
+      ],
+      "target": "IBM273",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 256,
+      "verified": true
+    },
+    {
+      "group": "IBM277",
+      "names": [
+        "OSF10020115"
+      ],
+      "target": "IBM277",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 256,
+      "verified": true
+    },
+    {
+      "group": "IBM280",
+      "names": [
+        "OSF10020118"
+      ],
+      "target": "IBM280",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 256,
+      "verified": true
+    },
+    {
+      "group": "IBM284",
+      "names": [
+        "CP1079",
+        "OSF1002011C"
+      ],
+      "target": "IBM284",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 256,
+      "verified": true
+    },
+    {
+      "group": "IBM297",
+      "names": [
+        "CP1081",
+        "OSF10020129"
+      ],
+      "target": "IBM297",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 256,
+      "verified": true
+    },
+    {
+      "group": "IBM4517",
+      "names": [
+        "CP4517",
+        "CSIBM4517"
+      ],
+      "target": "IBM4517",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 243,
+      "verified": true
+    },
+    {
+      "group": "IBM4899",
+      "names": [
+        "CP4899",
+        "CSIBM4899"
+      ],
+      "target": "IBM4899",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 163,
+      "verified": true
+    },
+    {
+      "group": "IBM4909",
+      "names": [
+        "CP4909",
+        "CSIBM4909"
+      ],
+      "target": "IBM4909",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 251,
+      "verified": true
+    },
+    {
+      "group": "IBM4971",
+      "names": [
+        "CP4971",
+        "CSIBM4971"
+      ],
+      "target": "IBM4971",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 251,
+      "verified": true
+    },
+    {
+      "group": "IBM500",
+      "names": [
+        "500V1",
+        "CP1084",
+        "OSF100201F4"
+      ],
+      "target": "IBM500",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 256,
+      "verified": true
+    },
+    {
+      "group": "IBM5347",
+      "names": [
+        "CP5347",
+        "CSIBM5347"
+      ],
+      "target": "IBM5347",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 256,
+      "verified": true
+    },
+    {
+      "group": "IBM803",
+      "names": [
+        "CSIBM803"
+      ],
+      "target": "IBM803",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 154,
+      "verified": true
+    },
+    {
+      "group": "IBM856",
+      "names": [
+        "CSIBM856"
+      ],
+      "target": "IBM856",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 215,
+      "verified": true
+    },
+    {
+      "group": "IBM901",
+      "names": [
+        "CP901",
+        "CSIBM901"
+      ],
+      "target": "IBM901",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 256,
+      "verified": true
+    },
+    {
+      "group": "IBM902",
+      "names": [
+        "CP902",
+        "CSIBM902"
+      ],
+      "target": "IBM902",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 256,
+      "verified": true
+    },
+    {
+      "group": "IBM9030",
+      "names": [
+        "CP9030",
+        "CSIBM9030"
+      ],
+      "target": "IBM9030",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 251,
+      "verified": true
+    },
+    {
+      "group": "IBM9066",
+      "names": [
+        "CP9066",
+        "CSIBM9066"
+      ],
+      "target": "IBM9066",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 219,
+      "verified": true
+    },
+    {
+      "group": "IBM921",
+      "names": [
+        "CSIBM921"
+      ],
+      "target": "IBM921",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 256,
+      "verified": true
+    },
+    {
+      "group": "IBM922",
+      "names": [
+        "CSIBM922"
+      ],
+      "target": "IBM922",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 256,
+      "verified": true
+    },
+    {
+      "group": "IBM933",
+      "names": [
+        "CSIBM933"
+      ],
+      "target": "IBM933",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 131328,
+      "encode_vectors": 57198,
+      "verified": true
+    },
+    {
+      "group": "IBM935",
+      "names": [
+        "CSIBM935"
+      ],
+      "target": "IBM935",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 131328,
+      "encode_vectors": 36089,
+      "verified": true
+    },
+    {
+      "group": "IBM937",
+      "names": [
+        "CSIBM937"
+      ],
+      "target": "IBM937",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 131328,
+      "encode_vectors": 46158,
+      "verified": true
+    },
+    {
+      "group": "IBM9448",
+      "names": [
+        "CP9448",
+        "CSIBM9448"
+      ],
+      "target": "IBM9448",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 256,
+      "verified": true
+    },
+    {
+      "group": "ISO-8859-1",
+      "names": [
+        "OSF00010001"
+      ],
+      "target": "ISO-8859-1",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 256,
+      "verified": true
+    },
+    {
+      "group": "ISO-8859-10",
+      "names": [
+        "OSF0001000A"
+      ],
+      "target": "ISO-8859-10",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 256,
+      "verified": true
+    },
+    {
+      "group": "ISO-8859-13",
+      "names": [
+        "BALTIC",
+        "ISO-IR-179",
+        "L7",
+        "LATIN7"
+      ],
+      "target": "ISO-8859-13",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 256,
+      "verified": true
+    },
+    {
+      "group": "ISO-8859-15",
+      "names": [
+        "ISO-IR-203",
+        "ISO_8859-15:1998"
+      ],
+      "target": "ISO-8859-15",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 256,
+      "verified": true
+    },
+    {
+      "group": "ISO-8859-2",
+      "names": [
+        "OSF00010002"
+      ],
+      "target": "ISO-8859-2",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 256,
+      "verified": true
+    },
+    {
+      "group": "ISO-8859-3",
+      "names": [
+        "OSF00010003"
+      ],
+      "target": "ISO-8859-3",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 249,
+      "verified": true
+    },
+    {
+      "group": "ISO-8859-4",
+      "names": [
+        "OSF00010004"
+      ],
+      "target": "ISO-8859-4",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 256,
+      "verified": true
+    },
+    {
+      "group": "ISO-8859-5",
+      "names": [
+        "OSF00010005"
+      ],
+      "target": "ISO-8859-5",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 256,
+      "verified": true
+    },
+    {
+      "group": "ISO-8859-6",
+      "names": [
+        "OSF00010006"
+      ],
+      "target": "ISO-8859-6",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 211,
+      "verified": true
+    },
+    {
+      "group": "ISO-8859-7",
+      "names": [
+        "ISO_8859-7:2003",
+        "OSF00010007"
+      ],
+      "target": "ISO-8859-7",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 253,
+      "verified": true
+    },
+    {
+      "group": "ISO-8859-8",
+      "names": [
+        "OSF00010008"
+      ],
+      "target": "ISO-8859-8",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 220,
+      "verified": true
+    },
+    {
+      "group": "ISO-8859-9",
+      "names": [
+        "OSF00010009",
+        "TS-5881"
+      ],
+      "target": "ISO-8859-9",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 256,
+      "verified": true
+    },
+    {
+      "group": "MAC-CENTRALEUROPE",
+      "names": [
+        "CP1282"
+      ],
+      "target": "MAC-CENTRALEUROPE",
+      "decode_differences": 0,
+      "encode_differences": 0,
+      "decode_examples": [],
+      "decode_vectors": 256,
+      "encode_vectors": 256,
+      "verified": true
+    }
+  ],
+  "deferred_aliases": [
+    {
+      "group": "BIG5",
+      "names": [
+        "BIG-FIVE",
+        "BIGFIVE",
+        "CN-BIG5"
+      ],
+      "target": "BIG5",
+      "decode_differences": 6069,
+      "encode_differences": 4,
+      "decode_examples": [
+        [
+          "89cf",
+          null,
+          "0df4"
+        ],
+        [
+          "82bf",
+          null,
+          "b2ef"
+        ],
+        [
+          "93b2",
+          null,
+          "72e6"
+        ]
+      ],
+      "decode_vectors": 65792,
+      "encode_vectors": 30671,
+      "verified": false
+    },
+    {
+      "group": "CP1125",
+      "names": [
+        "IBM848",
+        "RUSCII"
+      ],
+      "target": "CP1125",
+      "decode_differences": 5,
+      "encode_differences": 5,
+      "decode_examples": [
+        [
+          "7f",
+          "7f00",
+          "1a00"
+        ],
+        [
+          "fa",
+          "b700",
+          "f700"
+        ],
+        [
+          "1c",
+          "1c00",
+          "7f00"
+        ]
+      ],
+      "decode_vectors": 256,
+      "encode_vectors": 256,
+      "verified": false
+    },
+    {
+      "group": "CP1250",
+      "names": [
+        "MS-EE"
+      ],
+      "target": "CP1250",
+      "decode_differences": 5,
+      "encode_differences": 0,
+      "decode_examples": [
+        [
+          "90",
+          null,
+          "9000"
+        ],
+        [
+          "83",
+          null,
+          "8300"
+        ],
+        [
+          "98",
+          null,
+          "9800"
+        ]
+      ],
+      "decode_vectors": 256,
+      "encode_vectors": 251,
+      "verified": false
+    },
+    {
+      "group": "CP1251",
+      "names": [
+        "MS-CYRL"
+      ],
+      "target": "CP1251",
+      "decode_differences": 1,
+      "encode_differences": 0,
+      "decode_examples": [
+        [
+          "98",
+          null,
+          "9800"
+        ]
+      ],
+      "decode_vectors": 256,
+      "encode_vectors": 255,
+      "verified": false
+    },
+    {
+      "group": "CP1252",
+      "names": [
+        "MS-ANSI"
+      ],
+      "target": "CP1252",
+      "decode_differences": 5,
+      "encode_differences": 0,
+      "decode_examples": [
+        [
+          "90",
+          null,
+          "9000"
+        ],
+        [
+          "8f",
+          null,
+          "8f00"
+        ],
+        [
+          "9d",
+          null,
+          "9d00"
+        ]
+      ],
+      "decode_vectors": 256,
+      "encode_vectors": 251,
+      "verified": false
+    },
+    {
+      "group": "CP1253",
+      "names": [
+        "MS-GREEK"
+      ],
+      "target": "CP1253",
+      "decode_differences": 15,
+      "encode_differences": 0,
+      "decode_examples": [
+        [
+          "90",
+          null,
+          "9000"
+        ],
+        [
+          "8f",
+          null,
+          "8f00"
+        ],
+        [
+          "8a",
+          null,
+          "8a00"
+        ]
+      ],
+      "decode_vectors": 256,
+      "encode_vectors": 239,
+      "verified": false
+    },
+    {
+      "group": "CP1254",
+      "names": [
+        "MS-TURK"
+      ],
+      "target": "CP1254",
+      "decode_differences": 7,
+      "encode_differences": 0,
+      "decode_examples": [
+        [
+          "90",
+          null,
+          "9000"
+        ],
+        [
+          "8f",
+          null,
+          "8f00"
+        ],
+        [
+          "9d",
+          null,
+          "9d00"
+        ]
+      ],
+      "decode_vectors": 256,
+      "encode_vectors": 249,
+      "verified": false
+    },
+    {
+      "group": "CP1255",
+      "names": [
+        "MS-HEBR"
+      ],
+      "target": "CP1255",
+      "decode_differences": 12,
+      "encode_differences": 0,
+      "decode_examples": [
+        [
+          "90",
+          null,
+          "9000"
+        ],
+        [
+          "8f",
+          null,
+          "8f00"
+        ],
+        [
+          "8a",
+          null,
+          "8a00"
+        ]
+      ],
+      "decode_vectors": 256,
+      "encode_vectors": 233,
+      "verified": false
+    },
+    {
+      "group": "CP1257",
+      "names": [
+        "WINBALTRIM"
+      ],
+      "target": "CP1257",
+      "decode_differences": 10,
+      "encode_differences": 0,
+      "decode_examples": [
+        [
+          "90",
+          null,
+          "9000"
+        ],
+        [
+          "8a",
+          null,
+          "8a00"
+        ],
+        [
+          "83",
+          null,
+          "8300"
+        ]
+      ],
+      "decode_vectors": 256,
+      "encode_vectors": 244,
+      "verified": false
+    },
+    {
+      "group": "CP932",
+      "names": [
+        "SJIS-OPEN",
+        "SJIS-WIN"
+      ],
+      "target": "CP932",
+      "decode_differences": 1140,
+      "encode_differences": 1140,
+      "decode_examples": [
+        [
+          "7f47",
+          "7f004700",
+          "1a004700"
+        ],
+        [
+          "731c",
+          "73001c00",
+          "73007f00"
+        ],
+        [
+          "2f1c",
+          "2f001c00",
+          "2f007f00"
+        ]
+      ],
+      "decode_vectors": 65792,
+      "encode_vectors": 45878,
+      "verified": false
+    },
+    {
+      "group": "EUC-CN",
+      "names": [
+        "CN-GB"
+      ],
+      "target": "EUC-CN",
+      "decode_differences": 10002,
+      "encode_differences": 1,
+      "decode_examples": [
+        [
+          "6485",
+          null,
+          "64008500"
+        ],
+        [
+          "afe2",
+          null,
+          "bbe2"
+        ],
+        [
+          "890b",
+          null,
+          "89000b00"
+        ]
+      ],
+      "decode_vectors": 65792,
+      "encode_vectors": 23957,
+      "verified": false
+    },
+    {
+      "group": "EUC-JP",
+      "names": [
+        "OSF00030010"
+      ],
+      "target": "EUC-JP",
+      "decode_differences": 466,
+      "encode_differences": 6,
+      "decode_examples": [
+        [
+          "f9f8",
+          null,
+          "b85d"
+        ],
+        [
+          "fbd9",
+          null,
+          "7f83"
+        ],
+        [
+          "fba5",
+          null,
+          "bd73"
+        ]
+      ],
+      "decode_vectors": 65792,
+      "encode_vectors": 32064,
+      "verified": false
+    },
+    {
+      "group": "GBK",
+      "names": [
+        "GB13000"
+      ],
+      "target": "GBK",
+      "decode_differences": 2409,
+      "encode_differences": 0,
+      "decode_examples": [
+        [
+          "afe2",
+          null,
+          "17e2"
+        ],
+        [
+          "a475",
+          null,
+          "1be6"
+        ],
+        [
+          "f9f8",
+          null,
+          "e9e2"
+        ]
+      ],
+      "decode_vectors": 65792,
+      "encode_vectors": 38561,
+      "verified": false
+    },
+    {
+      "group": "HP-ROMAN8",
+      "names": [
+        "OSF10010001"
+      ],
+      "target": "HP-ROMAN8",
+      "decode_differences": 7,
+      "encode_differences": 7,
+      "decode_examples": [
+        [
+          "f3",
+          "b500",
+          "bc03"
+        ],
+        [
+          "af",
+          "a420",
+          "a300"
+        ],
+        [
+          "b3",
+          "b000",
+          "da02"
+        ]
+      ],
+      "decode_vectors": 256,
+      "encode_vectors": 255,
+      "verified": false
+    },
+    {
+      "group": "HP-TURKISH8",
+      "names": [
+        "HP-TURKISH8",
+        "HPTURKISH8",
+        "OSF10010006"
+      ],
+      "target": "TURKISH8",
+      "decode_differences": 95,
+      "encode_differences": 86,
+      "decode_examples": [
+        [
+          "c7",
+          "fa00",
+          "c700"
+        ],
+        [
+          "dc",
+          "d600",
+          "dc00"
+        ],
+        [
+          "d5",
+          "ed00",
+          "d500"
+        ]
+      ],
+      "decode_vectors": 256,
+      "encode_vectors": 247,
+      "verified": false
+    },
+    {
+      "group": "IBM1026",
+      "names": [
+        "OSF10020402"
+      ],
+      "target": "IBM1026",
+      "decode_differences": 3,
+      "encode_differences": 3,
+      "decode_examples": [
+        [
+          "bc",
+          "1420",
+          "af00"
+        ],
+        [
+          "9a",
+          "aa00",
+          "ba20"
+        ],
+        [
+          "9d",
+          "db02",
+          "b800"
+        ]
+      ],
+      "decode_vectors": 256,
+      "encode_vectors": 256,
+      "verified": false
+    },
+    {
+      "group": "IBM1132",
+      "names": [
+        "CP1132",
+        "CSIBM1132"
+      ],
+      "target": "IBM1132",
+      "decode_differences": 1,
+      "encode_differences": 0,
+      "decode_examples": [
+        [
+          "70",
+          "6b00",
+          "ad20"
+        ]
+      ],
+      "decode_vectors": 256,
+      "encode_vectors": 229,
+      "verified": false
+    },
+    {
+      "group": "IBM1155",
+      "names": [
+        "CP1155",
+        "CSIBM1155"
+      ],
+      "target": "IBM1155",
+      "decode_differences": 1,
+      "encode_differences": 1,
+      "decode_examples": [
+        [
+          "9a",
+          "aa00",
+          "ba20"
+        ]
+      ],
+      "decode_vectors": 256,
+      "encode_vectors": 256,
+      "verified": false
+    },
+    {
+      "group": "IBM1371",
+      "names": [
+        "CP1371",
+        "CSIBM1371"
+      ],
+      "target": "IBM1371",
+      "decode_differences": 0,
+      "encode_differences": 324,
+      "decode_examples": [],
+      "decode_vectors": 131328,
+      "encode_vectors": 46482,
+      "verified": false
+    },
+    {
+      "group": "IBM1388",
+      "names": [
+        "CP1388",
+        "CSIBM1388"
+      ],
+      "target": "IBM1388",
+      "decode_differences": 287,
+      "encode_differences": 0,
+      "decode_examples": [
+        [
+          "0ef7e30f",
+          null,
+          "72d80ede"
+        ],
+        [
+          "0ef0780f",
+          null,
+          "e59f"
+        ],
+        [
+          "0ece720f",
+          "31e8",
+          "45d8d7dd"
+        ]
+      ],
+      "decode_vectors": 131328,
+      "encode_vectors": 59138,
+      "verified": false
+    },
+    {
+      "group": "IBM1390",
+      "names": [
+        "CP1390",
+        "CSIBM1390"
+      ],
+      "target": "IBM1390",
+      "decode_differences": 13122,
+      "encode_differences": 0,
+      "decode_examples": [
+        [
+          "ce18",
+          "1a001800",
+          null
+        ],
+        [
+          "ce80",
+          "1a005d00",
+          null
+        ],
+        [
+          "a6cd",
+          "91ff1a00",
+          null
+        ]
+      ],
+      "decode_vectors": 131328,
+      "encode_vectors": 73858,
+      "verified": false
+    },
+    {
+      "group": "IBM1399",
+      "names": [
+        "CP1399",
+        "CSIBM1399"
+      ],
+      "target": "IBM1399",
+      "decode_differences": 13122,
+      "encode_differences": 0,
+      "decode_examples": [
+        [
+          "ce18",
+          "1a001800",
+          null
+        ],
+        [
+          "ce80",
+          "1a001a00",
+          null
+        ],
+        [
+          "a6cd",
+          "77001a00",
+          null
+        ]
+      ],
+      "decode_vectors": 131328,
+      "encode_vectors": 73858,
+      "verified": false
+    },
+    {
+      "group": "IBM278",
+      "names": [
+        "OSF10020116"
+      ],
+      "target": "IBM278",
+      "decode_differences": 2,
+      "encode_differences": 2,
+      "decode_examples": [
+        [
+          "71",
+          "c900",
+          "5c00"
+        ],
+        [
+          "e0",
+          "5c00",
+          "c900"
+        ]
+      ],
+      "decode_vectors": 256,
+      "encode_vectors": 256,
+      "verified": false
+    },
+    {
+      "group": "IBM285",
+      "names": [
+        "OSF1002011D"
+      ],
+      "target": "IBM285",
+      "decode_differences": 1,
+      "encode_differences": 1,
+      "decode_examples": [
+        [
+          "a1",
+          "3e20",
+          "af00"
+        ]
+      ],
+      "decode_vectors": 256,
+      "encode_vectors": 256,
+      "verified": false
+    },
+    {
+      "group": "IBM290",
+      "names": [
+        "OSF10020122"
+      ],
+      "target": "IBM290",
+      "decode_differences": 98,
+      "encode_differences": 64,
+      "decode_examples": [
+        [
+          "be",
+          "9b30",
+          "9eff"
+        ],
+        [
+          "49",
+          "a530",
+          "69ff"
+        ],
+        [
+          "bd",
+          "f330",
+          "9dff"
+        ]
+      ],
+      "decode_vectors": 256,
+      "encode_vectors": 195,
+      "verified": false
+    },
+    {
+      "group": "IBM420",
+      "names": [
+        "OSF100201A4"
+      ],
+      "target": "IBM420",
+      "decode_differences": 1,
+      "encode_differences": 0,
+      "decode_examples": [
+        [
+          "45",
+          null,
+          "0b20"
+        ]
+      ],
+      "decode_vectors": 256,
+      "encode_vectors": 246,
+      "verified": false
+    },
+    {
+      "group": "IBM424",
+      "names": [
+        "OSF100201A8"
+      ],
+      "target": "IBM424",
+      "decode_differences": 4,
+      "encode_differences": 3,
+      "decode_examples": [
+        [
+          "8f",
+          null,
+          "b100"
+        ],
+        [
+          "bc",
+          "af00",
+          "3e20"
+        ],
+        [
+          "b3",
+          "b700",
+          "2220"
+        ]
+      ],
+      "decode_vectors": 256,
+      "encode_vectors": 217,
+      "verified": false
+    },
+    {
+      "group": "IBM437",
+      "names": [
+        "OSF100201B5"
+      ],
+      "target": "IBM437",
+      "decode_differences": 4,
+      "encode_differences": 4,
+      "decode_examples": [
+        [
+          "7f",
+          "7f00",
+          "1a00"
+        ],
+        [
+          "e6",
+          "b500",
+          "bc03"
+        ],
+        [
+          "1c",
+          "1c00",
+          "7f00"
+        ]
+      ],
+      "decode_vectors": 256,
+      "encode_vectors": 256,
+      "verified": false
+    },
+    {
+      "group": "IBM850",
+      "names": [
+        "OSF10020352"
+      ],
+      "target": "IBM850",
+      "decode_differences": 3,
+      "encode_differences": 3,
+      "decode_examples": [
+        [
+          "7f",
+          "7f00",
+          "1a00"
+        ],
+        [
+          "1c",
+          "1c00",
+          "7f00"
+        ],
+        [
+          "1a",
+          "1a00",
+          "1c00"
+        ]
+      ],
+      "decode_vectors": 256,
+      "encode_vectors": 256,
+      "verified": false
+    },
+    {
+      "group": "IBM851",
+      "names": [
+        "CSIBM851"
+      ],
+      "target": "IBM851",
+      "decode_differences": 6,
+      "encode_differences": 6,
+      "decode_examples": [
+        [
+          "f7",
+          "db02",
+          "b800"
+        ],
+        [
+          "b7",
+          "9d03",
+          "9c03"
+        ],
+        [
+          "7f",
+          "7f00",
+          "1a00"
+        ]
+      ],
+      "decode_vectors": 256,
+      "encode_vectors": 255,
+      "verified": false
+    },
+    {
+      "group": "IBM852",
+      "names": [
+        "OSF10020354"
+      ],
+      "target": "IBM852",
+      "decode_differences": 4,
+      "encode_differences": 4,
+      "decode_examples": [
+        [
+          "aa",
+          "ac00",
+          null
+        ],
+        [
+          "7f",
+          "7f00",
+          "1a00"
+        ],
+        [
+          "1c",
+          "1c00",
+          "7f00"
+        ]
+      ],
+      "decode_vectors": 256,
+      "encode_vectors": 256,
+      "verified": false
+    },
+    {
+      "group": "IBM855",
+      "names": [
+        "OSF10020357"
+      ],
+      "target": "IBM855",
+      "decode_differences": 3,
+      "encode_differences": 3,
+      "decode_examples": [
+        [
+          "7f",
+          "7f00",
+          "1a00"
+        ],
+        [
+          "1c",
+          "1c00",
+          "7f00"
+        ],
+        [
+          "1a",
+          "1a00",
+          "1c00"
+        ]
+      ],
+      "decode_vectors": 256,
+      "encode_vectors": 256,
+      "verified": false
+    },
+    {
+      "group": "IBM857",
+      "names": [
+        "OSF10020359"
+      ],
+      "target": "IBM857",
+      "decode_differences": 3,
+      "encode_differences": 3,
+      "decode_examples": [
+        [
+          "7f",
+          "7f00",
+          "1a00"
+        ],
+        [
+          "1c",
+          "1c00",
+          "7f00"
+        ],
+        [
+          "1a",
+          "1a00",
+          "1c00"
+        ]
+      ],
+      "decode_vectors": 256,
+      "encode_vectors": 253,
+      "verified": false
+    },
+    {
+      "group": "IBM858",
+      "names": [
+        "858",
+        "CSPC858MULTILINGUAL"
+      ],
+      "target": "IBM858",
+      "decode_differences": 3,
+      "encode_differences": 3,
+      "decode_examples": [
+        [
+          "7f",
+          "7f00",
+          "1a00"
+        ],
+        [
+          "1c",
+          "1c00",
+          "7f00"
+        ],
+        [
+          "1a",
+          "1a00",
+          "1c00"
+        ]
+      ],
+      "decode_vectors": 256,
+      "encode_vectors": 256,
+      "verified": false
+    },
+    {
+      "group": "IBM861",
+      "names": [
+        "CPIBM861",
+        "OSF1002035D"
+      ],
+      "target": "IBM861",
+      "decode_differences": 4,
+      "encode_differences": 4,
+      "decode_examples": [
+        [
+          "7f",
+          "7f00",
+          "1a00"
+        ],
+        [
+          "e6",
+          "b500",
+          "bc03"
+        ],
+        [
+          "1c",
+          "1c00",
+          "7f00"
+        ]
+      ],
+      "decode_vectors": 256,
+      "encode_vectors": 256,
+      "verified": false
+    },
+    {
+      "group": "IBM862",
+      "names": [
+        "OSF1002035E"
+      ],
+      "target": "IBM862",
+      "decode_differences": 4,
+      "encode_differences": 4,
+      "decode_examples": [
+        [
+          "7f",
+          "7f00",
+          "1a00"
+        ],
+        [
+          "e6",
+          "b500",
+          "bc03"
+        ],
+        [
+          "1c",
+          "1c00",
+          "7f00"
+        ]
+      ],
+      "decode_vectors": 256,
+      "encode_vectors": 256,
+      "verified": false
+    },
+    {
+      "group": "IBM863",
+      "names": [
+        "OSF1002035F"
+      ],
+      "target": "IBM863",
+      "decode_differences": 4,
+      "encode_differences": 4,
+      "decode_examples": [
+        [
+          "7f",
+          "7f00",
+          "1a00"
+        ],
+        [
+          "e6",
+          "b500",
+          "bc03"
+        ],
+        [
+          "1c",
+          "1c00",
+          "7f00"
+        ]
+      ],
+      "decode_vectors": 256,
+      "encode_vectors": 256,
+      "verified": false
+    },
+    {
+      "group": "IBM864",
+      "names": [
+        "864",
+        "OSF10020360"
+      ],
+      "target": "IBM864",
+      "decode_differences": 8,
+      "encode_differences": 7,
+      "decode_examples": [
+        [
+          "d7",
+          "c1fe",
+          "c3fe"
+        ],
+        [
+          "7f",
+          "7f00",
+          "1a00"
+        ],
+        [
+          "d8",
+          "c5fe",
+          "c7fe"
+        ]
+      ],
+      "decode_vectors": 256,
+      "encode_vectors": 250,
+      "verified": false
+    },
+    {
+      "group": "IBM868",
+      "names": [
+        "OSF10020364"
+      ],
+      "target": "IBM868",
+      "decode_differences": 105,
+      "encode_differences": 81,
+      "decode_examples": [
+        [
+          "c7",
+          "3c25",
+          "c9fe"
+        ],
+        [
+          "dc",
+          "0c25",
+          "8425"
+        ],
+        [
+          "be",
+          "5d25",
+          "c3fe"
+        ]
+      ],
+      "decode_vectors": 256,
+      "encode_vectors": 231,
+      "verified": false
+    },
+    {
+      "group": "IBM869",
+      "names": [
+        "OSF10020365"
+      ],
+      "target": "IBM869",
+      "decode_differences": 5,
+      "encode_differences": 5,
+      "decode_examples": [
+        [
+          "7f",
+          "7f00",
+          "1a00"
+        ],
+        [
+          "1c",
+          "1c00",
+          "7f00"
+        ],
+        [
+          "ef",
+          "8403",
+          "b400"
+        ]
+      ],
+      "decode_vectors": 256,
+      "encode_vectors": 247,
+      "verified": false
+    },
+    {
+      "group": "IBM870",
+      "names": [
+        "OSF10020366"
+      ],
+      "target": "IBM870",
+      "decode_differences": 1,
+      "encode_differences": 1,
+      "decode_examples": [
+        [
+          "b0",
+          "b700",
+          "d902"
+        ]
+      ],
+      "decode_vectors": 256,
+      "encode_vectors": 256,
+      "verified": false
+    },
+    {
+      "group": "IBM871",
+      "names": [
+        "OSF10020367"
+      ],
+      "target": "IBM871",
+      "decode_differences": 2,
+      "encode_differences": 2,
+      "decode_examples": [
+        [
+          "4a",
+          "fe00",
+          "de00"
+        ],
+        [
+          "c0",
+          "de00",
+          "fe00"
+        ]
+      ],
+      "decode_vectors": 256,
+      "encode_vectors": 256,
+      "verified": false
+    },
+    {
+      "group": "IBM874",
+      "names": [
+        "874"
+      ],
+      "target": "IBM874",
+      "decode_differences": 21,
+      "encode_differences": 13,
+      "decode_examples": [
+        [
+          "dc",
+          null,
+          "4a0e"
+        ],
+        [
+          "7f",
+          "7f00",
+          "1a00"
+        ],
+        [
+          "fe",
+          null,
+          "a600"
+        ]
+      ],
+      "decode_vectors": 256,
+      "encode_vectors": 225,
+      "verified": false
+    },
+    {
+      "group": "IBM875",
+      "names": [
+        "EBCDIC-GREEK",
+        "OSF1002036B"
+      ],
+      "target": "IBM875",
+      "decode_differences": 3,
+      "encode_differences": 2,
+      "decode_examples": [
+        [
+          "74",
+          "0722",
+          "a000"
+        ],
+        [
+          "6a",
+          null,
+          "7c00"
+        ],
+        [
+          "dd",
+          "b700",
+          "8703"
+        ]
+      ],
+      "decode_vectors": 256,
+      "encode_vectors": 249,
+      "verified": false
+    },
+    {
+      "group": "IBM918",
+      "names": [
+        "OSF10020396"
+      ],
+      "target": "IBM918",
+      "decode_differences": 68,
+      "encode_differences": 42,
+      "decode_examples": [
+        [
+          "dc",
+          "4806",
+          "edfe"
+        ],
+        [
+          "be",
+          "4406",
+          "ddfe"
+        ],
+        [
+          "49",
+          "2806",
+          "8ffe"
+        ]
+      ],
+      "decode_vectors": 256,
+      "encode_vectors": 230,
+      "verified": false
+    },
+    {
+      "group": "IBM930",
+      "names": [
+        "CSIBM930"
+      ],
+      "target": "IBM930",
+      "decode_differences": 0,
+      "encode_differences": 902,
+      "decode_examples": [],
+      "decode_vectors": 131328,
+      "encode_vectors": 62938,
+      "verified": false
+    },
+    {
+      "group": "IBM932",
+      "names": [
+        "CSIBM932"
+      ],
+      "target": "IBM932",
+      "decode_differences": 1945,
+      "encode_differences": 5,
+      "decode_examples": [
+        [
+          "ce80",
+          null,
+          "8effa200"
+        ],
+        [
+          "4780",
+          null,
+          "4700a200"
+        ],
+        [
+          "ff68",
+          null,
+          "7e006800"
+        ]
+      ],
+      "decode_vectors": 65792,
+      "encode_vectors": 45817,
+      "verified": false
+    },
+    {
+      "group": "IBM939",
+      "names": [
+        "CSIBM939"
+      ],
+      "target": "IBM939",
+      "decode_differences": 0,
+      "encode_differences": 902,
+      "decode_examples": [],
+      "decode_vectors": 131328,
+      "encode_vectors": 62938,
+      "verified": false
+    },
+    {
+      "group": "IBM943",
+      "names": [
+        "CSIBM943"
+      ],
+      "target": "IBM943",
+      "decode_differences": 762,
+      "encode_differences": 762,
+      "decode_examples": [
+        [
+          "7eb0",
+          "7e0070ff",
+          "3e2070ff"
+        ],
+        [
+          "5b7e",
+          "5b007e00",
+          "5b003e20"
+        ],
+        [
+          "3b7e",
+          "3b007e00",
+          "3b003e20"
+        ]
+      ],
+      "decode_vectors": 65792,
+      "encode_vectors": 45878,
+      "verified": false
+    },
+    {
+      "group": "MAC-UK",
+      "names": [
+        "MAC-UK",
+        "MACUK",
+        "MACUKRAINIAN"
+      ],
+      "target": "MAC-CYRILLIC",
+      "decode_differences": 1,
+      "encode_differences": 1,
+      "decode_examples": [
+        [
+          "ff",
+          "a400",
+          "ac20"
+        ]
+      ],
+      "decode_vectors": 256,
+      "encode_vectors": 256,
+      "verified": false
+    },
+    {
+      "group": "TIS-620",
+      "names": [
+        "ISO-IR-166",
+        "TIS620-0",
+        "TIS620.2529-1",
+        "TIS620.2533-0"
+      ],
+      "target": "TIS-620",
+      "decode_differences": 41,
+      "encode_differences": 0,
+      "decode_examples": [
+        [
+          "dc",
+          null,
+          "c2f8"
+        ],
+        [
+          "82",
+          null,
+          "8200"
+        ],
+        [
+          "90",
+          null,
+          "9000"
+        ]
+      ],
+      "decode_vectors": 256,
+      "encode_vectors": 215,
+      "verified": false
+    },
+    {
+      "group": "UHC",
+      "names": [
+        "MSCP949",
+        "OSF100203B5",
+        "UHC"
+      ],
+      "target": "CP949",
+      "decode_differences": 11115,
+      "encode_differences": 9841,
+      "decode_examples": [
+        [
+          "89cf",
+          "0db4",
+          null
+        ],
+        [
+          "82bf",
+          "adad",
+          null
+        ],
+        [
+          "c9af",
+          null,
+          "0ee0"
+        ]
+      ],
+      "decode_vectors": 65792,
+      "encode_vectors": 33560,
+      "verified": false
+    }
+  ],
+  "ambiguous_aliases": [
+    {
+      "name": "BIG5-HKSCS",
+      "target": "ibm-1375_P100-2008"
+    },
+    {
+      "name": "BIG5HKSCS",
+      "target": "ibm-1375_P100-2008"
+    },
+    {
+      "name": "CP932",
+      "target": "ibm-943_P15A-2003"
+    },
+    {
+      "name": "CSISO2022JP",
+      "target": "ISO_2022,locale=ja,version=0"
+    },
+    {
+      "name": "CSISO2022JP2",
+      "target": "ISO_2022,locale=ja,version=2"
+    },
+    {
+      "name": "CSISO2022KR",
+      "target": "ISO_2022,locale=ko,version=0"
+    },
+    {
+      "name": "IBM-943",
+      "target": "ibm-943_P130-1999"
+    },
+    {
+      "name": "IBM943",
+      "target": "ibm-943_P130-1999"
+    },
+    {
+      "name": "ISO-2022-JP-2",
+      "target": "ISO_2022,locale=ja,version=2"
+    },
+    {
+      "name": "ISO-2022-JP",
+      "target": "ISO_2022,locale=ja,version=0"
+    },
+    {
+      "name": "ISO-2022-KR",
+      "target": "ISO_2022,locale=ko,version=0"
+    },
+    {
+      "name": "ISO2022JP",
+      "target": "ISO_2022,locale=ja,version=0"
+    },
+    {
+      "name": "ISO2022JP2",
+      "target": "ISO_2022,locale=ja,version=2"
+    },
+    {
+      "name": "ISO2022KR",
+      "target": "ISO_2022,locale=ko,version=0"
+    },
+    {
+      "name": "SHIFT-JIS",
+      "target": "ibm-943_P15A-2003"
+    },
+    {
+      "name": "SHIFT_JIS",
+      "target": "ibm-943_P15A-2003"
+    },
+    {
+      "name": "TIS-620",
+      "target": "windows-874-2000"
+    },
+    {
+      "name": "TIS620",
+      "target": "windows-874-2000"
+    },
+    {
+      "name": "WINDOWS-936",
+      "target": "windows-936-2000"
+    },
+    {
+      "name": "WINDOWS-1250",
+      "target": "ibm-5346_P100-1998"
+    },
+    {
+      "name": "WINDOWS-1251",
+      "target": "ibm-5347_P100-1998"
+    },
+    {
+      "name": "WINDOWS-1252",
+      "target": "ibm-5348_P100-1997"
+    },
+    {
+      "name": "WINDOWS-1253",
+      "target": "ibm-5349_P100-1998"
+    },
+    {
+      "name": "WINDOWS-1254",
+      "target": "ibm-5350_P100-1998"
+    },
+    {
+      "name": "WINDOWS-1255",
+      "target": "ibm-9447_P100-2002"
+    },
+    {
+      "name": "WINDOWS-1256",
+      "target": "ibm-9448_X100-2005"
+    },
+    {
+      "name": "WINDOWS-1257",
+      "target": "ibm-9449_P100-2002"
+    },
+    {
+      "name": "WINDOWS-1258",
+      "target": "ibm-5354_P100-1998"
+    }
+  ]
+}

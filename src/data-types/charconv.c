@@ -44,9 +44,15 @@
 #endif
 #ifdef HAVE_ICU
 #include <unicode/ucnv.h>
+#include <unicode/udata.h>
+#include "charconv-icu/aliases.h"
+#include "charconv-icu/data.h"
 #endif
 #ifdef HAVE_COREFOUNDATION_CHARCONV
 #include <CoreFoundation/CoreFoundation.h>
+#ifndef HAVE_ICONV
+#include "charconv-icu/apple-legacy.h"
+#endif
 #endif
 #include <stdlib.h>
 #include <string.h>
@@ -143,21 +149,19 @@ static int mutf7_decode_utf16be(const unsigned char * bytes,
   return 0;
 }
 
-LIBETPAN_EXPORT
-char * charconv_decode_mutf7(const char * str)
+static int mutf7_decode(const char * str, size_t input_len,
+    char ** result, size_t * result_len)
 {
-  size_t input_len;
   char * output;
   size_t output_len;
   size_t i;
+  int res = MAIL_CHARCONV_ERROR_CONV;
 
-  if (str == NULL)
-    return NULL;
-
-  input_len = strlen(str);
+  if (input_len > (((size_t) -1) - 1) / 4)
+    return MAIL_CHARCONV_ERROR_MEMORY;
   output = malloc(input_len * 4 + 1);
   if (output == NULL)
-    return NULL;
+    return MAIL_CHARCONV_ERROR_MEMORY;
 
   output_len = 0;
   i = 0;
@@ -187,8 +191,10 @@ char * charconv_decode_mutf7(const char * str)
       bit_count = 0;
       bytes_size = input_len;
       bytes = malloc(bytes_size + 1);
-      if (bytes == NULL)
+      if (bytes == NULL) {
+        res = MAIL_CHARCONV_ERROR_MEMORY;
         goto err;
+      }
       byte_count = 0;
       has_base64 = 0;
 
@@ -240,11 +246,23 @@ char * charconv_decode_mutf7(const char * str)
   }
 
   output[output_len] = '\0';
-  return output;
+  *result = output;
+  *result_len = output_len;
+  return MAIL_CHARCONV_NO_ERROR;
 
  err:
   free(output);
-  return NULL;
+  return res;
+}
+
+LIBETPAN_EXPORT
+char * charconv_decode_mutf7(const char * str)
+{
+  char * result = NULL;
+  size_t length;
+  if (str != NULL)
+    mutf7_decode(str, strlen(str), &result, &length);
+  return result;
 }
 
 static int mutf7_output_reserve(char ** output, size_t * output_size,
@@ -253,12 +271,20 @@ static int mutf7_output_reserve(char ** output, size_t * output_size,
   char * new_output;
   size_t new_size;
 
+  if (output_len == (size_t) -1 ||
+      needed > ((size_t) -1) - output_len - 1)
+    return -1;
   if (output_len + needed + 1 <= *output_size)
     return 0;
 
   new_size = *output_size;
-  while (output_len + needed + 1 > new_size)
+  while (output_len + needed + 1 > new_size) {
+    if (new_size > ((size_t) -1) / 2) {
+      new_size = output_len + needed + 1;
+      break;
+    }
     new_size *= 2;
+  }
 
   new_output = realloc(*output, new_size);
   if (new_output == NULL)
@@ -413,26 +439,24 @@ static int mutf7_flush_shift(char ** output, size_t * output_size,
   return mutf7_output_char(output, output_size, output_len, '-');
 }
 
-LIBETPAN_EXPORT
-char * charconv_encode_mutf7(const char * str)
+static int mutf7_encode(const char * str, size_t input_len,
+    char ** result, size_t * result_len)
 {
   char * output;
   size_t output_size;
   size_t output_len;
-  size_t input_len;
   size_t i;
   int in_shift;
+  int res = MAIL_CHARCONV_ERROR_MEMORY;
   unsigned int bits;
   unsigned int bit_count;
 
-  if (str == NULL)
-    return NULL;
-
-  input_len = strlen(str);
+  if (input_len > (((size_t) -1) - 16) / 2)
+    return MAIL_CHARCONV_ERROR_MEMORY;
   output_size = input_len * 2 + 16;
   output = malloc(output_size);
   if (output == NULL)
-    return NULL;
+    return MAIL_CHARCONV_ERROR_MEMORY;
 
   output_len = 0;
   i = 0;
@@ -443,8 +467,10 @@ char * charconv_encode_mutf7(const char * str)
   while (i < input_len) {
     unsigned int cp;
 
-    if (mutf7_decode_utf8_char(str, input_len, &i, &cp) < 0)
+    if (mutf7_decode_utf8_char(str, input_len, &i, &cp) < 0) {
+      res = MAIL_CHARCONV_ERROR_CONV;
       goto err;
+    }
 
     if (mutf7_is_direct(cp)) {
       if (in_shift) {
@@ -488,19 +514,43 @@ char * charconv_encode_mutf7(const char * str)
   }
 
   output[output_len] = '\0';
-  return output;
+  *result = output;
+  *result_len = output_len;
+  return MAIL_CHARCONV_NO_ERROR;
 
  err:
   free(output);
-  return NULL;
+  return res;
+}
+
+LIBETPAN_EXPORT
+char * charconv_encode_mutf7(const char * str)
+{
+  char * result = NULL;
+  size_t length;
+  if (str != NULL)
+    mutf7_encode(str, strlen(str), &result, &length);
+  return result;
+}
+
+static int mutf7_charconv(const char * tocode, const char * fromcode,
+    const char * str, size_t length, char ** result, size_t * result_len)
+{
+  if (strcasecmp(tocode, "UTF-8") == 0 &&
+      strcasecmp(fromcode, "UTF-7-IMAP") == 0)
+    return mutf7_decode(str, length, result, result_len);
+  if (strcasecmp(fromcode, "UTF-8") == 0 &&
+      strcasecmp(tocode, "UTF-7-IMAP") == 0)
+    return mutf7_encode(str, length, result, result_len);
+  return MAIL_CHARCONV_ERROR_UNKNOWN_CHARSET;
 }
 
 static int charconv_get_output_size(size_t length, size_t * result)
 {
-  if (length > (((size_t) -1) - 1) / 6)
+  if (length > (((size_t) -1) - 17) / 6)
     return MAIL_CHARCONV_ERROR_MEMORY;
 
-  * result = length * 6;
+  * result = length * 6 + 16;
   return MAIL_CHARCONV_NO_ERROR;
 }
 
@@ -575,6 +625,69 @@ static size_t mail_iconv (iconv_t cd, const char **inbuf, size_t *inbytesleft,
 #endif
 
 #ifdef HAVE_COREFOUNDATION_CHARCONV
+#ifndef HAVE_ICONV
+static const unsigned short * apple_legacy_charset(const char * name)
+{
+  size_t index;
+  for (index = 0; index < sizeof(apple_legacy_charsets) /
+      sizeof(apple_legacy_charsets[0]); index++) {
+    if (strcasecmp(name, apple_legacy_charsets[index].name) == 0)
+      return apple_legacy_charsets[index].unicode;
+  }
+  return NULL;
+}
+
+static int apple_legacy_charconv(const char * tocode, const char * fromcode,
+    const char * str, size_t length, char * result, size_t * result_len)
+{
+  const unsigned short * table;
+  size_t index = 0, written = 0;
+  int decode = strcasecmp(tocode, "UTF-8") == 0;
+  table = decode ? apple_legacy_charset(fromcode) :
+      (strcasecmp(fromcode, "UTF-8") == 0 ? apple_legacy_charset(tocode) : NULL);
+  if (table == NULL)
+    return MAIL_CHARCONV_ERROR_UNKNOWN_CHARSET;
+  while (index < length) {
+    unsigned int cp;
+    if (decode) {
+      size_t needed;
+      cp = table[(unsigned char) str[index++]];
+      if (cp == 0xffff)
+        return MAIL_CHARCONV_ERROR_CONV;
+      needed = cp < 0x80 ? 1 : cp < 0x800 ? 2 : 3;
+      if (needed > *result_len - written)
+        return MAIL_CHARCONV_ERROR_MEMORY;
+      if (needed == 1)
+        result[written++] = (char) cp;
+      else if (needed == 2) {
+        result[written++] = (char) (0xc0 | (cp >> 6));
+        result[written++] = (char) (0x80 | (cp & 0x3f));
+      }
+      else {
+        result[written++] = (char) (0xe0 | (cp >> 12));
+        result[written++] = (char) (0x80 | ((cp >> 6) & 0x3f));
+        result[written++] = (char) (0x80 | (cp & 0x3f));
+      }
+    }
+    else {
+      size_t byte;
+      if (mutf7_decode_utf8_char(str, length, &index, &cp) < 0)
+        return MAIL_CHARCONV_ERROR_CONV;
+      if (written == *result_len)
+        return MAIL_CHARCONV_ERROR_MEMORY;
+      for (byte = 0; byte < 256; byte++) {
+        if (table[byte] != 0xffff && table[byte] == cp)
+          break;
+      }
+      result[written++] = byte < 256 ? (char) byte : '?';
+    }
+  }
+  result[written] = '\0';
+  *result_len = written;
+  return MAIL_CHARCONV_NO_ERROR;
+}
+#endif
+
 static CFStringEncoding apple_charset_encoding(const char * charset)
 {
   CFStringRef charset_string;
@@ -593,17 +706,26 @@ static int apple_should_try_charset(const char * fromcode)
 {
   CFStringEncoding encoding;
 
+#ifndef HAVE_ICONV
+  if (apple_legacy_charset(fromcode) != NULL)
+    return 1;
+#endif
   encoding = apple_charset_encoding(fromcode);
   if (encoding == kCFStringEncodingInvalidId ||
       !CFStringIsEncodingAvailable(encoding))
     return 0;
 
+#ifndef HAVE_ICONV
+  /* CoreFoundation supplies the general Apple backend without iconv. */
+  return 1;
+#else
   return encoding == kCFStringEncodingISO_2022_JP ||
       encoding == kCFStringEncodingISO_2022_JP_1 ||
       encoding == kCFStringEncodingISO_2022_JP_2 ||
       encoding == kCFStringEncodingShiftJIS ||
       encoding == kCFStringEncodingDOSJapanese ||
       encoding == kCFStringEncodingEUC_JP;
+#endif
 }
 
 static int apple_charconv(const char * tocode, const char * fromcode,
@@ -617,6 +739,11 @@ static int apple_charconv(const char * tocode, const char * fromcode,
   CFIndex converted_length;
   int res;
 
+#ifndef HAVE_ICONV
+  res = apple_legacy_charconv(tocode, fromcode, str, length, result, result_len);
+  if (res != MAIL_CHARCONV_ERROR_UNKNOWN_CHARSET)
+    return res;
+#endif
   if (length > (size_t) LONG_MAX || *result_len > (size_t) LONG_MAX)
     return MAIL_CHARCONV_ERROR_MEMORY;
 
@@ -684,31 +811,163 @@ static int icu_should_try_charset(const char * fromcode)
 #endif
 }
 
+static int icu_error(UErrorCode err)
+{
+  if (err == U_MEMORY_ALLOCATION_ERROR || err == U_BUFFER_OVERFLOW_ERROR)
+    return MAIL_CHARCONV_ERROR_MEMORY;
+  if (err == U_FILE_ACCESS_ERROR || err == U_MISSING_RESOURCE_ERROR ||
+      err == U_INVALID_TABLE_FORMAT || err == U_UNSUPPORTED_ERROR)
+    return MAIL_CHARCONV_ERROR_UNKNOWN_CHARSET;
+  return MAIL_CHARCONV_ERROR_CONV;
+}
+
+static UConverter * icu_open_charset(const char * name, UErrorCode * err)
+{
+  size_t index;
+  for (index = 0; index < sizeof(charconv_icu_aliases) /
+      sizeof(charconv_icu_aliases[0]); index++) {
+    if (strcasecmp(name, charconv_icu_aliases[index].name) == 0) {
+      if (charconv_icu_aliases[index].packaged) {
+        /* ICU serializes registration; repeated calls are harmless warnings.
+         * Our static image also survives an application's u_cleanup(). */
+        udata_setAppData("libetpan_charsets", charconv_icu_data.bytes, err);
+        if (U_FAILURE(*err))
+          return NULL;
+        *err = U_ZERO_ERROR;
+        return ucnv_openPackage("libetpan_charsets",
+            charconv_icu_aliases[index].target, err);
+      }
+      return ucnv_open(charconv_icu_aliases[index].target, err);
+    }
+  }
+  if (strcasecmp(name, "UCS-2BE") == 0)
+    name = "UTF-16BE";
+  else if (strcasecmp(name, "UCS-2LE") == 0)
+    name = "UTF-16LE";
+  else if (strcasecmp(name, "UCS-4BE") == 0)
+    name = "UTF-32BE";
+  else if (strcasecmp(name, "UCS-4LE") == 0)
+    name = "UTF-32LE";
+  else if (strcasecmp(name, "WCHAR_T") == 0) {
+    if (sizeof(wchar_t) != 4) {
+      *err = U_UNSUPPORTED_ERROR;
+      return NULL;
+    }
+    name = U_IS_BIG_ENDIAN ? "UTF-32BE" : "UTF-32LE";
+  }
+  return ucnv_open(name, err);
+}
+
+static int icu_is_ucs2(const char * name)
+{
+  return strcasecmp(name, "UCS-2BE") == 0 ||
+      strcasecmp(name, "UCS-2LE") == 0;
+}
+
 static int icu_charconv(const char * tocode, const char * fromcode,
-    const char * str, size_t length, char * result, size_t * result_len)
+    const char * str, size_t length, char ** result, size_t * result_len)
 {
   UErrorCode err = U_ZERO_ERROR;
-  int32_t converted_len;
+  UConverter * source = NULL;
+  UConverter * target = NULL;
+  UChar * unicode = NULL;
+  char * output = NULL;
+  int32_t unicode_len, output_len;
+  int res = MAIL_CHARCONV_NO_ERROR;
+  size_t index;
 
-  if (length > (size_t) 0x7fffffff || *result_len > (size_t) 0x7fffffff)
+  if (length > (size_t) INT_MAX)
     return MAIL_CHARCONV_ERROR_MEMORY;
-
-  converted_len = ucnv_convert(tocode, fromcode, result, (int32_t) *result_len,
-      str, (int32_t) length, &err);
-  if (err == U_BUFFER_OVERFLOW_ERROR)
-    return MAIL_CHARCONV_ERROR_MEMORY;
+  source = icu_open_charset(fromcode, &err);
   if (U_FAILURE(err)) {
-    if (err == U_FILE_ACCESS_ERROR || err == U_MISSING_RESOURCE_ERROR ||
-        err == U_INVALID_TABLE_FORMAT)
-      return MAIL_CHARCONV_ERROR_UNKNOWN_CHARSET;
-    return MAIL_CHARCONV_ERROR_CONV;
+    res = icu_error(err);
+    goto done;
   }
-  if (converted_len < 0)
-    return MAIL_CHARCONV_ERROR_CONV;
-
-  result[converted_len] = '\0';
-  *result_len = (size_t) converted_len;
-  return MAIL_CHARCONV_NO_ERROR;
+  err = U_ZERO_ERROR;
+  target = icu_open_charset(tocode, &err);
+  if (U_FAILURE(err)) {
+    res = icu_error(err);
+    goto done;
+  }
+  if (icu_is_ucs2(fromcode)) {
+    int big = strcasecmp(fromcode, "UCS-2BE") == 0;
+    if (length % 2 != 0) {
+      res = MAIL_CHARCONV_ERROR_CONV;
+      goto done;
+    }
+    for (index = 0; index < length; index += 2) {
+      unsigned int high = (unsigned char) str[index + (big ? 0 : 1)];
+      if (high >= 0xd8 && high <= 0xdf) {
+        res = MAIL_CHARCONV_ERROR_CONV;
+        goto done;
+      }
+    }
+  }
+  err = U_ZERO_ERROR;
+  unicode_len = ucnv_toUChars(source, NULL, 0, str, (int32_t) length, &err);
+  if (err != U_BUFFER_OVERFLOW_ERROR && U_FAILURE(err)) {
+    res = icu_error(err);
+    goto done;
+  }
+  if (unicode_len < 0 || unicode_len == INT_MAX ||
+      (size_t) unicode_len + 1 > ((size_t) -1) / sizeof(UChar)) {
+    res = MAIL_CHARCONV_ERROR_MEMORY;
+    goto done;
+  }
+  unicode = malloc(((size_t) unicode_len + 1) * sizeof(UChar));
+  if (unicode == NULL) {
+    res = MAIL_CHARCONV_ERROR_MEMORY;
+    goto done;
+  }
+  err = U_ZERO_ERROR;
+  unicode_len = ucnv_toUChars(source, unicode, unicode_len + 1, str,
+      (int32_t) length, &err);
+  if (U_FAILURE(err)) {
+    res = icu_error(err);
+    goto done;
+  }
+  if (icu_is_ucs2(tocode)) {
+    for (index = 0; index < (size_t) unicode_len; index++) {
+      if (unicode[index] >= 0xd800 && unicode[index] <= 0xdfff) {
+        res = MAIL_CHARCONV_ERROR_CONV;
+        goto done;
+      }
+    }
+  }
+  err = U_ZERO_ERROR;
+  output_len = ucnv_fromUChars(target, NULL, 0, unicode, unicode_len, &err);
+  if (err != U_BUFFER_OVERFLOW_ERROR && U_FAILURE(err)) {
+    res = icu_error(err);
+    goto done;
+  }
+  if (output_len < 0 || output_len == INT_MAX) {
+    res = MAIL_CHARCONV_ERROR_MEMORY;
+    goto done;
+  }
+  output = malloc((size_t) output_len + 1);
+  if (output == NULL) {
+    res = MAIL_CHARCONV_ERROR_MEMORY;
+    goto done;
+  }
+  err = U_ZERO_ERROR;
+  output_len = ucnv_fromUChars(target, output, output_len + 1, unicode,
+      unicode_len, &err);
+  if (U_FAILURE(err)) {
+    res = icu_error(err);
+    goto done;
+  }
+  output[output_len] = '\0';
+  *result = output;
+  *result_len = (size_t) output_len;
+  output = NULL;
+ done:
+  free(output);
+  free(unicode);
+  if (source != NULL)
+    ucnv_close(source);
+  if (target != NULL)
+    ucnv_close(target);
+  return res;
 }
 #endif
 
@@ -787,6 +1046,14 @@ int charconv(const char * tocode, const char * fromcode,
 		/* Try the built-in backends for an unsupported charset. */
 	}
 
+  {
+    size_t converted_length;
+    res = mutf7_charconv(tocode, fromcode, str, length, result,
+        &converted_length);
+    if (res != MAIL_CHARCONV_ERROR_UNKNOWN_CHARSET)
+      return res;
+  }
+
 #ifdef HAVE_COREFOUNDATION_CHARCONV
 	if (apple_should_try_charset(fromcode))
 	{
@@ -816,31 +1083,12 @@ int charconv(const char * tocode, const char * fromcode,
 #endif
 
 #ifdef HAVE_ICU
-	if (icu_should_try_charset(fromcode))
-	{
-		size_t allocated_length;
-		size_t result_length;
-
-		res = charconv_get_output_size(length, &allocated_length);
-		if (res != MAIL_CHARCONV_NO_ERROR)
-			return res;
-		result_length = allocated_length;
-		*result = malloc(allocated_length + 1);
-		if (*result == NULL)
-			return MAIL_CHARCONV_ERROR_MEMORY;
-		res = icu_charconv(tocode, fromcode, str, length, *result,
-		    &result_length);
-		if (res == MAIL_CHARCONV_NO_ERROR) {
-			out = realloc(*result, result_length + 1);
-			if (out != NULL)
-				*result = out;
-			return MAIL_CHARCONV_NO_ERROR;
-		}
-		free(*result);
-		*result = NULL;
-		if (res != MAIL_CHARCONV_ERROR_UNKNOWN_CHARSET)
-			return res;
-	}
+  if (icu_should_try_charset(fromcode)) {
+    size_t result_length;
+    res = icu_charconv(tocode, fromcode, str, length, result, &result_length);
+    if (res != MAIL_CHARCONV_ERROR_UNKNOWN_CHARSET)
+      return res;
+  }
 #endif
 
 #ifndef HAVE_ICONV
@@ -957,6 +1205,28 @@ int charconv_buffer(const char * tocode, const char * fromcode,
 		/* Try the built-in backends for an unsupported charset. */
 	}
 
+  {
+    char * converted = NULL;
+    size_t converted_length;
+    res = mutf7_charconv(tocode, fromcode, str, length, &converted,
+        &converted_length);
+    if (res == MAIL_CHARCONV_NO_ERROR) {
+      mmapstr = mmap_string_new_len(converted, converted_length);
+      free(converted);
+      if (mmapstr == NULL)
+        return MAIL_CHARCONV_ERROR_MEMORY;
+      if (mmap_string_ref(mmapstr) < 0) {
+        mmap_string_free(mmapstr);
+        return MAIL_CHARCONV_ERROR_MEMORY;
+      }
+      *result = mmapstr->str;
+      *result_len = converted_length;
+      return MAIL_CHARCONV_NO_ERROR;
+    }
+    if (res != MAIL_CHARCONV_ERROR_UNKNOWN_CHARSET)
+      return res;
+  }
+
 #ifdef HAVE_COREFOUNDATION_CHARCONV
 	if (apple_should_try_charset(fromcode))
 	{
@@ -993,38 +1263,27 @@ int charconv_buffer(const char * tocode, const char * fromcode,
 #endif
 
 #ifdef HAVE_ICU
-	if (icu_should_try_charset(fromcode))
-	{
-		size_t allocated_length;
-		size_t result_length;
-
-		res = charconv_get_output_size(length, &allocated_length);
-		if (res != MAIL_CHARCONV_NO_ERROR)
-			return res;
-		result_length = allocated_length;
-		mmapstr = mmap_string_sized_new(allocated_length + 1);
-		*result_len = 0;
-		if (mmapstr == NULL)
-			return MAIL_CHARCONV_ERROR_MEMORY;
-		res = icu_charconv(tocode, fromcode, str, length, mmapstr->str,
-		    &result_length);
-		if (res == MAIL_CHARCONV_NO_ERROR) {
-			int r;
-
-			*result = mmapstr->str;
-			r = mmap_string_ref(mmapstr);
-			if (r < 0) {
-				mmap_string_free(mmapstr);
-				return MAIL_CHARCONV_ERROR_MEMORY;
-			}
-			mmap_string_set_size(mmapstr, result_length);
-			*result_len = result_length;
-			return MAIL_CHARCONV_NO_ERROR;
-		}
-		mmap_string_free(mmapstr);
-		if (res != MAIL_CHARCONV_ERROR_UNKNOWN_CHARSET)
-			return res;
-	}
+  if (icu_should_try_charset(fromcode)) {
+    char * converted = NULL;
+    size_t converted_length;
+    res = icu_charconv(tocode, fromcode, str, length, &converted,
+        &converted_length);
+    if (res == MAIL_CHARCONV_NO_ERROR) {
+      mmapstr = mmap_string_new_len(converted, converted_length);
+      free(converted);
+      if (mmapstr == NULL)
+        return MAIL_CHARCONV_ERROR_MEMORY;
+      if (mmap_string_ref(mmapstr) < 0) {
+        mmap_string_free(mmapstr);
+        return MAIL_CHARCONV_ERROR_MEMORY;
+      }
+      *result = mmapstr->str;
+      *result_len = converted_length;
+      return MAIL_CHARCONV_NO_ERROR;
+    }
+    if (res != MAIL_CHARCONV_ERROR_UNKNOWN_CHARSET)
+      return res;
+  }
 #endif
 
 #ifndef HAVE_ICONV

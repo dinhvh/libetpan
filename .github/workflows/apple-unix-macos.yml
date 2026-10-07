@@ -13,7 +13,7 @@ jobs:
       - name: Install dependencies
         run: |
           brew install autoconf automake libtool pkg-config \
-            openssl@3 gnutls cyrus-sasl libiconv icu4c berkeley-db lmdb \
+            openssl@3 gnutls cyrus-sasl berkeley-db lmdb \
             libxml2 json-c curl zlib rnp tidy-html5
 
       - name: Configure
@@ -21,7 +21,7 @@ jobs:
           cppflags=""
           ldflags=""
           pkg_config_path=""
-          for formula in openssl@3 gnutls cyrus-sasl libiconv icu4c berkeley-db lmdb libxml2 json-c curl zlib rnp tidy-html5; do
+          for formula in openssl@3 gnutls cyrus-sasl berkeley-db lmdb libxml2 json-c curl zlib rnp tidy-html5; do
             prefix="$(brew --prefix "$formula")"
             cppflags="$cppflags -I$prefix/include"
             ldflags="$ldflags -L$prefix/lib"
@@ -45,7 +45,7 @@ jobs:
               --with-openssl="$(brew --prefix openssl@3)" \
               --with-sasl="$(brew --prefix cyrus-sasl)" \
               --with-curl="$(brew --prefix curl)" \
-              --with-icu=yes --with-rnp=yes --with-json=yes --with-feed=yes
+              --with-icu=no --enable-iconv --with-rnp=yes --with-json=yes --with-feed=yes
 
       - name: Build
         run: |

@@ -1,0 +1,8 @@
+{
+  "strategy": "additive",
+  "featureFilters": {
+    "cnvalias": "include",
+    "conversion_mappings": "include",
+    "normalization": "include"
+  }
+}

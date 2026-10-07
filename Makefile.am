@@ -32,7 +32,7 @@ include $(top_srcdir)/rules.mk
 ACLOCAL_AMFLAGS = -I m4
 
 EXTRA_DIST = libetpan.pc.in libetpan-config.h.in COPYRIGHT \
-	tools/public_headers.py PUBLIC_HEADERS_PLAN.md \
+	tools/public_headers.py README.md \
 	unittest/public-headers/test_public_headers.py \
 	unittest/mailpgp/fixtures/hidden-recipient-secret.asc \
 	unittest/mailpgp/fixtures/hidden-recipient-message.eml \
@@ -84,3 +84,20 @@ unittest:
 	$(MAKE) -C unittest check
 
 check-local: unittest
+
+EXTRA_DIST += unittest/Makefile unittest/charconv/main.c \
+	unittest/charconv/charset_cases.h unittest/charconv/charset_cases_test.c \
+	unittest/charconv/charset_singlebyte_cases.c \
+	unittest/charconv/charset_multibyte_cases.c \
+	unittest/charconv/charset_case_vectors.h \
+	unittest/charconv/charset_apple_cases.h \
+	unittest/charconv/data/iconv-glibc-charsets.txt \
+	unittest/charconv/data/provider-comparison.json \
+	unittest/charconv/data/apple-provider-comparison.json
+
+EXTRA_DIST += unittest/plaintext-rendering/data/input/icu-optional-iso-8859-16.eml \
+	unittest/plaintext-rendering/data/output/icu-optional-iso-8859-16.txt \
+	unittest/plaintext-rendering/data/input/icu-optional-viscii.eml \
+	unittest/plaintext-rendering/data/output/icu-optional-viscii.txt \
+	unittest/plaintext-rendering/data/input/icu-optional-koi8-t.eml \
+	unittest/plaintext-rendering/data/output/icu-optional-koi8-t.txt

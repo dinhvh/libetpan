@@ -8,7 +8,7 @@ current_dir=$(cd "$(dirname "$0")" && pwd)
 output_dir="$current_dir/build/$package_name"
 openssl_path="$current_dir/dependencies/build/openssl-android"
 cyrus_sasl_path="$current_dir/dependencies/build/cyrus-sasl-android"
-iconv_path="$current_dir/dependencies/build/iconv-android"
+icu_path="$current_dir/dependencies/build/icu-android"
 json_c_path="${JSON_C_PATH:-$current_dir/dependencies/build/json-c-android}"
 curl_path="$current_dir/dependencies/build/curl-android"
 libxml2_path="$current_dir/dependencies/build/libxml2-android"
@@ -44,10 +44,10 @@ build() {
   rm -rf "$current_dir/obj"
 
   cd "$current_dir/jni"
-  $ANDROID_NDK/ndk-build APP_PLATFORM=$ANDROID_PLATFORM TARGET_ARCH_ABI=$TARGET_ARCH_ABI \
+  "$ANDROID_NDK/ndk-build" APP_PLATFORM=$ANDROID_PLATFORM APP_ABI=$TARGET_ARCH_ABI \
     OPENSSL_PATH="$openssl_path" \
     CYRUS_SASL_PATH="$cyrus_sasl_path" \
-    ICONV_PATH="$iconv_path" \
+    ICU_PATH="$icu_path" \
     JSON_C_PATH="$json_c_path" \
     CURL_PATH="$curl_path" \
     LIBXML2_PATH="$libxml2_path" \
@@ -59,8 +59,11 @@ build() {
 }
 
 cd "$current_dir/.."
-tar xzf "$current_dir/../build-mac/autogen-result.tar.gz"
-./configure
+if test ! -x ./configure; then
+  ./autogen.sh --disable-iconv --with-icu=no
+else
+  ./configure --disable-iconv --with-icu=no
+fi
 # `make prepare` creates the include/libetpan symlinks but does NOT build
 # libetpan-config.h (it is a BUILT_SOURCES target, only made by a full `make`).
 # Generate it explicitly so the include/libetpan/libetpan-config.h symlink

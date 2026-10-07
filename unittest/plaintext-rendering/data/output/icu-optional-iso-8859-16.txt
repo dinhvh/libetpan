@@ -1,0 +1,6 @@
+From: sender@example.test
+To: reader@example.test
+Subject: Latin10: ȘȚșț
+Date: October 6, 2026 at 12:00:00 PM PDT
+
+Latin10: ȘȚșț
