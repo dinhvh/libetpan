@@ -3,7 +3,7 @@
 set -euo pipefail
 
 # OpenSSL 3.5 is the current LTS line and is required by recent curl.
-version=3.5.8
+version=3.5.9
 package_name=openssl-android
 export MIN_SDK_VERSION=23
 current_dir="$(cd "$(dirname "$0")" && pwd)"
@@ -72,11 +72,11 @@ else
   tar xzf "../packages/openssl-$version.tar.gz"
 fi
 
-export TOOLCHAIN=$ANDROID_NDK/toolchains/llvm/prebuilt/$HOST_TAG
-
-# openssl refers to the host specific toolchain as "ANDROID_NDK_HOME"
-export ANDROID_NDK_HOME=$TOOLCHAIN
-PATH=$TOOLCHAIN/bin:$PATH
+# OpenSSL prefers ANDROID_NDK_ROOT; match it to the NDK selected by the build.
+export ANDROID_NDK_ROOT="$ANDROID_NDK"
+export TOOLCHAIN="$ANDROID_NDK/toolchains/llvm/prebuilt/$HOST_TAG"
+export ANDROID_NDK_HOME="$ANDROID_NDK"
+export PATH="$TOOLCHAIN/bin:$PATH"
 
 # NDK r23+ removed the GNU binutils-style per-target archiver tools
 # (<triple>-ar, <triple>-ranlib); provide the legacy names as symlinks to the
