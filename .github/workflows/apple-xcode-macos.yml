@@ -28,7 +28,7 @@ jobs:
           path: |
             build-mac/dependencies/build/*.xcframework
             build-mac/dependencies/build/openssl/macos-universal
-          key: macos-26-${{ runner.arch }}-libetpan-dependencies-${{ steps.dependency-key.outputs.value }}-${{ hashFiles('.gitmodules') }}
+          key: ${{ github.workflow }}-macos-26-${{ runner.arch }}-libetpan-dependencies-${{ steps.dependency-key.outputs.value }}-${{ hashFiles('.gitmodules') }}
 
       - name: Prepare
         run: |
