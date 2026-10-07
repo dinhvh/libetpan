@@ -19,3 +19,10 @@ CoreFoundation conversion backend, configure Unix macOS with --with-icu=no
 For Xcode builds, pass OTHER_CFLAGS='$(inherited) -DLIBETPAN_DISABLE_ICONV=1'.
 Without iconv, small generated VISCII and KOI8-T tables provide conversions to
 and from UTF-8 when CoreFoundation cannot supply those encodings.
+
+The charset inventory tests keep decoding checks for ISO-2022-CN,
+ISO-2022-CN-EXT, and ISO-2022-KR, including their recorded aliases. Encoding
+checks for those five names are explicitly skipped with the Apple iconv backend:
+some system versions replace their non-ASCII output with question marks.
+CoreFoundation-only and ICU tests still check both directions. This test
+exception does not change the library's charset support or conversion behavior.
