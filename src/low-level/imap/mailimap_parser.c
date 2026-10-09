@@ -8706,7 +8706,8 @@ mailimap_msg_att_body_section_parse_progress(mailstream * fd, MMAPString * buffe
   }
 
   r = mailimap_space_parse(fd, buffer, &cur_token);
-  if (r != MAILIMAP_NO_ERROR) {
+  /* A missing space before a literal or NIL is accepted. */
+  if ((r != MAILIMAP_NO_ERROR) && (r != MAILIMAP_ERROR_PARSE)) {
     res = r;
     goto free_section;
   }

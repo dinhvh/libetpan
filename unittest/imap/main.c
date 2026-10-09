@@ -10,6 +10,7 @@ int main(void)
   imap_command_sender_test_run();
   imap_command_parameter_sender_test_run();
   imap_idle_test_run();
+  imap_body_literal_space_test_run();
 
   puts("imap_test: ok");
   return 0;

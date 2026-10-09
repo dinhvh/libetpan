@@ -112,6 +112,7 @@ IMAP_TEST_SRCS = \
 	imap/command_sender_test.c \
 	imap/command_parameter_sender_test.c \
 	imap/idle_test.c \
+	imap/body_literal_space_test.c \
 	imap/imap_test_utils.c
 IMAP_TEST_DEPS = $(IMAP_TEST_SRCS) imap/*.h
 IMF_TEST_SRCS = \
