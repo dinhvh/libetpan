@@ -501,6 +501,95 @@ static void check_malformed_return_path_does_not_leak(void)
   mailimf_message_free(message);
 }
 
+/* Exercise both the CFWS entry point and structured message headers. */
+static void check_deep_comments(void)
+{
+  static const size_t depths[] = { 100, 105000, 1000000 };
+  static const char suffix[] = " user@example.com\r\n\r\nbody\r\n";
+  size_t i;
+
+  for (i = 0; i < sizeof(depths) / sizeof(depths[0]); i++) {
+    size_t depth = depths[i];
+    size_t length = 4 + 2 * depth + sizeof(suffix) - 1;
+    char * input = malloc(length + 1);
+    struct mailimf_message * message = NULL;
+    struct mailimf_field * field;
+    size_t indx;
+    int r;
+
+    assert(input != NULL);
+    memcpy(input, "To: ", 4);
+    memset(input + 4, '(', depth);
+    memset(input + 4 + depth, ')', depth);
+    memcpy(input + 4 + 2 * depth, suffix, sizeof(suffix));
+
+    indx = 4;
+    r = mailimf_cfws_parse(input, length, &indx);
+    assert(r == MAILIMF_NO_ERROR);
+    assert(indx == 4 + 2 * depth);
+
+    indx = 0;
+    r = mailimf_message_parse(input, length, &indx, &message);
+    assert(r == MAILIMF_NO_ERROR);
+    assert(indx == length);
+    assert(message != NULL);
+    field = field_at(message->msg_fields, 0);
+    assert(field->fld_type == MAILIMF_FIELD_TO);
+    assert(clist_count(field->fld_data.fld_to->to_addr_list->ad_list) == 1);
+    mailimf_message_free(message);
+
+    /* The reported PoC: a To header containing only opening parentheses. */
+    input[4 + depth] = '\0';
+    indx = 4;
+    r = mailimf_cfws_parse(input, 4 + depth, &indx);
+    assert(r == MAILIMF_ERROR_PARSE);
+    assert(indx == 4);
+
+    indx = 0;
+    message = NULL;
+    r = mailimf_message_parse(input, 4 + depth, &indx, &message);
+    /* Malformed structured headers may fall back to unstructured fields. */
+    assert(r == MAILIMF_NO_ERROR || r == MAILIMF_ERROR_PARSE);
+    if (message != NULL)
+      mailimf_message_free(message);
+    free(input);
+  }
+}
+
+static void check_comment_syntax(void)
+{
+  static const char * valid[] = {
+    "()", "(one (two) three)", "( (a) (b) )",
+    "(one\r\n \t(two\r\n three)\r\n )",
+    "(escaped \\( and \\) and \\\\)", "(\\()", "(\\))",
+    "(one)(two (three))", "(control\177)"
+  };
+  static const char * invalid[] = {
+    "(", "((", "(one (two)", "(trailing\\", "(bad\r\nfold)",
+    "(bad\0)"
+  };
+  size_t i;
+
+  for (i = 0; i < sizeof(valid) / sizeof(valid[0]); i++) {
+    size_t indx = 0;
+    int r = mailimf_cfws_parse(valid[i], strlen(valid[i]), &indx);
+    assert_parse_consumes(r, indx, valid[i]);
+  }
+  for (i = 0; i < sizeof(invalid) / sizeof(invalid[0]); i++) {
+    size_t indx = 0;
+    int r = mailimf_cfws_parse(invalid[i], strlen(invalid[i]), &indx);
+    assert(r == MAILIMF_ERROR_PARSE);
+    assert(indx == 0);
+  }
+  {
+    const char * input = "x(one (two))tail";
+    size_t indx = 1;
+    int r = mailimf_cfws_parse(input, strlen(input), &indx);
+    assert(r == MAILIMF_NO_ERROR);
+    assert(indx == strlen("x(one (two))"));
+  }
+}
+
 struct imf_parser_case {
   const char * name;
   void (* run)(void);
@@ -509,6 +598,8 @@ struct imf_parser_case {
 static const struct imf_parser_case parser_cases[] = {
   { "date time", check_date_time },
   { "lexical tokens", check_lexical_tokens },
+  { "deep comments", check_deep_comments },
+  { "comment syntax", check_comment_syntax },
   { "address forms", check_address_forms },
   { "identifier fields", check_identifier_fields },
   { "all standard fields", check_all_standard_fields },

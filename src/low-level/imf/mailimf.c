@@ -76,13 +76,6 @@ static inline int is_dtext(char ch);
 static int mailimf_quoted_pair_parse(const char * message, size_t length,
 				     size_t * indx, char * result);
 
-static int mailimf_ccontent_parse(const char * message, size_t length,
-				  size_t * indx);
-
-static int
-mailimf_comment_fws_ccontent_parse(const char * message, size_t length,
-				   size_t * indx);
-
 static inline int mailimf_comment_parse(const char * message, size_t length,
 				 size_t * indx);
 
@@ -921,73 +914,16 @@ static inline int is_ctext(char ch)
 }
 
 /*
+comment         =       "(" *([FWS] ccontent) [FWS] ")"
 ccontent        =       ctext / quoted-pair / comment
 */
 
-static inline int mailimf_ccontent_parse(const char * message, size_t length,
-					 size_t * indx)
-{
-  size_t cur_token;
-  char ch;
-  int r;
-  
-  cur_token = * indx;
-
-  if (cur_token >= length)
-    return MAILIMF_ERROR_PARSE;
-
-  if (is_ctext(message[cur_token])) {
-    cur_token ++;
-  }
-  else {
-    r = mailimf_quoted_pair_parse(message, length, &cur_token, &ch);
-    
-    if (r == MAILIMF_ERROR_PARSE)
-      r = mailimf_comment_parse(message, length, &cur_token);
-    
-    if (r == MAILIMF_ERROR_PARSE)
-      return r;
-  }
-
-  * indx = cur_token;
-
-  return MAILIMF_NO_ERROR;
-}
-
-/*
-[FWS] ccontent
-*/
-
-static inline int
-mailimf_comment_fws_ccontent_parse(const char * message, size_t length,
-				   size_t * indx)
-{
-  size_t cur_token;
-  int r;
-
-  cur_token = * indx;
-
-  r = mailimf_fws_parse(message, length, &cur_token);
-  if ((r != MAILIMF_NO_ERROR) && (r != MAILIMF_ERROR_PARSE))
-    return r;
-
-  r = mailimf_ccontent_parse(message, length, &cur_token);
-  if (r != MAILIMF_NO_ERROR)
-    return r;
-
-  * indx = cur_token;
-
-  return MAILIMF_NO_ERROR;
-}
-
-/*
-comment         =       "(" *([FWS] ccontent) [FWS] ")"
-*/
-
 static inline int mailimf_comment_parse(const char * message, size_t length,
-				 size_t * indx)
+                                 size_t * indx)
 {
   size_t cur_token;
+  size_t depth;
+  char ch;
   int r;
 
   cur_token = * indx;
@@ -996,23 +932,37 @@ static inline int mailimf_comment_parse(const char * message, size_t length,
   if (r != MAILIMF_NO_ERROR)
     return r;
 
-  while (1) {
-    r = mailimf_comment_fws_ccontent_parse(message, length, &cur_token);
-    if (r != MAILIMF_NO_ERROR) {
-      if (r == MAILIMF_ERROR_PARSE)
-	break;
-      else
-	return r;
+  /* Track nesting without recursion so untrusted comments cannot exhaust
+     the stack. Each opening parenthesis consumes a byte, bounding depth
+     by the input length. Quoted parentheses do not change the depth. */
+  depth = 1;
+  while (depth != 0) {
+    r = mailimf_fws_parse(message, length, &cur_token);
+    if ((r != MAILIMF_NO_ERROR) && (r != MAILIMF_ERROR_PARSE))
+      return r;
+
+    if (cur_token >= length)
+      return MAILIMF_ERROR_PARSE;
+
+    if (is_ctext(message[cur_token])) {
+      cur_token ++;
+    }
+    else if (message[cur_token] == '(') {
+      cur_token ++;
+      depth ++;
+    }
+    else if (message[cur_token] == ')') {
+      r = mailimf_cparenth_parse(message, length, &cur_token);
+      if (r != MAILIMF_NO_ERROR)
+        return r;
+      depth --;
+    }
+    else {
+      r = mailimf_quoted_pair_parse(message, length, &cur_token, &ch);
+      if (r != MAILIMF_NO_ERROR)
+        return r;
     }
   }
-
-  r = mailimf_fws_parse(message, length, &cur_token);
-  if ((r != MAILIMF_NO_ERROR) && (r != MAILIMF_ERROR_PARSE))
-    return r;
-
-  r = mailimf_cparenth_parse(message, length, &cur_token);
-  if (r != MAILIMF_NO_ERROR)
-    return r;
 
   * indx = cur_token;
 
