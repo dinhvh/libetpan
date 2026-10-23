@@ -3308,6 +3308,7 @@ mailimap_parser_context_new(mailimap * session)
   ctx->msg_body_parse_in_progress = false;
   ctx->msg_body_section = NULL;
   ctx->msg_body_att_type = 0;
+  ctx->body_parse_depth = 0;
 
   return ctx;
 

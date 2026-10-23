@@ -3602,6 +3602,9 @@ struct mailimap_parser_context {
   struct mailimap_msg_att_body_section * msg_body_section;
   int msg_body_att_type;
   bool msg_body_parse_in_progress;
+
+  /* Active BODY and body-extension parser calls; shared nesting budget. */
+  unsigned int body_parse_depth;
 };
 
 LIBETPAN_EXPORT
