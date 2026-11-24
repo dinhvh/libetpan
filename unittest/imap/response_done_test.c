@@ -1,12 +1,14 @@
 #include <assert.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "response_done_test.h"
 
 #include "clist.h"
 #include "imap_test_utils.h"
 #include "mailimap_types.h"
+#include "mailimap.h"
 
 int imap_response_done_test_case(const char * fixture_root,
     const char * fixture_name, int compressed, int cond_type,
@@ -72,6 +74,34 @@ static void check_skip_malformed_fetch_response(int compressed)
   mailimap_response_free(response);
 }
 
+/* Exercise response storage and cleanup, not just syntax parsing. */
+static void check_repeated_badcharset(const char * responses,
+    const char * expected)
+{
+  mailimap * session;
+  clist * charsets;
+  const char * charset;
+
+  session = mailimap_new(0, NULL);
+  assert(session != NULL);
+  session->imap_stream = imap_test_stream_from_string(responses);
+  assert(session->imap_stream != NULL);
+  session->imap_state = MAILIMAP_STATE_AUTHENTICATED;
+  assert(mailimap_noop(session) == MAILIMAP_NO_ERROR);
+  charsets = session->imap_response_info->rsp_badcharset;
+  if (expected == NULL) {
+    assert(charsets == NULL);
+  }
+  else {
+    assert(charsets != NULL);
+    assert(clist_count(charsets) == 1);
+    charset = clist_content(clist_begin(charsets));
+    assert(charset != NULL);
+    assert(strcmp(charset, expected) == 0);
+  }
+  mailimap_free(session);
+}
+
 int imap_response_done_test_run(void)
 {
   static const struct {
@@ -95,6 +125,17 @@ int imap_response_done_test_run(void)
     assert(imap_response_done_test_case("data/response-done", cases[i].path,
         true, cases[i].cond_type, cases[i].elements, NULL, NULL) == 0);
   }
+
+  check_repeated_badcharset(
+      "* OK [BADCHARSET (a)] x\r\n"
+      "* OK [BADCHARSET (b)] y\r\n"
+      "1 OK done\r\n", "b");
+  check_repeated_badcharset(
+      "* OK [BADCHARSET (a)] x\r\n"
+      "1 OK [BADCHARSET (b)] done\r\n", "b");
+  check_repeated_badcharset(
+      "* OK [BADCHARSET (a)] x\r\n"
+      "1 OK [BADCHARSET] done\r\n", NULL);
 
   check_skip_malformed_fetch_response(false);
   check_skip_malformed_fetch_response(true);

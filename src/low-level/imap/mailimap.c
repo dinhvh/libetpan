@@ -148,9 +148,9 @@ static void resp_text_store(mailimap * session,
     case MAILIMAP_RESP_TEXT_CODE_BADCHARSET:
       if (session->imap_response_info) {
 	if (session->imap_response_info->rsp_badcharset != NULL) {
-	  clist_foreach(resp_text_code->rc_data.rc_badcharset,
+	  clist_foreach(session->imap_response_info->rsp_badcharset,
               (clist_func) mailimap_astring_free, NULL);
-	  clist_free(resp_text_code->rc_data.rc_badcharset);
+	  clist_free(session->imap_response_info->rsp_badcharset);
 	}
 	session->imap_response_info->rsp_badcharset =
           resp_text_code->rc_data.rc_badcharset;
