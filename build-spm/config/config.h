@@ -45,21 +45,21 @@
 #define HAVE_ZLIB 1
 
 #define LIBETPAN_REENTRANT 1
-#define LIBETPAN_VERSION "1.10.1"
-#define LIBETPAN_VERSION_MAJOR 1
-#define LIBETPAN_VERSION_MINOR 10
-#define LIBETPAN_VERSION_MICRO 1
+#define LIBETPAN_VERSION "2.0.0"
+#define LIBETPAN_VERSION_MAJOR 2
+#define LIBETPAN_VERSION_MINOR 0
+#define LIBETPAN_VERSION_MICRO 0
 
 #define PACKAGE "libetpan"
 #define PACKAGE_BUGREPORT "libetpan-devel@lists.sourceforge.net"
 #define PACKAGE_NAME "libetpan"
-#define PACKAGE_STRING "libetpan 1.10.1"
+#define PACKAGE_STRING "libetpan 2.0.0"
 #define PACKAGE_TARNAME "libetpan"
 #define PACKAGE_URL ""
-#define PACKAGE_VERSION "1.10.1"
+#define PACKAGE_VERSION "2.0.0"
 #define STDC_HEADERS 1
 #define UNSTRICT_SYNTAX 1
-#define VERSION "1.10.1"
+#define VERSION "2.0.0"
 
 /* SASL is disabled for the source package to avoid a system/vendor dependency. */
 /* #undef USE_SASL */

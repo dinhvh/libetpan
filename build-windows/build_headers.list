@@ -15,6 +15,7 @@ src\data-types\mailstream_socket.h
 src\data-types\mailstream_ssl.h
 src\data-types\mailstream_types.h
 src\data-types\mmapstring.h
+src\driver\implementation\data-message\data_message_driver.h
 src\driver\implementation\db\dbstorage.h
 src\driver\implementation\feed\feedstorage.h
 src\driver\implementation\hotmail\hotmailstorage.h
