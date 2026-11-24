@@ -43,6 +43,21 @@ extern "C" {
 
 #include "mailimap_types.h"
 
+struct mailimap_parser_context {
+  int is_rambler_workaround_enabled;
+  int is_qip_workaround_enabled;
+  int is_skip_malformed_fetch_response_enabled;
+
+  mailimap_msg_body_handler * msg_body_handler;
+  void * msg_body_handler_context;
+  struct mailimap_msg_att_body_section * msg_body_section;
+  int msg_body_att_type;
+  bool msg_body_parse_in_progress;
+
+  /* Active BODY and body-extension parser calls; shared nesting budget. */
+  unsigned int body_parse_depth;
+};
+
 int mailimap_greeting_parse(mailstream * fd, MMAPString * buffer, struct mailimap_parser_context * parser_ctx,
 			    size_t * indx,
 			    struct mailimap_greeting ** result,

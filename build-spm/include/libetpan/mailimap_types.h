@@ -3590,19 +3590,8 @@ enum {
   MAILIMAP_ERROR_CLIENTID,
 };
 
-/* information about parser context */
-
-struct mailimap_parser_context {
-  int is_rambler_workaround_enabled;
-  int is_qip_workaround_enabled;
-  int is_skip_malformed_fetch_response_enabled;
-
-  mailimap_msg_body_handler * msg_body_handler;
-  void * msg_body_handler_context;
-  struct mailimap_msg_att_body_section * msg_body_section;
-  int msg_body_att_type;
-  bool msg_body_parse_in_progress;
-};
+/* Opaque parser context, managed by the constructor and destructor below. */
+struct mailimap_parser_context;
 
 LIBETPAN_EXPORT
 struct mailimap_parser_context *

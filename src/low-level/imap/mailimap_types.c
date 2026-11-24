@@ -38,6 +38,7 @@
 #endif
 
 #include "mailimap_types.h"
+#include "mailimap_parser.h"
 #include "mmapstring.h"
 #include "mail.h"
 #include "mailimap_extension.h"
