@@ -299,12 +299,14 @@ static struct mailstream_ssl_data * ssl_data_new(int fd, time_t timeout,
   gnutls_priority_set_direct(session, "NORMAL", NULL);
 
   gnutls_record_disable_padding(session);
-  gnutls_dh_set_prime_bits(session, 512);
+#if GNUTLS_VERSION_NUMBER < 0x030107
+  /* Older GnuTLS versions do not derive the DH minimum from the priority. */
+  gnutls_dh_set_prime_bits(session, 2048);
+#endif
 
   gnutls_transport_set_int(session, fd);
 
-  /* lower limits on server key length restriction */
-  gnutls_dh_set_prime_bits(session, 512);
+  /* Keep the DH minimum selected by the NORMAL priority on modern GnuTLS. */
   
   if (timeout == 0) {
 		timeout_value = mailstream_network_delay.tv_sec * 1000 + mailstream_network_delay.tv_usec / 1000;
