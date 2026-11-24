@@ -3,9 +3,9 @@
 
 m4_define([maj_version], [2])
 m4_define([min_version], [0])
-m4_define([mic_version], [0])
+m4_define([mic_version], [1])
 m4_define([api_current], [27])
-m4_define([api_revision], [0])
+m4_define([api_revision], [1])
 m4_define([api_compatibility], [27])
 dnl API version
 dnl 1. If you have changed any of the sources for this library, the revision
