@@ -9,6 +9,7 @@
 #include "imap_test_utils.h"
 #include "mailimap_types.h"
 #include "mailimap.h"
+#include "mailimap_parser.h"
 
 int imap_response_done_test_case(const char * fixture_root,
     const char * fixture_name, int compressed, int cond_type,
@@ -102,6 +103,51 @@ static void check_repeated_badcharset(const char * responses,
   mailimap_free(session);
 }
 
+static void check_null_context_resp_text(const char * charset_text)
+{
+  MMAPString * buffer;
+  struct mailimap_greeting * greeting = NULL;
+  struct mailimap_continue_req * continuation = NULL;
+  struct mailimap_resp_text * text;
+  const char * charset;
+  size_t index;
+  int i;
+
+  for (i = 0; i < 2; i++) {
+    buffer = mmap_string_new(i == 0 ? "* OK [BADCHARSET (" :
+        "+ [BADCHARSET (");
+    assert(buffer != NULL);
+    assert(mmap_string_append(buffer, charset_text) != NULL);
+    assert(mmap_string_append(buffer, ")] hi\r\n") != NULL);
+    index = 0;
+    if (i == 0) {
+      assert(mailimap_greeting_parse(NULL, buffer, NULL, &index,
+          &greeting, 0, NULL) == MAILIMAP_NO_ERROR);
+      assert(greeting != NULL);
+      text = greeting->gr_data.gr_auth->rsp_text;
+    }
+    else {
+      assert(mailimap_continue_req_parse(NULL, buffer, NULL, &index,
+          &continuation, 0, NULL) == MAILIMAP_NO_ERROR);
+      assert(continuation != NULL);
+      assert(continuation->cr_type == MAILIMAP_CONTINUE_REQ_TEXT);
+      text = continuation->cr_data.cr_text;
+    }
+    assert(index == buffer->len);
+    assert(text->rsp_code != NULL);
+    assert(text->rsp_code->rc_type == MAILIMAP_RESP_TEXT_CODE_BADCHARSET);
+    assert(clist_count(text->rsp_code->rc_data.rc_badcharset) == 1);
+    charset = clist_content(clist_begin(text->rsp_code->rc_data.rc_badcharset));
+    assert(charset != NULL);
+    assert(strcmp(charset, "x") == 0);
+    if (i == 0)
+      mailimap_greeting_free(greeting);
+    else
+      mailimap_continue_req_free(continuation);
+    mmap_string_free(buffer);
+  }
+}
+
 int imap_response_done_test_run(void)
 {
   static const struct {
@@ -136,6 +182,9 @@ int imap_response_done_test_run(void)
   check_repeated_badcharset(
       "* OK [BADCHARSET (a)] x\r\n"
       "1 OK [BADCHARSET] done\r\n", NULL);
+
+  check_null_context_resp_text("\"x\"");
+  check_null_context_resp_text("{1}\r\nx");
 
   check_skip_malformed_fetch_response(false);
   check_skip_malformed_fetch_response(true);

@@ -6376,7 +6376,8 @@ static int mailimap_literal_parse_progress(mailstream * fd, MMAPString * buffer,
   bool use_msg_body_handler;
   
   cur_token = * indx;
-  use_msg_body_handler = (parser_ctx->msg_body_handler != NULL
+  use_msg_body_handler = (parser_ctx != NULL
+                          && parser_ctx->msg_body_handler != NULL
                           && parser_ctx->msg_body_parse_in_progress);
   
   r = mailimap_oaccolade_parse(fd, buffer, parser_ctx, &cur_token);
@@ -9198,7 +9199,8 @@ mailimap_quoted_parse(mailstream * fd, MMAPString * buffer, struct mailimap_pars
 
   cur_token = * indx;
 
-  use_msg_body_handler = (parser_ctx->msg_body_handler != NULL
+  use_msg_body_handler = (parser_ctx != NULL
+                          && parser_ctx->msg_body_handler != NULL
                           && parser_ctx->msg_body_parse_in_progress);
 
 #ifdef UNSTRICT_SYNTAX
